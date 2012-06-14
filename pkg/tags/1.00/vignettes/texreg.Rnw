@@ -35,7 +35,7 @@ It should be possible to install \TeX reg using a simple command:
 <<results=hide, eval=FALSE>>=
 install.packages("texreg")
 @
-If this is not possible for some reason, the source files can be downloaded from \url{http://www.philipleifeld.de} or \url{https://r-forge.r-project.org/projects/texreg/}.
+If this is not possible for some reason, the source files can be downloaded from \url{http://www.philipleifeld.de} or \url{texreg.r-forge.r-project.org}.
 To load the package in R once it has been installed, enter the following command:
 <<results=hide>>=
 library(texreg)
@@ -56,7 +56,7 @@ More specific help on the \texttt{texreg} command can be obtained by entering th
 help(texreg)
 @
 If all else fails, more help can be obtained from the homepage of the \TeX reg package.
-Questions can be posted to a public forum at \url{https://r-forge.r-project.org/projects/texreg/}.
+Questions can be posted to a public forum at \url{texreg.r-forge.r-project.org}.
 A prior registration may be required.
 
 \section{Examples for \texttt{lme} objects}
@@ -114,7 +114,8 @@ mat <- matrix(mat, nrow=20)
 Using the \texttt{statnet} package, the matrix can be converted into a network object.
 The \texttt{ergm()} command can be used to fit some models:
 <<results=hide>>=
-library(statnet)
+library(network)
+library(ergm)
 nw <- network(mat)
 m1 <- ergm(nw ~ edges)
 m2 <- ergm(nw ~ edges + mutual)
