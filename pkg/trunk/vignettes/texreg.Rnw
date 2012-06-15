@@ -1,3 +1,7 @@
+%\VignetteIndexEntry{Conversion of R regression output to LaTeX tables}
+%\VignetteDepends{}
+%\VignetteKeywords{regression, lme, ergm, table, LaTeX, typesetting}
+%\VignettePackage{texreg}
 \documentclass[a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
