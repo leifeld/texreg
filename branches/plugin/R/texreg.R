@@ -1,4 +1,4 @@
-#TODO: change the texreg function in order to allow any kind of gof statistics; use gof rownames instead of predefined names for AIC etc.; then implement lm models. Finally, allow resorting the coefficient rows, and implement custom coefficient labels as an argument.
+#TODO: fix all bugs; implement lm models; allow resorting the coefficient rows; implement custom coefficient labels as an argument.
 
 
 # function which reformats a coefficient with two decimal places
@@ -16,7 +16,7 @@ coef.to.string <- function(x, lead.zero=FALSE) {
 }
 
 
-#extension for lme objects
+# extension for lme objects
 extract.lme <- function(model) {
   
   if (!class(model) == "lme") {
@@ -36,7 +36,7 @@ extract.lme <- function(model) {
 }
 
 
-#extension for ergm objects
+# extension for ergm objects
 extract.ergm <- function(model) {
   
   if (!class(model) == "ergm") {
@@ -70,44 +70,47 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     stop("Unknown object was handed over.")
   }
   
-  # extract relevant information
-  coefs <- list()
-  aics <- numeric()
-  bics <- numeric()
-  liks <- numeric()
+  # extract data from the models
+  models <- list()
   for (i in 1:length(l)) {
-    if (class(l[[i]]) == "ergm") { #ERGM EXTENSION
-      data <- extract.ergm(l[[i]])
-    } else if (class(l[[i]]) == "lme") { #LME EXTENSION
-      data <- extract.lme(l[[i]])
+    if (class(l[[i]]) == "ergm") {
+      model <- extract.ergm(l[[i]])
+      models <- append(models, model)
+    } else if (class(l[[i]]) == "lme") {
+      model <- extract.lme(l[[i]])
+      models <- append(models, model)
     } else {
-      stop("Unknown object was part of the model list.")
+      warning(paste("Skipping unknown model of type ", class(l[[i]]), ".", 
+          sep=""))
     }
-    coefs <- append(coefs, list(data[[1]]))
-    if (!is.null(data[[2]][1])) {
-      aics <- append(aics, coef.to.string(data[[2]][1], leading.zero))
-    }
-    if (!is.null(data[[2]][2])) {
-      bics <- append(bics, coef.to.string(data[[2]][2], leading.zero))
-    }
-    if (!is.null(data[[2]][3])) {
-      liks <- append(liks, coef.to.string(data[[2]][3], leading.zero))
-    }
-  }
-  if (
-      length(coefs) != length(liks) | 
-      length(coefs) != length(aics) | 
-      length(coefs) != length(bics) | 
-      length(liks) != length(aics) | 
-      length(liks) != length(bics) | 
-      length(aics) != length(bics)
-  ) {
-    stop("Goodness of fit statistics are not available for all models.")
-  }
-  if (length(coefs) == 0) {
-    stop("Empty list was handed over! No coefficients were found.")
   }
   
+  # extract names of the goodness-of-fit statistics
+  gof.names <- character()
+  for (i in 1:length(models)) {
+    for (j in 1:length(models[[i]][[2]])) {
+      if (!row.names(models[[i]][[2]][j]) %in% gof.names) {
+        gof.names <- append(gof.names, row.names(models[[i]][[2]][j]))
+      }
+    }
+  }
+  gof.names <- sort(gof.names)
+  
+  # aggregate goodness-of-fit statistics in a matrix and create list of coefs
+  coefs <- list()
+  gofs <- matrix(nrow=length(gof.names), ncol=length(models))
+  row.names(gofs) <- gof.names
+  for (i in 1:length(models)) {
+    coefs <- append(coefs, models[[i]][1])
+    for (j in 1:length(models[[i]][[2]])) {
+      rn <- row.names(models[[i]][[2]][j])
+      val <- models[[i]][[2]][j]
+      col <- i
+      row <- which(row.names(gofs) == rn)
+      gofs[row,col] <- val
+    }
+  }
+
   # merge the coefficient tables
   if (length(coefs) == 1) {
     m <- coefs[[1]]
@@ -124,7 +127,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   m <- as.data.frame(m)
   
   # what is the optimal length of the labels?
-  lab.list <- c(rownames(m), "AIC", "BIC", "Log Likelihood")
+  lab.list <- c(rownames(m), gof.names)
   lab.length <- 0
   for (i in 1:length(lab.list)) {
     if (nchar(lab.list[i]) > lab.length) {
@@ -200,15 +203,12 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   
   # write coefficient rows
   if (single.row==TRUE) {
-    output.matrix <- matrix(ncol=(length(m)/3)+1, nrow=length(m[,1])+3)
+    output.matrix <- matrix(ncol=(length(m)/3)+1, nrow=length(m[,1]))
     
     # row labels
     for (i in 1:length(rownames(m))) {
       output.matrix[i,1] <- rownames(m)[i]
     }
-    output.matrix[length(output.matrix[,1])-2,1] <- "AIC"
-    output.matrix[length(output.matrix[,1])-1,1] <- "BIC"
-    output.matrix[length(output.matrix[,1]),1] <- "Log Likelihood"
     
     # coefficients and standard deviations
     for (i in 1:length(m[,1])) { #go through rows
@@ -250,7 +250,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
           } else {
             dollar <- "$"
           }
-          entry <- paste(dollar, coef.to.string(m[i,j], leading.zero), std, p, dollar, sep="")
+          entry <- paste(dollar, coef.to.string(m[i,j], leading.zero), std, p, 
+              dollar, sep="")
           output.matrix[i,k] <- entry
           
         }
@@ -259,16 +260,13 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       }
     }
   } else {
-    output.matrix <- matrix(ncol=(length(m)/3)+1, nrow=2*length(m[,1])+3)
+    output.matrix <- matrix(ncol=(length(m)/3)+1, nrow=2*length(m[,1]))
     
     # row labels
     for (i in 1:length(rownames(m))) {
       output.matrix[(i*2)-1,1] <- rownames(m)[i]
       output.matrix[(i*2),1] <- ""
     }
-    output.matrix[length(output.matrix[,1])-2,1] <- "AIC"
-    output.matrix[length(output.matrix[,1])-1,1] <- "BIC"
-    output.matrix[length(output.matrix[,1]),1] <- "Log Likelihood"
     
     # coefficients and standard deviations
     for (i in 1:length(m[,1])) {
@@ -320,31 +318,26 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       }
     }
   }
-
-  #AIC, BIC and log likelihood values
-  if (length(aics) > 0 && length(bics) > 0 & length(liks) > 0) {
-    if (dcolumn == TRUE) {
-      dollar <- ""
-    } else {
-      dollar <- "$"
-    }
-    for (i in 1:length(aics)) {
-      if (dcolumn == TRUE) {
-        output.matrix[length(output.matrix[,1])-2,i+1] <- aics[i]
-        output.matrix[length(output.matrix[,1])-1,i+1] <- bics[i]
-        output.matrix[length(output.matrix[,1]),i+1] <- liks[i]
-      } else {
-        output.matrix[length(output.matrix[,1])-2,i+1] <- paste(dollar, 
-            aics[i], dollar, sep="")
-        output.matrix[length(output.matrix[,1])-1,i+1] <- paste(dollar, 
-            bics[i], dollar, sep="")
-        output.matrix[length(output.matrix[,1]),i+1] <- paste(dollar, liks[i], 
-            dollar, sep="")
-      }
+  
+  # goodness-of-fit statistics
+  if (dcolumn == TRUE) {
+    dollar <- ""
+  } else {
+    dollar <- "$"
+  }
+  gof.matrix <- matrix(nrow=nrow(gofs), ncol=ncol(gofs)+1) #incl. labels
+  for (i in 1:length(gofs[,1])) {
+    gof.matrix[i,1] <- rownames(gofs)[i]
+    for (j in 2:length(gofs[1,])) {
+      string <- coef.to.string(gofs[i,j-1], leading.zero)
+      gof.matrix[i,j] <- paste(dollar, string, dollar, sep="")
     }
   }
   
-  #fill with spaces
+  # combine the coefficient and gof matrices vertically
+  output.matrix <- rbind(output.matrix, gof.matrix)
+  
+  # fill with spaces
   max.lengths <- numeric(length(output.matrix[1,]))
   for (i in 1:length(output.matrix[1,])) {
     max.length <- 0
@@ -366,7 +359,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   
   
   # write coefficients to string object
-  for (i in 1:(length(output.matrix[,1])-3)) {
+  for (i in 1:(length(output.matrix[,1])-length(gof.names))) {
     for (j in 1:length(output.matrix[1,])) {
       string <- paste(string, output.matrix[i,j], sep="")
       if (j == length(output.matrix[1,])) {
@@ -383,7 +376,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     string <- paste(string, "\\hline\n", sep="")
   }
   
-  for (i in (length(output.matrix[,1])-2):(length(output.matrix[,1]))) {
+  for (i in (length(output.matrix[,1])-(length(gof.names)-1)):
+      (length(output.matrix[,1]))) {
     for (j in 1:length(output.matrix[1,])) {
       string <- paste(string, output.matrix[i,j], sep="")
       if (j == length(output.matrix[1,])) {
