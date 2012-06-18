@@ -1,3 +1,5 @@
+#TODO: change the texreg function in order to allow any kind of gof statistics; use gof rownames instead of predefined names for AIC etc.; then implement lm models. Finally, allow resorting the coefficient rows, and implement custom coefficient labels as an argument.
+
 
 # function which reformats a coefficient with two decimal places
 coef.to.string <- function(x, lead.zero=FALSE) {
@@ -11,6 +13,46 @@ coef.to.string <- function(x, lead.zero=FALSE) {
     y <- gsub("0\\.", "\\.", y)
   }
   return(y)
+}
+
+
+#extension for lme objects
+extract.lme <- function(model) {
+  
+  if (!class(model) == "lme") {
+    stop("Internal error: Incorrect model type! Should be an lme object!")
+  }
+  
+  tab <- summary(model)$tTable[,-3:-4] #extract coefficient table
+  
+  lik <- summary(model)$logLik #extract log likelihood
+  aic <- summary(model)$AIC #extract AIC
+  bic <- summary(model)$BIC #extract BIC
+  gof <- matrix(c(aic, bic, lik), ncol=1)
+  row.names(gof) <- c("AIC", "BIC", "Log Likelihood")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+
+#extension for ergm objects
+extract.ergm <- function(model) {
+  
+  if (!class(model) == "ergm") {
+    stop("Internal error: Incorrect model type! Should be an ergm object!")
+  }
+  
+  tab <- summary(model)$coefs[,-3] #extract coefficient table
+  
+  lik <- model$mle.lik[1] #extract log likelihood
+  aic <- summary(model)$aic #extract AIC
+  bic <- summary(model)$bic #extract BIC
+  gof <- matrix(c(aic, bic, lik), ncol=1)
+  row.names(gof) <- c("AIC", "BIC", "Log Likelihood")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
 }
 
 
@@ -34,36 +76,22 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   bics <- numeric()
   liks <- numeric()
   for (i in 1:length(l)) {
-    if (class(l[[i]]) == "ergm") { #ergm objects
-      tab <- summary(l[[i]])$coefs[,-3] #extract coefficient table
-      coefs <- append(coefs, list(tab))
-      if (!is.null(l[[i]]$mle.lik[1])) {
-        lik <- l[[i]]$mle.lik[1] #log likelihood
-        liks <- append(liks, coef.to.string(lik, leading.zero))
-      }
-      if (!is.null(summary(l[[i]])$aic)) { #AIC
-        aic <- coef.to.string(summary(l[[i]])$aic, leading.zero)
-        aics <- append(aics, aic)
-      }
-      if (!is.null(summary(l[[i]])$bic)) { #AIC
-        bic <- coef.to.string(summary(l[[i]])$bic, leading.zero)
-        bics <- append(bics, bic)
-      }
-    } else if (class(l[[i]]) == "lme") { #lme objects
-      tab <- summary(l[[i]])$tTable[,-3:-4] #extract coefficient table
-      coefs <- append(coefs, list(tab))
-      if (!is.null(summary(l[[i]])$logLik)) {
-        lik <- summary(l[[i]])$logLik #extract log likelihood
-        liks <- append(liks, coef.to.string(lik, leading.zero))
-      }
-      if (!is.null(summary(l[[i]])$AIC)) { #extract AIC
-        aic <- coef.to.string(summary(l[[i]])$AIC, leading.zero)
-        aics <- append(aics, aic)
-      }
-      if (!is.null(summary(l[[i]])$BIC)) { #extract BIC
-        bic <- coef.to.string(summary(l[[i]])$BIC, leading.zero)
-        bics <- append(bics, bic)
-      }
+    if (class(l[[i]]) == "ergm") { #ERGM EXTENSION
+      data <- extract.ergm(l[[i]])
+    } else if (class(l[[i]]) == "lme") { #LME EXTENSION
+      data <- extract.lme(l[[i]])
+    } else {
+      stop("Unknown object was part of the model list.")
+    }
+    coefs <- append(coefs, list(data[[1]]))
+    if (!is.null(data[[2]][1])) {
+      aics <- append(aics, coef.to.string(data[[2]][1], leading.zero))
+    }
+    if (!is.null(data[[2]][2])) {
+      bics <- append(bics, coef.to.string(data[[2]][2], leading.zero))
+    }
+    if (!is.null(data[[2]][3])) {
+      liks <- append(liks, coef.to.string(data[[2]][3], leading.zero))
     }
   }
   if (
