@@ -3,17 +3,17 @@
 \alias{texreg-package}
 \title{Conversion of \R regression output to LaTeX tables.}
 \description{texreg converts coefficients, standard errors, significance stars, 
-    and goodness-of-fit statistics of lme objects (that is, linear mixed 
-    effects models) and ergm objects (that is, exponential random graph models) 
-    into LaTeX tables. Either a single model or a list of models can be 
-    combined in a single table. The output is customizable.}
+    and goodness-of-fit statistics of statistical models into LaTeX tables. 
+    Either a single model or a list of models can be combined in a single 
+    table. The output is customizable. New model types can be easily 
+    implemented.}
 \details{
 Several packages like xtable, outreg and memsic are available for typesetting 
-R regression output as LaTeX tables. However, these packages do not work with 
-ergm objects (that is, exponential random graph models) and lme objects (that 
-is, linear mixed effects models). The texreg package, in contrast, is able to 
-convert lme and ergm output to LaTeX tables. It accepts single models or lists 
-of several models. If several models are submitted, they are merged by row 
+R regression output as LaTeX tables. However, they cannot process certain model 
+types (like ergm or lme objects), and some of these packages do not support 
+multiple models within one single table. The texreg package, in contrast, 
+accepts single models or lists of several models, and it can handle ergm and 
+lme objects. If several models are submitted, they are merged by row 
 labels of the coefficients, and they are inserted into the final table as 
 separate columns.
 
