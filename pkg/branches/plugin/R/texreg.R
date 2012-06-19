@@ -1,8 +1,12 @@
-#TODO: fix all bugs; implement lm models; allow resorting the coefficient rows; implement custom coefficient labels as an argument.
-
+# The texreg package was written by Philip Leifeld.
+# Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
+# for bug reports, help or feature requests.
 
 # function which reformats a coefficient with two decimal places
 coef.to.string <- function(x, lead.zero=FALSE) {
+  if (is.na(x)) {
+    return("")
+  }
   y <- as.character(round(x, 2))
   if (grepl("\\.", y) == FALSE) {
     y <- paste(y, ".00", sep="")
@@ -13,6 +17,68 @@ coef.to.string <- function(x, lead.zero=FALSE) {
     y <- gsub("0\\.", "\\.", y)
   }
   return(y)
+}
+
+
+# extension for lm objects
+extract.lm <- function(model) {
+  
+  if (!class(model) == "lm") {
+    stop("Internal error: Incorrect model type! Should be an lm object!")
+  }
+  
+  tab <- summary(model)$coef[,-3] #extract coefficient table
+  
+  rs <- summary(model)$r.squared #extract R-squared
+  adj <- summary(model)$adj.r.squared #extract adjusted R-squared
+  n <- nobs(model) #extract number of observations
+  
+  gof <- matrix(c(rs, adj, n), ncol=1)
+  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+
+# extension for gls objects
+extract.gls <- function(model) {
+  
+  if (!class(model) == "gls") {
+    stop("Internal error: Incorrect model type! Should be a gls object!")
+  }
+  
+  tab <- summary(model)$tTable[,-3] #extract coefficient table
+  
+  lik <- summary(model)$logLik #extract log likelihood
+  aic <- summary(model)$AIC #extract AIC
+  bic <- summary(model)$BIC #extract BIC
+  n <- nobs(model) #extract number of observations
+  gof <- matrix(c(aic, bic, lik, n), ncol=1)
+  row.names(gof) <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+
+# extension for glm objects
+extract.glm <- function(model) {
+  
+  if (!class(model)[1] == "glm") {
+    stop("Internal error: Incorrect model type! Should be a glm object!")
+  }
+  
+  tab <- summary(model)$coef[,-3] #extract coefficient table
+  
+  aic <- summary(model)$aic #extract AIC
+  n <- nobs(model) #extract number of observations
+  
+  gof <- matrix(c(aic, n), ncol=1)
+  row.names(gof) <- c("AIC", "Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
 }
 
 
@@ -28,8 +94,9 @@ extract.lme <- function(model) {
   lik <- summary(model)$logLik #extract log likelihood
   aic <- summary(model)$AIC #extract AIC
   bic <- summary(model)$BIC #extract BIC
-  gof <- matrix(c(aic, bic, lik), ncol=1)
-  row.names(gof) <- c("AIC", "BIC", "Log Likelihood")
+  n <- nobs(model) #extract number of observations
+  gof <- matrix(c(aic, bic, lik, n), ncol=1)
+  row.names(gof) <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
   
   table.content <- list(tab, gof)
   return(table.content)
@@ -57,28 +124,40 @@ extract.ergm <- function(model) {
 
 
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
-    table=TRUE, strong.signif=TRUE, symbol="\\cdot", use.packages=TRUE, 
+    table=TRUE, strong.signif=FALSE, symbol="\\cdot", use.packages=TRUE, 
     caption="Statistical models", label="table:coefficients", dcolumn=TRUE, 
-    booktabs=TRUE, scriptsize=TRUE) {
+    booktabs=TRUE, scriptsize=FALSE) {
   
   string <- ""
   
   # if a single model is handed over, put model inside a list
-  if (class(l) == "ergm" | class(l) == "lme") {
+  # IMPLEMENT NEW EXTENSIONS HERE
+  if (class(l)[1] == "ergm" | class(l)[1] == "lme" | class(l)[1] == "lm" | 
+      class(l)[1] == "gls" | class(l)[1] == "glm") {
     l <- list(l)
   } else if (class(l) != "list") {
     stop("Unknown object was handed over.")
   }
   
   # extract data from the models
-  models <- list()
+  # IMPLEMENT NEW EXTENSIONS HERE
+  models <- NULL
   for (i in 1:length(l)) {
-    if (class(l[[i]]) == "ergm") {
+    if (class(l[[i]])[1] == "ergm") {
       model <- extract.ergm(l[[i]])
-      models <- append(models, model)
-    } else if (class(l[[i]]) == "lme") {
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "lme") {
       model <- extract.lme(l[[i]])
-      models <- append(models, model)
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "lm") {
+      model <- extract.lm(l[[i]])
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "gls") {
+      model <- extract.gls(l[[i]])
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "glm") {
+      model <- extract.glm(l[[i]])
+      models <- append(models, list(model))
     } else {
       warning(paste("Skipping unknown model of type ", class(l[[i]]), ".", 
           sep=""))
@@ -89,12 +168,11 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   gof.names <- character()
   for (i in 1:length(models)) {
     for (j in 1:length(models[[i]][[2]])) {
-      if (!row.names(models[[i]][[2]][j]) %in% gof.names) {
-        gof.names <- append(gof.names, row.names(models[[i]][[2]][j]))
+      if (!row.names(models[[i]][[2]])[j] %in% gof.names) {
+        gof.names <- append(gof.names, row.names(models[[i]][[2]])[j])
       }
     }
   }
-  gof.names <- sort(gof.names)
   
   # aggregate goodness-of-fit statistics in a matrix and create list of coefs
   coefs <- list()
@@ -103,7 +181,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   for (i in 1:length(models)) {
     coefs <- append(coefs, models[[i]][1])
     for (j in 1:length(models[[i]][[2]])) {
-      rn <- row.names(models[[i]][[2]][j])
+      rn <- row.names(models[[i]][[2]])[j]
       val <- models[[i]][[2]][j]
       col <- i
       row <- which(row.names(gofs) == rn)
@@ -154,9 +232,15 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   }
   string <- paste(string, "\\begin{tabular}{l ", sep="")
   
-  for(i in 1:length(l)) {
+  #define columns of the table
+  for(i in 1:length(models)) {
+    gof.list <- as.vector(gofs[,i])
+    gof.list.string <- NULL
+    for (j in 1:length(gof.list)) {
+      gof.list.string[j] <- coef.to.string(gof.list[j], leading.zero)
+    }
     if (dcolumn == TRUE) {
-      dec.left <- max(c(nchar(aics[i])-3, nchar(bics[i])-3, nchar(liks[i])-3), 3)
+      dec.left <- max(c(nchar(gof.list.string)-3), 3)
       if (single.row == TRUE) {
         dec.right <- 3
         separator <- ")"
@@ -328,9 +412,23 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   gof.matrix <- matrix(nrow=nrow(gofs), ncol=ncol(gofs)+1) #incl. labels
   for (i in 1:length(gofs[,1])) {
     gof.matrix[i,1] <- rownames(gofs)[i]
-    for (j in 2:length(gofs[1,])) {
-      string <- coef.to.string(gofs[i,j-1], leading.zero)
-      gof.matrix[i,j] <- paste(dollar, string, dollar, sep="")
+    for (j in 1:length(gofs[1,])) {
+      strg <- coef.to.string(gofs[i,j], leading.zero)
+      rn <- rownames(gofs)[i]
+      if (rn == "Num. obs." | rn == "n" | rn == "N" | rn == "N obs" | 
+          rn == "N obs." | rn == "nobs" | rn == "n obs" | rn == "n obs." | 
+          rn == "n.obs." | rn == "N.obs." | rn == "N. obs" | 
+          rn == "Num observations" | rn == "Number of observations" | 
+          rn == "Num obs" | rn == "num obs" | rn == "Num. observations" | 
+          rn == "Num Observations" | rn == "Num. Observations" | 
+          rn == "Num. Obs." | rn == "Num.Obs." | rn == "Number obs." | 
+          rn == "Number Obs." | rn == "Number obs" | rn == "Number Obs" | 
+          rn == "Number of Obs." | rn == "Number of obs." | 
+          rn == "Number of obs" | rn == "Number of Obs" | rn == "Obs" | 
+          rn == "obs" | rn == "Obs." | rn == "obs.") {
+        strg <- substring(strg, 1, nchar(strg)-3)
+      }
+      gof.matrix[i,j+1] <- paste(dollar, strg, dollar, sep="")
     }
   }
   
