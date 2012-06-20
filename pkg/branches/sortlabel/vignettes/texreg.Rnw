@@ -30,11 +30,14 @@
 
 \section{Motivation}
 The \TeX reg package for the statistical computing environment R was designed to convert regression model output from multiple models into tables for inclusion in \LaTeX\ documents.
-While similar packages exist -- e.g., \texttt{xtable}, \texttt{outreg} and \texttt{memsic} --, they do not provide this functionality for \texttt{lme} objects (from the nlme package) and \texttt{ergm} objects (from the statnet suite).
-Moreover, most existing packages are not able to merge multiple models into one single table.
-The \TeX reg package fills these gaps.
+It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \texttt{outreg} and \texttt{memsic}, which can also convert R tables to \LaTeX\ tables.
+Only a subset of these packages is able to merge multiple regression models in a single table.
+Those packages which can do this do not support important model types such as \texttt{lme} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
+\TeX reg, in contrast, accepts these model types and can also merge multiple models in a single table.
 Currently, \texttt{lm}, \texttt{lme}, \texttt{gls}, \texttt{glm} and \texttt{ergm} objects are supported.
-New model types can be easily implemented.
+New model types can be easily implemented (see section \ref{templates}).
+\TeX reg can be used within Sweave.
+\LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
 
 
 \section{Installation}
@@ -42,7 +45,7 @@ It should be possible to install \TeX reg using a simple command:
 <<results=hide, eval=FALSE>>=
 install.packages("texreg")
 @
-If this is not possible for some reason, the source files can be downloaded from \url{http://www.philipleifeld.de} or \url{http://r-forge.r-project.org/projects/texreg/}.
+If this is not possible for some reason, the source files and binaries can be downloaded from \url{http://r-forge.r-project.org/projects/texreg/}.
 To load the package in R once it has been installed, enter the following command:
 <<results=hide>>=
 library(texreg)
@@ -82,7 +85,7 @@ The coefficients, standard errors, $p$ values etc. can be displayed as follows:
 summary(m2)
 @
 Now it is fairly tedious to copy every single coefficient and standard error to a \LaTeX\ table when you design your academic paper.
-To improve the situation, the following commands can do this automatically (the \LaTeX\ output code is shown below the R code, and the resulting table is shown in table~\ref{tab:1}):
+To improve the situation, the following commands can do this automatically (the \LaTeX\ output code is shown below the R code, and the resulting table is shown in table \ref{tab:1}):
 <<>>=
 library(texreg)
 table <- texreg(m2)
@@ -98,7 +101,7 @@ In order to print it to the R console again, the following command can be used:
 cat(table)
 @
 The \texttt{texreg} command also accepts multiple models as a \texttt{list} and merges them in a table.
-The output of the following command is shown in table~\ref{tab:2}.
+The output of the following command is shown in table \ref{tab:2}.
 <<eval=FALSE>>=
 table <- texreg(list(m1,m2))
 @
@@ -111,13 +114,15 @@ Among other options, the \texttt{use.packages} argument can be used to switch of
 Using the \texttt{label} argument, the label of the table can be set.
 In a similar way, the \texttt{caption} argument takes care of the caption.
 Activating the \texttt{scriptsize} option prints the table in a smaller font size.
+The \texttt{custom.names} and \texttt{model.names} arguments can be used to specify the names of the model terms and the models, respectively.
 An example:
 <<results=tex>>=
-table <- texreg(list(m1, m2), use.packages=FALSE, label="tab:3", caption="My regression table", scriptsize=TRUE)
+table <- texreg(list(m1, m2), use.packages=FALSE, label="tab:3", caption="My regression table", scriptsize=TRUE, custom.names=c("(Intercept)", "Treatment", "Control"), model.names=c("First model", "Second model"))
 @
-The output of this command is shown as table~\ref{tab:3}.
+The output of this command is shown as table \ref{tab:3}.
 Another argument is \texttt{table}.
 By deactivating it, the plain \texttt{tabular} environment is printed, and the whole table environment and header is omitted from the output.
+This may be useful for integrating tables in Sweave, or for tweaking the floating environment of the table.
 The \texttt{no.margin} argument can be used to control the cell spacing of the table.
 If set to \texttt{TRUE}, regular margins are used.
 By default, no margins are used in order not to waste any horizontal space on the page.
@@ -147,7 +152,7 @@ Switching on \texttt{strong.signif} returns the significance levels used by the 
 <<results=tex>>=
 table <- texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:4", scriptsize=FALSE, strong.signif=TRUE)
 @
-Table~\ref{tab:4} shows the result of this command.
+Table \ref{tab:4} shows the result of this command.
 
 Most academic journals require tables where the coefficient and the standard error are stored in two separate rows of the table, as shown in tables~\ref{tab:1} to~\ref{tab:4}.
 In some situations, however, it makes sense to accommodate them in a single row.
@@ -155,8 +160,8 @@ The \texttt{single.row} argument can take care of this:
 <<results=tex>>=
 table <- texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:5", single.row=TRUE)
 @
-The result is shown in table~\ref{tab:5}.
-Note the difference between tables~\ref{tab:4} and~\ref{tab:5}.
+The result is shown in table \ref{tab:5}.
+Note the difference between tables \ref{tab:4} and \ref{tab:5}.
 
 The \TeX reg command can also combine the output of different model types in a single table.
 Consider the following example of an \texttt{lm} object, an \texttt{lme} (linear mixed-effects) model and an \texttt{ergm} object:
@@ -165,12 +170,12 @@ library(nlme)
 m3 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
 @
 <<results=tex>>=
-table <- texreg(list(m2,m3,m6), label="tab:6", use.packages=FALSE)
+table <- texreg(list(m3, m2, m6), label="tab:6", use.packages=FALSE)
 @
-The output is shown in table~\ref{tab:6}.
+The output is shown in table \ref{tab:6}.
 Note that different model types may report different kinds of goodness-of-fit statistics at the bottom of the table.
 
-\section{Creating templates for new model types}
+\section{Creating templates for new model types}\label{templates}
 Currently, \TeX reg supports \texttt{lm}, \texttt{lme}, \texttt{gls}, \texttt{glm} and \texttt{ergm} objects.
 However, implementing new kinds of statistical models is fairly easy (if you know how to modify R functions).
 For any model type, there exists a function which extracts the relevant information from a model.
@@ -178,7 +183,7 @@ For example, \texttt{extract.lm()} provides coefficients and goodness-of-fit sta
 Any new function of this kind must return a list with two objects:
 \begin{enumerate}
  \item A matrix containing the coefficients. This matrix must have exactly three columns. The first column contains the coefficients, the second column contains the standard errors, and the third column contains the $p$ values for any coefficient. The names of the coefficients or independent variables must be stored as row names of the matrix. Column names do not matter.
- \item A matrix of goodness-of-fit statistics. This matrix must have exactly one column and as many rows as there are gof measures. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj.~R$^2$ and Num. obs. They are aggregated in a $3\times 1$ matrix. The row names of this matrix should indicate what is being measured, for instance ``Num. obs.''
+ \item A matrix of goodness-of-fit statistics. This matrix must have exactly one column and as many rows as there are gof measures. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj. R$^2$ and Num. obs. They are aggregated in a $3\times 1$ matrix. The row names of this matrix should indicate what is being measured, for instance ``Num. obs.''
 \end{enumerate}
 The following code is an example.
 It shows the \texttt{extract.lme()} function:
@@ -207,7 +212,7 @@ After writing a custom function, this function has to be registered in the \text
 There are two locations where the code has to be slightly adjusted.
 These two locations are marked by a comment stating ``IMPLEMENT NEW EXTENSIONS HERE''.
 
-If you write such a function, it would be very helpful to post them in the forum (see section~\ref{help}) in order to let other users profit from it.
+If you write such a function, it would be very helpful to post them in the forum (see section \ref{help}) in order to let other users profit from it.
 If it works and if you can provide a self-contained example, the code can be implemented in a future version of \TeX reg.
 Please send an inquiry if you are interested in joining the \TeX reg project and working directly on the code.
 

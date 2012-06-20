@@ -126,7 +126,7 @@ extract.ergm <- function(model) {
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
     table=TRUE, strong.signif=FALSE, symbol="\\cdot", use.packages=TRUE, 
     caption="Statistical models", label="table:coefficients", dcolumn=TRUE, 
-    booktabs=TRUE, scriptsize=FALSE) {
+    booktabs=TRUE, scriptsize=FALSE, custom.names=NA, model.names=NA) {
   
   string <- ""
   
@@ -188,7 +188,17 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       gofs[row,col] <- val
     }
   }
-
+  
+  # figure out correct order of the coefficients
+  coef.order <- character()
+  for (i in 1:length(coefs)) {
+    for (j in 1:length(rownames(coefs[[i]]))) {
+      if (!rownames(coefs[[i]])[j] %in% coef.order) {
+        coef.order <- append(coef.order, rownames(coefs[[i]])[j])
+      }
+    }
+  }
+  
   # merge the coefficient tables
   if (length(coefs) == 1) {
     m <- coefs[[1]]
@@ -202,6 +212,58 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   }
   colnames(m) <- rep(colnames(coefs[[1]]), length(coefs))
+  
+  # reorder merged coefficient table
+  m.temp <- matrix(nrow=nrow(m), ncol=ncol(m))
+  for (i in 1:nrow(m)) {
+    new.row <- which(coef.order == rownames(m)[i])
+    for (j in 1:length(m[i,])) {
+      m.temp[new.row,j] <- m[i,j]
+    }
+  }
+  rownames(m.temp) <- coef.order
+  colnames(m.temp) <- colnames(m)
+  m <- m.temp
+  
+  # use custom coefficient names if provided
+  if (length(custom.names) > 1) {
+    if (!class(custom.names) == "character") {
+      stop("Custom coefficient names must be provided as a vector of strings!")
+    } else if (length(custom.names) != length(rownames(m))) {
+      stop(paste("There are", length(rownames(m)), 
+          "coefficients, but you provided", length(custom.names), 
+          "custom names for them."))
+    } else {
+      rownames(m) <- custom.names
+    }
+  } else if (!is.na(custom.names) & class(custom.names) != "character") {
+    stop("Custom coefficient names must be provided as a vector of strings.")
+  }
+  
+  # check if the custom name procedure caused duplicates and merge them
+  for (i in 1:length(rownames(m))) {  #go through rows
+    for (j in 1:length(rownames(m))) {  #go through rows (to find duplicates)
+      if (i != j & rownames(m)[i] == rownames(m)[j]) {  #found a duplicate name
+        identical <- logical(length(m[i,]))
+        for (k in 1:length(m[i,])) {  #go through columns
+          if ( (is.na(m[i,k]) & !is.na(m[j,k])) | 
+              (!is.na(m[i,k]) & is.na(m[j,k])) ) {
+            identical[k] <- TRUE  #set TRUE if they are complementary
+          }
+        }
+        if (length(identical[identical==FALSE]) == 0) {  #if complementary...
+          for (k in 1:ncol(m)) {  #go through the columns again
+            if (is.na(m[i,k])) {
+              m[i,k] <- m[j,k]  #merge them
+            } else if (is.na(m[j,k])) {
+              m[j,k] <- m[i,k]  #merge them
+            }
+          }
+        }
+      }
+    }
+  }
+  m <- m[duplicated(m) == FALSE,]  #remove duplicate rows
   m <- as.data.frame(m)
   
   # what is the optimal length of the labels?
@@ -261,24 +323,61 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   }
   
+  # horizontal rule above the table
   if (booktabs == TRUE) {
     string <- paste(string, "}\n", "\\toprule\n", sep="")
   } else {
     string <- paste(string, "}\n", "\\hline\n", sep="")
   }
-
+  
+  # specify model names
   for (k in 1:lab.length) {
     string <- paste(string, " ", sep="")
   }
-  if (dcolumn == TRUE) {
-    for (i in 1:length(l)) {
-      string <- paste(string, " & \\multicolumn{1}{c}{Model ", i, "}", sep="")
+  if (length(model.names) > 1) {
+    if (class(model.names) != "character") {
+      stop("Model names must be specified as a vector of strings.")
+    } else if (length(model.names) != length(l)) {
+      stop(paste("There are", length(l), "models, but you provided", 
+          length(model.names), "names for them."))
+    } else {
+      if (dcolumn == TRUE) {
+        for (i in 1:length(l)) {
+          string <- paste(string, " & \\multicolumn{1}{c}{", model.names[i], 
+              "}", sep="")
+        }
+      } else {
+        for (i in 1:length(l)) {
+          string <- paste(string, " & ", model.names[i], sep="")
+        }
+      }
+    }
+  } else if (!is.na(model.names) & class(model.names) != "character") {
+    stop("Model names must be specified as a vector of strings.")
+  } else if (class(model.names) == "character" & 
+      length(model.names) != length(l)) {
+    stop(paste("A single model name was specified. But there are in fact", 
+        length(l), "models."))
+  } else if (class(model.names) == "character") {
+    if (dcolumn == TRUE) {
+      string <- paste(string, " & \\multicolumn{1}{c}{", model.names, "}", 
+          sep="")
+    } else {
+      string <- paste(string, " & ", model.names, sep="")
     }
   } else {
-    for (i in 1:length(l)) {
-      string <- paste(string, " & Model ", i, sep="")
+    if (dcolumn == TRUE) {
+      for (i in 1:length(l)) {
+        string <- paste(string, " & \\multicolumn{1}{c}{Model ", i, "}", sep="")
+      }
+    } else {
+      for (i in 1:length(l)) {
+        string <- paste(string, " & Model ", i, sep="")
+      }
     }
   }
+  
+  # horizontal rule between coefficients and goodness-of-fit block
   if (booktabs == TRUE) {
     string <- paste(string, " \\\\\n", "\\midrule\n", sep="")
   } else {
