@@ -7,7 +7,7 @@ texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     table=TRUE, strong.signif=FALSE, symbol="\\\\cdot", 
     use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, 
-    scriptsize=FALSE)
+    scriptsize=FALSE, custom.names=NA, model.names=NA)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -31,6 +31,10 @@ implemented.
 \item{dcolumn}{ Use the \code{dcolumn} LaTeX package to get a nice alignment of the coefficients. }
 \item{booktabs}{ Use the \code{booktabs} LaTeX package to get thick horizontal rules in the output table. }
 \item{scriptsize}{ To save horizontal space on the page, the table can be set in script size instead of normal text size by setting \code{scriptsize=TRUE}. }
+\item{custom.names}{ By default, texreg uses the coefficient names which are stored in the models. The \code{custom.names} argument can be used to replace them by other character strings in the order of appearance. For example, if a table shows a total of three different independent variables (including the intercept), the argument \code{custom names=c("Intercept", "variable 1", "variable 2")} will replace their names in this order.
+
+Sometimes it happens that the same variable has a different name in different models. In this case, the user can use this function to assign identical names. If possible, the rows will then be merged into a single row unless both rows contain values in the same column. }
+\item{model.names}{ A string vector of labels for the models. By default, the models are named Model 1, Model 2, etc. Specifying \code{model.names=c("My name 1", "My name 2")} etc. overrides the default behavior. }
 }
 \seealso{
 \code{\link{texreg-package}}
