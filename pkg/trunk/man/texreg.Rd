@@ -4,10 +4,11 @@
 \description{Conversion of R regression output to LaTeX tables.}
 \usage{
 texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
-    table=TRUE, strong.signif=FALSE, symbol="\\\\cdot", 
-    use.packages=TRUE, caption="Statistical models", 
-    label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, 
-    scriptsize=FALSE, custom.names=NA, model.names=NA)
+    table=TRUE, sideways=FALSE, float.pos="", 
+    strong.signif=FALSE, symbol="\\\\cdot", use.packages=TRUE, 
+    caption="Statistical models", label="table:coefficients", 
+    dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
+    custom.names=NA, model.names=NA)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -23,6 +24,8 @@ implemented.
 \item{no.margin}{ In order to save space, inner margins of tables are switched off by default. To reactivate the default table spacing, set \code{no.margin=FALSE}. }
 \item{leading.zero}{ Most journals require leading zeros of coefficients and standard errors (for example, \code{0.35}). This is also the default texreg behavior. Some journals, however, require omission of leading zeros (for example, \code{.35}). This can be achieved by setting \code{leading.zero=FALSE}. }
 \item{table}{ By default, texreg puts the actual \code{tabular} object in a \code{table} floating environment. To get only the \code{tabular} object without the whole table header, set \code{table=FALSE}. }
+\item{sideways}{ If \code{sideways=TRUE} is set, the \code{table} floating environment is replaced by a \code{sidewaystable} float, and the \code{rotating} package is loaded in the preamble. The argument only has an effect if \code{table=TRUE} is also set. }
+\item{float.pos}{ This argument specifies where the table should be located on the page or in the document. By default, no floating position is specified, and LaTeX takes care of the position automatically. Possible values include \code{h} (here), \code{p} (page), \code{t} (top), \code{b} (bottom), any combination thereof, e.g. \code{tb}, or any of these values followed by an exclamation mark, e.g. \code{t!}, in order to enforce this position. The square brackets do not have to be specified. }
 \item{strong.signif}{ Conventional regression tables report 99 percent significance as three stars, 95 percent as two stars, and 90 percent as one star. For ERGMs, however, the de facto standard is to report 99.9 percent as three stars, 99 percent as two stars, 95 percent as one star, and 90 percent as a single dot. By default, texreg follows conventional significance levels. To use the stronger ERGM standard, set \code{strong.signif=TRUE}. }
 \item{symbol}{ By default, p values smaller than 0.1 and larger than 0.05 are reported as dots (\code{symbol="\\\\cdot"}) when \code{strong.signif=TRUE} is set. Any other mathematical LaTeX symbol can be used, for example \code{symbol="\\\\circ"}. }
 \item{use.packages}{ If this argument is set to \code{TRUE} (= the default behavior), the required LaTeX packages are loaded in the beginning. If set to \code{FALSE}, the use package statements are omitted from the output. }
