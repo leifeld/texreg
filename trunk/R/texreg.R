@@ -124,9 +124,10 @@ extract.ergm <- function(model) {
 
 
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
-    table=TRUE, strong.signif=FALSE, symbol="\\cdot", use.packages=TRUE, 
-    caption="Statistical models", label="table:coefficients", dcolumn=TRUE, 
-    booktabs=TRUE, scriptsize=FALSE, custom.names=NA, model.names=NA) {
+    table=TRUE, sideways=FALSE, float.pos="", strong.signif=FALSE, 
+    symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
+    label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
+    custom.names=NA, model.names=NA) {
   
   string <- ""
   
@@ -238,6 +239,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   } else if (!is.na(custom.names) & class(custom.names) != "character") {
     stop("Custom coefficient names must be provided as a vector of strings.")
+  } else if (length(custom.names) == 1 & class(custom.names) == "character") {
+    rownames(m) <- custom.names
   }
   
   # check if the custom name procedure caused duplicates and merge them
@@ -247,7 +250,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
         identical <- logical(length(m[i,]))
         for (k in 1:length(m[i,])) {  #go through columns
           if ( (is.na(m[i,k]) & !is.na(m[j,k])) | 
-              (!is.na(m[i,k]) & is.na(m[j,k])) ) {
+              (!is.na(m[i,k]) & is.na(m[j,k])) | 
+              (is.na(m[i,k]) & is.na(m[j,k])) ) {
             identical[k] <- TRUE  #set TRUE if they are complementary
           }
         }
@@ -278,6 +282,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   # write table header
   string <- paste(string, "\n", sep="")
   if (use.packages == TRUE) {
+    if (sideways == TRUE & table == TRUE) {
+      string <- paste(string, "\\usepackage{rotating}\n", sep="")
+    }
     if (booktabs == TRUE) {
       string <- paste(string, "\\usepackage{booktabs}\n", sep="")
     }
@@ -286,7 +293,17 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   }
   if (table == TRUE) {
-    string <- paste(string, "\\begin{table}\n", sep="")
+    if (sideways == TRUE) {
+      t <- "sideways"
+    } else {
+      t <- ""
+    }
+    if ( float.pos == "") {
+      string <- paste(string, "\\begin{", t, "table}\n", sep="")
+    } else {
+      string <- paste(string, "\\begin{", t, "table}[", float.pos, "]\n", 
+          sep="")
+    }
     string <- paste(string, "\\begin{center}\n", sep="")
     if (scriptsize == TRUE) {
       string <- paste(string, "\\scriptsize\n", sep="")
@@ -613,7 +630,12 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     string <- paste(string, "\\end{center}\n", sep="")
     string <- paste(string, "\\caption{", caption, "}\n", sep="")
     string <- paste(string, "\\label{", label, "}\n", sep="")
-    string <- paste(string, "\\end{table}\n", sep="")
+    if (sideways == TRUE) {
+      t <- "sideways"
+    } else {
+      t <- ""
+    }
+    string <- paste(string, "\\end{", t, "table}\n", sep="")
   }
   
   cat(string)

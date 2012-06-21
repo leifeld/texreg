@@ -6,6 +6,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
 \usepackage{dcolumn}
+\usepackage{rotating}
 \usepackage{geometry}
 \geometry{margin=3cm}
 \usepackage[pdfpagelabels,bookmarks]{hyperref}
@@ -114,10 +115,12 @@ Among other options, the \texttt{use.packages} argument can be used to switch of
 Using the \texttt{label} argument, the label of the table can be set.
 In a similar way, the \texttt{caption} argument takes care of the caption.
 Activating the \texttt{scriptsize} option prints the table in a smaller font size.
+The \texttt{sideways} argument rotates the table by 90 degrees and uses the \texttt{rotating} package and the \texttt{sidewaystable} environment.
+The position of the table on the page or in the document can be specified using the \texttt{float.pos} argument.
 The \texttt{custom.names} and \texttt{model.names} arguments can be used to specify the names of the model terms and the models, respectively.
 An example:
 <<results=tex>>=
-table <- texreg(list(m1, m2), use.packages=FALSE, label="tab:3", caption="My regression table", scriptsize=TRUE, custom.names=c("(Intercept)", "Treatment", "Control"), model.names=c("First model", "Second model"))
+table <- texreg(list(m1, m2), use.packages=FALSE, label="tab:3", caption="My regression table", scriptsize=TRUE, custom.names=c("(Intercept)", "Treatment", "Control"), model.names=c("First model", "Second model"), float.pos="b")
 @
 The output of this command is shown as table \ref{tab:3}.
 Another argument is \texttt{table}.
