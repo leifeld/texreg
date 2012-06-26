@@ -183,7 +183,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     coefs <- append(coefs, models[[i]][1])
     for (j in 1:length(models[[i]][[2]])) {
       rn <- row.names(models[[i]][[2]])[j]
-      val <- models[[i]][[2]][j]
+      val <- models[[i]][[2]][[j]]
       col <- i
       row <- which(row.names(gofs) == rn)
       gofs[row,col] <- val
