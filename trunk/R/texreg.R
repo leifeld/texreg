@@ -122,6 +122,27 @@ extract.ergm <- function(model) {
   return(table.content)
 }
 
+# extension for lrm objects (Design package)
+extract.lrm <- function(model) {
+
+  if (!class(model)[1] == "lrm") {
+    stop("Internal error: Incorrect model type! Should be an lrm object!")
+  }
+
+  tab <- model$coef #extract coefficient table
+  tab <- cbind(COEFEST = model$coef, SE = sqrt(diag(model$var)), 
+      PVALUES = pnorm(abs(model$coef/sqrt(diag(model$var))), 
+      lower.tail = FALSE)*2)
+  
+  pseudors <- model$stats[10] #extract pseudo R-squared
+  LR <- model$stats[3] #extract LR
+  n <- model$stats[1] #extract number of observations
+  gof <- matrix(c(pseudors, LR, n), ncol=1) #put gof measures in a 1-column matrix
+  row.names(gof) <- c("Pseudo R$^2$", "L.R.", "Num. obs.") #set row names
+  table.content <- list(tab, gof) #put coefficients and gofs in a list
+  
+  return(table.content) #return the list object
+}
 
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
     table=TRUE, sideways=FALSE, float.pos="", strong.signif=FALSE, 
@@ -134,7 +155,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   # if a single model is handed over, put model inside a list
   # IMPLEMENT NEW EXTENSIONS HERE
   if (class(l)[1] == "ergm" | class(l)[1] == "lme" | class(l)[1] == "lm" | 
-      class(l)[1] == "gls" | class(l)[1] == "glm") {
+      class(l)[1] == "gls" | class(l)[1] == "glm" | class(l)[1] == "lrm") {
     l <- list(l)
   } else if (class(l) != "list") {
     stop("Unknown object was handed over.")
@@ -158,6 +179,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       models <- append(models, list(model))
     } else if (class(l[[i]])[1] == "glm") {
       model <- extract.glm(l[[i]])
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "lrm") {
+      model <- extract.lrm(l[[i]])
       models <- append(models, list(model))
     } else {
       warning(paste("Skipping unknown model of type ", class(l[[i]]), ".", 
