@@ -8,12 +8,12 @@
     table. The output is customizable. New model types can be easily 
     implemented.}
 \details{
-Several packages like xtable, outreg and memsic are available for typesetting 
-R regression output as LaTeX tables. However, they cannot process certain model 
-types (like ergm or lme objects), and some of these packages do not support 
-multiple models within one single table. The texreg package, in contrast, 
-accepts single models or lists of several models, and it can handle ergm and 
-lme objects. If several models are submitted, they are merged by row 
+Several packages like apsrtable, xtable, outreg and memsic are available for 
+typesetting R regression output as LaTeX tables. However, they cannot process 
+certain model types (like ergm or lme objects), and some of these packages do 
+not support multiple models within one single table. The texreg package, in 
+contrast, accepts single models or lists of several models, and it can handle 
+ergm and lme objects. If several models are submitted, they are merged by row 
 labels of the coefficients, and they are inserted into the final table as 
 separate columns.
 
