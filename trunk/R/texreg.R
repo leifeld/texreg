@@ -122,14 +122,71 @@ extract.ergm <- function(model) {
   return(table.content)
 }
 
-# extension for lrm objects (Design package)
+# extension for plm objects (from the plm package); submitted by Lena Koerber
+extract.plm <- function(model) {
+  if (!class(model)[1] == "plm") {
+    stop("Internal error: Incorrect model type! Should be a plm object!")
+  }
+  
+  tab <- summary(model)$coef[,-3]
+  
+  rs <- summary(model)$r.squared
+  n <- length(summary(model)$resid)
+  gof <- matrix(c(rs, n), ncol=1)
+  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+# extension for rq objects (quantreg package); submitted by Lena Koerber
+extract.rq <- function(model) {
+  if (!class(model) == "rq") {
+    stop("Internal error: Incorrect model type! Should be an rq object!")
+  }
+  
+  tab <- summary(model, cov=T)$coef[,-3]
+  n <- length(summary(model)$resid)
+  gof <- matrix(n, ncol=1)
+  row.names(gof) <- c( "Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+# extension for pmg objects (from the plm package); submitted by Lena Koerber
+extract.pmg <- function(model) {
+  if (!class(model)[1] == "pmg") {
+    stop("Internal error: Incorrect model type! Should be a pmg object!")
+  }
+  
+  co <- data.matrix(summary(model)$coef)
+  se <- (diag(summary(model)$vcov))^(1/2) #standard errors
+  t <- co / se #t-statistics
+  n <- length(summary(model)$resid) #number of observations
+  d <- n - length(co) #degrees of freedom
+  pval <- 2 * pt(-abs(t), df=d)
+  tab <- cbind(co, se, pval) #coefficient table
+  
+  gof <- matrix(n, ncol=1)
+  row.names(gof) <- c("Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+# extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model) {
 
   if (!class(model)[1] == "lrm") {
     stop("Internal error: Incorrect model type! Should be an lrm object!")
   }
-
+  
   tab <- model$coef #extract coefficient table
+  
+  attributes(model$coef)$names <- lapply(attributes(model$coef)$names, 
+    function(x) gsub(">=", " $\\\\geq$ ", x))
+  
   tab <- cbind(COEFEST = model$coef, SE = sqrt(diag(model$var)), 
       PVALUES = pnorm(abs(model$coef/sqrt(diag(model$var))), 
       lower.tail = FALSE)*2)
@@ -160,7 +217,10 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       class(l)[1] == "lm" | 
       class(l)[1] == "gls" | 
       class(l)[1] == "glm" | 
-      class(l)[1] == "lrm"
+      class(l)[1] == "lrm" | 
+      class(l)[1] == "plm" | 
+      class(l)[1] == "rq" | 
+      class(l)[1] == "pmg"
   ) {
     l <- list(l)
   } else if (class(l) != "list") {
@@ -188,6 +248,15 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       models <- append(models, list(model))
     } else if (class(l[[i]])[1] == "lrm") {
       model <- extract.lrm(l[[i]])
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "plm") {
+      model <- extract.plm(l[[i]])
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "rq") {
+      model <- extract.rq(l[[i]])
+      models <- append(models, list(model))
+    } else if (class(l[[i]])[1] == "pmg") {
+      model <- extract.pmg(l[[i]])
       models <- append(models, list(model))
     } else {
       warning(paste("Skipping unknown model of type ", class(l[[i]]), ".", 
