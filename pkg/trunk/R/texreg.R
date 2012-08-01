@@ -194,8 +194,8 @@ extract.lrm <- function(model) {
   pseudors <- model$stats[10] #extract pseudo R-squared
   LR <- model$stats[3] #extract LR
   n <- model$stats[1] #extract number of observations
-  gof <- matrix(c(pseudors, LR, n), ncol=1) #put gof measures in a 1-column matrix
-  row.names(gof) <- c("Pseudo R$^2$", "L.R.", "Num. obs.") #set row names
+  gof <- matrix(c(pseudors, LR, n), ncol=1)
+  row.names(gof) <- c("Pseudo R$^2$", "L.R.", "Num. obs.")
   
   table.content <- list(tab, gof) #put coefficients and gofs in a list
   return(table.content) #return the list object
@@ -717,7 +717,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   } else {
     string <- paste(string, "\\multicolumn{", length(l)+1, 
         "}{l}{\\textsuperscript{***}$p<0.01$, ", 
-        "\\textsuperscript{**}$p<0.05$, \\textsuperscript{*}$p<0.1$}\n", sep="")
+        "\\textsuperscript{**}$p<0.05$, \\textsuperscript{*}$p<0.1$}\n", 
+        sep="")
   }
   
   string <- paste(string, "\\end{tabular}\n", sep="")
