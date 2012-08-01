@@ -122,8 +122,10 @@ extract.ergm <- function(model) {
   return(table.content)
 }
 
+
 # extension for plm objects (from the plm package); submitted by Lena Koerber
 extract.plm <- function(model) {
+  
   if (!class(model)[1] == "plm") {
     stop("Internal error: Incorrect model type! Should be a plm object!")
   }
@@ -139,23 +141,28 @@ extract.plm <- function(model) {
   return(table.content)
 }
 
+
 # extension for rq objects (quantreg package); submitted by Lena Koerber
 extract.rq <- function(model) {
+  
   if (!class(model) == "rq") {
     stop("Internal error: Incorrect model type! Should be an rq object!")
   }
   
-  tab <- summary(model, cov=T)$coef[,-3]
+  tab <- summary(model, cov=TRUE)$coef[,-3]
   n <- length(summary(model)$resid)
-  gof <- matrix(n, ncol=1)
-  row.names(gof) <- c( "Num. obs.")
+  tau<-summary(model)$tau
+  gof <- matrix(c(n, tau), ncol=1)
+  row.names(gof) <- c("Num. obs.", "Percentile")
   
   table.content <- list(tab, gof)
   return(table.content)
 }
 
+
 # extension for pmg objects (from the plm package); submitted by Lena Koerber
 extract.pmg <- function(model) {
+  
   if (!class(model)[1] == "pmg") {
     stop("Internal error: Incorrect model type! Should be a pmg object!")
   }
@@ -174,6 +181,7 @@ extract.pmg <- function(model) {
   table.content <- list(tab, gof)
   return(table.content)
 }
+
 
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model) {
@@ -200,6 +208,7 @@ extract.lrm <- function(model) {
   table.content <- list(tab, gof) #put coefficients and gofs in a list
   return(table.content) #return the list object
 }
+
 
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
     table=TRUE, sideways=FALSE, float.pos="", strong.signif=FALSE, 
