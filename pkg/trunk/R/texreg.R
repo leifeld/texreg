@@ -3,15 +3,29 @@
 # for bug reports, help or feature requests.
 
 # function which reformats a coefficient with two decimal places
-coef.to.string <- function(x, lead.zero=FALSE) {
+coef.to.string <- function(x, lead.zero=FALSE, digits=2) {
   if (is.na(x)) {
     return("")
   }
-  y <- as.character(round(x, 2))
-  if (grepl("\\.", y) == FALSE) {
-    y <- paste(y, ".00", sep="")
-  } else if (grepl("\\.[0-9]$", y) == TRUE) {
-    y <- paste(y, "0", sep="")
+  if (digits < 0) {
+    stop("The number of digits must be 0 or higher.")
+  }
+  y <- as.character(round(x, digits))
+  
+  actual.digits <- attributes(regexpr("\\.[0-9]+$", y))$match.length - 1
+  if (grepl("\\.", y) == FALSE) { #no decimal places present
+    zeros <- paste(rep("0", digits), collapse="")
+    y <- paste(y, ".", zeros, sep="")
+  } else if (grepl("\\.[0-9]$", y) == TRUE && digits > 1) { #only one decimal p.
+    zeros <- paste(rep("0", digits-1), collapse="")
+    y <- paste(y, zeros, sep="")
+  } else if (actual.digits < digits) { #more desired digits than present
+    fill <- digits - actual.digits
+    zeros <- paste(rep("0", fill), collapse="")
+    y <- paste(y, zeros, sep="")
+  }
+  if (grepl("\\.$", y) == TRUE) {
+    y <- gsub("\\.$", "", y)
   }
   if (lead.zero==FALSE && (grepl("^0",y) == TRUE || grepl("^-0",y) == TRUE)) {
     y <- gsub("0\\.", "\\.", y)
@@ -214,7 +228,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     table=TRUE, sideways=FALSE, float.pos="", strong.signif=FALSE, 
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NA, model.names=NA) {
+    custom.names=NA, model.names=NA, digits=2) {
   
   string <- ""
   
@@ -424,7 +438,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     gof.list <- as.vector(gofs[,i])
     gof.list.string <- NULL
     for (j in 1:length(gof.list)) {
-      gof.list.string[j] <- coef.to.string(gof.list[j], leading.zero)
+      gof.list.string[j] <- coef.to.string(gof.list[j], leading.zero, 
+          digits=digits)
     }
     if (dcolumn == TRUE) {
       dec.left <- max(c(nchar(gof.list.string)-3), 3)
@@ -528,8 +543,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
         } else if (m[i,j] == -Inf) {
           output.matrix[i,k] <- "-Inf (NA)"
         } else {
-          std <- paste(" \\; (", coef.to.string(m[i,j+1], leading.zero), ")", 
-              sep="")
+          std <- paste(" \\; (", coef.to.string(m[i,j+1], leading.zero, 
+              digits=digits), ")", sep="")
           if (strong.signif == TRUE) {
             if (m[i,j+2] <= 0.001) {
               p <- "^{***}"
@@ -558,8 +573,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
           } else {
             dollar <- "$"
           }
-          entry <- paste(dollar, coef.to.string(m[i,j], leading.zero), std, p, 
-              dollar, sep="")
+          entry <- paste(dollar, coef.to.string(m[i,j], leading.zero, 
+              digits=digits), std, p, dollar, sep="")
           output.matrix[i,k] <- entry
           
         }
@@ -617,9 +632,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
             dollar <- "$"
           }
           output.matrix[(i*2)-1,k] <- paste(dollar, coef.to.string(m[i,j], 
-              leading.zero), p, dollar, sep="")
+              leading.zero, digits=digits), p, dollar, sep="")
           output.matrix[(i*2),k] <- paste(dollar, "(", coef.to.string(m[i,j+1], 
-              leading.zero), ")", dollar, sep="")
+              leading.zero, digits=digits), ")", dollar, sep="")
         }
         k <- k+1
         j <- j+3
@@ -637,7 +652,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   for (i in 1:length(gofs[,1])) {
     gof.matrix[i,1] <- rownames(gofs)[i]
     for (j in 1:length(gofs[1,])) {
-      strg <- coef.to.string(gofs[i,j], leading.zero)
+      strg <- coef.to.string(gofs[i,j], leading.zero, digits=digits)
       rn <- rownames(gofs)[i]
       if (rn == "Num. obs." | rn == "n" | rn == "N" | rn == "N obs" | 
           rn == "N obs." | rn == "nobs" | rn == "n obs" | rn == "n obs." | 
@@ -650,7 +665,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
           rn == "Number of Obs." | rn == "Number of obs." | 
           rn == "Number of obs" | rn == "Number of Obs" | rn == "Obs" | 
           rn == "obs" | rn == "Obs." | rn == "obs.") {
-        strg <- substring(strg, 1, nchar(strg)-3)
+        #strg <- substring(strg, 1, nchar(strg)-3)
+        strg <- strsplit(strg, "\\.")[[1]][1]
       }
       gof.matrix[i,j+1] <- paste(dollar, strg, dollar, sep="")
     }

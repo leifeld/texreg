@@ -8,7 +8,7 @@ texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     strong.signif=FALSE, symbol="\\\\cdot", use.packages=TRUE, 
     caption="Statistical models", label="table:coefficients", 
     dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NA, model.names=NA)
+    custom.names=NA, model.names=NA, digits=2)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -38,6 +38,7 @@ can be easily implemented.
 
 Sometimes it happens that the same variable has a different name in different models. In this case, the user can use this function to assign identical names. If possible, the rows will then be merged into a single row unless both rows contain values in the same column. }
 \item{model.names}{ A string vector of labels for the models. By default, the models are named Model 1, Model 2, etc. Specifying \code{model.names=c("My name 1", "My name 2")} etc. overrides the default behavior. }
+\item{digits}{ Set the number of decimal places for coefficients, standard errors and goodness-of-fit statistics. Do not use negative values! }
 }
 \seealso{
 \code{\link{texreg-package}}
