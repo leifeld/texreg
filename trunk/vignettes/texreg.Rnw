@@ -7,6 +7,7 @@
 \usepackage{booktabs}
 \usepackage{dcolumn}
 \usepackage{rotating}
+\usepackage{longtable}
 \usepackage{geometry}
 \geometry{margin=3cm}
 \usepackage[pdfpagelabels,bookmarks]{hyperref}
@@ -35,11 +36,31 @@ It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \text
 Only a subset of these packages is able to merge multiple regression models in a single table.
 Those packages which can do this do not support important model types such as \texttt{lme} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
 \TeX reg, in contrast, accepts these model types and can also merge multiple models in a single table.
-Currently, \texttt{lm}, \texttt{lme}, \texttt{gls}, \texttt{glm}, \texttt{ergm}, \texttt{plm}, \texttt{pmg}, and \texttt{rq} objects are supported.
+Currently supported model types are listed in section~\ref{types}.
 New model types can be easily implemented (see section \ref{templates}).
 \TeX reg can be used within Sweave.
 \LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
 
+\section{Supported model types}\label{types}
+\begin{longtable}{l l l l p{5.4cm}}
+\toprule
+Class		& From package				& Contributed by	& Added		& Description \\
+\midrule
+\endhead
+\texttt{ergm}	& \texttt{statnet}, \texttt{ergm}	& Philip Leifeld	& 2012-06-18	& Exponential random graph models \\
+\texttt{lm}	& \texttt{base}				& Philip Leifeld	& 2012-06-19	& Ordinary least squares (OLS, linear models) \\
+\texttt{glm}	& \texttt{base}				& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
+\texttt{gls}	& \texttt{nlme}				& Philip Leifeld	& 2012-06-19	& Generalized least squares \\
+\texttt{lme}	& \texttt{nlme}				& Philip Leifeld	& 2012-06-19	& Linear mixed effects models (random effects, fixed effects) \\
+\texttt{lrm}	& \texttt{rms}, \texttt{Design}		& Fabrice Le Lec	& 2012-07-04	& Logistic regression models \\
+\texttt{plm}	& \texttt{plm}				& Lena Koerber		& 2012-08-01	& Linear models for panel data \\
+\texttt{pmg}	& \texttt{plm}				& Lena Koerber		& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
+\texttt{rq}	& \texttt{quantreg}			& Lena Koerber		& 2012-08-01	& Quantile regression models \\
+\texttt{clogit}	& \texttt{survival}			& Sebastian Daza	& 2012-09-30	& Conditional logistic regression \\
+\bottomrule \\
+\caption{List of currently supported model types}
+\label{tab:types}
+\end{longtable}
 
 \section{Installation}\label{installation}
 It should be possible to install \TeX reg using a simple command:
@@ -191,8 +212,7 @@ The output is shown in table \ref{tab:6}.
 Note that different model types may report different kinds of goodness-of-fit statistics at the bottom of the table.
 
 \section{Creating templates for new model types}\label{templates}
-Currently, \TeX reg supports \texttt{lm}, \texttt{lme}, \texttt{gls}, \texttt{glm}, \texttt{ergm}, \texttt{plm}, \texttt{pmg}, and \texttt{rq} objects.
-However, implementing new kinds of statistical models is fairly easy (if you know how to modify R functions).
+Implementing new kinds of statistical models is fairly easy (if you know how to modify R functions).
 For any model type, there exists a function which extracts the relevant information from a model.
 For example, \texttt{extract.lm()} provides coefficients and goodness-of-fit statistics for \texttt{lm} objects, \texttt{extract.ergm()} provides this information for \texttt{ergm} objects, etc.
 Any new function of this kind must return a list with two objects:
@@ -205,9 +225,9 @@ It shows the \texttt{extract.lme()} function:
 \begin{verbatim}
 extract.lm <- function(model) {
   
-  if (!class(model)[1] == "lm") {
+  if ("lm" %in% class(model) == FALSE) {
     stop("Internal error: Incorrect model type! Should be an lm object!")
-  }
+  }                                     #do not forget to replace "lm object"
   
   tab <- summary(model)$coef[,-3]       #extract coefficient table
                                         #third column (t values) is omitted
@@ -224,8 +244,8 @@ extract.lm <- function(model) {
 }
 \end{verbatim}
 After writing a custom function, the function has to be registered in the \texttt{texreg()} function.
-Download a copy of the texreg.R file containing the texreg() function from the R-Forge website (see section~\ref{installation}).
-Modify the texreg() function according to the following guidelines, then execute it once.
+Download a copy of the texreg.R file containing the texreg() function from the R-Forge website (see section~\ref{source}).
+Modify the \texttt{texreg()} function according to the following guidelines, then execute it once.
 
 There are two locations where the code has to be slightly adjusted.
 These two locations are marked by a comment stating ``IMPLEMENT NEW EXTENSIONS HERE''.
@@ -245,5 +265,10 @@ If you write a new extract function, it would be very helpful to post them in th
 If it works and if you can provide a self-contained example, the code can be implemented in a future version of \TeX reg.
 Please make sure that you do not modify anything else in the code, and that you stick to the formatting rules used in the remaining file; otherwise comparison with the original may be difficult.
 Please send an inquiry if you are interested in joining the \TeX reg project and working directly on the code.
+
+\section{How to obtain the source code}\label{source}
+If you would like to inspect the \TeX reg source code in order to develop your own extensions, you can download the \texttt{.tar.gz} file from the repository homepage.
+To do this, you can either search the list of R-Forge contributions (\url{http://download.r-forge.r-project.org/src/contrib/}) for \TeX reg, or click on the ``R packages'' link on the \TeX reg package homepage at R-Forge (\url{http://r-forge.r-project.org/projects/texreg/}).
+Make sure you download the \TeX reg file with the \texttt{.tar.gz} extension, open this compressed file (e.g., using 7Zip if you are on Windows), and open the \texttt{texreg.R} file in the \texttt{R/} directory.
 
 \end{document}
