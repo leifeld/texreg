@@ -37,7 +37,7 @@ for the \link{texreg} function.
 \item{...}{ Custom parameters. }
 }
 \seealso{
-\code{\link{texreg-package} \link{texreg}}
+\code{\link{texreg-package} \link{texreg} \link{extract-methods}}
 }
 \author{
 Philip Leifeld (\url{http://www.philipleifeld.de})
