@@ -2,6 +2,7 @@
 # Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
 # for bug reports, help or feature requests.
 
+
 # function which reformats a coefficient with two decimal places
 coeftostring <- function(x, lead.zero=FALSE, digits=2) {
   if (is.na(x)) {
@@ -34,13 +35,13 @@ coeftostring <- function(x, lead.zero=FALSE, digits=2) {
 }
 
 
+# generic extract function
+setGeneric("extract", function(model, ...) standardGeneric("extract"), 
+    package="texreg")
+
+
 # extension for lm objects
 extract.lm <- function(model) {
-  
-  if ("lm" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be an lm object!")
-  }
-  
   tab <- summary(model)$coef[,-3] #extract coefficient table
   
   rs <- summary(model)$r.squared #extract R-squared
@@ -54,14 +55,12 @@ extract.lm <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("lm", "stats"), 
+    definition = extract.lm)
+
 
 # extension for gls objects
 extract.gls <- function(model) {
-  
-  if ("gls" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be a gls object!")
-  }
-  
   tab <- summary(model)$tTable[,-3] #extract coefficient table
   
   lik <- summary(model)$logLik #extract log likelihood
@@ -75,14 +74,12 @@ extract.gls <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("gls", "nlme"), 
+    definition = extract.gls)
+
 
 # extension for glm objects
 extract.glm <- function(model) {
-  
-  if ("glm" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be a glm object!")
-  }
-  
   tab <- summary(model)$coef[,-3] #extract coefficient table
   
   aic <- summary(model)$aic #extract AIC
@@ -95,14 +92,12 @@ extract.glm <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("glm", "stats"), 
+    definition = extract.glm)
+
 
 # extension for lme objects
 extract.lme <- function(model) {
-  
-  if ("lme" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be an lme object!")
-  }
-  
   tab <- summary(model)$tTable[,-3:-4] #extract coefficient table
   
   lik <- summary(model)$logLik #extract log likelihood
@@ -116,14 +111,12 @@ extract.lme <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("lme", "nlme"), 
+    definition = extract.lme)
+
 
 # extension for ergm objects
 extract.ergm <- function(model) {
-  
-  if ("ergm" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be an ergm object!")
-  }
-  
   tab <- summary(model)$coefs[,-3] #extract coefficient table
   
   lik <- model$mle.lik[1] #extract log likelihood
@@ -136,14 +129,12 @@ extract.ergm <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("ergm", "ergm"), 
+    definition = extract.ergm)
+
 
 # extension for plm objects (from the plm package); submitted by Lena Koerber
 extract.plm <- function(model) {
-  
-  if ("plm" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be a plm object!")
-  }
-  
   tab <- summary(model)$coef[,-3]
   
   rs <- summary(model)$r.squared
@@ -155,14 +146,12 @@ extract.plm <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("plm", "plm"), 
+    definition = extract.plm)
+
 
 # extension for rq objects (quantreg package); submitted by Lena Koerber
 extract.rq <- function(model) {
-  
-  if ("rq" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be an rq object!")
-  }
-  
   tab <- summary(model, cov=TRUE)$coef[,-3]
   n <- length(summary(model)$resid)
   tau<-summary(model)$tau
@@ -173,14 +162,12 @@ extract.rq <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("rq", "quantreg"), 
+    definition = extract.rq)
+
 
 # extension for pmg objects (from the plm package); submitted by Lena Koerber
 extract.pmg <- function(model) {
-  
-  if ("pmg" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be a pmg object!")
-  }
-  
   co <- data.matrix(summary(model)$coef)
   se <- (diag(summary(model)$vcov))^(1/2) #standard errors
   t <- co / se #t-statistics
@@ -196,14 +183,12 @@ extract.pmg <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("pmg", "plm"), 
+    definition = extract.pmg)
+
 
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model) {
-
-  if ("lrm" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be an lrm object!")
-  }
-  
   tab <- model$coef #extract coefficient table
   
   attributes(model$coef)$names <- lapply(attributes(model$coef)$names, 
@@ -223,14 +208,14 @@ extract.lrm <- function(model) {
   return(table.content) #return the list object
 }
 
+setMethod("extract", signature=className("lrm", "rms"), 
+    definition = extract.lrm)
+setMethod("extract", signature=className("lrm", "Design"), 
+    definition = extract.lrm)
+
 
 # extension for clogit objects (survival package); submitted by Sebastian Daza
 extract.clogit <- function(model) {
-  
-  if ("clogit" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be a clogit object!")
-  }
-  
   tab <- summary(model)$coef[,c(-2,-4)]
   aic <- extractAIC(model)[2]
   event <- model$nevent
@@ -243,7 +228,11 @@ extract.clogit <- function(model) {
   return(table.content)
 }
 
+setMethod("extract", signature=className("clogit", "survival"), 
+    definition = extract.clogit)
 
+
+# texreg function
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
     table=TRUE, sideways=FALSE, float.pos="", strong.signif=FALSE, 
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
@@ -253,62 +242,15 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   string <- ""
   
   # if a single model is handed over, put model inside a list
-  # IMPLEMENT NEW EXTENSIONS HERE
-  if (
-      "ergm" %in% class(l) | 
-      "lme" %in% class(l) | 
-      "lm" %in% class(l) | 
-      "gls" %in% class(l) | 
-      "glm" %in% class(l) | 
-      "lrm" %in% class(l) | 
-      "plm" %in% class(l) | 
-      "rq" %in% class(l) | 
-      "pmg" %in% class(l) |
-      "clogit" %in% class(l)
-  ) {
+  if (class(l) != "list") {
     l <- list(l)
-  } else if (class(l) != "list") {
-    stop("Unknown object was handed over.")
   }
-  
+
   # extract data from the models
-  # IMPLEMENT NEW EXTENSIONS HERE
   models <- NULL
   for (i in 1:length(l)) {
-    if ("ergm" %in% class(l[[i]])) {
-      model <- extract.ergm(l[[i]])
-      models <- append(models, list(model))
-    } else if ("lme" %in% class(l[[i]])) {
-      model <- extract.lme(l[[i]])
-      models <- append(models, list(model))
-    } else if ("lm" %in% class(l[[i]])) {
-      model <- extract.lm(l[[i]])
-      models <- append(models, list(model))
-    } else if ("gls" %in% class(l[[i]])) {
-      model <- extract.gls(l[[i]])
-      models <- append(models, list(model))
-    } else if ("glm" %in% class(l[[i]])) {
-      model <- extract.glm(l[[i]])
-      models <- append(models, list(model))
-    } else if ("lrm" %in% class(l[[i]])) {
-      model <- extract.lrm(l[[i]])
-      models <- append(models, list(model))
-    } else if ("plm" %in% class(l[[i]])) {
-      model <- extract.plm(l[[i]])
-      models <- append(models, list(model))
-    } else if ("rq" %in% class(l[[i]])) {
-      model <- extract.rq(l[[i]])
-      models <- append(models, list(model))
-    } else if ("pmg" %in% class(l[[i]])) {
-      model <- extract.pmg(l[[i]])
-      models <- append(models, list(model))
-    } else if ("clogit" %in% class(l[[i]])) {
-      model <- extract.clogit(l[[i]])
-      models <- append(models, list(model))
-    } else {
-      warning(paste("Skipping unknown model of type ", class(l[[i]]), ".", 
-          sep=""))
-    }
+    model <- extract(l[[i]])
+    models <- append(models, list(model))
   }
   
   # extract names of the goodness-of-fit statistics
@@ -692,6 +634,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
           rn == "# Events" | rn == "# events" | rn == "events" | 
           rn == "Missings" | rn == "Missing" | rn == "# Missing") {
         strg <- strsplit(strg, "\\.")[[1]][1]
+        if (is.na(strg) == TRUE) {
+          strg <- ""
+        }
       }
       gof.matrix[i,j+1] <- paste(dollar, strg, dollar, sep="")
     }
