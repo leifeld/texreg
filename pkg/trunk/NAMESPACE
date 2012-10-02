@@ -1,5 +1,6 @@
 export("texreg")
 export("coeftostring")
+export("extract")
 export("extract.lm")
 export("extract.lme")
 export("extract.ergm")
