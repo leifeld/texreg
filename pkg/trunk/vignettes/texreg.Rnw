@@ -48,8 +48,8 @@ Class		& From package				& Contributed by	& Added		& Description \\
 \midrule
 \endhead
 \texttt{ergm}	& \texttt{statnet}, \texttt{ergm}	& Philip Leifeld	& 2012-06-18	& Exponential random graph models \\
-\texttt{lm}	& \texttt{base}				& Philip Leifeld	& 2012-06-19	& Ordinary least squares (OLS, linear models) \\
-\texttt{glm}	& \texttt{base}				& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
+\texttt{lm}	& \texttt{stats}			& Philip Leifeld	& 2012-06-19	& Ordinary least squares (OLS, linear models) \\
+\texttt{glm}	& \texttt{stats}			& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
 \texttt{gls}	& \texttt{nlme}				& Philip Leifeld	& 2012-06-19	& Generalized least squares \\
 \texttt{lme}	& \texttt{nlme}				& Philip Leifeld	& 2012-06-19	& Linear mixed effects models (random effects, fixed effects) \\
 \texttt{lrm}	& \texttt{rms}, \texttt{Design}		& Fabrice Le Lec	& 2012-07-04	& Logistic regression models \\
@@ -80,6 +80,7 @@ The package can be updated to the most recent version by typing:
 <<results=hide, eval=FALSE>>=
 update.packages("texreg", repos="http://R-Forge.R-project.org")
 @
+If the file is not available on the R-Forge repository, you can try to download it from the R-Forge project homepage (\url{http://r-forge.r-project.org/projects/texreg/}; click on ``R packages'') and install it manually by entering something like \verb+R CMD INSTALL texreg_1.xx.tar.gz+ (replace \texttt{xx} by the current version number) on the terminal (not the R terminal, but the normal command line of your operating system).
 
 \section{Getting help}\label{help}
 This R package vignette is part of the \TeX reg package.
@@ -221,14 +222,9 @@ Any new function of this kind must return a list with two objects:
  \item A matrix of goodness-of-fit statistics. This matrix must have exactly one column and as many rows as there are gof measures. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj. R$^2$ and Num. obs. They are aggregated in a $3\times 1$ matrix. The row names of this matrix should indicate what is being measured, for instance ``Num. obs.''
 \end{enumerate}
 The following code is an example.
-It shows the \texttt{extract.lme()} function:
+It shows the \texttt{extract.lm()} function:
 \begin{verbatim}
 extract.lm <- function(model) {
-  
-  if ("lm" %in% class(model) == FALSE) {
-    stop("Internal error: Incorrect model type! Should be an lm object!")
-  }                                     #do not forget to replace "lm object"
-  
   tab <- summary(model)$coef[,-3]       #extract coefficient table
                                         #third column (t values) is omitted
   
@@ -243,25 +239,23 @@ extract.lm <- function(model) {
   return(table.content)                 #return the list object
 }
 \end{verbatim}
-After writing a custom function, the function has to be registered in the \texttt{texreg()} function.
-Download a copy of the texreg.R file containing the texreg() function from the R-Forge website (see section~\ref{source}).
-Modify the \texttt{texreg()} function according to the following guidelines, then execute it once.
-
-There are two locations where the code has to be slightly adjusted.
-These two locations are marked by a comment stating ``IMPLEMENT NEW EXTENSIONS HERE''.
-First, you have to add something like this in order to let \TeX reg properly check whether the model type is known:
+After writing a custom function, the function has to be registered.
+In other words, you have to tell the more general \texttt{extract} function that objects of the new class should be handled by using your custom function.
+In the above example, this is achieved with the following code:
 \begin{verbatim}
-      class(l)[1] == "gls" | 
+setMethod("extract", signature=className("lm", "stats"), 
+    definition = extract.lm)
 \end{verbatim}
-Of course, ``gls'' must be replaced by the model type of your choice. Then, something like this must be added some lines below the first modification:
+Let's say you have written an extension for \texttt{clogit} objects called \texttt{extract.clogit()}.
+The \texttt{clogit} command (and the corresponding class definition) can be found in the \texttt{survival} package.
+Then you would have to adjust the above code as follows:
 \begin{verbatim}
-    } else if (class(l[[i]])[1] == "gls") {
-      model <- extract.gls(l[[i]])
-      models <- append(models, list(model))
+setMethod("extract", signature=className("clogit", "survival"), 
+    definition = extract.clogit)
 \end{verbatim}
-Again, replace ``gls'' twice with the model type you want to implement.
+After executing the definition of the function and the adjusted \texttt{setMethod} command, \TeX reg can be used with your models.
 
-If you write a new extract function, it would be very helpful to post them in the forum (see section \ref{help}) in order to let other users profit from it.
+If you write a new extract function and a \texttt{setMethod} configuration, it would be very helpful to post them in the forum (see section \ref{help}) in order to let other users profit from it.
 If it works and if you can provide a self-contained example, the code can be implemented in a future version of \TeX reg.
 Please make sure that you do not modify anything else in the code, and that you stick to the formatting rules used in the remaining file; otherwise comparison with the original may be difficult.
 Please send an inquiry if you are interested in joining the \TeX reg project and working directly on the code.
