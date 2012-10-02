@@ -237,7 +237,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     table=TRUE, sideways=FALSE, float.pos="", strong.signif=FALSE, 
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NA, model.names=NA, digits=2) {
+    custom.names=NA, model.names=NA, digits=2, ...) {
   
   string <- ""
   
@@ -249,7 +249,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   # extract data from the models
   models <- NULL
   for (i in 1:length(l)) {
-    model <- extract(l[[i]])
+    model <- extract(l[[i]], ...)
     models <- append(models, list(model))
   }
   
