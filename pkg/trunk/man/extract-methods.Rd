@@ -11,9 +11,10 @@
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
 \alias{extract,rq-method}
+\alias{extract,systemfit-method}
 \title{Methods for Function \code{extract} in Package \pkg{texreg}}
 \description{
- ~~ Methods for function \code{extract} in package \pkg{texreg} ~~
+Methods for function \code{extract} in package \pkg{texreg}.
 }
 \section{Methods}{
 \describe{
@@ -56,6 +57,10 @@ An extract function for pmg objects from the \pkg{plm} package.
 
 \item{\code{extract.rq}}{
 An extract function for rq objects from the \pkg{quantreg} package.
+}
+
+\item{\code{extract.systemfit}}{
+An extract function for systemfit objects from the \pkg{systemfit} package.
 }
 }}
 \seealso{
