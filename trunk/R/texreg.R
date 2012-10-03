@@ -40,23 +40,58 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
     package="texreg")
 
 
-# extension for lm objects
-extract.lm <- function(model) {
-  tab <- summary(model)$coef[,-3] #extract coefficient table
-  
-  rs <- summary(model)$r.squared #extract R-squared
-  adj <- summary(model)$adj.r.squared #extract adjusted R-squared
-  n <- nobs(model) #extract number of observations
-  
-  gof <- matrix(c(rs, adj, n), ncol=1)
-  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+# extension for clogit objects (survival package); submitted by Sebastian Daza
+extract.clogit <- function(model) {
+  tab <- summary(model)$coef[,c(-2,-4)]
+  aic <- extractAIC(model)[2]
+  event <- model$nevent
+  n <- model$n
+  mis <- length(model$na.action)
+  gof <- matrix(c(aic, event, n, mis), ncol=1)
+  row.names(gof) <- c("AIC", "Events", "Num. obs.", "Missings")
   
   table.content <- list(tab, gof)
   return(table.content)
 }
 
-setMethod("extract", signature=className("lm", "stats"), 
-    definition = extract.lm)
+setMethod("extract", signature=className("clogit", "survival"), 
+    definition = extract.clogit)
+
+
+# extension for ergm objects
+extract.ergm <- function(model) {
+  tab <- summary(model)$coefs[,-3] #extract coefficient table
+  
+  lik <- model$mle.lik[1] #extract log likelihood
+  aic <- summary(model)$aic #extract AIC
+  bic <- summary(model)$bic #extract BIC
+  gof <- matrix(c(aic, bic, lik), ncol=1)
+  row.names(gof) <- c("AIC", "BIC", "Log Likelihood")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+setMethod("extract", signature=className("ergm", "ergm"), 
+    definition = extract.ergm)
+
+
+# extension for glm objects
+extract.glm <- function(model) {
+  tab <- summary(model)$coef[,-3] #extract coefficient table
+  
+  aic <- summary(model)$aic #extract AIC
+  n <- nobs(model) #extract number of observations
+  
+  gof <- matrix(c(aic, n), ncol=1)
+  row.names(gof) <- c("AIC", "Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+setMethod("extract", signature=className("glm", "stats"), 
+    definition = extract.glm)
 
 
 # extension for gls objects
@@ -78,22 +113,23 @@ setMethod("extract", signature=className("gls", "nlme"),
     definition = extract.gls)
 
 
-# extension for glm objects
-extract.glm <- function(model) {
+# extension for lm objects
+extract.lm <- function(model) {
   tab <- summary(model)$coef[,-3] #extract coefficient table
   
-  aic <- summary(model)$aic #extract AIC
+  rs <- summary(model)$r.squared #extract R-squared
+  adj <- summary(model)$adj.r.squared #extract adjusted R-squared
   n <- nobs(model) #extract number of observations
   
-  gof <- matrix(c(aic, n), ncol=1)
-  row.names(gof) <- c("AIC", "Num. obs.")
+  gof <- matrix(c(rs, adj, n), ncol=1)
+  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
   
   table.content <- list(tab, gof)
   return(table.content)
 }
 
-setMethod("extract", signature=className("glm", "stats"), 
-    definition = extract.glm)
+setMethod("extract", signature=className("lm", "stats"), 
+    definition = extract.lm)
 
 
 # extension for lme objects
@@ -113,78 +149,6 @@ extract.lme <- function(model) {
 
 setMethod("extract", signature=className("lme", "nlme"), 
     definition = extract.lme)
-
-
-# extension for ergm objects
-extract.ergm <- function(model) {
-  tab <- summary(model)$coefs[,-3] #extract coefficient table
-  
-  lik <- model$mle.lik[1] #extract log likelihood
-  aic <- summary(model)$aic #extract AIC
-  bic <- summary(model)$bic #extract BIC
-  gof <- matrix(c(aic, bic, lik), ncol=1)
-  row.names(gof) <- c("AIC", "BIC", "Log Likelihood")
-  
-  table.content <- list(tab, gof)
-  return(table.content)
-}
-
-setMethod("extract", signature=className("ergm", "ergm"), 
-    definition = extract.ergm)
-
-
-# extension for plm objects (from the plm package); submitted by Lena Koerber
-extract.plm <- function(model) {
-  tab <- summary(model)$coef[,-3]
-  
-  rs <- summary(model)$r.squared
-  n <- length(summary(model)$resid)
-  gof <- matrix(c(rs, n), ncol=1)
-  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
-  
-  table.content <- list(tab, gof)
-  return(table.content)
-}
-
-setMethod("extract", signature=className("plm", "plm"), 
-    definition = extract.plm)
-
-
-# extension for rq objects (quantreg package); submitted by Lena Koerber
-extract.rq <- function(model) {
-  tab <- summary(model, cov=TRUE)$coef[,-3]
-  n <- length(summary(model)$resid)
-  tau<-summary(model)$tau
-  gof <- matrix(c(n, tau), ncol=1)
-  row.names(gof) <- c("Num. obs.", "Percentile")
-  
-  table.content <- list(tab, gof)
-  return(table.content)
-}
-
-setMethod("extract", signature=className("rq", "quantreg"), 
-    definition = extract.rq)
-
-
-# extension for pmg objects (from the plm package); submitted by Lena Koerber
-extract.pmg <- function(model) {
-  co <- data.matrix(summary(model)$coef)
-  se <- (diag(summary(model)$vcov))^(1/2) #standard errors
-  t <- co / se #t-statistics
-  n <- length(summary(model)$resid) #number of observations
-  d <- n - length(co) #degrees of freedom
-  pval <- 2 * pt(-abs(t), df=d)
-  tab <- cbind(co, se, pval) #coefficient table
-  
-  gof <- matrix(n, ncol=1)
-  row.names(gof) <- c("Num. obs.")
-  
-  table.content <- list(tab, gof)
-  return(table.content)
-}
-
-setMethod("extract", signature=className("pmg", "plm"), 
-    definition = extract.pmg)
 
 
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
@@ -214,22 +178,82 @@ setMethod("extract", signature=className("lrm", "Design"),
     definition = extract.lrm)
 
 
-# extension for clogit objects (survival package); submitted by Sebastian Daza
-extract.clogit <- function(model) {
-  tab <- summary(model)$coef[,c(-2,-4)]
-  aic <- extractAIC(model)[2]
-  event <- model$nevent
-  n <- model$n
-  mis <- length(model$na.action)
-  gof <- matrix(c(aic, event, n, mis), ncol=1)
-  row.names(gof) <- c("AIC", "Events", "Num. obs.", "Missings")
+# extension for plm objects (from the plm package); submitted by Lena Koerber
+extract.plm <- function(model) {
+  tab <- summary(model)$coef[,-3]
+  
+  rs <- summary(model)$r.squared
+  n <- length(summary(model)$resid)
+  gof <- matrix(c(rs, n), ncol=1)
+  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
   
   table.content <- list(tab, gof)
   return(table.content)
 }
 
-setMethod("extract", signature=className("clogit", "survival"), 
-    definition = extract.clogit)
+setMethod("extract", signature=className("plm", "plm"), 
+    definition = extract.plm)
+
+
+# extension for pmg objects (from the plm package); submitted by Lena Koerber
+extract.pmg <- function(model) {
+  co <- data.matrix(summary(model)$coef)
+  se <- (diag(summary(model)$vcov))^(1/2) #standard errors
+  t <- co / se #t-statistics
+  n <- length(summary(model)$resid) #number of observations
+  d <- n - length(co) #degrees of freedom
+  pval <- 2 * pt(-abs(t), df=d)
+  tab <- cbind(co, se, pval) #coefficient table
+  
+  gof <- matrix(n, ncol=1)
+  row.names(gof) <- c("Num. obs.")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+setMethod("extract", signature=className("pmg", "plm"), 
+    definition = extract.pmg)
+
+
+# extension for rq objects (quantreg package); submitted by Lena Koerber
+extract.rq <- function(model) {
+  tab <- summary(model, cov=TRUE)$coef[,-3]
+  n <- length(summary(model)$resid)
+  tau<-summary(model)$tau
+  gof <- matrix(c(n, tau), ncol=1)
+  row.names(gof) <- c("Num. obs.", "Percentile")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+setMethod("extract", signature=className("rq", "quantreg"), 
+    definition = extract.rq)
+
+
+# extension for systemfit objects; submitted by Johannes Kutsam
+extract.systemfit <- function(model) {
+  equationList <- list()
+  for(eq in model$eq){  #go through estimated equations
+    sum <- summary(eq)  #extract model summary
+    tab <- coef(sum)[,-3]  #coefficients table for the equation
+    
+    rsquared <- sum$r.squared  #extract r-squared
+    radj <- sum$adj.r.squared  #extract adjusted r-squared
+    n <- nobs(model)  #extract number of observations
+    
+    gof <- matrix(c(rsquared, radj, n), ncol=1)  #GOF matrix
+    row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")  #set GOF row names
+
+    table.content <- list(tab, gof)
+    equationList[[eq$eqnNo]] <- table.content
+  }
+  return(equationList)  #returns a list of table.content lists
+}
+
+setMethod("extract", signature=className("systemfit", "systemfit"), 
+    definition = extract.systemfit)
 
 
 # texreg function
@@ -250,7 +274,11 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   models <- NULL
   for (i in 1:length(l)) {
     model <- extract(l[[i]], ...)
-    models <- append(models, list(model))
+    if (class(model[[1]]) == "list") {  #nested list of models (e.g. systemfit)
+      models <- append(models, model)
+    } else {  #normal case; one model
+      models <- append(models, list(model))
+    }
   }
   
   # extract names of the goodness-of-fit statistics
@@ -443,17 +471,17 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   if (length(model.names) > 1) {
     if (class(model.names) != "character") {
       stop("Model names must be specified as a vector of strings.")
-    } else if (length(model.names) != length(l)) {
-      stop(paste("There are", length(l), "models, but you provided", 
+    } else if (length(model.names) != length(models)) {
+      stop(paste("There are", length(models), "models, but you provided", 
           length(model.names), "names for them."))
     } else {
       if (dcolumn == TRUE) {
-        for (i in 1:length(l)) {
+        for (i in 1:length(models)) {
           string <- paste(string, " & \\multicolumn{1}{c}{", model.names[i], 
               "}", sep="")
         }
       } else {
-        for (i in 1:length(l)) {
+        for (i in 1:length(models)) {
           string <- paste(string, " & ", model.names[i], sep="")
         }
       }
@@ -461,9 +489,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   } else if (!is.na(model.names) & class(model.names) != "character") {
     stop("Model names must be specified as a vector of strings.")
   } else if (class(model.names) == "character" & 
-      length(model.names) != length(l)) {
+      length(model.names) != length(models)) {
     stop(paste("A single model name was specified. But there are in fact", 
-        length(l), "models."))
+        length(models), "models."))
   } else if (class(model.names) == "character") {
     if (dcolumn == TRUE) {
       string <- paste(string, " & \\multicolumn{1}{c}{", model.names, "}", 
@@ -473,11 +501,11 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   } else {
     if (dcolumn == TRUE) {
-      for (i in 1:length(l)) {
+      for (i in 1:length(models)) {
         string <- paste(string, " & \\multicolumn{1}{c}{Model ", i, "}", sep="")
       }
     } else {
-      for (i in 1:length(l)) {
+      for (i in 1:length(models)) {
         string <- paste(string, " & Model ", i, sep="")
       }
     }
@@ -705,12 +733,12 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   string <- paste(string, "\\vspace{-2mm}\\\\\n", sep="")
   
   if (strong.signif == TRUE) {
-    string <- paste(string, "\\multicolumn{", length(l)+1, 
+    string <- paste(string, "\\multicolumn{", length(models)+1, 
         "}{l}{\\textsuperscript{***}$p<0.001$, ", 
         "\\textsuperscript{**}$p<0.01$, \\textsuperscript{*}$p<0.05$, ", 
         "\\textsuperscript{$", symbol, "$}$p<0.1$}\n", sep="")
   } else {
-    string <- paste(string, "\\multicolumn{", length(l)+1, 
+    string <- paste(string, "\\multicolumn{", length(models)+1, 
         "}{l}{\\textsuperscript{***}$p<0.01$, ", 
         "\\textsuperscript{**}$p<0.05$, \\textsuperscript{*}$p<0.1$}\n", 
         sep="")
