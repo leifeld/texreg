@@ -130,7 +130,20 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       }
     }
   }
-  m <- m[duplicated(m) == FALSE,]  #remove duplicate rows
+
+  #remove duplicate rows
+  for (i in length(m[,1]):1) {
+    for (j in length(m[,1]):1) {
+      if (i != j && is.duplicate(m, i, j) 
+          && identical(mat[rowA,], mat[rowB,])
+          && identical(rownames(mat)[rowA], rownames(mat)[rowB])) {
+        m <- m[-i,]
+        j <- length(m[,1])
+        i <- length(m[,1])
+      }
+    }
+  }
+  
   m <- as.data.frame(m)
   
   # what is the optimal length of the labels?
