@@ -130,13 +130,15 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       }
     }
   }
-
+  
   #remove duplicate rows
   for (i in length(m[,1]):1) {
     for (j in length(m[,1]):1) {
-      if (i != j && is.duplicate(m, i, j) 
-          && identical(mat[rowA,], mat[rowB,])
-          && identical(rownames(mat)[rowA], rownames(mat)[rowB])) {
+      if (
+          i != j
+          && identical(m[i,], m[j,])
+          && identical(rownames(m)[i], rownames(m)[j])
+      ) {
         m <- m[-i,]
         j <- length(m[,1])
         i <- length(m[,1])
