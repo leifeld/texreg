@@ -295,7 +295,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
         if (is.na(m[i,j])) {
           output.matrix[i,k] <- ""
         } else if (m[i,j] == -Inf) {
-          output.matrix[i,k] <- "-Inf (NA)"
+          output.matrix[i,k] <- "\\multicolumn{1}{c}{$-$Inf}"
         } else {
           std <- paste(" \\; (", coeftostring(m[i,j+1], leading.zero, 
               digits=digits), ")", sep="")
@@ -350,12 +350,12 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       j <- 1
       k <- 2
       while (j <= length(m)) {
-        if (is.na(m[i,j])) {
+        if (is.na(m[i,j]) || is.nan(m[i,j])) {
           output.matrix[(i*2)-1,k] <- "" #upper coefficient row
           output.matrix[(i*2),k] <- "" #lower std row
         } else if (m[i,j] == -Inf) {
-          output.matrix[(i*2)-1,k] <- "-Inf" #upper coefficient row
-          output.matrix[(i*2),k] <- "(NA)" #lower std row
+          output.matrix[(i*2)-1,k] <- "\\multicolumn{1}{c}{$-$Inf}" #upper row
+          output.matrix[(i*2),k] <- "" #lower std row
         } else {
           if (strong.signif == TRUE) {
             if (m[i,j+2] <= 0.001) {

@@ -5,7 +5,7 @@
 
 # function which reformats a coefficient with two decimal places
 coeftostring <- function(x, lead.zero=FALSE, digits=2) {
-  if (is.na(x)) {
+  if (!is.finite(x)) {
     return("")
   }
   if (digits < 0) {
