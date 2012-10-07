@@ -53,6 +53,7 @@ Class			& Package			& Contributed by	& Added		& Description \\
 \texttt{gls}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Generalized least squares \\
 \texttt{lm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Ordinary least squares (OLS, linear models) \\
 \texttt{lme}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Linear mixed effects models (random effects, fixed effects) \\
+\texttt{lnam}		& \texttt{sna}			& Philip Leifeld	& 2012-10-07	& Linear network autocorrelation models \\
 \texttt{lrm}		& \texttt{rms}, \texttt{Design}	& Fabrice Le Lec	& 2012-07-04	& Logistic regression models \\
 \texttt{plm}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear models for panel data \\
 \texttt{pmg}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear panel models with heterogeneous coefficients \\

@@ -6,6 +6,7 @@
 \alias{extract.gls}
 \alias{extract.lm}
 \alias{extract.lme}
+\alias{extract.lnam}
 \alias{extract.lrm}
 \alias{extract.plm}
 \alias{extract.pmg}
@@ -21,6 +22,7 @@ extract.glm(model)
 extract.gls(model)
 extract.lm(model)
 extract.lme(model)
+extract.lnam{model}
 extract.lrm(model)
 extract.plm(model)
 extract.pmg(model)
