@@ -2,6 +2,52 @@
 # Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
 # for bug reports, help or feature requests.
 
+#function which conflates a matrix with duplicate row names
+rearrangeMatrix <- function(m) {
+  
+  # The following code block rearranges a matrix with duplicate row names such 
+  # that these rows are conflated where possible. First, an empty matrix q with
+  # the same width is created. The rows will be copied iteratively into this 
+  # matrix. Second, we go through the unique row names, and for each row name 
+  # we create a small virtual matrix in which the values will be nicely 
+  # rearranged. After rearranging the values, this small matrix is rbinded to 
+  # the q matrix. Rearranging works in the following way (the inner loop): for 
+  # every column, we create a vector of all values corresponding to the specific
+  # row name (as specified by the outer loop). We retain only non-NA values 
+  # because irrelevant information should be removed from the coefficients 
+  # table. Then we put the first non-NA value in the first vertical slot of the 
+  # virtual matrix, the second non-NA value of the same row name in the second 
+  # slot, etc., and we create additional rows in the virtual matrix as needed.
+  # By doing this, we ensure that no space in the matrix is wasted with NA 
+  # values. When going to the next column, we place the non-NA values in the 
+  # correct slot again, and we only create new rows if needed. The virtual rows 
+  # are finally rbinded to the large replacement matrix q.
+  
+  unique.names <- unique(rownames(m))              #unique row names in m
+  num.unique <- length(unique.names)               #count these unique names
+  orig.width <- length(m[1,])                      #number of columns in m
+  q <- matrix(nrow=0, ncol=orig.width)             #new matrix with same width
+  for (i in 1:num.unique) {                        #go through unique row names
+    rows <- matrix(NA, nrow=0, ncol=orig.width)    #create matrix where re-
+                                                   #arranged rows will be stored
+    for (j in 1:orig.width) {                      #go through columns in m
+      current.name <- unique.names[i]              #save row name
+      nonNa <- m[rownames(m)==current.name,j]      #create a vector of values
+                                                   #with same rowname in the col
+      nonNa <- nonNa[!is.na(nonNa)]                #retain only non-NA values
+      for (k in 1:length(nonNa)) {                 #go through non-NA values
+        if (k > dim(rows)[1]) {                    #add an NA-only row in which
+          rows <- rbind(rows, rep(NA, orig.width)) #the values are stored
+          rownames(rows)[k] <- unique.names[i]     #also add the row name
+        }
+        rows[k,j] <- nonNa[k]                      #actually store the value
+      }
+    }
+    q <- rbind(q, rows)                            #add the new row(s) to q
+  }
+  return(q)
+}
+
 
 # texreg function
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
@@ -106,46 +152,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     rownames(m) <- custom.names
   }
   
-  # check if the custom name procedure caused duplicates and merge them
-  for (i in 1:length(rownames(m))) {  #go through rows
-    for (j in 1:length(rownames(m))) {  #go through rows (to find duplicates)
-      if (i != j & rownames(m)[i] == rownames(m)[j]) {  #found a duplicate name
-        identical <- logical(length(m[i,]))
-        for (k in 1:length(m[i,])) {  #go through columns
-          if ( (is.na(m[i,k]) & !is.na(m[j,k])) | 
-              (!is.na(m[i,k]) & is.na(m[j,k])) | 
-              (is.na(m[i,k]) & is.na(m[j,k])) ) {
-            identical[k] <- TRUE  #set TRUE if they are complementary
-          }
-        }
-        if (length(identical[identical==FALSE]) == 0) {  #if complementary...
-          for (k in 1:ncol(m)) {  #go through the columns again
-            if (is.na(m[i,k])) {
-              m[i,k] <- m[j,k]  #merge them
-            } else if (is.na(m[j,k])) {
-              m[j,k] <- m[i,k]  #merge them
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  #remove duplicate rows
-  for (i in length(m[,1]):1) {
-    for (j in length(m[,1]):1) {
-      if (
-          i != j
-          && identical(m[i,], m[j,])
-          && identical(rownames(m)[i], rownames(m)[j])
-      ) {
-        m <- m[-i,]
-        j <- length(m[,1])
-        i <- length(m[,1])
-      }
-    }
-  }
-  
+  m <- rearrangeMatrix(m)
   m <- as.data.frame(m)
   
   # what is the optimal length of the labels?
