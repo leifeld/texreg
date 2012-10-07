@@ -69,7 +69,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     model <- extract(l[[i]], ...)
     if (class(model[[1]]) == "list") {  #nested list of models (e.g. systemfit)
       models <- append(models, model)
-    } else {  #normal case; one model
+    } else {                            #normal case; one model
       models <- append(models, list(model))
     }
   }
@@ -416,7 +416,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     gof.matrix[i,1] <- rownames(gofs)[i]
     for (j in 1:length(gofs[1,])) {
       strg <- coeftostring(gofs[i,j], leading.zero, digits=digits)
-      rn <- rownames(gofs)[i]
+      rn <- rownames(gofs)[i]  #special cases without decimal places hardcoded:
       if (rn == "Num. obs." | rn == "n" | rn == "N" | rn == "N obs" | 
           rn == "N obs." | rn == "nobs" | rn == "n obs" | rn == "n obs." | 
           rn == "n.obs." | rn == "N.obs." | rn == "N. obs" | 
@@ -461,7 +461,6 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       output.matrix[i,j] <- paste(output.matrix[i,j], zeros, sep="")
     }
   }
-  
   
   # write coefficients to string object
   for (i in 1:(length(output.matrix[,1])-length(gof.names))) {
