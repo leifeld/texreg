@@ -119,6 +119,33 @@ setMethod("extract", signature=className("lme", "nlme"),
     definition = extract.lme)
 
 
+# extension for lnam objects (sna package)
+extract.lnam <- function(model) {
+  coefs <- coef(model)
+  se <- se.lnam(fit)
+  p <- 2 * (1 - pnorm(abs(coefs), 0, se))
+  tab <- cbind(coefs, se, p)
+  
+  rss <- sum(model$residuals^2)
+  mss <- sum((model$fitted - mean(model$fitted))^2)
+  rdfns <- model$df.residual + 1
+  rsquared <- mss / (mss + rss)
+  adj.rsquared <- 1 - (1 - mss / (mss + rss)) * model$df.total / rdfns
+  loglik <- model$lnlik.model
+  aic <- -2 * model$lnlik.model + 2 * model$df.model
+  bic <- -2 * model$lnlik.model + log(model$df.total) * model$df.model
+  
+  gof <- matrix(c(rsquared, adj.rsquared, loglik, aic, bic), ncol=1)
+  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Log Likelihood", "AIC", "BIC")
+  
+  table.content <- list(tab, gof)
+  return(table.content)
+}
+
+setMethod("extract", signature=className("lnam", "sna"), 
+    definition = extract.lnam)
+
+
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model) {
   tab <- model$coef #extract coefficient table

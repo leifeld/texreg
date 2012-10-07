@@ -7,6 +7,7 @@
 \alias{extract,gls-method}
 \alias{extract,lm-method}
 \alias{extract,lme-method}
+\alias{extract,lnam-method}
 \alias{extract,lrm-method}
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
@@ -41,6 +42,10 @@ An extract function for lm objects from the \pkg{stats} package.
 
 \item{\code{extract.lme}}{
 An extract function for lme objects from the \pkg{nlme} package.
+}
+
+\item{\code{extract.lnam}}{
+An extract function for lnam objects from the \pkg{sna} package.
 }
 
 \item{\code{extract.lrm}}{
