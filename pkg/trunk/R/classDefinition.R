@@ -73,7 +73,7 @@ setMethod(f="show", signature="texreg", definition=function(object) {
     gofBlock <- matrix(object@gof, ncol=1)
     colnames(gofBlock) <- "GOF"
   } else {
-    gofBlock <- data.frame(cbind(object@gof,object@gof.decimal), ncol=2)
+    gofBlock <- data.frame(object@gof,object@gof.decimal)
     colnames(gofBlock) <- c("GOF", "dec. places")
   }
   rownames(gofBlock) <- object@gof.names

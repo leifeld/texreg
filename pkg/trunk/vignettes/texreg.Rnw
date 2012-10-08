@@ -51,8 +51,9 @@ Class			& Package			& Contributed by	& Added		& Description \\
 \texttt{ergm}		& \texttt{ergm}			& Philip Leifeld	& 2012-06-18	& Exponential random graph models \\
 \texttt{glm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
 \texttt{gls}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Generalized least squares \\
-\texttt{lm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Ordinary least squares (OLS, linear models) \\
+\texttt{lm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Ordinary least squares \\
 \texttt{lme}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Linear mixed effects models \\
+\texttt{lmerMod}	& \texttt{lme4}			& Philip Leifeld	& 2012-10-08	& Linear mixed effects models \\
 \texttt{lnam}		& \texttt{sna}			& Philip Leifeld	& 2012-10-07	& Linear network autocorrelation models \\
 \texttt{mer}		& \texttt{lme4}			& Philip Leifeld	& 2012-10-08	& Linear mixed effects models \\
 \texttt{lrm}		& \texttt{rms}, \texttt{Design}	& Fabrice Le Lec	& 2012-07-04	& Logistic regression models \\
