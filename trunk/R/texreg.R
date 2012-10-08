@@ -75,7 +75,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   }
   
   # extract names of the goodness-of-fit statistics
-  gof.names <- character()
+  gof.names <- character()  #names of all models in one vector
   for (i in 1:length(models)) {
     gn <- models[[i]]@gof.names
     for (j in 1:length(gn)) {
@@ -88,6 +88,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   # aggregate GOF statistics in a matrix and create list of coef blocks
   coefs <- list()
   gofs <- matrix(nrow=length(gof.names), ncol=length(models))
+  decimal.matrix <- matrix(nrow=length(gof.names), ncol=length(models))
   row.names(gofs) <- gof.names
   for (i in 1:length(models)) {
     cf <- models[[i]]@coef
@@ -104,8 +105,16 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       rn <- models[[i]]@gof.names[j]
       val <- models[[i]]@gof[j]
       col <- i
+      if (is.na(models[[i]]@gof.decimal[j])) {
+        dec <- digits
+      } else if (models[[i]]@gof.decimal[j] == FALSE) {
+        dec <- 0
+      } else {
+        dec <- digits
+      }
       row <- which(row.names(gofs) == rn)
       gofs[row,col] <- val
+      decimal.matrix[row,col] <- dec
     }
   }
   
@@ -429,26 +438,26 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   for (i in 1:length(gofs[,1])) {
     gof.matrix[i,1] <- rownames(gofs)[i]
     for (j in 1:length(gofs[1,])) {
-      strg <- coeftostring(gofs[i,j], leading.zero, digits=digits)
-      rn <- rownames(gofs)[i]  #special cases without decimal places hardcoded:
-      if (rn == "Num. obs." | rn == "n" | rn == "N" | rn == "N obs" | 
-          rn == "N obs." | rn == "nobs" | rn == "n obs" | rn == "n obs." | 
-          rn == "n.obs." | rn == "N.obs." | rn == "N. obs" | 
-          rn == "Num observations" | rn == "Number of observations" | 
-          rn == "Num obs" | rn == "num obs" | rn == "Num. observations" | 
-          rn == "Num Observations" | rn == "Num. Observations" | 
-          rn == "Num. Obs." | rn == "Num.Obs." | rn == "Number obs." | 
-          rn == "Number Obs." | rn == "Number obs" | rn == "Number Obs" | 
-          rn == "Number of Obs." | rn == "Number of obs." | 
-          rn == "Number of obs" | rn == "Number of Obs" | rn == "Obs" | 
-          rn == "obs" | rn == "Obs." | rn == "obs." | rn == "Events" | 
-          rn == "# Events" | rn == "# events" | rn == "events" | 
-          rn == "Missings" | rn == "Missing" | rn == "# Missing") {
-        strg <- strsplit(strg, "\\.")[[1]][1]
-        if (is.na(strg) == TRUE) {
-          strg <- ""
-        }
-      }
+      strg <- coeftostring(gofs[i,j], leading.zero, digits=decimal.matrix[i,j])
+      #rn <- rownames(gofs)[i]  #special cases without decimal places hardcoded:
+      #if (rn == "Num. obs." | rn == "n" | rn == "N" | rn == "N obs" | 
+      #    rn == "N obs." | rn == "nobs" | rn == "n obs" | rn == "n obs." | 
+      #    rn == "n.obs." | rn == "N.obs." | rn == "N. obs" | 
+      #    rn == "Num observations" | rn == "Number of observations" | 
+      #    rn == "Num obs" | rn == "num obs" | rn == "Num. observations" | 
+      #    rn == "Num Observations" | rn == "Num. Observations" | 
+      #    rn == "Num. Obs." | rn == "Num.Obs." | rn == "Number obs." | 
+      #    rn == "Number Obs." | rn == "Number obs" | rn == "Number Obs" | 
+      #    rn == "Number of Obs." | rn == "Number of obs." | 
+      #    rn == "Number of obs" | rn == "Number of Obs" | rn == "Obs" | 
+      #    rn == "obs" | rn == "Obs." | rn == "obs." | rn == "Events" | 
+      #    rn == "# Events" | rn == "# events" | rn == "events" | 
+      #    rn == "Missings" | rn == "Missing" | rn == "# Missing") {
+      #  strg <- strsplit(strg, "\\.")[[1]][1]
+      #  if (is.na(strg) == TRUE) {
+      #    strg <- ""
+      #  }
+      #}
       gof.matrix[i,j+1] <- paste(dollar, strg, dollar, sep="")
     }
   }

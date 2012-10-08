@@ -8,6 +8,7 @@
 \alias{extract.lme}
 \alias{extract.lnam}
 \alias{extract.lrm}
+\alias{extract.mer}
 \alias{extract.plm}
 \alias{extract.pmg}
 \alias{extract.rq}
@@ -24,6 +25,7 @@ extract.lm(model)
 extract.lme(model)
 extract.lnam(model)
 extract.lrm(model)
+extract.mer(model, variance=TRUE, nobs=TRUE, groups=TRUE, deviance=TRUE)
 extract.plm(model)
 extract.pmg(model)
 extract.rq(model)
@@ -38,6 +40,10 @@ the \link{texreg} function.
 }
 \arguments{
 \item{model}{ A statistical model object. }
+\item{variance}{ If available: should group variances be reported? }
+\item{nobs}{ If available: should the number of observations be reported? }
+\item{groups}{ If available: should the number of groups be reported? }
+\item{deviance}{ If available: should the deviance be reported? }
 \item{...}{ Custom parameters. }
 }
 \seealso{

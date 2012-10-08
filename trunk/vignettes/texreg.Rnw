@@ -34,7 +34,7 @@
 The \TeX reg package for the statistical computing environment R was designed to convert regression model output from multiple models into tables for inclusion in \LaTeX\ documents.
 It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \texttt{outreg} and \texttt{memsic}, which can also convert R tables to \LaTeX\ tables.
 Only a subset of these packages is able to merge multiple regression models in a single table.
-Those packages which can do this do not support important model types such as \texttt{lme} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
+Those packages which can do this do not support important model types such as \texttt{lme} or \texttt{mer} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
 \TeX reg, in contrast, accepts these model types and can also merge multiple models in a single table.
 Currently supported model types are listed in section \ref{types}.
 New model types can be easily implemented (see section \ref{templates}).
@@ -52,8 +52,9 @@ Class			& Package			& Contributed by	& Added		& Description \\
 \texttt{glm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
 \texttt{gls}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Generalized least squares \\
 \texttt{lm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Ordinary least squares (OLS, linear models) \\
-\texttt{lme}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Linear mixed effects models (random effects, fixed effects) \\
+\texttt{lme}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Linear mixed effects models \\
 \texttt{lnam}		& \texttt{sna}			& Philip Leifeld	& 2012-10-07	& Linear network autocorrelation models \\
+\texttt{mer}		& \texttt{lme4}			& Philip Leifeld	& 2012-10-08	& Linear mixed effects models \\
 \texttt{lrm}		& \texttt{rms}, \texttt{Design}	& Fabrice Le Lec	& 2012-07-04	& Logistic regression models \\
 \texttt{plm}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear models for panel data \\
 \texttt{pmg}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
@@ -228,6 +229,7 @@ Any new extract function must retrieve the following data from a statistical mod
  \item[pvalues] The $p$ values (\emph{optional}). They are used to add significance stars. These values must be in the same order as the \texttt{coef.names}.
  \item[gof.names] The names of some goodness-of-fit statistics to be added to the table. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj. R$^2$ and Num. obs.
  \item[gof] A vector of goodness-of-fit statistics to be added to the table. These values must be in the same order as the \texttt{gof.names}.
+ \item[gof.decimal] A vector of logical (boolean) values indicating for every GOF value whether the value should have decimal places in the output table (\emph{optional}). This is useful to avoid decimal places for the number of observations and similar count variables.
 \end{description}
 
 Once you have located all these data, you can create a \texttt{texreg} object and return it to the \texttt{texreg()} function.
@@ -246,6 +248,7 @@ extract.lm <- function(model) {
   
   gof <- c(rs, adj, n)                     # put the GOFs in a vector
   gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")   #also put names in vector
+  decimal.places <- c(TRUE, TRUE, FALSE)   # which GOFs will have decimal places
   
   tr <- createTexreg(                      # create a texreg object
       coef.names=names, 
@@ -253,7 +256,8 @@ extract.lm <- function(model) {
       se=se, 
       pvalues=pval,                        # p-values are only needed when
       gof.names=gof.names,                 # significance stars shall be printed
-      gof=gof
+      gof=gof,
+      gof.decimal=decimal.places           # (optional)
   )
   return(tr)                               # return the texreg object to texreg
 }
