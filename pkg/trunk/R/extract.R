@@ -21,6 +21,7 @@ extract.clogit <- function(model) {
   mis <- length(model$na.action)
   gof <- c(aic, event, n, mis)
   gof.names <- c("AIC", "Events", "Num. obs.", "Missings")
+  gof.decimal <- c(TRUE, FALSE, FALSE, FALSE)
   
   tr <- createTexreg(
       coef.names=coefficient.names, 
@@ -28,7 +29,8 @@ extract.clogit <- function(model) {
       se=standard.errors, 
       pvalues=significance, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -77,6 +79,7 @@ extract.glm <- function(model) {
   
   gof <- c(aic, n)
   gof.names <- c("AIC", "Num. obs.")
+  gof.decimal <- c(TRUE, FALSE)
   
   tr <- createTexreg(
       coef.names=coefficient.names, 
@@ -84,7 +87,8 @@ extract.glm <- function(model) {
       se=standard.errors, 
       pvalues=significance, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -106,6 +110,7 @@ extract.gls <- function(model) {
   n <- nobs(model) #extract number of observations
   gof <- c(aic, bic, lik, n)
   gof.names <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
+  gof.decimal <- c(TRUE, TRUE, TRUE, FALSE)
   
   tr <- createTexreg(
       coef.names=coefficient.names, 
@@ -113,7 +118,8 @@ extract.gls <- function(model) {
       se=standard.errors, 
       pvalues=significance, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -135,6 +141,7 @@ extract.lm <- function(model) {
   
   gof <- c(rs, adj, n)
   gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+  decimal.places <- c(TRUE, TRUE, FALSE)
   
   tr <- createTexreg(
       coef.names=names, 
@@ -142,7 +149,8 @@ extract.lm <- function(model) {
       se=se, 
       pvalues=pval, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=decimal.places
   )
   return(tr)
 }
@@ -164,6 +172,7 @@ extract.lme <- function(model) {
   n <- nobs(model) #extract number of observations
   gof <- c(aic, bic, lik, n)
   gof.names <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
+  gof.decimal <- c(TRUE, TRUE, TRUE, FALSE)
   
   tr <- createTexreg(
       coef.names=coefficient.names, 
@@ -171,7 +180,8 @@ extract.lme <- function(model) {
       se=standard.errors, 
       pvalues=significance, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -229,6 +239,7 @@ extract.lrm <- function(model) {
   n <- model$stats[1] #extract number of observations
   gof <- c(pseudors, LR, n)
   gof.names <- c("Pseudo R$^2$", "L.R.", "Num. obs.")
+  gof.decimal <- c(TRUE, TRUE, FALSE)
   
   tr <- createTexreg(
       coef.names=coef.names, 
@@ -236,7 +247,8 @@ extract.lrm <- function(model) {
       se=se, 
       pvalues=p, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -245,6 +257,78 @@ setMethod("extract", signature=className("lrm", "rms"),
     definition = extract.lrm)
 setMethod("extract", signature=className("lrm", "Design"), 
     definition = extract.lrm)
+
+
+# extension for mer objects (lme4 package)
+extract.mer <- function(model, variance=TRUE, nobs=TRUE, groups=TRUE, 
+    deviance=TRUE) {
+  names <- rownames(coef(summary(model)))
+  co <- coef(summary(model))[,1]
+  se <- coef(summary(model))[,2]
+  
+  lik <- logLik(model)[1]
+  aic <- AIC(model)
+  bic <- BIC(model)
+  dev <- deviance(model)
+  n <- length(summary(model)@frame[,1])
+  grps <- summary(model)@ngrps
+  grp.names <- names(summary(model)@ngrps)
+  grp.names <- paste("Groups:", grp.names)
+  
+  vnmatrix <- matrix(summary(model)@REmat[,1:2], ncol=2)
+  varnames <- character()
+  for (i in 1:length(vnmatrix[,1])) {
+    if (vnmatrix[i,1] == "" && vnmatrix[i,2] == "") {
+      vn <- "Variance"
+    } else if (vnmatrix[i,1] == "" && vnmatrix[i,2] != "") {
+      vn <- paste("Variance:", vnmatrix[i,2])
+    } else if (vnmatrix[i,1] != "" && vnmatrix[i,2] == "") {
+      vn <- paste("Variance:", vnmatrix[i,1])
+    } else if (vnmatrix[i,1] != "" && vnmatrix[i,2] != "") {
+      if (vnmatrix[i,2] == "(Intercept)") {
+        vn <- paste("Variance:", vnmatrix[i,1])
+      } else {
+        vn <- paste("Variance: ", vnmatrix[i,1], "---", vnmatrix[i,2], sep="")
+      }
+    }
+    vn <- gsub("^\\s+|\\s+$", "", vn)
+    varnames <- append(varnames, vn)
+  }
+  var <- summary(model)@REmat[,3]
+  var <- gsub("^\\s+|\\s+$", "", var)
+  var <- as.numeric(var)
+  
+  gof <- c(lik, aic, bic)
+  if (deviance==TRUE) gof <- c(gof, dev)
+  if (nobs==TRUE) gof <- c(n, gof)
+  if (groups==TRUE) gof <- c(grps, gof)
+  if (variance==TRUE) gof <- c(var, gof)
+  
+  gof.names <- c("Log Likelihood", "AIC", "BIC")
+  if (deviance==TRUE) gof.names <- c(gof.names, "Deviance")
+  if (nobs==TRUE) gof.names <- c("Num. obs.", gof.names)
+  if (groups==TRUE) gof.names <- c(grp.names, gof.names)
+  if (variance==TRUE) gof.names <- c(varnames, gof.names)
+  
+  gof.decimal <- c(TRUE, TRUE, TRUE)
+  if (deviance==TRUE) gof.decimal <- c(gof.decimal, TRUE)
+  if (nobs==TRUE) gof.decimal <- c(FALSE, gof.decimal)
+  if (groups==TRUE) gof.decimal <- c(rep(FALSE, length(grps)), gof.decimal)
+  if (variance==TRUE) gof.decimal <- c(rep(TRUE, length(var)), gof.decimal)
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se,  #no p-values are reported in the mer class!
+      gof.names=gof.names, 
+      gof=gof,
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("mer", "lme4"), 
+    definition = extract.mer)
 
 
 # extension for plm objects (from the plm package); submitted by Lena Koerber
@@ -258,6 +342,7 @@ extract.plm <- function(model) {
   n <- length(summary(model)$resid)
   gof <- c(rs, n)
   gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+  gof.decimal <- c(TRUE, TRUE, FALSE)
   
   tr <- createTexreg(
       coef.names=coefficient.names, 
@@ -265,7 +350,8 @@ extract.plm <- function(model) {
       se=standard.errors, 
       pvalues=significance, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -287,6 +373,7 @@ extract.pmg <- function(model) {
   
   gof <- n
   gof.names <- "Num. obs."
+  gof.decimal <- FALSE
   
   tr <- createTexreg(
       coef.names=names, 
@@ -294,7 +381,8 @@ extract.pmg <- function(model) {
       se=se, 
       pvalues=pval, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -314,6 +402,7 @@ extract.rq <- function(model) {
   tau<-summary(model)$tau
   gof <- c(n, tau)
   gof.names <- c("Num. obs.", "Percentile")
+  gof.decimal <- c(FALSE, TRUE)
   
   tr <- createTexreg(
       coef.names=names, 
@@ -321,7 +410,8 @@ extract.rq <- function(model) {
       se=se, 
       pvalues=pval, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
   )
   return(tr)
 }
@@ -346,6 +436,7 @@ extract.systemfit <- function(model) {
     
     gof <- c(rsquared, radj, n)
     gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+    gof.decimal <- c(TRUE, TRUE, FALSE)
 
     tr <- createTexreg(
       coef.names=names, 
@@ -353,7 +444,8 @@ extract.systemfit <- function(model) {
       se=se, 
       pvalues=pval, 
       gof.names=gof.names, 
-      gof=gof
+      gof=gof, 
+      gof.decimal=gof.decimal
     )
     equationList[[eq$eqnNo]] <- tr
   }

@@ -9,6 +9,7 @@
 \alias{extract,lme-method}
 \alias{extract,lnam-method}
 \alias{extract,lrm-method}
+\alias{extract,mer-method}
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
 \alias{extract,rq-method}
@@ -50,6 +51,10 @@ An extract function for lnam objects from the \pkg{sna} package.
 
 \item{\code{extract.lrm}}{
 An extract function for lrm objects from the \pkg{Design} or \pkg{rms} package.
+}
+
+\item{\code{extract.mer}}{
+An extract function for mer objects from the \pkg{lme4} package.
 }
 
 \item{\code{extract.plm}}{

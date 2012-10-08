@@ -4,7 +4,8 @@
 \description{Create a texreg object with coefficients and GOF statistics.}
 \usage{
 createTexreg(coef.names, coef, se, pvalues=numeric(0), 
-    gof.names=character(0), gof=numeric(0))
+    gof.names=character(0), gof=numeric(0), 
+    gof.decimal=logical(0))
 }
 \details{
 This function creates a texreg object. A texreg object contains 
@@ -19,6 +20,7 @@ are used by the texreg command to create LaTeX tables.
 \item{pvalues}{ The p-values of the model. This is optional. }
 \item{gof.names}{ A vector of names of the goodness-of-fit statistics. }
 \item{gof}{ A vector of goodness-of-fit statistics. }
+\item{gof.decimal}{ A vector of numbers indicating the number of decimal places for each GOF statistic. This is optional. }
 }
 \seealso{
 \code{\link{texreg-package} \link{texreg}}
@@ -40,6 +42,7 @@ bic <- summary(model)$BIC #extract BIC
 n <- nobs(model) #extract number of observations
 gof <- c(aic, bic, lik, n) #create a vector of GOF statistics
 gof.names <- c("AIC", "BIC", "Log Likelihood", "Num. obs.") #names of GOFs
+decimal.places <- c(TRUE, TRUE, TRUE, FALSE) #the last one is a count variable
 
 #create the texreg object
 tr <- createTexreg(
@@ -48,6 +51,7 @@ tr <- createTexreg(
   se=standard.errors, 
   pvalues=significance, 
   gof.names=gof.names, 
-  gof=gof
+  gof=gof, 
+  gof.decimal=decimal.places
 )
 }
