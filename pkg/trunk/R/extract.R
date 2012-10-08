@@ -10,16 +10,27 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
 
 # extension for clogit objects (survival package); submitted by Sebastian Daza
 extract.clogit <- function(model) {
-  tab <- summary(model)$coef[,c(-2,-4)]
+  coefficient.names <- rownames(summary(model)$coef)
+  coefficients <- summary(model)$coef[,1]
+  standard.errors <- summary(model)$coef[,3]
+  significance <- summary(model)$coef[,5]
+  
   aic <- extractAIC(model)[2]
   event <- model$nevent
   n <- model$n
   mis <- length(model$na.action)
-  gof <- matrix(c(aic, event, n, mis), ncol=1)
-  row.names(gof) <- c("AIC", "Events", "Num. obs.", "Missings")
+  gof <- c(aic, event, n, mis)
+  gof.names <- c("AIC", "Events", "Num. obs.", "Missings")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("clogit", "survival"), 
@@ -28,16 +39,26 @@ setMethod("extract", signature=className("clogit", "survival"),
 
 # extension for ergm objects
 extract.ergm <- function(model) {
-  tab <- summary(model)$coefs[,-3] #extract coefficient table
+  coefficient.names <- rownames(summary(model)$coefs)
+  coefficients <- summary(model)$coefs[,1]
+  standard.errors <- summary(model)$coefs[,2]
+  significance <- summary(model)$coefs[,4]
   
   lik <- model$mle.lik[1] #extract log likelihood
   aic <- summary(model)$aic #extract AIC
   bic <- summary(model)$bic #extract BIC
-  gof <- matrix(c(aic, bic, lik), ncol=1)
-  row.names(gof) <- c("AIC", "BIC", "Log Likelihood")
+  gof <- c(aic, bic, lik)
+  gof.names <- c("AIC", "BIC", "Log Likelihood")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("ergm", "ergm"), 
@@ -46,16 +67,26 @@ setMethod("extract", signature=className("ergm", "ergm"),
 
 # extension for glm objects
 extract.glm <- function(model) {
-  tab <- summary(model)$coef[,-3] #extract coefficient table
+  coefficient.names <- rownames(summary(model)$coef)
+  coefficients <- summary(model)$coef[,1]
+  standard.errors <- summary(model)$coef[,2]
+  significance <- summary(model)$coef[,4]
   
   aic <- summary(model)$aic #extract AIC
   n <- nobs(model) #extract number of observations
   
-  gof <- matrix(c(aic, n), ncol=1)
-  row.names(gof) <- c("AIC", "Num. obs.")
+  gof <- c(aic, n)
+  gof.names <- c("AIC", "Num. obs.")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("glm", "stats"), 
@@ -64,17 +95,27 @@ setMethod("extract", signature=className("glm", "stats"),
 
 # extension for gls objects
 extract.gls <- function(model) {
-  tab <- summary(model)$tTable[,-3] #extract coefficient table
+  coefficient.names <- rownames(summary(model)$tTable)
+  coefficients <- summary(model)$tTable[,1]
+  standard.errors <- summary(model)$tTable[,2]
+  significance <- summary(model)$tTable[,4]
   
   lik <- summary(model)$logLik #extract log likelihood
   aic <- summary(model)$AIC #extract AIC
   bic <- summary(model)$BIC #extract BIC
   n <- nobs(model) #extract number of observations
-  gof <- matrix(c(aic, bic, lik, n), ncol=1)
-  row.names(gof) <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
+  gof <- c(aic, bic, lik, n)
+  gof.names <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("gls", "nlme"), 
@@ -83,17 +124,27 @@ setMethod("extract", signature=className("gls", "nlme"),
 
 # extension for lm objects
 extract.lm <- function(model) {
-  tab <- summary(model)$coef[,-3] #extract coefficient table
+  names <- rownames(summary(model)$coef)
+  co <- summary(model)$coef[,1]
+  se <- summary(model)$coef[,2]
+  pval <- summary(model)$coef[,4]
   
   rs <- summary(model)$r.squared #extract R-squared
   adj <- summary(model)$adj.r.squared #extract adjusted R-squared
   n <- nobs(model) #extract number of observations
   
-  gof <- matrix(c(rs, adj, n), ncol=1)
-  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+  gof <- c(rs, adj, n)
+  gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("lm", "stats"), 
@@ -102,17 +153,27 @@ setMethod("extract", signature=className("lm", "stats"),
 
 # extension for lme objects
 extract.lme <- function(model) {
-  tab <- summary(model)$tTable[,-3:-4] #extract coefficient table
+  coefficient.names <- rownames(summary(model)$tTable)
+  coefficients <- summary(model)$tTable[,1]
+  standard.errors <- summary(model)$tTable[,2]
+  significance <- summary(model)$tTable[,5]
   
   lik <- summary(model)$logLik #extract log likelihood
   aic <- summary(model)$AIC #extract AIC
   bic <- summary(model)$BIC #extract BIC
   n <- nobs(model) #extract number of observations
-  gof <- matrix(c(aic, bic, lik, n), ncol=1)
-  row.names(gof) <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
+  gof <- c(aic, bic, lik, n)
+  gof.names <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("lme", "nlme"), 
@@ -122,9 +183,9 @@ setMethod("extract", signature=className("lme", "nlme"),
 # extension for lnam objects (sna package)
 extract.lnam <- function(model) {
   coefs <- coef(model)
-  se <- se.lnam(fit)
+  coef.names <- names(coefs)
+  se <- c(model$beta.se, model$rho1.se, model$rho2.se)
   p <- 2 * (1 - pnorm(abs(coefs), 0, se))
-  tab <- cbind(coefs, se, p)
   
   rss <- sum(model$residuals^2)
   mss <- sum((model$fitted - mean(model$fitted))^2)
@@ -135,11 +196,18 @@ extract.lnam <- function(model) {
   aic <- -2 * model$lnlik.model + 2 * model$df.model
   bic <- -2 * model$lnlik.model + log(model$df.total) * model$df.model
   
-  gof <- matrix(c(rsquared, adj.rsquared, loglik, aic, bic), ncol=1)
-  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Log Likelihood", "AIC", "BIC")
+  gof <- c(rsquared, adj.rsquared, loglik, aic, bic)
+  gof.names <- c("R$^2$", "Adj. R$^2$", "Log Likelihood", "AIC", "BIC")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=coef.names, 
+      coef=coefs, 
+      se=se, 
+      pvalues=p, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("lnam", "sna"), 
@@ -148,23 +216,29 @@ setMethod("extract", signature=className("lnam", "sna"),
 
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model) {
-  tab <- model$coef #extract coefficient table
-  
   attributes(model$coef)$names <- lapply(attributes(model$coef)$names, 
     function(x) gsub(">=", " $\\\\geq$ ", x))
-  
-  tab <- cbind(COEFEST = model$coef, SE = sqrt(diag(model$var)), 
-      PVALUES = pnorm(abs(model$coef/sqrt(diag(model$var))), 
-      lower.tail = FALSE)*2)
+  coef.names <- attributes(model$coef)$names
+  coef <- model$coef
+  se <- sqrt(diag(model$var))
+  p <- pnorm(abs(model$coef/sqrt(diag(model$var))), 
+      lower.tail = FALSE)*2
   
   pseudors <- model$stats[10] #extract pseudo R-squared
   LR <- model$stats[3] #extract LR
   n <- model$stats[1] #extract number of observations
-  gof <- matrix(c(pseudors, LR, n), ncol=1)
-  row.names(gof) <- c("Pseudo R$^2$", "L.R.", "Num. obs.")
+  gof <- c(pseudors, LR, n)
+  gof.names <- c("Pseudo R$^2$", "L.R.", "Num. obs.")
   
-  table.content <- list(tab, gof) #put coefficients and gofs in a list
-  return(table.content) #return the list object
+  tr <- createTexreg(
+      coef.names=coef.names, 
+      coef=coef, 
+      se=se, 
+      pvalues=p, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("lrm", "rms"), 
@@ -175,15 +249,25 @@ setMethod("extract", signature=className("lrm", "Design"),
 
 # extension for plm objects (from the plm package); submitted by Lena Koerber
 extract.plm <- function(model) {
-  tab <- summary(model)$coef[,-3]
+  coefficient.names <- rownames(summary(model)$coef)
+  coefficients <- summary(model)$coef[,1]
+  standard.errors <- summary(model)$coef[,2]
+  significance <- summary(model)$coef[,4]
   
   rs <- summary(model)$r.squared
   n <- length(summary(model)$resid)
-  gof <- matrix(c(rs, n), ncol=1)
-  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
+  gof <- c(rs, n)
+  gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("plm", "plm"), 
@@ -192,19 +276,27 @@ setMethod("extract", signature=className("plm", "plm"),
 
 # extension for pmg objects (from the plm package); submitted by Lena Koerber
 extract.pmg <- function(model) {
-  co <- data.matrix(summary(model)$coef)
+  co <- summary(model)$coef
   se <- (diag(summary(model)$vcov))^(1/2) #standard errors
   t <- co / se #t-statistics
   n <- length(summary(model)$resid) #number of observations
   d <- n - length(co) #degrees of freedom
   pval <- 2 * pt(-abs(t), df=d)
   tab <- cbind(co, se, pval) #coefficient table
+  names <- rownames(tab)
   
-  gof <- matrix(n, ncol=1)
-  row.names(gof) <- c("Num. obs.")
+  gof <- n
+  gof.names <- "Num. obs."
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("pmg", "plm"), 
@@ -213,14 +305,25 @@ setMethod("extract", signature=className("pmg", "plm"),
 
 # extension for rq objects (quantreg package); submitted by Lena Koerber
 extract.rq <- function(model) {
-  tab <- summary(model, cov=TRUE)$coef[,-3]
+  co <- summary(model, cov=TRUE)$coef[,1]
+  names <- rownames(summary(model, cov=TRUE)$coef)
+  se <- summary(model, cov=TRUE)$coef[,2]
+  pval <- summary(model, cov=TRUE)$coef[,4]
+  
   n <- length(summary(model)$resid)
   tau<-summary(model)$tau
-  gof <- matrix(c(n, tau), ncol=1)
-  row.names(gof) <- c("Num. obs.", "Percentile")
+  gof <- c(n, tau)
+  gof.names <- c("Num. obs.", "Percentile")
   
-  table.content <- list(tab, gof)
-  return(table.content)
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof
+  )
+  return(tr)
 }
 
 setMethod("extract", signature=className("rq", "quantreg"), 
@@ -232,17 +335,27 @@ extract.systemfit <- function(model) {
   equationList <- list()
   for(eq in model$eq){  #go through estimated equations
     sum <- summary(eq)  #extract model summary
-    tab <- coef(sum)[,-3]  #coefficients table for the equation
+    names <- rownames(coef(sum))
+    co <- coef(sum)[,1]
+    se <- coef(sum)[,2]
+    pval <- coef(sum)[,4]
     
     rsquared <- sum$r.squared  #extract r-squared
     radj <- sum$adj.r.squared  #extract adjusted r-squared
     n <- nobs(model)  #extract number of observations
     
-    gof <- matrix(c(rsquared, radj, n), ncol=1)  #GOF matrix
-    row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")  #set GOF row names
+    gof <- c(rsquared, radj, n)
+    gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")
 
-    table.content <- list(tab, gof)
-    equationList[[eq$eqnNo]] <- table.content
+    tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof
+    )
+    equationList[[eq$eqnNo]] <- tr
   }
   return(equationList)  #returns a list of table.content lists
 }

@@ -51,7 +51,7 @@ rearrangeMatrix <- function(m) {
 
 # texreg function
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
-    table=TRUE, sideways=FALSE, float.pos="", strong.signif=FALSE, 
+    table=TRUE, sideways=FALSE, float.pos="", stars=TRUE, strong.signif=FALSE, 
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NA, model.names=NA, digits=2, ...) {
@@ -67,7 +67,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   models <- NULL
   for (i in 1:length(l)) {
     model <- extract(l[[i]], ...)
-    if (class(model[[1]]) == "list") {  #nested list of models (e.g. systemfit)
+    if (class(model) == "list") {  #nested list of models (e.g. systemfit)
       models <- append(models, model)
     } else {                            #normal case; one model
       models <- append(models, list(model))
@@ -77,22 +77,32 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   # extract names of the goodness-of-fit statistics
   gof.names <- character()
   for (i in 1:length(models)) {
-    for (j in 1:length(models[[i]][[2]])) {
-      if (!row.names(models[[i]][[2]])[j] %in% gof.names) {
-        gof.names <- append(gof.names, row.names(models[[i]][[2]])[j])
+    gn <- models[[i]]@gof.names
+    for (j in 1:length(gn)) {
+      if (!gn[j] %in% gof.names) {
+        gof.names <- append(gof.names, gn[j])
       }
     }
   }
   
-  # aggregate goodness-of-fit statistics in a matrix and create list of coefs
+  # aggregate GOF statistics in a matrix and create list of coef blocks
   coefs <- list()
   gofs <- matrix(nrow=length(gof.names), ncol=length(models))
   row.names(gofs) <- gof.names
   for (i in 1:length(models)) {
-    coefs <- append(coefs, models[[i]][1])
-    for (j in 1:length(models[[i]][[2]])) {
-      rn <- row.names(models[[i]][[2]])[j]
-      val <- models[[i]][[2]][[j]]
+    cf <- models[[i]]@coef
+    se <- models[[i]]@se
+    pv <- models[[i]]@pvalues
+    if (length(pv) > 0) {
+      coef <- cbind(cf, se, pv)
+    } else {
+      coef <- cbind(cf, se, rep(0.99, length(cf)))
+    }
+    rownames(coef) <- models[[i]]@coef.names
+    coefs[[i]] <- coef
+    for (j in 1:length(models[[i]]@gof)) {
+      rn <- models[[i]]@gof.names[j]
+      val <- models[[i]]@gof[j]
       col <- i
       row <- which(row.names(gofs) == rn)
       gofs[row,col] <- val
@@ -308,7 +318,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
         } else {
           std <- paste(" \\; (", coeftostring(m[i,j+1], leading.zero, 
               digits=digits), ")", sep="")
-          if (strong.signif == TRUE) {
+          if (strong.signif == TRUE && stars==TRUE) {
             if (m[i,j+2] <= 0.001) {
               p <- "^{***}"
             } else if (m[i,j+2] <= 0.01) {
@@ -320,7 +330,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
             } else {
               p <- ""
             }
-          } else {
+          } else if (stars==TRUE) {
             if (m[i,j+2] <= 0.01) {
               p <- "^{***}"
             } else if (m[i,j+2] <= 0.05) {
@@ -330,6 +340,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
             } else {
               p <- ""
             }
+          } else {
+              p <- ""
           }
           if (dcolumn == TRUE) {
             dollar <- ""
@@ -366,7 +378,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
           output.matrix[(i*2)-1,k] <- "\\multicolumn{1}{c}{$-$Inf}" #upper row
           output.matrix[(i*2),k] <- "" #lower std row
         } else {
-          if (strong.signif == TRUE) {
+          if (strong.signif == TRUE && stars==TRUE) {
             if (m[i,j+2] <= 0.001) {
               p <- "^{***}"
             } else if (m[i,j+2] <= 0.01) {
@@ -378,7 +390,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
             } else {
               p <- ""
             }
-          } else {
+          } else if (stars==TRUE) {
             if (m[i,j+2] <= 0.01) {
               p <- "^{***}"
             } else if (m[i,j+2] <= 0.05) {
@@ -388,6 +400,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
             } else {
               p <- ""
             }
+          } else {
+              p <- ""
           }
           if (dcolumn == TRUE) {
             dollar <- ""
@@ -500,12 +514,12 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   }
   string <- paste(string, "\\vspace{-2mm}\\\\\n", sep="")
   
-  if (strong.signif == TRUE) {
+  if (strong.signif == TRUE && stars==TRUE) {
     string <- paste(string, "\\multicolumn{", length(models)+1, 
         "}{l}{\\textsuperscript{***}$p<0.001$, ", 
         "\\textsuperscript{**}$p<0.01$, \\textsuperscript{*}$p<0.05$, ", 
         "\\textsuperscript{$", symbol, "$}$p<0.1$}\n", sep="")
-  } else {
+  } else if (stars==TRUE) {
     string <- paste(string, "\\multicolumn{", length(models)+1, 
         "}{l}{\\textsuperscript{***}$p<0.01$, ", 
         "\\textsuperscript{**}$p<0.05$, \\textsuperscript{*}$p<0.1$}\n", 
