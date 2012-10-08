@@ -190,6 +190,65 @@ setMethod("extract", signature=className("lme", "nlme"),
     definition = extract.lme)
 
 
+# extension for lmerMod objects (lme4 package)
+extract.lmerMod <- function(model, variance=TRUE, nobs=TRUE, groups=TRUE, 
+    deviance=TRUE) {
+  names <- rownames(coef(summary(model)))
+  co <- coef(summary(model))[,1]
+  se <- coef(summary(model))[,2]
+  
+  lik <- logLik(model)[1]
+  aic <- AIC(model)
+  bic <- BIC(model)
+  dev <- deviance(model)
+  n <- nobs(model)
+  grps <- summary(model)$ngrps
+  grp.names <- names(summary(model)$ngrps)
+  grp.names <- paste("Groups:", grp.names)
+  
+
+  vc <- VarCorr(model)
+  varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
+      attr(vc, "sc")^2)                     # residual variance
+  varnames <- names(varcomps)
+  varnames[length(varnames)] <- "Residual"
+  varnames <- gsub("\\.", "---", varnames)
+  varnames <- gsub("---\\(Intercept)", "", varnames)
+  varnames <- paste("Variance:", varnames)
+  
+  gof <- c(lik, aic, bic)
+  if (deviance==TRUE) gof <- c(gof, dev)
+  if (nobs==TRUE) gof <- c(n, gof)
+  if (groups==TRUE) gof <- c(grps, gof)
+  if (variance==TRUE) gof <- c(varcomps, gof)
+  
+  gof.names <- c("Log Likelihood", "AIC", "BIC")
+  if (deviance==TRUE) gof.names <- c(gof.names, "Deviance")
+  if (nobs==TRUE) gof.names <- c("Num. obs.", gof.names)
+  if (groups==TRUE) gof.names <- c(grp.names, gof.names)
+  if (variance==TRUE) gof.names <- c(varnames, gof.names)
+  
+  gof.decimal <- c(TRUE, TRUE, TRUE)
+  if (deviance==TRUE) gof.decimal <- c(gof.decimal, TRUE)
+  if (nobs==TRUE) gof.decimal <- c(FALSE, gof.decimal)
+  if (groups==TRUE) gof.decimal <- c(rep(FALSE, length(grps)), gof.decimal)
+  if (variance==TRUE) gof.decimal <- c(rep(TRUE, length(varcomps)), gof.decimal)
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se,  #no p-values are reported in the lmerMod class!
+      gof.names=gof.names, 
+      gof=gof,
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("lmerMod", "lme4"), 
+    definition = extract.lmerMod)
+
+
 # extension for lnam objects (sna package)
 extract.lnam <- function(model) {
   coefs <- coef(model)

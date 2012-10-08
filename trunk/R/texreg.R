@@ -439,25 +439,6 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     gof.matrix[i,1] <- rownames(gofs)[i]
     for (j in 1:length(gofs[1,])) {
       strg <- coeftostring(gofs[i,j], leading.zero, digits=decimal.matrix[i,j])
-      #rn <- rownames(gofs)[i]  #special cases without decimal places hardcoded:
-      #if (rn == "Num. obs." | rn == "n" | rn == "N" | rn == "N obs" | 
-      #    rn == "N obs." | rn == "nobs" | rn == "n obs" | rn == "n obs." | 
-      #    rn == "n.obs." | rn == "N.obs." | rn == "N. obs" | 
-      #    rn == "Num observations" | rn == "Number of observations" | 
-      #    rn == "Num obs" | rn == "num obs" | rn == "Num. observations" | 
-      #    rn == "Num Observations" | rn == "Num. Observations" | 
-      #    rn == "Num. Obs." | rn == "Num.Obs." | rn == "Number obs." | 
-      #    rn == "Number Obs." | rn == "Number obs" | rn == "Number Obs" | 
-      #    rn == "Number of Obs." | rn == "Number of obs." | 
-      #    rn == "Number of obs" | rn == "Number of Obs" | rn == "Obs" | 
-      #    rn == "obs" | rn == "Obs." | rn == "obs." | rn == "Events" | 
-      #    rn == "# Events" | rn == "# events" | rn == "events" | 
-      #    rn == "Missings" | rn == "Missing" | rn == "# Missing") {
-      #  strg <- strsplit(strg, "\\.")[[1]][1]
-      #  if (is.na(strg) == TRUE) {
-      #    strg <- ""
-      #  }
-      #}
       gof.matrix[i,j+1] <- paste(dollar, strg, dollar, sep="")
     }
   }

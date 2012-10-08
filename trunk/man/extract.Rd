@@ -6,6 +6,7 @@
 \alias{extract.gls}
 \alias{extract.lm}
 \alias{extract.lme}
+\alias{extract.lmerMod}
 \alias{extract.lnam}
 \alias{extract.lrm}
 \alias{extract.mer}
@@ -23,6 +24,7 @@ extract.glm(model)
 extract.gls(model)
 extract.lm(model)
 extract.lme(model)
+extract.lmerMod(model, variance=TRUE, nobs=TRUE, groups=TRUE, deviance=TRUE)
 extract.lnam(model)
 extract.lrm(model)
 extract.mer(model, variance=TRUE, nobs=TRUE, groups=TRUE, deviance=TRUE)

@@ -7,6 +7,7 @@
 \alias{extract,gls-method}
 \alias{extract,lm-method}
 \alias{extract,lme-method}
+\alias{extract,lmerMod-method}
 \alias{extract,lnam-method}
 \alias{extract,lrm-method}
 \alias{extract,mer-method}
@@ -45,6 +46,10 @@ An extract function for lm objects from the \pkg{stats} package.
 An extract function for lme objects from the \pkg{nlme} package.
 }
 
+\item{\code{extract.lmerMod}}{
+An extract function for lmerMod objects from the (new) \pkg{lme4} package.
+}
+
 \item{\code{extract.lnam}}{
 An extract function for lnam objects from the \pkg{sna} package.
 }
@@ -54,7 +59,7 @@ An extract function for lrm objects from the \pkg{Design} or \pkg{rms} package.
 }
 
 \item{\code{extract.mer}}{
-An extract function for mer objects from the \pkg{lme4} package.
+An extract function for mer objects from the (old) \pkg{lme4} package.
 }
 
 \item{\code{extract.plm}}{
