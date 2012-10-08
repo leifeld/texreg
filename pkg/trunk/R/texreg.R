@@ -2,7 +2,17 @@
 # Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
 # for bug reports, help or feature requests.
 
-#function which conflates a matrix with duplicate row names
+
+# display version number and date when the package is loaded
+.onAttach <- function(...) {
+  pack <- installed.packages()
+  vers <- help(package="texreg")$info[[1]][2]
+  dat <- help(package="texreg")$info[[1]][3]
+  packageStartupMessage(paste(vers, "\n", dat, sep=""))
+}
+
+
+# function which conflates a matrix with duplicate row names
 rearrangeMatrix <- function(m) {
   
   # The following code block rearranges a matrix with duplicate row names such 
