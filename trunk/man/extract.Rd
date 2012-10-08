@@ -22,7 +22,7 @@ extract.glm(model)
 extract.gls(model)
 extract.lm(model)
 extract.lme(model)
-extract.lnam{model}
+extract.lnam(model)
 extract.lrm(model)
 extract.plm(model)
 extract.pmg(model)

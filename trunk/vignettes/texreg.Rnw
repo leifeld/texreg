@@ -36,7 +36,7 @@ It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \text
 Only a subset of these packages is able to merge multiple regression models in a single table.
 Those packages which can do this do not support important model types such as \texttt{lme} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
 \TeX reg, in contrast, accepts these model types and can also merge multiple models in a single table.
-Currently supported model types are listed in section~\ref{types}.
+Currently supported model types are listed in section \ref{types}.
 New model types can be easily implemented (see section \ref{templates}).
 \TeX reg can be used within Sweave.
 \LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
@@ -192,7 +192,7 @@ table <- texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:4",
 @
 Table \ref{tab:4} shows the result of this command.
 
-Most academic journals require tables where the coefficient and the standard error are stored in two separate rows of the table, as shown in tables~\ref{tab:1} to~\ref{tab:4}.
+Most academic journals require tables where the coefficient and the standard error are stored in two separate rows of the table, as shown in tables \ref{tab:1} to \ref{tab:4}.
 In some situations, however, it makes sense to accommodate them in a single row.
 The \texttt{single.row} argument can take care of this:
 <<results=tex>>=
@@ -218,27 +218,44 @@ Note that different model types may report different kinds of goodness-of-fit st
 Implementing new kinds of statistical models is fairly easy (if you know how to modify R functions).
 For any model type, there exists a function which extracts the relevant information from a model.
 For example, \texttt{extract.lm()} provides coefficients and goodness-of-fit statistics for \texttt{lm} objects, \texttt{extract.ergm()} provides this information for \texttt{ergm} objects, etc.
-Any new function of this kind must return a list with two objects:
-\begin{enumerate}
- \item A matrix containing the coefficients. This matrix must have exactly three columns. The first column contains the coefficients, the second column contains the standard errors, and the third column contains the $p$ values for any coefficient. The names of the coefficients or independent variables must be stored as row names of the matrix. Column names do not matter.
- \item A matrix of goodness-of-fit statistics. This matrix must have exactly one column and as many rows as there are gof measures. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj. R$^2$ and Num. obs. They are aggregated in a $3\times 1$ matrix. The row names of this matrix should indicate what is being measured, for instance ``Num. obs.''
-\end{enumerate}
-The following code is an example.
+
+You can get an overview of the model type you are interested in by fitting a model and examining the resulting object using the \texttt{str(model)} command, the \texttt{summary(model)} command, the \texttt{summary{model}\$coef} command, and related commands.
+Any new extract function must retrieve the following data from a statistical model:
+\begin{description}
+ \item[coef.names] The names of the independent variables or coefficients.
+ \item[coef] The actual coefficients. These values must be in the same order as the \texttt{coef.names}.
+ \item[se] The standard errors, which will later be put in parentheses. These values must be in the same order as the \texttt{coef.names}.
+ \item[pvalues] The $p$ values (\emph{optional}). They are used to add significance stars. These values must be in the same order as the \texttt{coef.names}.
+ \item[gof.names] The names of some goodness-of-fit statistics to be added to the table. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj. R$^2$ and Num. obs.
+ \item[gof] A vector of goodness-of-fit statistics to be added to the table. These values must be in the same order as the \texttt{gof.names}.
+\end{description}
+
+Once you have located all these data, you can create a \texttt{texreg} object and return it to the \texttt{texreg()} function.
+The following code provides an example.
 It shows the \texttt{extract.lm()} function:
 \begin{verbatim}
 extract.lm <- function(model) {
-  tab <- summary(model)$coef[,-3]       #extract coefficient table
-                                        #third column (t values) is omitted
+  names <- rownames(summary(model)$coef)   # extract coefficient names
+  co <- summary(model)$coef[,1]            # extract the coefficient values
+  se <- summary(model)$coef[,2]            # extract the standard errors
+  pval <- summary(model)$coef[,4]          # extract the p-values
   
-  rs <- summary(model)$r.squared        #extract R-squared
-  adj <- summary(model)$adj.r.squared   #extract adjusted R-squared
-  n <- nobs(model)                      #extract number of observations
+  rs <- summary(model)$r.squared           # extract R-squared
+  adj <- summary(model)$adj.r.squared      # extract adjusted R-squared
+  n <- nobs(model)                         # extract number of observations
   
-  gof <- matrix(c(rs, adj, n), ncol=1)  #put gof measures in a 1-column matrix
-  row.names(gof) <- c("R$^2$", "Adj. R$^2$", "Num. obs.")  #set row names
+  gof <- c(rs, adj, n)                     # put the GOFs in a vector
+  gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")   #also put names in vector
   
-  table.content <- list(tab, gof)       #put coefficients and gofs in a list
-  return(table.content)                 #return the list object
+  tr <- createTexreg(                      # create a texreg object
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval,                        # p-values are only needed when
+      gof.names=gof.names,                 # significance stars shall be printed
+      gof=gof
+  )
+  return(tr)                               # return the texreg object to texreg
 }
 \end{verbatim}
 After writing a custom function, the function has to be registered.
@@ -250,7 +267,7 @@ setMethod("extract", signature=className("lm", "stats"),
 \end{verbatim}
 Let's say you have written an extension for \texttt{clogit} objects called \texttt{extract.clogit()}.
 The \texttt{clogit} command (and the corresponding class definition) can be found in the \texttt{survival} package.
-Then you would have to adjust the above code as follows:
+Then you would have to adjust the code above as follows:
 \begin{verbatim}
 setMethod("extract", signature=className("clogit", "survival"), 
     definition = extract.clogit)
