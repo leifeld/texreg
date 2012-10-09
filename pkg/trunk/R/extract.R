@@ -190,23 +190,27 @@ setMethod("extract", signature=className("lme", "nlme"),
     definition = extract.lme)
 
 
-# extension for lmerMod objects (lme4 package)
-extract.lmerMod <- function(model, variance=TRUE, nobs=TRUE, groups=TRUE, 
-    deviance=TRUE) {
-  names <- rownames(coef(summary(model)))
-  co <- coef(summary(model))[,1]
-  se <- coef(summary(model))[,2]
+# extension for lmerMod objects (lme4 package, version 0.99999911-0)
+extract.lmerMod <- function(model, include.variance=TRUE, include.nobs=TRUE, 
+    include.groups=TRUE, include.deviance=TRUE, include.pvalues=FALSE) {
   
+  Vcov <- vcov(model, useScale = FALSE)
+  Vcov <- as.matrix(Vcov)
+  betas <- fixef(model)
+  se <- sqrt(diag(Vcov))
+  zval <- betas / se
+  pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+
   lik <- logLik(model)[1]
   aic <- AIC(model)
   bic <- BIC(model)
   dev <- deviance(model)
-  n <- nobs(model)
-  grps <- summary(model)$ngrps
-  grp.names <- names(summary(model)$ngrps)
+  n <- dim(model.frame(model))[1]
+  # n <- nobs(model)
+  grps <- sapply(model@flist, function(x) length(levels(x)))
+  grp.names <- names(grps)
   grp.names <- paste("Groups:", grp.names)
   
-
   vc <- VarCorr(model)
   varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
       attr(vc, "sc")^2)                     # residual variance
@@ -217,35 +221,53 @@ extract.lmerMod <- function(model, variance=TRUE, nobs=TRUE, groups=TRUE,
   varnames <- paste("Variance:", varnames)
   
   gof <- c(lik, aic, bic)
-  if (deviance==TRUE) gof <- c(gof, dev)
-  if (nobs==TRUE) gof <- c(n, gof)
-  if (groups==TRUE) gof <- c(grps, gof)
-  if (variance==TRUE) gof <- c(varcomps, gof)
+  if (include.deviance==TRUE) gof <- c(gof, dev)
+  if (include.nobs==TRUE) gof <- c(n, gof)
+  if (include.groups==TRUE) gof <- c(grps, gof)
+  if (include.variance==TRUE) gof <- c(varcomps, gof)
   
   gof.names <- c("Log Likelihood", "AIC", "BIC")
-  if (deviance==TRUE) gof.names <- c(gof.names, "Deviance")
-  if (nobs==TRUE) gof.names <- c("Num. obs.", gof.names)
-  if (groups==TRUE) gof.names <- c(grp.names, gof.names)
-  if (variance==TRUE) gof.names <- c(varnames, gof.names)
+  if (include.deviance==TRUE) gof.names <- c(gof.names, "Deviance")
+  if (include.nobs==TRUE) gof.names <- c("Num. obs.", gof.names)
+  if (include.groups==TRUE) gof.names <- c(grp.names, gof.names)
+  if (include.variance==TRUE) gof.names <- c(varnames, gof.names)
   
   gof.decimal <- c(TRUE, TRUE, TRUE)
-  if (deviance==TRUE) gof.decimal <- c(gof.decimal, TRUE)
-  if (nobs==TRUE) gof.decimal <- c(FALSE, gof.decimal)
-  if (groups==TRUE) gof.decimal <- c(rep(FALSE, length(grps)), gof.decimal)
-  if (variance==TRUE) gof.decimal <- c(rep(TRUE, length(varcomps)), gof.decimal)
+  if (include.deviance==TRUE) gof.decimal <- c(gof.decimal, TRUE)
+  if (include.nobs==TRUE) gof.decimal <- c(FALSE, gof.decimal)
+  if (include.groups==TRUE) gof.decimal <- c(rep(FALSE, length(grps)), 
+      gof.decimal)
+  if (include.variance==TRUE) gof.decimal <- c(rep(TRUE, length(varcomps)), 
+      gof.decimal)
   
-  tr <- createTexreg(
-      coef.names=names, 
-      coef=co, 
-      se=se,  #no p-values are reported in the lmerMod class!
-      gof.names=gof.names, 
-      gof=gof,
-      gof.decimal=gof.decimal
-  )
+  if (include.pvalues==FALSE) {
+    tr <- createTexreg(
+        coef.names=names(betas), 
+        coef=betas, 
+        se=se,
+        gof.names=gof.names,
+        gof=gof,
+        gof.decimal=gof.decimal
+    )
+  } else {
+    tr <- createTexreg(
+        coef.names=names(betas), 
+        coef=betas, 
+        se=se,
+        pvalues=pval,
+        gof.names=gof.names,
+        gof=gof,
+        gof.decimal=gof.decimal
+    )
+  }
   return(tr)
 }
 
 setMethod("extract", signature=className("lmerMod", "lme4"), 
+    definition = extract.lmerMod)
+setMethod("extract", signature=className("glmerMod", "lme4"), 
+    definition = extract.lmerMod)
+setMethod("extract", signature=className("nlmerMod", "lme4"), 
     definition = extract.lmerMod)
 
 
@@ -318,71 +340,75 @@ setMethod("extract", signature=className("lrm", "Design"),
     definition = extract.lrm)
 
 
-# extension for mer objects (lme4 package)
-extract.mer <- function(model, variance=TRUE, nobs=TRUE, groups=TRUE, 
-    deviance=TRUE) {
-  names <- rownames(coef(summary(model)))
-  co <- coef(summary(model))[,1]
-  se <- coef(summary(model))[,2]
+# extension for mer objects (lme4 package, version 0.999999-0)
+extract.mer <- function(model, include.variance=TRUE, include.nobs=TRUE, 
+    include.groups=TRUE, include.deviance=TRUE, include.pvalues=FALSE) {
   
+  Vcov <- vcov(model, useScale = FALSE)
+  Vcov <- as.matrix(Vcov)
+  betas <- fixef(model)
+  se <- sqrt(diag(Vcov))
+  zval <- betas / se
+  pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+
   lik <- logLik(model)[1]
   aic <- AIC(model)
   bic <- BIC(model)
   dev <- deviance(model)
-  n <- length(summary(model)@frame[,1])
-  grps <- summary(model)@ngrps
-  grp.names <- names(summary(model)@ngrps)
+  n <- dim(model.frame(model))[1]
+  grps <- sapply(model@flist, function(x) length(levels(x)))
+  grp.names <- names(grps)
   grp.names <- paste("Groups:", grp.names)
   
-  vnmatrix <- matrix(summary(model)@REmat[,1:2], ncol=2)
-  varnames <- character()
-  for (i in 1:length(vnmatrix[,1])) {
-    if (vnmatrix[i,1] == "" && vnmatrix[i,2] == "") {
-      vn <- "Variance"
-    } else if (vnmatrix[i,1] == "" && vnmatrix[i,2] != "") {
-      vn <- paste("Variance:", vnmatrix[i,2])
-    } else if (vnmatrix[i,1] != "" && vnmatrix[i,2] == "") {
-      vn <- paste("Variance:", vnmatrix[i,1])
-    } else if (vnmatrix[i,1] != "" && vnmatrix[i,2] != "") {
-      if (vnmatrix[i,2] == "(Intercept)") {
-        vn <- paste("Variance:", vnmatrix[i,1])
-      } else {
-        vn <- paste("Variance: ", vnmatrix[i,1], "---", vnmatrix[i,2], sep="")
-      }
-    }
-    vn <- gsub("^\\s+|\\s+$", "", vn)
-    varnames <- append(varnames, vn)
-  }
-  var <- summary(model)@REmat[,3]
-  var <- gsub("^\\s+|\\s+$", "", var)
-  var <- as.numeric(var)
+  vc <- VarCorr(model)
+  varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
+      attr(vc, "sc")^2)                     # residual variance
+  varnames <- names(varcomps)
+  varnames[length(varnames)] <- "Residual"
+  varnames <- gsub("\\.", "---", varnames)
+  varnames <- gsub("---\\(Intercept)", "", varnames)
+  varnames <- paste("Variance:", varnames)
   
   gof <- c(lik, aic, bic)
-  if (deviance==TRUE) gof <- c(gof, dev)
-  if (nobs==TRUE) gof <- c(n, gof)
-  if (groups==TRUE) gof <- c(grps, gof)
-  if (variance==TRUE) gof <- c(var, gof)
+  if (include.deviance==TRUE) gof <- c(gof, dev)
+  if (include.nobs==TRUE) gof <- c(n, gof)
+  if (include.groups==TRUE) gof <- c(grps, gof)
+  if (include.variance==TRUE) gof <- c(varcomps, gof)
   
   gof.names <- c("Log Likelihood", "AIC", "BIC")
-  if (deviance==TRUE) gof.names <- c(gof.names, "Deviance")
-  if (nobs==TRUE) gof.names <- c("Num. obs.", gof.names)
-  if (groups==TRUE) gof.names <- c(grp.names, gof.names)
-  if (variance==TRUE) gof.names <- c(varnames, gof.names)
+  if (include.deviance==TRUE) gof.names <- c(gof.names, "Deviance")
+  if (include.nobs==TRUE) gof.names <- c("Num. obs.", gof.names)
+  if (include.groups==TRUE) gof.names <- c(grp.names, gof.names)
+  if (include.variance==TRUE) gof.names <- c(varnames, gof.names)
   
   gof.decimal <- c(TRUE, TRUE, TRUE)
-  if (deviance==TRUE) gof.decimal <- c(gof.decimal, TRUE)
-  if (nobs==TRUE) gof.decimal <- c(FALSE, gof.decimal)
-  if (groups==TRUE) gof.decimal <- c(rep(FALSE, length(grps)), gof.decimal)
-  if (variance==TRUE) gof.decimal <- c(rep(TRUE, length(var)), gof.decimal)
+  if (include.deviance==TRUE) gof.decimal <- c(gof.decimal, TRUE)
+  if (include.nobs==TRUE) gof.decimal <- c(FALSE, gof.decimal)
+  if (include.groups==TRUE) gof.decimal <- c(rep(FALSE, length(grps)), 
+      gof.decimal)
+  if (include.variance==TRUE) gof.decimal <- c(rep(TRUE, length(varcomps)), 
+      gof.decimal)
   
-  tr <- createTexreg(
-      coef.names=names, 
-      coef=co, 
-      se=se,  #no p-values are reported in the mer class!
-      gof.names=gof.names, 
-      gof=gof,
-      gof.decimal=gof.decimal
-  )
+  if (include.pvalues==FALSE) {
+    tr <- createTexreg(
+        coef.names=names(betas), 
+        coef=betas, 
+        se=se,
+        gof.names=gof.names,
+        gof=gof,
+        gof.decimal=gof.decimal
+    )
+  } else {
+    tr <- createTexreg(
+        coef.names=names(betas), 
+        coef=betas, 
+        se=se,
+        pvalues=pval,
+        gof.names=gof.names,
+        gof=gof,
+        gof.decimal=gof.decimal
+    )
+  }
   return(tr)
 }
 

@@ -4,6 +4,7 @@
 \alias{extract,clogit-method}
 \alias{extract,ergm-method}
 \alias{extract,glm-method}
+\alias{extract,glmerMod-method}
 \alias{extract,gls-method}
 \alias{extract,lm-method}
 \alias{extract,lme-method}
@@ -11,6 +12,7 @@
 \alias{extract,lnam-method}
 \alias{extract,lrm-method}
 \alias{extract,mer-method}
+\alias{extract,nlmerMod-method}
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
 \alias{extract,rq-method}
@@ -32,6 +34,10 @@ An extract function for ergm objects from the \pkg{ergm} package.
 
 \item{\code{extract.glm}}{
 An extract function for glm objects from the \pkg{stats} package.
+}
+
+\item{\code{extract.glmerMod}}{
+An extract function for glmerMod objects from the (new) \pkg{lme4} package.
 }
 
 \item{\code{extract.gls}}{
@@ -60,6 +66,10 @@ An extract function for lrm objects from the \pkg{Design} or \pkg{rms} package.
 
 \item{\code{extract.mer}}{
 An extract function for mer objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{extract.nlmerMod}}{
+An extract function for nlmerMod objects from the (new) \pkg{lme4} package.
 }
 
 \item{\code{extract.plm}}{

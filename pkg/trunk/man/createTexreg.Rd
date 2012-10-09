@@ -20,7 +20,7 @@ are used by the texreg command to create LaTeX tables.
 \item{pvalues}{ The p-values of the model. This is optional. }
 \item{gof.names}{ A vector of names of the goodness-of-fit statistics. }
 \item{gof}{ A vector of goodness-of-fit statistics. }
-\item{gof.decimal}{ A vector of numbers indicating the number of decimal places for each GOF statistic. This is optional. }
+\item{gof.decimal}{ A vector of boolean/logical values indicating for each GOF statistic if decimal places shall be used. This is optional. }
 }
 \seealso{
 \code{\link{texreg-package} \link{texreg}}
