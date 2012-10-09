@@ -24,10 +24,12 @@ extract.glm(model)
 extract.gls(model)
 extract.lm(model)
 extract.lme(model)
-extract.lmerMod(model, variance=TRUE, nobs=TRUE, groups=TRUE, deviance=TRUE)
+extract.lmerMod(model, include.variance=TRUE, include.nobs=TRUE, 
+    include.groups=TRUE, include.deviance=TRUE, include.pvalues=FALSE)
 extract.lnam(model)
 extract.lrm(model)
-extract.mer(model, variance=TRUE, nobs=TRUE, groups=TRUE, deviance=TRUE)
+extract.mer(model, include.variance=TRUE, include.nobs=TRUE, 
+    include.groups=TRUE, include.deviance=TRUE, include.pvalues=FALSE)
 extract.plm(model)
 extract.pmg(model)
 extract.rq(model)
@@ -42,10 +44,11 @@ the \link{texreg} function.
 }
 \arguments{
 \item{model}{ A statistical model object. }
-\item{variance}{ If available: should group variances be reported? }
-\item{nobs}{ If available: should the number of observations be reported? }
-\item{groups}{ If available: should the number of groups be reported? }
-\item{deviance}{ If available: should the deviance be reported? }
+\item{include.variance}{ If available: should group variances be reported? }
+\item{include.nobs}{ If available: should the number of observations be reported? }
+\item{include.groups}{ If available: should the number of groups be reported? }
+\item{include.deviance}{ If available: should the deviance be reported? }
+\item{include.pvalues}{ If available: should the p-values be reported (not recommended for lme4 models)? }
 \item{...}{ Custom parameters. }
 }
 \seealso{

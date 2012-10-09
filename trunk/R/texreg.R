@@ -4,8 +4,7 @@
 
 
 # display version number and date when the package is loaded
-.onAttach <- function(...) {
-  pack <- installed.packages()
+.onAttach <- function(libname, pkgname) {
   vers <- help(package="texreg")$info[[1]][2]
   dat <- help(package="texreg")$info[[1]][3]
   packageStartupMessage(paste(vers, "\n", dat, sep=""))
@@ -69,7 +68,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   string <- ""
   
   # if a single model is handed over, put model inside a list
-  if (class(l) != "list") {
+  if (!"list" %in% class(l)) {
     l <- list(l)
   }
 
@@ -77,7 +76,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   models <- NULL
   for (i in 1:length(l)) {
     model <- extract(l[[i]], ...)
-    if (class(model) == "list") {  #nested list of models (e.g. systemfit)
+    if (class(model) == "list") {       #nested list of models (e.g. systemfit)
       models <- append(models, model)
     } else {                            #normal case; one model
       models <- append(models, list(model))
