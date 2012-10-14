@@ -5,6 +5,7 @@
 \alias{extract,clogit-method}
 \alias{extract,coxph-method}
 \alias{extract,ergm-method}
+\alias{extract,gee-method}
 \alias{extract,glm-method}
 \alias{extract,glmerMod-method}
 \alias{extract,gls-method}
@@ -21,6 +22,7 @@
 \alias{extract,Relogit-method}
 \alias{extract,rq-method}
 \alias{extract,sclm-method}
+\alias{extract,svyglm-method}
 \alias{extract,systemfit-method}
 \title{Methods for Function \code{extract} in Package \pkg{texreg}}
 \description{
@@ -43,6 +45,10 @@ An extract function for coxph objects from the \pkg{survival} package.
 
 \item{\code{extract.ergm}}{
 An extract function for ergm objects from the \pkg{ergm} package.
+}
+
+\item{\code{extract.gee}}{
+An extract function for gee objects from the \pkg{gee} package.
 }
 
 \item{\code{extract.glm}}{
@@ -107,6 +113,10 @@ An extract function for rq objects from the \pkg{quantreg} package.
 
 \item{\code{extract.sclm}}{
 An extract function for sclm objects from the \pkg{ordinal} package.
+}
+
+\item{\code{extract.svyglm}}{
+An extract function for svyglm objects from the \pkg{survey} package.
 }
 
 \item{\code{extract.systemfit}}{

@@ -32,7 +32,7 @@
 
 \section{Motivation}
 The \TeX reg package for the statistical computing environment R was designed to convert regression model output from multiple models into tables for inclusion in \LaTeX\ documents.
-It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \texttt{outreg} and \texttt{memsic}, which can also convert R tables to \LaTeX\ tables.
+It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \texttt{outreg} and \texttt{memisc}, which can also convert R tables to \LaTeX\ tables.
 Only a subset of these packages is able to merge multiple regression models in a single table.
 Those packages which can do this do not support important model types such as \texttt{lme} or \texttt{mer} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
 \TeX reg, in contrast, accepts these model types and can also merge multiple models in a single table.
@@ -51,6 +51,7 @@ Class			& Package			& Contributed by	& Added		& Description \\
 \texttt{clogit}		& \texttt{survival}		& Sebastian Daza	& 2012-09-30	& Conditional logistic regression \\
 \texttt{coxph}		& \texttt{survival}		& Philip Leifeld	& 2012-10-14	& Cox proportional hazard models \\
 \texttt{ergm}		& \texttt{ergm}			& Philip Leifeld	& 2012-06-18	& Exponential random graph models \\
+\texttt{gee}		& \texttt{gee}			& Philip Leifeld	& 2012-10-14	& Generalized estimation equation \\
 \texttt{glm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
 \texttt{glmerMod}	& \texttt{lme4} (new)		& Philip Leifeld	& 2012-10-09	& Generalized linear mixed models \\
 \texttt{gls}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Generalized least squares \\
@@ -67,6 +68,7 @@ Class			& Package			& Contributed by	& Added		& Description \\
 \texttt{Relogit}	& \texttt{Zelig}		& Philip Leifeld	& 2012-10-14	& Rare events logistic regression \\
 \texttt{rq}		& \texttt{quantreg}		& Lena Koerber		& 2012-08-01	& Quantile regression models \\
 \texttt{sclm}		& \texttt{ordinal}		& Philip Leifeld	& 2012-10-12	& Cumulative link models \\
+\texttt{svyglm}		& \texttt{survey}		& Philip Leifeld	& 2012-10-14	& Survey-weighted generalized linear models \\
 \texttt{systemfit}	& \texttt{systemfit}		& Johannes Kutsam	& 2012-10-03	& Linear structural equations \\
 \bottomrule \\
 \caption{List of currently supported model types}
