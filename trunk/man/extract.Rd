@@ -4,6 +4,7 @@
 \alias{extract.clogit}
 \alias{extract.coxph}
 \alias{extract.ergm}
+\alias{extract.gee}
 \alias{extract.glm}
 \alias{extract.glmerMod}
 \alias{extract.gls}
@@ -20,6 +21,7 @@
 \alias{extract.Relogit}
 \alias{extract.rq}
 \alias{extract.sclm}
+\alias{extract.svyglm}
 \alias{extract.systemfit}
 \title{Extract coefficients and GOF measures from a statistical object}
 \description{Extract coefficients and GOF measures from a statistical object.}
@@ -34,6 +36,7 @@ extract.coxph(model, include.aic=TRUE, include.rsquared=FALSE,
     include.maxrs=FALSE, include.events=TRUE, include.nobs=TRUE, 
     include.missings=TRUE)
 extract.ergm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE)
+extract.gee(model, robust=TRUE, include.dispersion=TRUE, include.nobs=TRUE)
 extract.glm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=TRUE)
 extract.glmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
@@ -65,6 +68,8 @@ extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE,
 extract.rq(model, include.nobs=TRUE, include.percentile=TRUE)
 extract.sclm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
     include.loglik=TRUE, include.nobs=TRUE)
+extract.svyglm(model, include.aic=FALSE, include.bic=FALSE, include.loglik=FALSE,
+    include.deviance=TRUE, include.dispersion=TRUE, include.nobs=TRUE)
 extract.systemfit(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.nobs=TRUE)
 }
@@ -84,6 +89,7 @@ to convert them into texreg objects.
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }
+\item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }
 \item{include.groups}{ If available: should the number of groups be reported? }
 \item{include.loglik}{ If available: should the log-likelihood be reported? }
@@ -92,11 +98,12 @@ to convert them into texreg objects.
 \item{include.missings}{ If available: should the number of missing observations be reported (in survival models)? }
 \item{include.nobs}{ If available: should the number of observations be reported? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }
-\item{include.pseudors}{If available: should the pseudo R-squared be reported? }
+\item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
 \item{include.pvalues}{ If available: should the p-values be reported (not recommended for lme4 models)? }
-\item{include.rsquared}{If available: should R-squared be reported? }
+\item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
 \item{include.variance}{ If available: should group variances be reported? }
+\item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
 }
 \seealso{

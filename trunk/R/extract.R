@@ -200,6 +200,54 @@ setMethod("extract", signature=className("ergm", "ergm"),
     definition = extract.ergm)
 
 
+# extension for gee objects (gee package)
+extract.gee <- function(model, robust=TRUE, include.dispersion=TRUE, 
+    include.nobs=TRUE) {
+  
+  names <- rownames(coef(summary(model)))
+  co <- coef(summary(model))[,1]
+  if (robust==TRUE) {
+    se <- coef(summary(model))[,4]
+    zval <- coef(summary(model))[,5]
+  } else {
+    se <- coef(summary(model))[,2]
+    zval <- coef(summary(model))[,3]
+  }
+  pval <- pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+  
+  n <- nobs(model)
+  disp <- summary(model)$scale
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.dispersion==TRUE) {
+    gof <- c(gof, disp)
+    gof.names <- c(gof.names, "Dispersion")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("gee", "gee"), 
+    definition = extract.gee)
+
+
 # extension for glm objects
 extract.glm <- function(model, include.aic=TRUE, include.bic=TRUE, 
     include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE) {
@@ -936,6 +984,84 @@ extract.rq <- function(model, include.nobs=TRUE, include.percentile=TRUE) {
 
 setMethod("extract", signature=className("rq", "quantreg"), 
     definition = extract.rq)
+
+
+# extension for svyglm objects (survey package)
+extract.svyglm <- function(model, include.aic=FALSE, include.bic=FALSE, 
+    include.loglik=FALSE, include.deviance=TRUE, include.dispersion=TRUE, 
+    include.nobs=TRUE) {
+  
+  names <- rownames(coef(summary(model)))
+  co <- coef(summary(model))[,1]
+  se <- coef(summary(model))[,2]
+  pval <- coef(summary(model))[,4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    aic <- AIC(model)
+    if (length(aic) > 0) {
+      gof <- c(gof, aic)
+      gof.names <- c(gof.names, "AIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    } else {
+      warning("AIC was not available and will be skipped!")
+    }
+  }
+  if (include.bic==TRUE) {
+    bic <- BIC(model)
+    if (length(bic) > 0) {
+      gof <- c(gof, bic)
+      gof.names <- c(gof.names, "BIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    } else {
+      warning("BIC was not available and will be skipped!")
+    }
+  }
+  if (include.loglik==TRUE) {
+    lik <- logLik(model)[1]
+    if (length(lik) > 0) {
+      gof <- c(gof, lik)
+      gof.names <- c(gof.names, "Log Likelihood")
+      gof.decimal <- c(gof.decimal, TRUE)
+    } else {
+      warning("The log likelihood was not available and will be skipped!")
+    }
+  }
+  if (include.deviance==TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.dispersion==TRUE) {
+    disp <- summary(model)$dispersion[1]
+    gof <- c(gof, disp)
+    gof.names <- c(gof.names, "Dispersion")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("svyglm", "survey"), 
+    definition = extract.svyglm)
 
 
 # extension for systemfit objects
