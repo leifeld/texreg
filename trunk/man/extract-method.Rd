@@ -1,7 +1,9 @@
 \name{extract-methods}
 \docType{methods}
 \alias{extract-methods}
+\alias{extract,clm-method}
 \alias{extract,clogit-method}
+\alias{extract,coxph-method}
 \alias{extract,ergm-method}
 \alias{extract,glm-method}
 \alias{extract,glmerMod-method}
@@ -15,7 +17,10 @@
 \alias{extract,nlmerMod-method}
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
+\alias{extract,polr-method}
+\alias{extract,Relogit-method}
 \alias{extract,rq-method}
+\alias{extract,sclm-method}
 \alias{extract,systemfit-method}
 \title{Methods for Function \code{extract} in Package \pkg{texreg}}
 \description{
@@ -24,8 +29,16 @@ Methods for function \code{extract} in package \pkg{texreg}.
 \section{Methods}{
 \describe{
 
+\item{\code{extract.clm}}{
+An extract function for clm objects from the \pkg{ordinal} package.
+}
+
 \item{\code{extract.clogit}}{
 An extract function for clogit objects from the \pkg{survival} package.
+}
+
+\item{\code{extract.coxph}}{
+An extract function for coxph objects from the \pkg{survival} package.
 }
 
 \item{\code{extract.ergm}}{
@@ -80,8 +93,20 @@ An extract function for plm objects from the \pkg{plm} package.
 An extract function for pmg objects from the \pkg{plm} package.
 }
 
+\item{\code{extract.polr}}{
+An extract function for polr objects from the \pkg{MASS} package.
+}
+
+\item{\code{extract.Relogit}}{
+An extract function for Relogit objects from the \pkg{Zelig} package.
+}
+
 \item{\code{extract.rq}}{
 An extract function for rq objects from the \pkg{quantreg} package.
+}
+
+\item{\code{extract.sclm}}{
+An extract function for sclm objects from the \pkg{ordinal} package.
 }
 
 \item{\code{extract.systemfit}}{

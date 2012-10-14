@@ -1,6 +1,6 @@
 %\VignetteIndexEntry{Conversion of R regression output to LaTeX tables}
 %\VignetteDepends{}
-%\VignetteKeywords{regression, lme, ergm, table, LaTeX, typesetting}
+%\VignetteKeywords{regression, table, LaTeX, typesetting}
 %\VignettePackage{texreg}
 \documentclass[a4paper]{article}
 \usepackage[utf8]{inputenc}
@@ -47,7 +47,9 @@ New model types can be easily implemented (see section \ref{templates}).
 Class			& Package			& Contributed by	& Added		& Description \\
 \midrule
 \endhead
+\texttt{clm}		& \texttt{ordinal}		& Philip Leifeld	& 2012-10-12	& Cumulative link models \\
 \texttt{clogit}		& \texttt{survival}		& Sebastian Daza	& 2012-09-30	& Conditional logistic regression \\
+\texttt{coxph}		& \texttt{survival}		& Philip Leifeld	& 2012-10-14	& Cox proportional hazard models \\
 \texttt{ergm}		& \texttt{ergm}			& Philip Leifeld	& 2012-06-18	& Exponential random graph models \\
 \texttt{glm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
 \texttt{glmerMod}	& \texttt{lme4} (new)		& Philip Leifeld	& 2012-10-09	& Generalized linear mixed models \\
@@ -61,7 +63,10 @@ Class			& Package			& Contributed by	& Added		& Description \\
 \texttt{lrm}		& \texttt{rms}, \texttt{Design}	& Fabrice Le Lec	& 2012-07-04	& Logistic regression models \\
 \texttt{plm}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear models for panel data \\
 \texttt{pmg}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
+\texttt{polr}		& \texttt{MASS}			& Philip Leifeld	& 2012-10-12	& Ordered logistic or probit regression \\
+\texttt{Relogit}	& \texttt{Zelig}		& Philip Leifeld	& 2012-10-14	& Rare events logistic regression \\
 \texttt{rq}		& \texttt{quantreg}		& Lena Koerber		& 2012-08-01	& Quantile regression models \\
+\texttt{sclm}		& \texttt{ordinal}		& Philip Leifeld	& 2012-10-12	& Cumulative link models \\
 \texttt{systemfit}	& \texttt{systemfit}		& Johannes Kutsam	& 2012-10-03	& Linear structural equations \\
 \bottomrule \\
 \caption{List of currently supported model types}
