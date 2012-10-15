@@ -515,13 +515,13 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   
   if (strong.signif == TRUE && stars==TRUE) {
     string <- paste(string, "\\multicolumn{", length(models)+1, 
-        "}{l}{\\textsuperscript{***}$p<0.001$, ", 
-        "\\textsuperscript{**}$p<0.01$, \\textsuperscript{*}$p<0.05$, ", 
-        "\\textsuperscript{$", symbol, "$}$p<0.1$}\n", sep="")
+        "}{l}{\\textsuperscript{***}$p<0.001$, \n", 
+        "  \\textsuperscript{**}$p<0.01$, \n  \\textsuperscript{*}$p<0.05$, \n",
+        "  \\textsuperscript{$", symbol, "$}$p<0.1$}\n", sep="")
   } else if (stars==TRUE) {
     string <- paste(string, "\\multicolumn{", length(models)+1, 
-        "}{l}{\\textsuperscript{***}$p<0.01$, ", 
-        "\\textsuperscript{**}$p<0.05$, \\textsuperscript{*}$p<0.1$}\n", 
+        "}{l}{\\textsuperscript{***}$p<0.01$, \n", 
+        "  \\textsuperscript{**}$p<0.05$, \n  \\textsuperscript{*}$p<0.1$}\n", 
         sep="")
   }
   

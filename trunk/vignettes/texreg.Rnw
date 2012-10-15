@@ -36,44 +36,49 @@ It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \text
 Only a subset of these packages is able to merge multiple regression models in a single table.
 Those packages which can do this do not support important model types such as \texttt{lme} or \texttt{mer} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
 \TeX reg, in contrast, accepts these model types and can also merge multiple models in a single table.
-Currently supported model types are listed in section \ref{types}.
+Currently supported model types are listed in table~\ref{tab:types}.
 New model types can be easily implemented (see section \ref{templates}).
 \TeX reg can be used within Sweave.
 \LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
 
-\section{Supported model types}\label{types}
-\begin{longtable}{l l l l p{4.6cm}}
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{l l l l l}
 \toprule
-Class			& Package			& Contributed by	& Added		& Description \\
+Class			& Package			& Added		& Description \\
 \midrule
-\endhead
-\texttt{clm}		& \texttt{ordinal}		& Philip Leifeld	& 2012-10-12	& Cumulative link models \\
-\texttt{clogit}		& \texttt{survival}		& Sebastian Daza	& 2012-09-30	& Conditional logistic regression \\
-\texttt{coxph}		& \texttt{survival}		& Philip Leifeld	& 2012-10-14	& Cox proportional hazard models \\
-\texttt{ergm}		& \texttt{ergm}			& Philip Leifeld	& 2012-06-18	& Exponential random graph models \\
-\texttt{gee}		& \texttt{gee}			& Philip Leifeld	& 2012-10-14	& Generalized estimation equation \\
-\texttt{glm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Generalized linear models \\
-\texttt{glmerMod}	& \texttt{lme4} (new)		& Philip Leifeld	& 2012-10-09	& Generalized linear mixed models \\
-\texttt{gls}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Generalized least squares \\
-\texttt{lm}		& \texttt{stats}		& Philip Leifeld	& 2012-06-19	& Ordinary least squares \\
-\texttt{lme}		& \texttt{nlme}			& Philip Leifeld	& 2012-06-19	& Linear mixed-effects models \\
-\texttt{lmerMod}	& \texttt{lme4} (new)		& Philip Leifeld	& 2012-10-08	& Linear mixed-effects models \\
-\texttt{lnam}		& \texttt{sna}			& Philip Leifeld	& 2012-10-07	& Linear network autocorrelation models \\
-\texttt{mer}		& \texttt{lme4} (old)		& Philip Leifeld	& 2012-10-08	& Linear mixed-effects models \\
-\texttt{nlmerMod}	& \texttt{lme4} (new)		& Philip Leifeld	& 2012-10-09	& Nonlinear mixed-effects models \\
-\texttt{lrm}		& \texttt{rms}, \texttt{Design}	& Fabrice Le Lec	& 2012-07-04	& Logistic regression models \\
-\texttt{plm}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear models for panel data \\
-\texttt{pmg}		& \texttt{plm}			& Lena Koerber		& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
-\texttt{polr}		& \texttt{MASS}			& Philip Leifeld	& 2012-10-12	& Ordered logistic or probit regression \\
-\texttt{Relogit}	& \texttt{Zelig}		& Philip Leifeld	& 2012-10-14	& Rare events logistic regression \\
-\texttt{rq}		& \texttt{quantreg}		& Lena Koerber		& 2012-08-01	& Quantile regression models \\
-\texttt{sclm}		& \texttt{ordinal}		& Philip Leifeld	& 2012-10-12	& Cumulative link models \\
-\texttt{svyglm}		& \texttt{survey}		& Philip Leifeld	& 2012-10-14	& Survey-weighted generalized linear models \\
-\texttt{systemfit}	& \texttt{systemfit}		& Johannes Kutsam	& 2012-10-03	& Linear structural equations \\
-\bottomrule \\
+\texttt{clm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
+\texttt{clogit}		& \texttt{survival}		& 2012-09-30	& Conditional logistic regression \\
+\texttt{coxph}		& \texttt{survival}		& 2012-10-14	& Cox proportional hazard models \\
+\texttt{ergm}		& \texttt{ergm}			& 2012-06-18	& Exponential random graph models \\
+\texttt{gee}		& \texttt{gee}			& 2012-10-14	& Generalized estimation equation \\
+\texttt{glm}		& \texttt{stats}		& 2012-06-19	& Generalized linear models \\
+\texttt{glmerMod}	& \texttt{lme4} (new)		& 2012-10-09	& Generalized linear mixed models \\
+\texttt{gls}		& \texttt{nlme}			& 2012-06-19	& Generalized least squares \\
+\texttt{lm}		& \texttt{stats}		& 2012-06-19	& Ordinary least squares \\
+\texttt{lme}		& \texttt{nlme}			& 2012-06-19	& Linear mixed-effects models \\
+\texttt{lmerMod}	& \texttt{lme4} (new)		& 2012-10-08	& Linear mixed-effects models \\
+\texttt{lnam}		& \texttt{sna}			& 2012-10-07	& Linear network autocorrelation models \\
+\texttt{mer}		& \texttt{lme4} (old)		& 2012-10-08	& Linear mixed-effects models \\
+\texttt{negbin}		& \texttt{MASS}			& 2012-10-15	& Negative binomial generalized linear models \\
+\texttt{nlmerMod}	& \texttt{lme4} (new)		& 2012-10-09	& Nonlinear mixed-effects models \\
+\texttt{lrm}		& \texttt{rms}, \texttt{Design}	& 2012-07-04	& Logistic regression models \\
+\texttt{plm}		& \texttt{plm}			& 2012-08-01	& Linear models for panel data \\
+\texttt{pmg}		& \texttt{plm}			& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
+\texttt{polr}		& \texttt{MASS}			& 2012-10-12	& Ordered logistic or probit regression \\
+\texttt{Relogit}	& \texttt{Zelig}		& 2012-10-14	& Rare events logistic regression \\
+\texttt{rq}		& \texttt{quantreg}		& 2012-08-01	& Quantile regression models \\
+\texttt{sclm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
+\texttt{simex}		& \texttt{simex}		& 2012-10-15	& SIMEX algorithm for measurement error models \\
+\texttt{svyglm}		& \texttt{survey}		& 2012-10-14	& Survey-weighted generalized linear models \\
+\texttt{systemfit}	& \texttt{systemfit}		& 2012-10-03	& Linear structural equations \\
+\texttt{tobit}		& \texttt{AER}			& 2012-10-15	& Tobit regression models for censored data \\
+\bottomrule
+\end{tabular}
+\end{center}
 \caption{List of currently supported model types}
 \label{tab:types}
-\end{longtable}
+\end{table}
 
 \section{Installation}\label{installation}
 It should be possible to install \TeX reg using a simple command:

@@ -42,7 +42,7 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{...}{ Custom options to be passed on to the extract function. }
 }
 \seealso{
-\code{\link{texreg-package}}
+\code{\link{texreg-package} \link{extract} \link{extract-methods}}
 }
 \author{
 Philip Leifeld (\url{http://www.philipleifeld.de})

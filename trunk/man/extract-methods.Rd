@@ -15,6 +15,7 @@
 \alias{extract,lnam-method}
 \alias{extract,lrm-method}
 \alias{extract,mer-method}
+\alias{extract,negbin-method}
 \alias{extract,nlmerMod-method}
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
@@ -22,8 +23,10 @@
 \alias{extract,Relogit-method}
 \alias{extract,rq-method}
 \alias{extract,sclm-method}
+\alias{extract,simex-method}
 \alias{extract,svyglm-method}
 \alias{extract,systemfit-method}
+\alias{extract,tobit-method}
 \title{Methods for Function \code{extract} in Package \pkg{texreg}}
 \description{
 Methods for function \code{extract} in package \pkg{texreg}.
@@ -87,6 +90,10 @@ An extract function for lrm objects from the \pkg{Design} or \pkg{rms} package.
 An extract function for mer objects from the (old) \pkg{lme4} package.
 }
 
+\item{\code{extract.negbin}}{
+An extract function for negbin objects from the \pkg{MASS} package.
+}
+
 \item{\code{extract.nlmerMod}}{
 An extract function for nlmerMod objects from the (new) \pkg{lme4} package.
 }
@@ -115,12 +122,20 @@ An extract function for rq objects from the \pkg{quantreg} package.
 An extract function for sclm objects from the \pkg{ordinal} package.
 }
 
+\item{\code{extract.simex}}{
+An extract function for simex objects from the \pkg{simex} package.
+}
+
 \item{\code{extract.svyglm}}{
 An extract function for svyglm objects from the \pkg{survey} package.
 }
 
 \item{\code{extract.systemfit}}{
 An extract function for systemfit objects from the \pkg{systemfit} package.
+}
+
+\item{\code{extract.tobit}}{
+An extract function for tobit objects from the \pkg{AER} package.
 }
 }}
 \seealso{
