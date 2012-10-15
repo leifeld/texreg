@@ -14,6 +14,7 @@
 \alias{extract.lnam}
 \alias{extract.lrm}
 \alias{extract.mer}
+\alias{extract.negbin}
 \alias{extract.nlmerMod}
 \alias{extract.plm}
 \alias{extract.pmg}
@@ -21,8 +22,10 @@
 \alias{extract.Relogit}
 \alias{extract.rq}
 \alias{extract.sclm}
+\alias{extract.simex}
 \alias{extract.svyglm}
 \alias{extract.systemfit}
+\alias{extract.tobit}
 \title{Extract coefficients and GOF measures from a statistical object}
 \description{Extract coefficients and GOF measures from a statistical object.}
 \usage{
@@ -56,6 +59,8 @@ extract.lrm(model, include.pseudors=TRUE, include.lr=TRUE, include.nobs=TRUE)
 extract.mer(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
     include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE)
+extract.negbin(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
+    include.deviance=TRUE, include.nobs=TRUE)
 extract.nlmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
     include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE)
@@ -68,10 +73,14 @@ extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE,
 extract.rq(model, include.nobs=TRUE, include.percentile=TRUE)
 extract.sclm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
     include.loglik=TRUE, include.nobs=TRUE)
+extract.simex(model, jackknife=TRUE, include.nobs=TRUE)
 extract.svyglm(model, include.aic=FALSE, include.bic=FALSE, include.loglik=FALSE,
     include.deviance=TRUE, include.dispersion=TRUE, include.nobs=TRUE)
 extract.systemfit(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.nobs=TRUE)
+extract.tobit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
+    include.deviance=TRUE, include.nobs=FALSE, include.censnobs=TRUE, 
+    include.wald=TRUE)
 }
 \details{
 extract() is a generic function which extracts coefficients and GOF measures from 
@@ -88,6 +97,7 @@ to convert them into texreg objects.
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
+\item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }
 \item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }
@@ -103,6 +113,8 @@ to convert them into texreg objects.
 \item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
 \item{include.variance}{ If available: should group variances be reported? }
+\item{include.wald}{ If available: should the Wald statistic be included? }
+\item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
 }

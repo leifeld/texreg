@@ -310,6 +310,9 @@ extract.Relogit <- extract.glm
 setMethod("extract", signature=className("Relogit", "Zelig"), 
     definition = extract.Relogit)
 
+extract.negbin <- extract.glm
+setMethod("extract", signature=className("negbin", "MASS"), 
+    definition = extract.negbin)
 
 # extension for gls objects
 extract.gls <- function(model, include.aic=TRUE, include.bic=TRUE, 
@@ -986,6 +989,46 @@ setMethod("extract", signature=className("rq", "quantreg"),
     definition = extract.rq)
 
 
+# extension for simex objects
+extract.simex <- function(model, jackknife=TRUE, include.nobs=TRUE) {
+  if (jackknife==TRUE) {
+    names <- rownames(summary(model)$coefficients$jackknife)
+    co <- summary(model)$coefficients$jackknife[,1]
+    se <- summary(model)$coefficients$jackknife[,2]
+    pval <- summary(model)$coefficients$jackknife[,4]
+  } else {
+    names <- rownames(summary(model)$coefficients$asymptotic)
+    co <- summary(model)$coefficients$asymptotic[,1]
+    se <- summary(model)$coefficients$asymptotic[,2]
+    pval <- summary(model)$coefficients$asymptotic[,4]
+  }
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs==TRUE) {
+    n <- length(model$model$residuals)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("simex", "simex"), 
+    definition = extract.simex)
+
+
 # extension for svyglm objects (survey package)
 extract.svyglm <- function(model, include.aic=FALSE, include.bic=FALSE, 
     include.loglik=FALSE, include.deviance=TRUE, include.dispersion=TRUE, 
@@ -1114,4 +1157,73 @@ extract.systemfit <- function(model, include.rsquared=TRUE, include.adjrs=TRUE,
 
 setMethod("extract", signature=className("systemfit", "systemfit"), 
     definition = extract.systemfit)
+
+
+# extension for tobit objects (AER package)
+extract.tobit <- function(model, include.aic=TRUE, include.bic=TRUE, 
+    include.loglik=TRUE, include.deviance=TRUE, include.nobs=FALSE, 
+    include.censnobs=TRUE, include.wald=TRUE) {
+  
+  names <- rownames(summary(model)$coefficients)
+  co <- summary(model)$coefficients[,1]
+  se <- summary(model)$coefficients[,2]
+  pval <- summary(model)$coefficients[,4]
+
+  n <- nobs(model)
+  censnobs <- summary(model)$n
+  censnobs.names <- names(censnobs)
+  aic <- AIC(model)
+  bic <- BIC(model)
+  lik <- logLik(model)[1]
+  dev <- deviance(model)
+  wald <- summary(model)$wald
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic==TRUE) {
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik==TRUE) {
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance==TRUE) {
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.censnobs==TRUE) {
+    gof <- c(gof, censnobs)
+    gof.names <- c(gof.names, censnobs.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(censnobs)))
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("tobit", "AER"), 
+    definition = extract.tobit)
 
