@@ -6,5 +6,5 @@ Author: Philip Leifeld
 Maintainer: Philip Leifeld <philip.leifeld@eawag.ch>
 Description: texreg converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables. Either a single model or a list of models can be combined in a single table. The output is customizable. New model types can be easily implemented.
 Suggests: ergm, network, nlme
-Depends: R (>= 2.7.0), methods
+Depends: R (>= 2.13.0), methods
 License: GPL-3
