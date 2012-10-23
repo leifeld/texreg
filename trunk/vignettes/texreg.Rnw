@@ -70,6 +70,7 @@ Class			& Package			& Added		& Description \\
 \texttt{rq}		& \texttt{quantreg}		& 2012-08-01	& Quantile regression models \\
 \texttt{sclm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
 \texttt{simex}		& \texttt{simex}		& 2012-10-15	& SIMEX algorithm for measurement error models \\
+\texttt{stergm}		& \texttt{tergm}		& 2012-10-23	& Separable temporal exponential random graph models \\
 \texttt{svyglm}		& \texttt{survey}		& 2012-10-14	& Survey-weighted generalized linear models \\
 \texttt{systemfit}	& \texttt{systemfit}		& 2012-10-03	& Linear structural equations \\
 \texttt{tobit}		& \texttt{AER}			& 2012-10-15	& Tobit regression models for censored data \\
