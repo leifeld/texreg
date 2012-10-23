@@ -24,6 +24,7 @@
 \alias{extract,rq-method}
 \alias{extract,sclm-method}
 \alias{extract,simex-method}
+\alias{extract,stergm-method}
 \alias{extract,svyglm-method}
 \alias{extract,systemfit-method}
 \alias{extract,tobit-method}
@@ -124,6 +125,10 @@ An extract function for sclm objects from the \pkg{ordinal} package.
 
 \item{\code{extract.simex}}{
 An extract function for simex objects from the \pkg{simex} package.
+}
+
+\item{\code{extract.stergm}}{
+An extract function for stergm objects from the \pkg{tergm} package.
 }
 
 \item{\code{extract.svyglm}}{

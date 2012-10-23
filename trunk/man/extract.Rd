@@ -23,6 +23,7 @@
 \alias{extract.rq}
 \alias{extract.sclm}
 \alias{extract.simex}
+\alias{extract.stergm}
 \alias{extract.svyglm}
 \alias{extract.systemfit}
 \alias{extract.tobit}
@@ -74,6 +75,8 @@ extract.rq(model, include.nobs=TRUE, include.percentile=TRUE)
 extract.sclm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
     include.loglik=TRUE, include.nobs=TRUE)
 extract.simex(model, jackknife=TRUE, include.nobs=TRUE)
+extract.stergm(model, include.formation=TRUE, include.dissolution=TRUE, 
+    include.nvertices=TRUE)
 extract.svyglm(model, include.aic=FALSE, include.bic=FALSE, include.loglik=FALSE,
     include.deviance=TRUE, include.dispersion=TRUE, include.nobs=TRUE)
 extract.systemfit(model, include.rsquared=TRUE, include.adjrs=TRUE, 
@@ -100,13 +103,16 @@ to convert them into texreg objects.
 \item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }
 \item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
+\item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }
+\item{include.formation}{ If available: should the coefficients for the formation phase in a STERGM be reported? }
 \item{include.groups}{ If available: should the number of groups be reported? }
 \item{include.loglik}{ If available: should the log-likelihood be reported? }
 \item{include.lr}{ If available: should the likelihood ratio test be reported? }
 \item{include.maxrs}{If available: should the maximum possible R-squared be reported? }
 \item{include.missings}{ If available: should the number of missing observations be reported (in survival models)? }
 \item{include.nobs}{ If available: should the number of observations be reported? }
+\item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }
 \item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
 \item{include.pvalues}{ If available: should the p-values be reported (not recommended for lme4 models)? }

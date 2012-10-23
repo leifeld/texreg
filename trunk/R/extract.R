@@ -1029,6 +1029,53 @@ setMethod("extract", signature=className("simex", "simex"),
     definition = extract.simex)
 
 
+# extension for stergm objects (tergm package)
+extract.stergm <- function(model, include.formation=TRUE, 
+    include.dissolution=TRUE, include.nvertices=TRUE) {
+  
+  co <- numeric()
+  se <- numeric()
+  names <- character()
+  pval <- numeric()
+  if (include.formation==TRUE) {
+    names <- paste("Formation:", rownames(summary(model)$formation$coefs))
+    co <- summary(model)$formation$coefs[,1]
+    se <- summary(model)$formation$coefs[,2]
+    pval <- summary(model)$formation$coefs[,4]
+  }
+  if (include.dissolution==TRUE) {
+    names <- c(names, paste("Dissolution:", rownames(summary(model)$dissolution$coefs)))
+    co <- c(co, summary(model)$dissolution$coefs[,1])
+    se <- c(se, summary(model)$dissolution$coefs[,2])
+    pval <- c(pval, summary(model)$dissolution$coefs[,4])
+  }
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nvertices==TRUE) {
+    nvertices <- model$formation.fit$network$gal$n
+    gof <- c(gof, nvertices)
+    gof.names <- c(gof.names, "Num. vertices")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("stergm", "tergm"), 
+    definition = extract.stergm)
+
+
 # extension for svyglm objects (survey package)
 extract.svyglm <- function(model, include.aic=FALSE, include.bic=FALSE, 
     include.loglik=FALSE, include.deviance=TRUE, include.dispersion=TRUE, 
