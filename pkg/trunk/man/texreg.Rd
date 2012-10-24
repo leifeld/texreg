@@ -55,18 +55,6 @@ model.2 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
 table.string <- texreg(list(model.1, model.2))
 cat(table.string)
 
-#Exponential random graph models
-library(network)
-library(ergm)
-mat <- rbinom(400,1,0.16)  #create a matrix
-mat <- matrix(mat, nrow=20)
-nw <- network(mat)
-model.1 <- ergm(nw ~ edges)
-model.2 <- ergm(nw ~ edges + mutual)
-model.3 <- ergm(nw ~ edges + mutual + twopath)
-table.string <- texreg(list(model.1, model.2, model.3))
-cat(table.string)
-
 #Ordinary least squares model (example from the 'lm' help file)
 ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
 trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
