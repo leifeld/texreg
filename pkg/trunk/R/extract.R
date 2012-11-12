@@ -314,6 +314,7 @@ extract.negbin <- extract.glm
 setMethod("extract", signature=className("negbin", "MASS"), 
     definition = extract.negbin)
 
+
 # extension for gls objects
 extract.gls <- function(model, include.aic=TRUE, include.bic=TRUE, 
     include.loglik=TRUE, include.nobs=TRUE) {
@@ -570,6 +571,41 @@ setMethod("extract", signature=className("glmerMod", "lme4"),
 extract.nlmerMod <- extract.lmerMod
 setMethod("extract", signature=className("nlmerMod", "lme4"), 
     definition = extract.nlmerMod)
+
+
+# extension for lmrob objects (robustbase package)
+extract.lmrob <- function(model, include.nobs = TRUE) {
+
+  names <- rownames(summary(model)$coef)
+  co <- summary(model)$coef[,1]
+  se <- summary(model)$coef[,2]
+  pval <- summary(model)$coef[,4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  
+  if (include.nobs == TRUE) {
+    n <- length(model$residuals)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+    coef.names = names, 
+    coef = co, 
+    se = se,
+    pvalues = pval, 
+    gof.names = gof.names, 
+    gof = gof, 
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("lmrob", "robustbase"), 
+    definition = extract.lmrob)
 
 
 # extension for lnam objects (sna package)
@@ -947,6 +983,38 @@ extract.polr <- function(model, include.thresholds=TRUE, include.aic=TRUE,
 
 setMethod("extract", signature=className("polr", "MASS"), 
     definition = extract.polr)
+
+
+# extension for rlm objects (MASS package)
+extract.rlm <- function (model, include.nobs=TRUE) {
+  
+  names <- rownames(summary(model)$coef)
+  co <- summary(model)$coef[,1]
+  se <- summary(model)$coef[,2]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+    coef.names = names, 
+    coef = co, 
+    se = se, 
+    gof.names = gof.names, 
+    gof = gof, 
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("rlm", "MASS"), 
+    definition = extract.rlm)
 
 
 # extension for rq objects (quantreg package)

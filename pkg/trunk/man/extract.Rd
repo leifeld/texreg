@@ -11,6 +11,7 @@
 \alias{extract.lm}
 \alias{extract.lme}
 \alias{extract.lmerMod}
+\alias{extract.lmrob}
 \alias{extract.lnam}
 \alias{extract.lrm}
 \alias{extract.mer}
@@ -20,6 +21,7 @@
 \alias{extract.pmg}
 \alias{extract.polr}
 \alias{extract.Relogit}
+\alias{extract.rlm}
 \alias{extract.rq}
 \alias{extract.sclm}
 \alias{extract.simex}
@@ -54,6 +56,7 @@ extract.lme(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE,
 extract.lmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
     include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE)
+extract.lmrob(model, include.nobs=TRUE)
 extract.lnam(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE)
 extract.lrm(model, include.pseudors=TRUE, include.lr=TRUE, include.nobs=TRUE)
@@ -71,12 +74,14 @@ extract.polr(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
     include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE)
 extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=TRUE)
+extract.rlm(model, include.nobs=TRUE)
 extract.rq(model, include.nobs=TRUE, include.percentile=TRUE)
 extract.sclm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
     include.loglik=TRUE, include.nobs=TRUE)
 extract.simex(model, jackknife=TRUE, include.nobs=TRUE)
-extract.stergm(model, include.formation=TRUE, include.dissolution=TRUE, 
-    include.nvertices=TRUE)
+extract.stergm(model, beside=FALSE, include.formation=TRUE, 
+    include.dissolution=TRUE, include.nvertices=TRUE, include.aic=FALSE, 
+    include.bic=FALSE, include.loglik=FALSE)
 extract.svyglm(model, include.aic=FALSE, include.bic=FALSE, include.loglik=FALSE,
     include.deviance=TRUE, include.dispersion=TRUE, include.nobs=TRUE)
 extract.systemfit(model, include.rsquared=TRUE, include.adjrs=TRUE, 
@@ -97,6 +102,7 @@ to convert them into texreg objects.
 }
 \arguments{
 \item{model}{ A statistical model object. }
+\item{beside}{ If available: should the model terms be arranged below each other or beside each other (default)? For example, in a stergm model, the formation and dissolution coefficients can be arranged in two different ways. }
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
