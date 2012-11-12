@@ -12,6 +12,7 @@
 \alias{extract,lm-method}
 \alias{extract,lme-method}
 \alias{extract,lmerMod-method}
+\alias{extract,lmrob-method}
 \alias{extract,lnam-method}
 \alias{extract,lrm-method}
 \alias{extract,mer-method}
@@ -21,6 +22,7 @@
 \alias{extract,pmg-method}
 \alias{extract,polr-method}
 \alias{extract,Relogit-method}
+\alias{extract,rlm-method}
 \alias{extract,rq-method}
 \alias{extract,sclm-method}
 \alias{extract,simex-method}
@@ -79,6 +81,10 @@ An extract function for lme objects from the \pkg{nlme} package.
 An extract function for lmerMod objects from the (new) \pkg{lme4} package.
 }
 
+\item{\code{extract.lmrob}}{
+An extract function for lmrob objects from the \pkg{robustbase} package.
+}
+
 \item{\code{extract.lnam}}{
 An extract function for lnam objects from the \pkg{sna} package.
 }
@@ -113,6 +119,10 @@ An extract function for polr objects from the \pkg{MASS} package.
 
 \item{\code{extract.Relogit}}{
 An extract function for Relogit objects from the \pkg{Zelig} package.
+}
+
+\item{\code{extract.rlm}}{
+An extract function for rlm objects from the \pkg{MASS} package.
 }
 
 \item{\code{extract.rq}}{

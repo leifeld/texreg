@@ -58,6 +58,7 @@ Class			& Package			& Added		& Description \\
 \texttt{lm}		& \texttt{stats}		& 2012-06-19	& Ordinary least squares \\
 \texttt{lme}		& \texttt{nlme}			& 2012-06-19	& Linear mixed-effects models \\
 \texttt{lmerMod}	& \texttt{lme4} (new)		& 2012-10-08	& Linear mixed-effects models \\
+\texttt{lmrob}		& \texttt{robustbase}		& 2012-11-12	& MM-type estimators for linear models \\
 \texttt{lnam}		& \texttt{sna}			& 2012-10-07	& Linear network autocorrelation models \\
 \texttt{mer}		& \texttt{lme4} (old)		& 2012-10-08	& Linear mixed-effects models \\
 \texttt{negbin}		& \texttt{MASS}			& 2012-10-15	& Negative binomial generalized linear models \\
@@ -67,6 +68,7 @@ Class			& Package			& Added		& Description \\
 \texttt{pmg}		& \texttt{plm}			& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
 \texttt{polr}		& \texttt{MASS}			& 2012-10-12	& Ordered logistic or probit regression \\
 \texttt{Relogit}	& \texttt{Zelig}		& 2012-10-14	& Rare events logistic regression \\
+\texttt{rlm}		& \texttt{MASS}			& 2012-11-12	& Robust fitting of linear models \\
 \texttt{rq}		& \texttt{quantreg}		& 2012-08-01	& Quantile regression models \\
 \texttt{sclm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
 \texttt{simex}		& \texttt{simex}		& 2012-10-15	& SIMEX algorithm for measurement error models \\
