@@ -38,7 +38,7 @@ Those packages which can do this do not support important model types such as \t
 \TeX reg, in contrast, accepts these model types and can also merge multiple models in a single table.
 Currently supported model types are listed in table~\ref{tab:types}.
 New model types can be easily implemented (see section \ref{templates}).
-\TeX reg can be used within Sweave.
+\TeX reg can be used within Sweave and knitr.
 \LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
 
 \begin{table}[t]
@@ -245,7 +245,7 @@ Any new extract function must retrieve the following data from a statistical mod
  \item[coef] The actual coefficients. These values must be in the same order as the \texttt{coef.names}.
  \item[se] The standard errors, which will later be put in parentheses. These values must be in the same order as the \texttt{coef.names}.
  \item[pvalues] The $p$ values (\emph{optional}). They are used to add significance stars. These values must be in the same order as the \texttt{coef.names}.
- \item[gof.names] The names of some goodness-of-fit statistics to be added to the table. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj. R$^2$ and Num. obs.
+ \item[gof.names] The names of some goodness-of-fit statistics to be added to the table. For example, the \texttt{extract.lm()} function extracts R$^2$, Adj.\ R$^2$ and Num.\ obs.
  \item[gof] A vector of goodness-of-fit statistics to be added to the table. These values must be in the same order as the \texttt{gof.names}.
  \item[gof.decimal] A vector of logical (boolean) values indicating for every GOF value whether the value should have decimal places in the output table (\emph{optional}). This is useful to avoid decimal places for the number of observations and similar count variables.
 \end{description}
@@ -265,7 +265,7 @@ extract.lm <- function(model) {
   n <- nobs(model)                         # extract number of observations
   
   gof <- c(rs, adj, n)                     # put the GOFs in a vector
-  gof.names <- c("R$^2$", "Adj. R$^2$", "Num. obs.")   #also put names in vector
+  gof.names <- c("R$^2$", "Adj.\ R$^2$", "Num.\ obs.") #also put names in vector
   decimal.places <- c(TRUE, TRUE, FALSE)   # which GOFs will have decimal places
   
   tr <- createTexreg(                      # create a texreg object
