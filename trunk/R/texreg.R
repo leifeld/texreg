@@ -5,9 +5,9 @@
 
 # display version number and date when the package is loaded
 .onAttach <- function(libname, pkgname) {
-  vers <- help(package="texreg")$info[[1]][2]
-  dat <- help(package="texreg")$info[[1]][3]
-  packageStartupMessage(paste(vers, "\n", dat, sep=""))
+  desc  <- packageDescription(pkgname, libname)
+  packageStartupMessage('Version:  ', desc$Version, '\n', 'Date:     ', 
+      desc$Date)
 }
 
 
