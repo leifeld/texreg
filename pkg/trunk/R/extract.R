@@ -11,7 +11,7 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
 # extension for clm objects
 extract.clm <- function(model, include.thresholds=TRUE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.nobs=TRUE) {
-
+  
   tab <- summary(model)$coefficients
   thresh <- tab[rownames(tab) %in% names(summary(model)$aliased$alpha),]
   threshold.names <- rownames(thresh)
@@ -1018,14 +1018,14 @@ setMethod("extract", signature=className("rlm", "MASS"),
 
 
 # extension for rq objects (quantreg package)
-extract.rq <- function(model, include.nobs=TRUE, include.percentile=TRUE) {
-  co <- summary(model, cov=TRUE)$coef[,1]
-  names <- rownames(summary(model, cov=TRUE)$coef)
-  se <- summary(model, cov=TRUE)$coef[,2]
-  pval <- summary(model, cov=TRUE)$coef[,4]
+extract.rq <- function(model, include.nobs=TRUE, include.percentile=TRUE, ...) {
+  co <- summary(model, cov=TRUE, ...)$coef[,1]
+  names <- rownames(summary(model, cov=TRUE, ...)$coef)
+  se <- summary(model, cov=TRUE, ...)$coef[,2]
+  pval <- summary(model, cov=TRUE, ...)$coef[,4]
   
-  n <- length(summary(model)$resid)
-  tau <- summary(model)$tau
+  n <- length(summary(model, ...)$resid)
+  tau <- summary(model, ...)$tau
   
   gof <- numeric()
   gof.names <- character()
