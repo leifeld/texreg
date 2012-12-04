@@ -3,6 +3,7 @@
 \alias{extract.clm}
 \alias{extract.clogit}
 \alias{extract.coxph}
+\alias{extract.coxph.penal}
 \alias{extract.ergm}
 \alias{extract.gee}
 \alias{extract.glm}
@@ -35,12 +36,15 @@
 extract(model, ...)
 extract.clm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE, 
     include.loglik=TRUE, include.nobs=TRUE)
-extract.clogit(model, include.aic=TRUE, include.rsquared=FALSE, 
-    include.maxrs=FALSE, include.events=TRUE, include.nobs=TRUE, 
+extract.clogit(model, include.aic=TRUE, include.rsquared=TRUE, 
+    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
     include.missings=TRUE)
-extract.coxph(model, include.aic=TRUE, include.rsquared=FALSE, 
-    include.maxrs=FALSE, include.events=TRUE, include.nobs=TRUE, 
-    include.missings=TRUE)
+extract.coxph(model, include.aic=TRUE, include.rsquared=TRUE, 
+    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
+    include.missings=TRUE, include.zph=TRUE)
+extract.coxph.penal(model, include.aic=TRUE, include.rsquared=TRUE, 
+    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
+    include.missings=TRUE, include.zph=TRUE)
 extract.ergm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE)
 extract.gee(model, robust=TRUE, include.dispersion=TRUE, include.nobs=TRUE)
 extract.glm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
@@ -75,7 +79,7 @@ extract.polr(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
 extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=TRUE)
 extract.rlm(model, include.nobs=TRUE)
-extract.rq(model, include.nobs=TRUE, include.percentile=TRUE)
+extract.rq(model, include.nobs=TRUE, include.percentile=TRUE, ...)
 extract.sclm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
     include.loglik=TRUE, include.nobs=TRUE)
 extract.simex(model, jackknife=TRUE, include.nobs=TRUE)
@@ -126,6 +130,7 @@ to convert them into texreg objects.
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
 \item{include.variance}{ If available: should group variances be reported? }
 \item{include.wald}{ If available: should the Wald statistic be included? }
+\item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }

@@ -83,10 +83,164 @@ setMethod("extract", signature=className("sclm", "ordinal"),
     definition = extract.clm)
 
 
-# extension for coxph and clogit objects (survival package)
-extract.coxph <- function(model, include.aic=TRUE, include.rsquared=FALSE, 
-    include.maxrs=FALSE, include.events=TRUE, include.nobs=TRUE, 
+# extension for coxph objects (survival package)
+extract.coxph <- function(model, include.aic=TRUE, include.rsquared=TRUE, 
+    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
+    include.missings=TRUE, include.zph=TRUE) {
+  
+  coefficient.names <- rownames(summary(model)$coef)
+  coefficients <- summary(model)$coef[,1]
+  standard.errors <- summary(model)$coef[,3]
+  significance <- summary(model)$coef[,5]
+  
+  aic <- extractAIC(model)[2]
+  event <- model$nevent
+  n <- model$n
+  mis <- length(model$na.action)
+  rs <- summary(model)$rsq[1]
+  maxrs <- summary(model)$rsq[2]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.rsquared==TRUE) {
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.maxrs==TRUE) {
+    gof <- c(gof, maxrs)
+    gof.names <- c(gof.names, "Max.\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.events==TRUE) {
+    gof <- c(gof, event)
+    gof.names <- c(gof.names, "Num.\ events")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.nobs==TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.missings==TRUE) {
+    gof <- c(gof, mis)
+    gof.names <- c(gof.names, "Missings")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.zph==TRUE) {
+    zph <- cox.zph(model)$table
+    zph <- zph[length(zph[,1]), length(zph[1,])]
+    gof <- c(gof, zph)
+    gof.names <- c(gof.names, "PH test")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("coxph", "survival"), 
+    definition = extract.coxph)
+
+
+# extension for coxph.penal objects (survival package)
+extract.coxph.penal <- function(model, include.aic=TRUE, include.rsquared=TRUE,
+    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
+    include.missings=TRUE, include.zph=TRUE) {
+  
+  coefficients <- coef(model)
+  coefficient.names <- names(coefficients)
+  if (!is.null(model$naive.var)) {
+    standard.errors <- sqrt(diag(model$naive.var))
+  } else {
+    standard.errors <- sqrt(diag(model$var))
+  }
+  significance <- 1 - pchisq((coefficients/standard.errors)^2, 1)
+
+  aic <- extractAIC(model)[2]
+  event <- model$nevent
+  n <- model$n
+  mis <- length(model$na.action)
+  logtest <- -2 * (model$loglik[1] - model$loglik[2])
+  rs <- 1 - exp( - logtest / model$n)
+  maxrs <- 1 - exp((2 * model$loglik[1]) / model$n)
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.rsquared==TRUE) {
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.maxrs==TRUE) {
+    gof <- c(gof, maxrs)
+    gof.names <- c(gof.names, "Max.\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.events==TRUE) {
+    gof <- c(gof, event)
+    gof.names <- c(gof.names, "Num.\ events")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.nobs==TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.missings==TRUE) {
+    gof <- c(gof, mis)
+    gof.names <- c(gof.names, "Missings")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.zph==TRUE) {
+    zph <- cox.zph(model)$table
+    zph <- zph[length(zph[,1]), length(zph[1,])]
+    gof <- c(gof, zph)
+    gof.names <- c(gof.names, "PH test")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=coefficient.names, 
+      coef=coefficients, 
+      se=standard.errors, 
+      pvalues=significance, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("coxph.penal", "survival"), 
+    definition = extract.coxph.penal)
+
+
+# extension for clogit objects (survival package)
+extract.clogit <- function(model, include.aic=TRUE, include.rsquared=TRUE, 
+    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
     include.missings=TRUE) {
+  
   coefficient.names <- rownames(summary(model)$coef)
   coefficients <- summary(model)$coef[,1]
   standard.errors <- summary(model)$coef[,3]
@@ -145,10 +299,6 @@ extract.coxph <- function(model, include.aic=TRUE, include.rsquared=FALSE,
   return(tr)
 }
 
-setMethod("extract", signature=className("coxph", "survival"), 
-    definition = extract.coxph)
-
-extract.clogit <- extract.coxph
 setMethod("extract", signature=className("clogit", "survival"), 
     definition = extract.clogit)
 

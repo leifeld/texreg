@@ -50,6 +50,7 @@ Class			& Package			& Added		& Description \\
 \texttt{clm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
 \texttt{clogit}		& \texttt{survival}		& 2012-09-30	& Conditional logistic regression \\
 \texttt{coxph}		& \texttt{survival}		& 2012-10-14	& Cox proportional hazard models \\
+\texttt{coxph.penal}	& \texttt{survival}		& 2012-12-04	& Cox proportional hazard models with penalty splines \\
 \texttt{ergm}		& \texttt{ergm}			& 2012-06-18	& Exponential random graph models \\
 \texttt{gee}		& \texttt{gee}			& 2012-10-14	& Generalized estimation equation \\
 \texttt{glm}		& \texttt{stats}		& 2012-06-19	& Generalized linear models \\
