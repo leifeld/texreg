@@ -1060,6 +1060,15 @@ extract.polr <- function(model, include.thresholds=TRUE, include.aic=TRUE,
   beta <- tab[!rownames(tab) %in% zeta.names,]
   thresh <- tab[rownames(tab) %in% zeta.names,]
   
+  if (sum(!rownames(tab) %in% zeta.names) == 1) {
+    beta <- t(beta)
+    rownames(beta) <- rownames(tab)[!rownames(tab) %in% zeta.names]
+  }
+  if (sum(rownames(tab) %in% zeta.names) == 1) {
+    thresh <- t(thresh)
+    rownames(thresh) <- rownames(tab)[rownames(tab) %in% zeta.names]
+  }
+  
   threshold.names <- rownames(thresh)
   threshold.coef <- thresh[,1]
   threshold.se <- thresh[,2]
