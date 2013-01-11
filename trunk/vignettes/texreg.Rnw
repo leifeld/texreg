@@ -255,30 +255,49 @@ Once you have located all these data, you can create a \texttt{texreg} object an
 The following code provides an example.
 It shows the \texttt{extract.lm()} function:
 \begin{verbatim}
-extract.lm <- function(model) {
-  names <- rownames(summary(model)$coef)   # extract coefficient names
-  co <- summary(model)$coef[,1]            # extract the coefficient values
-  se <- summary(model)$coef[,2]            # extract the standard errors
-  pval <- summary(model)$coef[,4]          # extract the p-values
+extract.lm <- function(model, include.rsquared=TRUE, include.adjrs=TRUE, 
+    include.nobs=TRUE, ...) {
   
-  rs <- summary(model)$r.squared           # extract R-squared
-  adj <- summary(model)$adj.r.squared      # extract adjusted R-squared
-  n <- nobs(model)                         # extract number of observations
+  s <- summary(model, ...)                   # save the summary statistics
   
-  gof <- c(rs, adj, n)                     # put the GOFs in a vector
-  gof.names <- c("R$^2$", "Adj.\ R$^2$", "Num.\ obs.") #also put names in vector
-  decimal.places <- c(TRUE, TRUE, FALSE)   # which GOFs will have decimal places
+  names <- rownames(s$coef)                  # extract coefficient names
+  co <- s$coef[,1]                           # extract the coefficient values
+  se <- s$coef[,2]                           # extract the standard errors
+  pval <- s$coef[,4]                         # extract the p-values
   
-  tr <- createTexreg(                      # create a texreg object
+  rs <- s$r.squared                          # extract R-squared
+  adj <- s$adj.r.squared                     # extract adjusted R-squared
+  n <- nobs(model)                           # extract number of observations
+  
+  gof <- numeric()                           # create a vector for the GOFs
+  gof.names <- character()                   # create a vector for the GOF names
+  gof.decimal <- logical()                   # should the GOFs have dec. places?
+  if (include.rsquared==TRUE) {              # if the user wants r-squared...
+    gof <- c(gof, rs)                        # add it to the GOF list
+    gof.names <- c(gof.names, "R$^2$")       # add its name to the list
+    gof.decimal <- c(gof.decimal, TRUE)      # and make sure it has dec. places
+  }
+  if (include.adjrs==TRUE) {                 # same for adjusted r-squared
+    gof <- c(gof, adj)
+    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {                  # same for number of observations
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)     # but these are integer numbers
+  }
+  
+  tr <- createTexreg(                        # create a texreg object
       coef.names=names, 
       coef=co, 
       se=se, 
-      pvalues=pval,                        # p-values are only needed when
-      gof.names=gof.names,                 # significance stars shall be printed
-      gof=gof,
-      gof.decimal=decimal.places           # (optional)
+      pvalues=pval,                          # p-values are only needed when
+      gof.names=gof.names,                   # signif. stars shall be printed
+      gof=gof, 
+      gof.decimal=gof.decimal                # (optional)
   )
-  return(tr)                               # return the texreg object to texreg
+  return(tr)                                 # return texreg object to texreg
 }
 \end{verbatim}
 After writing a custom function, the function has to be registered.

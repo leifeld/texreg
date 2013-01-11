@@ -63,7 +63,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     table=TRUE, sideways=FALSE, float.pos="", stars=TRUE, strong.signif=FALSE, 
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NA, model.names=NA, digits=2, ...) {
+    custom.names=NA, model.names=NA, digits=2, override.se=0, override.pval=0, 
+    ...) {
   
   string <- ""
   
@@ -94,6 +95,65 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   }
   
+  # replace standard errors and p values by custom values if provided
+  for (i in length(models)) {
+    
+    # standard errors
+    if (class(override.se) != "list" && length(override.se) == 1 && 
+        override.se == 0) {
+      se <- models[[i]]@se
+    } else if (class(override.se) == "numeric" && length(models) == 1 && 
+        length(override.se) == length(models[[i]]@se)) {
+      se <- override.se
+    } else if (class(override.se) != "list") {
+      warning("SEs must be provided as a list. Using default SEs.")
+      se <- models[[i]]@se
+    } else if (length(override.se) != length(models)) {
+      warning(paste("Number of SEs provided does not match number of models.", 
+          "Using default SEs."))
+      se <- models[[i]]@se
+    } else if (length(models[[i]]@se) != length(override.se[[i]])) {
+      warning(paste("Number of SEs provided does not match number of ", 
+          "coefficients in model ", i, ". Using default SEs.", sep=""))
+      se <- models[[i]]@se
+    } else if (class(override.se[[i]]) != "numeric") {
+      warning(paste("SEs provided for model", i, 
+          "are not numeric. Using default SEs."))
+      se <- models[[i]]@se
+    } else {
+      se <- override.se[[i]]
+    }
+    models[[i]]@se <- se
+    
+    # p values
+    if (class(override.pval) != "list" && length(override.pval) == 1 && 
+        override.pval == 0) {
+      pval <- models[[i]]@pvalues
+    } else if (class(override.pval) == "numeric" && length(models) == 1 && 
+        length(override.pval) == length(models[[i]]@pvalues)) {
+      pval <- override.pval
+    } else if (class(override.pval) != "list") {
+      warning("p values must be provided as a list. Using default p values.")
+      pval <- models[[i]]@pvalues
+    } else if (length(override.pval) != length(models)) {
+      warning(paste("Number of p values provided does not match number of", 
+          "models. Using default p values."))
+      pval <- models[[i]]@pvalues
+    } else if (length(models[[i]]@se) != length(override.pval[[i]])) {
+      # previous line: comparison with se because pvalues can be empty
+      warning(paste("Number of p values provided does not match number of ", 
+          "coefficients in model ", i, ". Using default p values.", sep=""))
+      pval <- models[[i]]@pvalues
+    } else if (class(override.pval[[i]]) != "numeric") {
+      warning(paste("p values provided for model", i, 
+          "are not numeric. Using default p values."))
+      pval <- models[[i]]@pvalues
+    } else {
+      pval <- override.pval[[i]]
+    }
+    models[[i]]@pvalues <- pval
+  }
+  
   # aggregate GOF statistics in a matrix and create list of coef blocks
   coefs <- list()
   gofs <- matrix(nrow=length(gof.names), ncol=length(models))
@@ -105,7 +165,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     pv <- models[[i]]@pvalues
     if (length(pv) > 0) {
       coef <- cbind(cf, se, pv)
-    } else {
+    } else { #p-values not provided -> use p-values of 0.99
       coef <- cbind(cf, se, rep(0.99, length(cf)))
     }
     rownames(coef) <- models[[i]]@coef.names
