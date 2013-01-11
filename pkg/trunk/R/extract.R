@@ -10,15 +10,16 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
 
 # extension for clm objects
 extract.clm <- function(model, include.thresholds=TRUE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.nobs=TRUE) {
+    include.bic=TRUE, include.loglik=TRUE, include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
   
-  tab <- summary(model)$coefficients
-  thresh <- tab[rownames(tab) %in% names(summary(model)$aliased$alpha),]
+  tab <- s$coefficients
+  thresh <- tab[rownames(tab) %in% names(s$aliased$alpha),]
   threshold.names <- rownames(thresh)
   threshold.coef <- thresh[,1]
   threshold.se <- thresh[,2]
   threshold.pval <- thresh[,4]
-  beta <- tab[rownames(tab) %in% names(summary(model)$aliased$beta),]
+  beta <- tab[rownames(tab) %in% names(s$aliased$beta),]
   beta.names <- rownames(beta)
   beta.coef <- beta[,1]
   beta.se <- beta[,2]
@@ -86,19 +87,20 @@ setMethod("extract", signature=className("sclm", "ordinal"),
 # extension for coxph objects (survival package)
 extract.coxph <- function(model, include.aic=TRUE, include.rsquared=TRUE, 
     include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
-    include.missings=TRUE, include.zph=TRUE) {
+    include.missings=TRUE, include.zph=TRUE, ...) {
+  s <- summary(model, ...)
   
-  coefficient.names <- rownames(summary(model)$coef)
-  coefficients <- summary(model)$coef[,1]
-  standard.errors <- summary(model)$coef[,3]
-  significance <- summary(model)$coef[,5]
+  coefficient.names <- rownames(s$coef)
+  coefficients <- s$coef[,1]
+  standard.errors <- s$coef[,3]
+  significance <- s$coef[,5]
   
   aic <- extractAIC(model)[2]
   event <- model$nevent
   n <- model$n
   mis <- length(model$na.action)
-  rs <- summary(model)$rsq[1]
-  maxrs <- summary(model)$rsq[2]
+  rs <- s$rsq[1]
+  maxrs <- s$rsq[2]
   
   gof <- numeric()
   gof.names <- character()
@@ -160,9 +162,9 @@ setMethod("extract", signature=className("coxph", "survival"),
 # extension for coxph.penal objects (survival package)
 extract.coxph.penal <- function(model, include.aic=TRUE, include.rsquared=TRUE,
     include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
-    include.missings=TRUE, include.zph=TRUE) {
+    include.missings=TRUE, include.zph=TRUE, ...) {
   
-  coefficients <- coef(model)
+  coefficients <- coef(model, ...)
   coefficient.names <- names(coefficients)
   if (!is.null(model$naive.var)) {
     standard.errors <- sqrt(diag(model$naive.var))
@@ -239,19 +241,20 @@ setMethod("extract", signature=className("coxph.penal", "survival"),
 # extension for clogit objects (survival package)
 extract.clogit <- function(model, include.aic=TRUE, include.rsquared=TRUE, 
     include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
-    include.missings=TRUE) {
+    include.missings=TRUE, ...) {
+  s <- summary(model, ...)
   
-  coefficient.names <- rownames(summary(model)$coef)
-  coefficients <- summary(model)$coef[,1]
-  standard.errors <- summary(model)$coef[,3]
-  significance <- summary(model)$coef[,5]
+  coefficient.names <- rownames(s$coef)
+  coefficients <- s$coef[,1]
+  standard.errors <- s$coef[,3]
+  significance <- s$coef[,5]
   
   aic <- extractAIC(model)[2]
   event <- model$nevent
   n <- model$n
   mis <- length(model$na.action)
-  rs <- summary(model)$rsq[1]
-  maxrs <- summary(model)$rsq[2]
+  rs <- s$rsq[1]
+  maxrs <- s$rsq[2]
   
   gof <- numeric()
   gof.names <- character()
@@ -305,15 +308,17 @@ setMethod("extract", signature=className("clogit", "survival"),
 
 # extension for ergm objects
 extract.ergm <- function(model, include.aic=TRUE, include.bic=TRUE, 
-    include.loglik=TRUE) {
-  coefficient.names <- rownames(summary(model)$coefs)
-  coefficients <- summary(model)$coefs[,1]
-  standard.errors <- summary(model)$coefs[,2]
-  significance <- summary(model)$coefs[,4]
+    include.loglik=TRUE, ...) {
+  s <- summary(model, ...)
+  
+  coefficient.names <- rownames(s$coefs)
+  coefficients <- s$coefs[,1]
+  standard.errors <- s$coefs[,2]
+  significance <- s$coefs[,4]
   
   lik <- model$mle.lik[1]
-  aic <- summary(model)$aic
-  bic <- summary(model)$bic
+  aic <- s$aic
+  bic <- s$bic
   
   gof <- numeric()
   gof.names <- character()
@@ -352,21 +357,22 @@ setMethod("extract", signature=className("ergm", "ergm"),
 
 # extension for gee objects (gee package)
 extract.gee <- function(model, robust=TRUE, include.dispersion=TRUE, 
-    include.nobs=TRUE) {
+    include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
   
-  names <- rownames(coef(summary(model)))
-  co <- coef(summary(model))[,1]
+  names <- rownames(coef(s))
+  co <- coef(s)[,1]
   if (robust==TRUE) {
-    se <- coef(summary(model))[,4]
-    zval <- coef(summary(model))[,5]
+    se <- coef(s)[,4]
+    zval <- coef(s)[,5]
   } else {
-    se <- coef(summary(model))[,2]
-    zval <- coef(summary(model))[,3]
+    se <- coef(s)[,2]
+    zval <- coef(s)[,3]
   }
   pval <- pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
   
   n <- nobs(model)
-  disp <- summary(model)$scale
+  disp <- s$scale
   
   gof <- numeric()
   gof.names <- character()
@@ -400,11 +406,13 @@ setMethod("extract", signature=className("gee", "gee"),
 
 # extension for glm objects
 extract.glm <- function(model, include.aic=TRUE, include.bic=TRUE, 
-    include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE) {
-  coefficient.names <- rownames(summary(model)$coef)
-  coefficients <- summary(model)$coef[,1]
-  standard.errors <- summary(model)$coef[,2]
-  significance <- summary(model)$coef[,4]
+    include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
+  
+  coefficient.names <- rownames(s$coef)
+  coefficients <- s$coef[,1]
+  standard.errors <- s$coef[,2]
+  significance <- s$coef[,4]
   
   aic <- AIC(model)
   bic <- BIC(model)
@@ -467,15 +475,17 @@ setMethod("extract", signature=className("negbin", "MASS"),
 
 # extension for gls objects
 extract.gls <- function(model, include.aic=TRUE, include.bic=TRUE, 
-    include.loglik=TRUE, include.nobs=TRUE) {
-  coefficient.names <- rownames(summary(model)$tTable)
-  coefficients <- summary(model)$tTable[,1]
-  standard.errors <- summary(model)$tTable[,2]
-  significance <- summary(model)$tTable[,4]
+    include.loglik=TRUE, include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
   
-  lik <- summary(model)$logLik
-  aic <- summary(model)$AIC
-  bic <- summary(model)$BIC
+  coefficient.names <- rownames(s$tTable)
+  coefficients <- s$tTable[,1]
+  standard.errors <- s$tTable[,2]
+  significance <- s$tTable[,4]
+  
+  lik <- s$logLik
+  aic <- s$AIC
+  bic <- s$BIC
   n <- nobs(model)
   
   gof <- numeric()
@@ -520,14 +530,16 @@ setMethod("extract", signature=className("gls", "nlme"),
 
 # extension for lm objects
 extract.lm <- function(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE) {
-  names <- rownames(summary(model)$coef)
-  co <- summary(model)$coef[,1]
-  se <- summary(model)$coef[,2]
-  pval <- summary(model)$coef[,4]
+    include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
   
-  rs <- summary(model)$r.squared #extract R-squared
-  adj <- summary(model)$adj.r.squared #extract adjusted R-squared
+  names <- rownames(s$coef)
+  co <- s$coef[,1]
+  se <- s$coef[,2]
+  pval <- s$coef[,4]
+  
+  rs <- s$r.squared #extract R-squared
+  adj <- s$adj.r.squared #extract adjusted R-squared
   n <- nobs(model) #extract number of observations
   
   gof <- numeric()
@@ -567,15 +579,17 @@ setMethod("extract", signature=className("lm", "stats"),
 
 # extension for lme objects
 extract.lme <- function(model, include.aic=TRUE, include.bic=TRUE, 
-    include.loglik=TRUE, include.nobs=TRUE) {
-  coefficient.names <- rownames(summary(model)$tTable)
-  coefficients <- summary(model)$tTable[,1]
-  standard.errors <- summary(model)$tTable[,2]
-  significance <- summary(model)$tTable[,5]
+    include.loglik=TRUE, include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
+
+  coefficient.names <- rownames(s$tTable)
+  coefficients <- s$tTable[,1]
+  standard.errors <- s$tTable[,2]
+  significance <- s$tTable[,5]
   
-  lik <- summary(model)$logLik
-  aic <- summary(model)$AIC
-  bic <- summary(model)$BIC
+  lik <- s$logLik
+  aic <- s$AIC
+  bic <- s$BIC
   n <- nobs(model)
   
   gof <- numeric()
@@ -621,11 +635,11 @@ setMethod("extract", signature=className("lme", "nlme"),
 # extension for lmerMod objects (lme4 package, version 0.99999911-0)
 extract.lmerMod <- function(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE) {
+    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...) {
   
-  Vcov <- vcov(model, useScale = FALSE)
+  Vcov <- vcov(model, useScale = FALSE, ...)
   Vcov <- as.matrix(Vcov)
-  betas <- fixef(model)
+  betas <- fixef(model, ...)
   se <- sqrt(diag(Vcov))
   zval <- betas / se
   pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
@@ -724,12 +738,13 @@ setMethod("extract", signature=className("nlmerMod", "lme4"),
 
 
 # extension for lmrob objects (robustbase package)
-extract.lmrob <- function(model, include.nobs = TRUE) {
+extract.lmrob <- function(model, include.nobs = TRUE, ...) {
+  s <- summary(model, ...)
 
-  names <- rownames(summary(model)$coef)
-  co <- summary(model)$coef[,1]
-  se <- summary(model)$coef[,2]
-  pval <- summary(model)$coef[,4]
+  names <- rownames(s$coef)
+  co <- s$coef[,1]
+  se <- s$coef[,2]
+  pval <- s$coef[,4]
   
   gof <- numeric()
   gof.names <- character()
@@ -760,8 +775,8 @@ setMethod("extract", signature=className("lmrob", "robustbase"),
 
 # extension for lnam objects (sna package)
 extract.lnam <- function(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE) {
-  coefs <- coef(model)
+    include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, ...) {
+  coefs <- coef(model, ...)
   coef.names <- names(coefs)
   se <- c(model$beta.se, model$rho1.se, model$rho2.se)
   p <- 2 * (1 - pnorm(abs(coefs), 0, se))
@@ -822,7 +837,7 @@ setMethod("extract", signature=className("lnam", "sna"),
 
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model, include.pseudors=TRUE, include.lr=TRUE, 
-    include.nobs=TRUE) {
+    include.nobs=TRUE, ...) {
   attributes(model$coef)$names <- lapply(attributes(model$coef)$names, 
     function(x) gsub(">=", " $\\\\geq$ ", x))
   coef.names <- attributes(model$coef)$names
@@ -875,11 +890,11 @@ setMethod("extract", signature=className("lrm", "Design"),
 # extension for mer objects (lme4 package, version 0.999999-0)
 extract.mer <- function(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE) {
+    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...) {
   
-  Vcov <- vcov(model, useScale = FALSE)
+  Vcov <- vcov(model, useScale = FALSE, ...)
   Vcov <- as.matrix(Vcov)
-  betas <- fixef(model)
+  betas <- fixef(model, ...)
   se <- sqrt(diag(Vcov))
   zval <- betas / se
   pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
@@ -970,15 +985,17 @@ setMethod("extract", signature=className("mer", "lme4"),
 
 # extension for plm objects (from the plm package)
 extract.plm <- function(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE) {
-  coefficient.names <- rownames(summary(model)$coef)
-  coefficients <- summary(model)$coef[,1]
-  standard.errors <- summary(model)$coef[,2]
-  significance <- summary(model)$coef[,4]
+    include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
   
-  rs <- summary(model)$r.squared[1]
-  adj <- summary(model)$r.squared[2]
-  n <- length(summary(model)$resid)
+  coefficient.names <- rownames(s$coef)
+  coefficients <- s$coef[,1]
+  standard.errors <- s$coef[,2]
+  significance <- s$coef[,4]
+  
+  rs <- s$r.squared[1]
+  adj <- s$r.squared[2]
+  n <- length(s$resid)
   
   gof <- numeric()
   gof.names <- character()
@@ -1016,11 +1033,13 @@ setMethod("extract", signature=className("plm", "plm"),
 
 
 # extension for pmg objects (from the plm package)
-extract.pmg <- function(model, include.nobs=TRUE) {
-  co <- summary(model)$coef
-  se <- (diag(summary(model)$vcov))^(1/2) #standard errors
+extract.pmg <- function(model, include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
+  
+  co <- s$coef
+  se <- (diag(s$vcov))^(1/2) #standard errors
   t <- co / se #t-statistics
-  n <- length(summary(model)$resid) #number of observations
+  n <- length(s$resid) #number of observations
   d <- n - length(co) #degrees of freedom
   pval <- 2 * pt(-abs(t), df=d)
   tab <- cbind(co, se, pval) #coefficient table
@@ -1054,9 +1073,11 @@ setMethod("extract", signature=className("pmg", "plm"),
 # extension for polr objects (MASS package)
 extract.polr <- function(model, include.thresholds=TRUE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE) {
-  tab <- summary(model)$coefficients
-  zeta.names <- names(summary(model)$zeta)
+    include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
+  
+  tab <- s$coefficients
+  zeta.names <- names(s$zeta)
   beta <- tab[!rownames(tab) %in% zeta.names,]
   thresh <- tab[rownames(tab) %in% zeta.names,]
   
@@ -1145,11 +1166,12 @@ setMethod("extract", signature=className("polr", "MASS"),
 
 
 # extension for rlm objects (MASS package)
-extract.rlm <- function (model, include.nobs=TRUE) {
+extract.rlm <- function (model, include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
   
-  names <- rownames(summary(model)$coef)
-  co <- summary(model)$coef[,1]
-  se <- summary(model)$coef[,2]
+  names <- rownames(s$coef)
+  co <- s$coef[,1]
+  se <- s$coef[,2]
   
   gof <- numeric()
   gof.names <- character()
@@ -1178,13 +1200,15 @@ setMethod("extract", signature=className("rlm", "MASS"),
 
 # extension for rq objects (quantreg package)
 extract.rq <- function(model, include.nobs=TRUE, include.percentile=TRUE, ...) {
-  co <- summary(model, cov=TRUE, ...)$coef[,1]
-  names <- rownames(summary(model, cov=TRUE, ...)$coef)
-  se <- summary(model, cov=TRUE, ...)$coef[,2]
-  pval <- summary(model, cov=TRUE, ...)$coef[,4]
+  s <- summary(model, cov=TRUE, ...)
   
-  n <- length(summary(model, ...)$resid)
-  tau <- summary(model, ...)$tau
+  co <- s$coef[,1]
+  names <- rownames(s$coef)
+  se <- s$coef[,2]
+  pval <- s$coef[,4]
+  
+  n <- length(s$resid)
+  tau <- s$tau
   
   gof <- numeric()
   gof.names <- character()
@@ -1217,17 +1241,19 @@ setMethod("extract", signature=className("rq", "quantreg"),
 
 
 # extension for simex objects
-extract.simex <- function(model, jackknife=TRUE, include.nobs=TRUE) {
+extract.simex <- function(model, jackknife=TRUE, include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
+  
   if (jackknife==TRUE) {
-    names <- rownames(summary(model)$coefficients$jackknife)
-    co <- summary(model)$coefficients$jackknife[,1]
-    se <- summary(model)$coefficients$jackknife[,2]
-    pval <- summary(model)$coefficients$jackknife[,4]
+    names <- rownames(s$coefficients$jackknife)
+    co <- s$coefficients$jackknife[,1]
+    se <- s$coefficients$jackknife[,2]
+    pval <- s$coefficients$jackknife[,4]
   } else {
-    names <- rownames(summary(model)$coefficients$asymptotic)
-    co <- summary(model)$coefficients$asymptotic[,1]
-    se <- summary(model)$coefficients$asymptotic[,2]
-    pval <- summary(model)$coefficients$asymptotic[,4]
+    names <- rownames(s$coefficients$asymptotic)
+    co <- s$coefficients$asymptotic[,1]
+    se <- s$coefficients$asymptotic[,2]
+    pval <- s$coefficients$asymptotic[,4]
   }
   
   gof <- numeric()
@@ -1259,7 +1285,8 @@ setMethod("extract", signature=className("simex", "simex"),
 # extension for stergm objects (tergm package)
 extract.stergm <- function(model, beside=FALSE, include.formation=TRUE, 
     include.dissolution=TRUE, include.nvertices=TRUE, include.aic=FALSE, 
-    include.bic=FALSE, include.loglik=FALSE) {
+    include.bic=FALSE, include.loglik=FALSE, ...) {
+  s <- summary(model, ...)
   
   if (beside==FALSE) {
     co <- numeric()
@@ -1267,17 +1294,17 @@ extract.stergm <- function(model, beside=FALSE, include.formation=TRUE,
     names <- character()
     pval <- numeric()
     if (include.formation==TRUE) {
-      names <- paste("Formation:", rownames(summary(model)$formation$coefs))
-      co <- summary(model)$formation$coefs[,1]
-      se <- summary(model)$formation$coefs[,2]
-      pval <- summary(model)$formation$coefs[,4]
+      names <- paste("Formation:", rownames(s$formation$coefs))
+      co <- s$formation$coefs[,1]
+      se <- s$formation$coefs[,2]
+      pval <- s$formation$coefs[,4]
     }
     if (include.dissolution==TRUE) {
       names <- c(names, paste("Dissolution:", 
-          rownames(summary(model)$dissolution$coefs)))
-      co <- c(co, summary(model)$dissolution$coefs[,1])
-      se <- c(se, summary(model)$dissolution$coefs[,2])
-      pval <- c(pval, summary(model)$dissolution$coefs[,4])
+          rownames(s$dissolution$coefs)))
+      co <- c(co, s$dissolution$coefs[,1])
+      se <- c(se, s$dissolution$coefs[,2])
+      pval <- c(pval, s$dissolution$coefs[,4])
     }
     
     gof <- numeric()
@@ -1290,15 +1317,15 @@ extract.stergm <- function(model, beside=FALSE, include.formation=TRUE,
       gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.aic==TRUE) {
-      aic.dis <- summary(model)$dissolution$aic
-      aic.form <- summary(model)$formation$aic
+      aic.dis <- s$dissolution$aic
+      aic.form <- s$formation$aic
       gof <- c(gof, aic.form, aic.dis)
       gof.names <- c(gof.names, "Formation: AIC", "Dissolution: AIC")
       gof.decimal <- c(gof.decimal, TRUE, TRUE)
     }
     if (include.bic==TRUE) {
-      bic.dis <- summary(model)$dissolution$bic
-      bic.form <- summary(model)$formation$bic
+      bic.dis <- s$dissolution$bic
+      bic.form <- s$formation$bic
       gof <- c(gof, bic.form, bic.dis)
       gof.names <- c(gof.names, "Formation: BIC", "Dissolution: BIC")
       gof.decimal <- c(gof.decimal, TRUE, TRUE)
@@ -1329,16 +1356,16 @@ extract.stergm <- function(model, beside=FALSE, include.formation=TRUE,
     names <- character()
     pval <- numeric()
     if (include.formation==TRUE) {
-      f.names <- rownames(summary(model)$formation$coefs)
-      f.co <- summary(model)$formation$coefs[,1]
-      f.se <- summary(model)$formation$coefs[,2]
-      f.pval <- summary(model)$formation$coefs[,4]
+      f.names <- rownames(s$formation$coefs)
+      f.co <- s$formation$coefs[,1]
+      f.se <- s$formation$coefs[,2]
+      f.pval <- s$formation$coefs[,4]
     }
     if (include.dissolution==TRUE) {
-      d.names <- rownames(summary(model)$dissolution$coefs)
-      d.co <- summary(model)$dissolution$coefs[,1]
-      d.se <- summary(model)$dissolution$coefs[,2]
-      d.pval <- summary(model)$dissolution$coefs[,4]
+      d.names <- rownames(s$dissolution$coefs)
+      d.co <- s$dissolution$coefs[,1]
+      d.se <- s$dissolution$coefs[,2]
+      d.pval <- s$dissolution$coefs[,4]
     }
     
     f.gof <- numeric()
@@ -1357,21 +1384,21 @@ extract.stergm <- function(model, beside=FALSE, include.formation=TRUE,
       d.gof.decimal <- c(d.gof.decimal, FALSE)
     }
     if (include.aic==TRUE) {
-      f.aic <- summary(model)$formation$aic
+      f.aic <- s$formation$aic
       f.gof <- c(f.gof, f.aic)
       f.gof.names <- c(f.gof.names, "AIC")
       f.gof.decimal <- c(f.gof.decimal, TRUE)
-      d.aic <- summary(model)$dissolution$aic
+      d.aic <- s$dissolution$aic
       d.gof <- c(d.gof, d.aic)
       d.gof.names <- c(d.gof.names, "AIC")
       d.gof.decimal <- c(d.gof.decimal, TRUE)
     }
     if (include.bic==TRUE) {
-      f.bic <- summary(model)$formation$bic
+      f.bic <- s$formation$bic
       f.gof <- c(f.gof, f.bic)
       f.gof.names <- c(f.gof.names, "BIC")
       f.gof.decimal <- c(f.gof.decimal, TRUE)
-      d.bic <- summary(model)$dissolution$bic
+      d.bic <- s$dissolution$bic
       d.gof <- c(d.gof, d.bic)
       d.gof.names <- c(d.gof.names, "BIC")
       d.gof.decimal <- c(d.gof.decimal, TRUE)
@@ -1423,12 +1450,13 @@ setMethod("extract", signature=className("stergm", "tergm"),
 # extension for svyglm objects (survey package)
 extract.svyglm <- function(model, include.aic=FALSE, include.bic=FALSE, 
     include.loglik=FALSE, include.deviance=TRUE, include.dispersion=TRUE, 
-    include.nobs=TRUE) {
+    include.nobs=TRUE, ...) {
+  s <- summary(model, ...)
   
-  names <- rownames(coef(summary(model)))
-  co <- coef(summary(model))[,1]
-  se <- coef(summary(model))[,2]
-  pval <- coef(summary(model))[,4]
+  names <- rownames(coef(s))
+  co <- coef(s)[,1]
+  se <- coef(s)[,2]
+  pval <- coef(s)[,4]
   
   gof <- numeric()
   gof.names <- character()
@@ -1470,7 +1498,7 @@ extract.svyglm <- function(model, include.aic=FALSE, include.bic=FALSE,
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.dispersion==TRUE) {
-    disp <- summary(model)$dispersion[1]
+    disp <- s$dispersion[1]
     gof <- c(gof, disp)
     gof.names <- c(gof.names, "Dispersion")
     gof.decimal <- c(gof.decimal, TRUE)
@@ -1500,10 +1528,10 @@ setMethod("extract", signature=className("svyglm", "survey"),
 
 # extension for systemfit objects
 extract.systemfit <- function(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE) {
+    include.nobs=TRUE, ...) {
   equationList <- list()
   for(eq in model$eq){  #go through estimated equations
-    sum <- summary(eq)  #extract model summary
+    sum <- summary(eq, ...)  #extract model summary
     names <- rownames(coef(sum))
     co <- coef(sum)[,1]
     se <- coef(sum)[,2]
@@ -1553,21 +1581,22 @@ setMethod("extract", signature=className("systemfit", "systemfit"),
 # extension for tobit objects (AER package)
 extract.tobit <- function(model, include.aic=TRUE, include.bic=TRUE, 
     include.loglik=TRUE, include.deviance=TRUE, include.nobs=FALSE, 
-    include.censnobs=TRUE, include.wald=TRUE) {
+    include.censnobs=TRUE, include.wald=TRUE, ...) {
+  s <- summary(model, ...)
   
-  names <- rownames(summary(model)$coefficients)
-  co <- summary(model)$coefficients[,1]
-  se <- summary(model)$coefficients[,2]
-  pval <- summary(model)$coefficients[,4]
+  names <- rownames(s$coefficients)
+  co <- s$coefficients[,1]
+  se <- s$coefficients[,2]
+  pval <- s$coefficients[,4]
 
   n <- nobs(model)
-  censnobs <- summary(model)$n
+  censnobs <- s$n
   censnobs.names <- names(censnobs)
   aic <- AIC(model)
   bic <- BIC(model)
   lik <- logLik(model)[1]
   dev <- deviance(model)
-  wald <- summary(model)$wald
+  wald <- s$wald
   
   gof <- numeric()
   gof.names <- character()
