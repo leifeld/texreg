@@ -9,7 +9,7 @@ texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     caption="Statistical models", label="table:coefficients", 
     dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NA, model.names=NA, digits=2, override.se=0, 
-    override.pval=0, ...)
+    override.pval=0, omit.coef=NA, ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -42,6 +42,7 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{digits}{ Set the number of decimal places for coefficients, standard errors and goodness-of-fit statistics. Do not use negative values! }
 \item{override.se}{ Set custom values for the standard errors. New standard errors are provided as a list of numeric vectors. The list contains vectors of standard errors for each model. There must be as many vectors of standard errors as there are models. For example, if there are two models with three coefficients each, the argument could be specified as \code{override.se=list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.se=c(0.05, 0.06, 0.07)}. }
 \item{override.pval}{ Set custom values for the p values. New p values are provided as a list of numeric vectors. The list contains vectors of p values for each model. There must be as many vectors of p values as there are models. For example, if there are two models with three coefficients each, the argument could be specified as \code{override.pval=list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.pval=c(0.05, 0.06, 0.07)}. }
+\item{omit.coef}{ A character string which is used as a regular expression to remove coefficient rows from the table. For example, \code{omit.coef="group"} deletes all coefficient rows from the table where the name of the coefficient contains the character sequence "group". }
 \item{...}{ Custom options to be passed on to the extract function. }
 }
 \seealso{

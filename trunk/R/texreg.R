@@ -64,7 +64,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NA, model.names=NA, digits=2, override.se=0, override.pval=0, 
-    ...) {
+    omit.coef=NA, ...) {
   
   string <- ""
   
@@ -242,6 +242,15 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   
   m <- rearrangeMatrix(m)
   m <- as.data.frame(m)
+  
+  # remove coefficient rows that match the omit.coef regular expression
+  if (!is.na(omit.coef)) {
+    if (!is.character(omit.coef)) {
+      stop("omit.coef must be a character string!")
+    }
+    remove.rows <- grep(omit.coef, rownames(m))
+    m <- m[-remove.rows,]
+  }
   
   # what is the optimal length of the labels?
   lab.list <- c(rownames(m), gof.names)
