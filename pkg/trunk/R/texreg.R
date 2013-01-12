@@ -63,8 +63,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     table=TRUE, sideways=FALSE, float.pos="", stars=TRUE, strong.signif=FALSE, 
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NA, model.names=NA, digits=2, override.se=0, override.pval=0, 
-    omit.coef=NA, ...) {
+    custom.names=NA, model.names=NA, digits=2, override.coef=0, override.se=0, 
+    override.pval=0, omit.coef=NA, ...) {
   
   string <- ""
   
@@ -95,8 +95,35 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   }
   
-  # replace standard errors and p values by custom values if provided
+  # replace coefficients, SEs and p values by custom values if provided
   for (i in length(models)) {
+    
+    # coefficients
+    if (class(override.coef) != "list" && length(override.coef) == 1 && 
+        override.coef == 0) {
+      cf <- models[[i]]@coef
+    } else if (class(override.coef) == "numeric" && length(models) == 1 && 
+        length(override.coef) == length(models[[i]]@coef)) {
+      cf <- override.coef
+    } else if (class(override.coef) != "list") {
+      warning("Coefficients must be provided as a list. Using default values.")
+      cf <- models[[i]]@coef
+    } else if (length(override.coef) != length(models)) {
+      warning(paste("Number of coefficients provided does not match number of", 
+          "models. Using default values."))
+      cf <- models[[i]]@coef
+    } else if (length(models[[i]]@coef) != length(override.coef[[i]])) {
+      warning(paste("Number of coefficients provided does not match number of ",
+          "terms in model ", i, ". Using default values.", sep=""))
+      cf <- models[[i]]@coef
+    } else if (class(override.coef[[i]]) != "numeric") {
+      warning(paste("Coefficients provided for model", i, 
+          "are not numeric. Using default values."))
+      cf <- models[[i]]@coef
+    } else {
+      cf <- override.coef[[i]]
+    }
+    models[[i]]@coef <- cf
     
     # standard errors
     if (class(override.se) != "list" && length(override.se) == 1 && 
