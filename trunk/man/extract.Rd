@@ -78,7 +78,7 @@ extract.nlmerMod(model, include.pvalues=FALSE, include.aic=TRUE,
 extract.plm(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.nobs=TRUE, ...)
 extract.pmg(model, include.nobs=TRUE, ...)
-extract.polr(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
+extract.polr(model, include.thresholds=FALSE, include.aic=TRUE, include.bic=TRUE,
     include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE, ...)
 extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=TRUE, ...)

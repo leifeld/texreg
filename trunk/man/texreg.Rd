@@ -1,7 +1,9 @@
 \name{texreg}
 \alias{texreg}
-\title{Convert regression output to LaTeX tables}
-\description{Conversion of R regression output to LaTeX tables.}
+\alias{htmlreg}
+\alias{write.texreg}
+\title{Convert regression output to LaTeX or HTML tables}
+\description{Conversion of R regression output to LaTeX or HTML tables.}
 \usage{
 texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
     table=TRUE, sideways=FALSE, float.pos="", stars=TRUE, 
@@ -9,14 +11,19 @@ texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     caption="Statistical models", label="table:coefficients", 
     dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NA, model.names=NA, digits=2, override.coef=0, 
-    override.se=0, override.pval=0, omit.coef=NA, ...)
+    override.se=0, override.pval=0, omit.coef=NA, file=NA, ...)
+htmlreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
+    strong.signif=FALSE, symbol="&middot;", 
+    caption="Statistical models", custom.names=NA, 
+    model.names=NA, digits=2, override.coef=0, override.se=0, 
+    override.pval=0, omit.coef=NA, file=NA, ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
 and goodness-of-fit statistics of statistical models into LaTeX 
-tables. Either a single model or a list of models can be combined 
-in a single table. The output is customizable. Models can be handed 
-over as lists of objects. New model types can be easily implemented.
+tables or HTML tables. A list of several models can be combined 
+in a single table. The output is customizable. New model types can 
+be easily implemented.
 }
 \arguments{
 \item{l}{ A statistical model or a list of statistical models. Lists of models can be specified as \code{l = list(model.1, model.2, ...)}. Different object types can also be mixed. }
@@ -28,9 +35,9 @@ over as lists of objects. New model types can be easily implemented.
 \item{float.pos}{ This argument specifies where the table should be located on the page or in the document. By default, no floating position is specified, and LaTeX takes care of the position automatically. Possible values include \code{h} (here), \code{p} (page), \code{t} (top), \code{b} (bottom), any combination thereof, e.g. \code{tb}, or any of these values followed by an exclamation mark, e.g. \code{t!}, in order to enforce this position. The square brackets do not have to be specified. }
 \item{stars}{ Should significance stars be printed after coefficients/standard errors, and should a note about significance levels be printed below the table? }
 \item{strong.signif}{ Conventional regression tables report 99 percent significance as three stars, 95 percent as two stars, and 90 percent as one star. For ERGMs, however, the de facto standard is to report 99.9 percent as three stars, 99 percent as two stars, 95 percent as one star, and 90 percent as a single dot. By default, texreg follows conventional significance levels. To use the stronger ERGM standard, set \code{strong.signif=TRUE}. }
-\item{symbol}{ By default, p values smaller than 0.1 and larger than 0.05 are reported as dots (\code{symbol="\\\\cdot"}) when \code{strong.signif=TRUE} is set. Any other mathematical LaTeX symbol can be used, for example \code{symbol="\\\\circ"}. }
+\item{symbol}{ By default, p values smaller than 0.1 and larger than 0.05 are reported as centered dots (\code{symbol="\\\\cdot"} for the LaTeX dot or \code{symbol="&middot;"} for the HTML dot) when \code{strong.signif=TRUE} is set. Any other mathematical LaTeX symbol or plain text symbol can be used, for example \code{symbol="\\\\circ"} for a small circle in LaTeX. }
 \item{use.packages}{ If this argument is set to \code{TRUE} (= the default behavior), the required LaTeX packages are loaded in the beginning. If set to \code{FALSE}, the use package statements are omitted from the output. }
-\item{caption}{ Set the caption of the \code{table} environment. }
+\item{caption}{ Set the caption of the table. }
 \item{label}{ Set the label of the \code{table} environment. }
 \item{dcolumn}{ Use the \code{dcolumn} LaTeX package to get a nice alignment of the coefficients. }
 \item{booktabs}{ Use the \code{booktabs} LaTeX package to get thick horizontal rules in the output table. }
@@ -44,6 +51,7 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{override.se}{ Set custom values for the standard errors. New standard errors are provided as a list of numeric vectors. The list contains vectors of standard errors for each model. There must be as many vectors of standard errors as there are models. For example, if there are two models with three coefficients each, the argument could be specified as \code{override.se=list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.se=c(0.05, 0.06, 0.07)}. }
 \item{override.pval}{ Set custom values for the p values. New p values are provided as a list of numeric vectors. The list contains vectors of p values for each model. There must be as many vectors of p values as there are models. For example, if there are two models with three coefficients each, the argument could be specified as \code{override.pval=list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.pval=c(0.05, 0.06, 0.07)}. }
 \item{omit.coef}{ A character string which is used as a regular expression to remove coefficient rows from the table. For example, \code{omit.coef="group"} deletes all coefficient rows from the table where the name of the coefficient contains the character sequence "group". }
+\item{file}{ Using this argument, the resulting table is written to a file rather than to the R prompt. The file name can be specified as a character string. Writing a table to a file can be useful for working with MS Office or LibreOffice. For example, an HTML table can be written to a file with the extension \code{.doc} and opened with MS Word. The table can then be simply copied into any Word document, retaining the formatting of the table. Note that LibreOffice can import only plain HTML; CSS decorations are not supported; the resulting tables do not retain the full formatting in LibreOffice. }
 \item{...}{ Custom options to be passed on to the extract function. }
 }
 \seealso{
@@ -68,6 +76,10 @@ weight <- c(ctl, trt)
 lm.D9 <- lm(weight ~ group)
 table.string <- texreg(lm.D9)
 cat(table.string)
+
+#Create a 'fake' Office document containing a regression table
+table.string <- htmlreg(list(model.1, model.2), file="texreg.doc")
+unlink("texreg.doc")
 }
 \keyword{Programming|programming|interface}
 \keyword{Programming|IO}
