@@ -1,5 +1,6 @@
 import("utils")
 export("texreg")
+export("htmlreg")
 export("coeftostring")
 export("createTexreg")
 export("extract")
