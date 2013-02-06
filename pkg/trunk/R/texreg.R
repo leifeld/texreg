@@ -2,6 +2,152 @@
 # Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
 # for bug reports, help or feature requests.
 
+# screenreg function
+screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
+    strong.signif=FALSE, custom.names=NA, model.names=NA, digits=2, 
+    outer.rule="=", inner.rule="-", column.spacing=2, override.coef=0, 
+    override.se=0, override.pval=0, omit.coef=NA, file=NA, ...) {
+  
+  models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
+  models <- override(models, override.coef, override.se, override.pval)
+  models <- tex2screen(models) #convert TeX code in GOF names to text output
+  gof.names <- get.gof(models) #extract names of GOFs
+  
+  # arrange coefficients and GOFs nicely in a matrix
+  gofs <- aggregate.matrix(models, gof.names, digits, returnobject="gofs")
+  m <- aggregate.matrix(models, gof.names, digits, returnobject="m")
+  decimal.matrix <- aggregate.matrix(models, gof.names, digits, 
+      returnobject="decimal.matrix")
+  
+  m <- customnames(m, custom.names) #rename coefficients
+  m <- rearrangeMatrix(m) #resort matrix and conflate duplicate entries
+  m <- as.data.frame(m)
+  m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
+  
+  modnames <- modelnames(models, model.names) #use (custom) model names
+  
+  # what is the optimal length of the labels?
+  lab.list <- c(rownames(m), gof.names)
+  lab.length <- 0
+  for (i in 1:length(lab.list)) {
+    if (nchar(lab.list[i]) > lab.length) {
+      lab.length <- nchar(lab.list[i])
+    }
+  }
+  
+  # create output table with significance stars etc.
+  output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
+      leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix=" ", 
+      star.suffix="", strong.signif, stars, dcolumn=TRUE, symbol="\\.")
+  
+  # create GOF matrix (the lower part of the final output matrix)
+  gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
+      digits)
+  
+  # combine the coefficient and gof matrices vertically
+  output.matrix <- rbind(output.matrix, gof.matrix)
+  
+  # reformat output matrix and add spaces
+  temp <- apply(output.matrix[,-1], 2, format.column, single.row=single.row, 
+      digits=digits)
+  output.matrix <- cbind(output.matrix[,1], temp)
+  output.matrix <- rbind(c("", modnames), output.matrix)
+  for (i in 1:ncol(output.matrix)) {
+    output.matrix[,i] <- fill.spaces(output.matrix[,i])
+  }
+  
+  string <- "\n"
+  
+  # horizontal rule above the table
+  table.width <- sum(nchar(output.matrix[1,])) + 
+      (ncol(output.matrix) - 1) * column.spacing
+  if (class(outer.rule) != "character") {
+    stop("outer.rule must be a character.")
+  } else if (nchar(outer.rule) > 1) {
+    stop("outer.rule must be a character of maximum length 1.")
+  } else if (outer.rule == "") {
+    o.rule <- ""
+  } else {
+    o.rule <- paste(rep(outer.rule, table.width), collapse="")
+    string <- paste(string, o.rule, "\n", sep="")
+  }
+  
+  # specify model names
+  spacing <- paste(rep(" ", column.spacing), collapse="")
+  string <- paste(string, output.matrix[1,1], sep="")
+  for (i in 2:ncol(output.matrix)) {
+    string <- paste(string, spacing, output.matrix[1,i], sep="")
+  }
+  string <- paste(string, "\n", sep="")
+  
+  # mid rule 1
+  if (class(inner.rule) != "character") {
+    stop("inner.rule must be a character.")
+  } else if (nchar(inner.rule) > 1) {
+    stop("inner.rule must be a character of maximum length 1.")
+  } else if (inner.rule == "") {
+    i.rule <- ""
+  } else {
+    i.rule <- paste(rep(inner.rule, table.width), collapse="")
+    string <- paste(string, i.rule, "\n", sep="")
+  }
+  
+  # write coefficients
+  for (i in 2:(length(output.matrix[,1])-length(gof.names))) {
+    for (j in 1:length(output.matrix[1,])) {
+      string <- paste(string, output.matrix[i,j], sep="")
+      if (j == length(output.matrix[1,])) {
+        string <- paste(string, "\n", sep="")
+      } else {
+        string <- paste(string, spacing, sep="")
+      }
+    }
+  }
+  
+  # mid rule 2
+  if (inner.rule != "") {
+    string <- paste(string, i.rule, "\n", sep="")
+  }
+  
+  # write GOF part of the output matrix
+  for (i in (length(output.matrix[,1])-(length(gof.names)-1)):
+      (length(output.matrix[,1]))) {
+    for (j in 1:length(output.matrix[1,])) {
+      string <- paste(string, output.matrix[i,j], sep="")
+      if (j == length(output.matrix[1,])) {
+        string <- paste(string, "\n", sep="")
+      } else {
+        string <- paste(string, spacing, sep="")
+      }
+    }
+  }
+  
+  # write table footer
+  if (outer.rule != "") {
+    string <- paste(string, o.rule, "\n", sep="")
+  }
+  
+  if (strong.signif == TRUE && stars==TRUE) {
+    string <- paste(string, 
+        "*** p < 0.001, ** p < 0.01, * p < 0.05, . p < 0.1\n\n", sep="")
+  } else if (stars==TRUE) {
+    string <- paste(string, "*** p < 0.01, ** p < 0.05, * p < 0.1\n\n", sep="")
+  }
+  
+  #write to file
+  if (is.na(file)) {
+    cat(string)
+  } else if (!is.character(file)) {
+    stop("The 'file' argument must be a character string.")
+  } else {
+    sink(file)
+    cat(string)
+    sink()
+    cat(paste("The table was written to the file '", file, "'.\n", sep=""))
+  }
+
+}
+
 
 # texreg function
 texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
@@ -270,8 +416,6 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   
   modnames <- modelnames(models, model.names) #use (custom) model names
   
-  #string <- ""
-  
   # write table header
   if (single.row==TRUE) {
     numcols <- 2 * length(models)
@@ -352,10 +496,9 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   string <- paste(string, "        </tr>\n", "      </thead>\n", sep="")
   
   # create output table with significance stars etc.
-  output.matrix <- outputmatrix(m, single.row, 
-      neginfstring="-Inf", leading.zero, digits, 
-      se.prefix=" (", se.suffix=")", star.prefix="<sup>", star.suffix="</sup>", 
-      strong.signif, stars, dcolumn=TRUE, symbol)
+  output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
+      leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix="<sup>", 
+      star.suffix="</sup>", strong.signif, stars, dcolumn=TRUE, symbol)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
