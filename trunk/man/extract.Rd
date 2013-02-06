@@ -9,6 +9,7 @@
 \alias{extract.glm}
 \alias{extract.glmerMod}
 \alias{extract.gls}
+\alias{extract.gmm}
 \alias{extract.lm}
 \alias{extract.lme}
 \alias{extract.lmerMod}
@@ -54,6 +55,8 @@ extract.glmerMod(model, include.pvalues=FALSE, include.aic=TRUE,
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
     include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...)
 extract.gls(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
+    include.nobs=TRUE, ...)
+extract.gmm(model, include.obj.fcn=TRUE, include.overidentification=FALSE, 
     include.nobs=TRUE, ...)
 extract.lm(model, include.rsquared=TRUE, include.adjrs=TRUE, include.nobs=TRUE, 
     ...)
@@ -127,6 +130,8 @@ to convert them into texreg objects.
 \item{include.missings}{ If available: should the number of missing observations be reported (in survival models)? }
 \item{include.nobs}{ If available: should the number of observations be reported? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
+\item{include.obj.fcn}{ If available: should the value of the objective function (= criterion function) be reported (for \code{gmm} objects)? More precisely, this returns \code{E(g)var(g)^{-1}E(g)}. }
+\item{include.overidentification}{ If available: should the J-test for overidentification be reported (for \code{gmm} objects)? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }
 \item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
 \item{include.pvalues}{ If available: should the p-values be reported (not recommended for lme4 models)? }

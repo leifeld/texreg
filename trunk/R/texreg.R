@@ -6,11 +6,12 @@
 screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, custom.names=NA, model.names=NA, digits=2, 
     outer.rule="=", inner.rule="-", column.spacing=2, override.coef=0, 
-    override.se=0, override.pval=0, omit.coef=NA, file=NA, ...) {
+    override.se=0, override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, 
+    ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   models <- override(models, override.coef, override.se, override.pval)
-  models <- tex2screen(models) #convert TeX code in GOF names to text output
+  models <- tex.replace(models, type="screen") #convert TeX code to text code
   gof.names <- get.gof(models) #extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
@@ -26,15 +27,6 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   
   modnames <- modelnames(models, model.names) #use (custom) model names
   
-  # what is the optimal length of the labels?
-  lab.list <- c(rownames(m), gof.names)
-  lab.length <- 0
-  for (i in 1:length(lab.list)) {
-    if (nchar(lab.list[i]) > lab.length) {
-      lab.length <- nchar(lab.list[i])
-    }
-  }
-  
   # create output table with significance stars etc.
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
       leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix=" ", 
@@ -48,8 +40,13 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   output.matrix <- rbind(output.matrix, gof.matrix)
   
   # reformat output matrix and add spaces
-  temp <- apply(output.matrix[,-1], 2, format.column, single.row=single.row, 
-      digits=digits)
+  if (ncol(output.matrix) == 2) {
+    temp <- matrix(format.column(output.matrix[,-1], single.row=single.row, 
+        digits=digits))
+  } else {
+    temp <- apply(output.matrix[,-1], 2, format.column, single.row=single.row, 
+        digits=digits)
+  }
   output.matrix <- cbind(output.matrix[,1], temp)
   output.matrix <- rbind(c("", modnames), output.matrix)
   for (i in 1:ncol(output.matrix)) {
@@ -145,7 +142,10 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     sink()
     cat(paste("The table was written to the file '", file, "'.\n", sep=""))
   }
-
+  
+  if (return.string == TRUE) {
+    return(string)
+  }
 }
 
 
@@ -155,7 +155,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NA, model.names=NA, digits=2, override.coef=0, override.se=0, 
-    override.pval=0, omit.coef=NA, file=NA, ...) {
+    override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   gof.names <- get.gof(models) #extract names of GOFs
@@ -387,7 +387,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     sink()
     cat(paste("The table was written to the file '", file, "'.\n", sep=""))
   }
-  return(string)
+  if (return.string == TRUE) {
+    return(string)
+  }
 }
 
 
@@ -395,12 +397,12 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
 htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, symbol="&middot;", caption="Statistical models", 
     custom.names=NA, model.names=NA, digits=2, override.coef=0, override.se=0, 
-    override.pval=0, omit.coef=NA, file=NA, ...) {
+    override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   
   models <- override(models, override.coef, override.se, override.pval)
-  models <- tex2html(models) #convert TeX code in GOF names to HTML code
+  models <- tex.replace(models, type="html") #convert TeX code to HTML code
   gof.names <- get.gof(models) #extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
@@ -415,6 +417,18 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
   
   modnames <- modelnames(models, model.names) #use (custom) model names
+  
+  # create output table with significance stars etc.
+  output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
+      leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix="<sup>", 
+      star.suffix="</sup>", strong.signif, stars, dcolumn=TRUE, symbol)
+  
+  # create GOF matrix (the lower part of the final output matrix)
+  gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
+      digits)
+  
+  # combine the coefficient and gof matrices vertically
+  output.matrix <- rbind(output.matrix, gof.matrix)
   
   # write table header
   if (single.row==TRUE) {
@@ -440,36 +454,30 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
       "  <head>\n", 
       "    <title>", caption, "</title>\n", 
       "    <style type=\"text/css\">\n", 
-      "      .modelnames {\n", 
-      "        border-top-style: solid;\n", 
-      "        border-top-width: 2px;\n", 
-      "        border-top-color: black;\n", 
-      "        border-bottom-style: solid;\n", 
-      "        border-bottom-width: 1px;\n", 
-      "        border-bottom-color: black;\n", 
+      "      table {\n", 
+      "        border: none;\n", 
+      "      }\n", 
+      "      th {\n", 
+      "        text-align: left;\n", 
+      "        border-top: 2px solid black;\n", 
+      "        border-bottom: 1px solid black;\n", 
       "        padding-right: 12px;\n", 
-      "        vertical-align: bottom;\n", 
       "      }\n", 
       "      .midRule {\n", 
-      "        border-top-style: solid;\n", 
-      "        border-top-width: 1px;\n", 
-      "        border-top-color: black;\n", 
-      "        padding-right: 12px;\n", 
-      "        vertical-align: bottom;\n", 
+      "        border-top: 1px solid black;\n", 
       "      }\n", 
       "      .bottomRule {\n", 
-      "        border-bottom-style: solid;\n", 
-      "        border-bottom-width: 2px;\n", 
-      "        border-bottom-color: black;\n", 
-      "        padding-right: 12px;\n", 
-      "        vertical-align: bottom;\n", 
+      "        border-bottom: 2px solid black;\n", 
       "      }\n", 
-      "      .cells {\n", 
+      "      td {\n", 
       "        padding-right: 12px;\n", 
-      "        vertical-align: bottom;\n", 
+      "        border: none;\n", 
       "      }\n", 
       "      caption span {\n", 
       "        float: left;\n", 
+      "      }\n", 
+      "      sup {\n", 
+      "        vertical-align: 4px;\n", 
       "      }\n", 
       "    </style>\n", 
       "  </head>\n\n", 
@@ -477,41 +485,23 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
       "    <table cellspacing=\"0\">\n", 
       "      <caption align=\"bottom\" style=\"font-size:0.8em\"><span>", note, 
       "</span></caption>\n", 
-      "      <colgroup>\n", 
-      "        <col>\n", 
-      paste(rep("        <col align=\"char\" char=\".\">\n", numcols), 
-          collapse=""), 
-      "      </colgroup>\n", 
-      "      <thead>\n", 
-      "        <tr>\n", 
-      "          <th class=\"modelnames\"></th>\n", 
+      "      <tr>\n", 
+      "        <th class=\"modelnames\"></th>\n", 
       sep="")
   
   # specify model names (header row)
   for (i in 1:length(models)) {
     string <- paste(string, 
-        "          <th class=\"modelnames\"><b>", 
+        "        <th><b>", 
         modnames[i], "</b></th>\n", sep="")
   }
-  string <- paste(string, "        </tr>\n", "      </thead>\n", sep="")
-  
-  # create output table with significance stars etc.
-  output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
-      leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix="<sup>", 
-      star.suffix="</sup>", strong.signif, stars, dcolumn=TRUE, symbol)
-  
-  # create GOF matrix (the lower part of the final output matrix)
-  gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
-      digits)
-  
-  # combine the coefficient and gof matrices vertically
-  output.matrix <- rbind(output.matrix, gof.matrix)
+  string <- paste(string, "      </tr>\n", sep="")
   
   # write coefficients to string object
   for (i in 1:(length(output.matrix[,1])-length(gof.names))) {
     string <- paste(string, "      <tr>\n", sep="")
     for (j in 1:length(output.matrix[1,])) {
-      string <- paste(string, "        <td class=\"cells\">", 
+      string <- paste(string, "        <td>", 
           output.matrix[i,j], "</td>\n", sep="")
     }
     string <- paste(string, "      </tr>\n", sep="")
@@ -528,7 +518,7 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
         string <- paste(string, "        <td class=\"bottomRule\">", 
             output.matrix[i,j], "</td>\n", sep="")
       } else {
-        string <- paste(string, "        <td class=\"cells\">", 
+        string <- paste(string, "        <td>", 
             output.matrix[i,j], "</td>\n", sep="")
       }
     }
@@ -538,7 +528,7 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   # write table footer
   string <- paste(string, "    </table>\n")
   
-  string <- paste(string, "  </body>\n</html>\n\n", sep="")
+  string <- paste(string, "  </body>\n</html>\n", sep="")
   
   if (is.na(file)) {
     cat(string)
@@ -550,6 +540,8 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     sink()
     cat(paste("The table was written to the file '", file, "'.\n", sep=""))
   }
-  return(string)
+  if (return.string == TRUE) {
+    return(string)
+  }
 }
 

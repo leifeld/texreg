@@ -220,27 +220,21 @@ override <- function(models, override.coef, override.se, override.pval) {
 }
 
 
-# function which converts LaTeX code in GOF names to HTML code
-tex2html <- function(models) {
+# function which converts LaTeX code in GOF names to HTML oder text/screen code
+tex.replace <- function(models, type="html") {
   for (i in 1:length(models)) {
-    models[[i]]@gof.names <- sub("\\$\\^2\\$", "<sup>2</sup>", 
-        models[[i]]@gof.names)
+    if (type == "html") {
+      r <- "<sup>2</sup>"
+    } else if (type == "screen") {
+      r <- "^2"
+    }
+    models[[i]]@gof.names <- sub("\\$\\^2\\$", r, models[[i]]@gof.names)
     models[[i]]@gof.names <- sub("\\\\ ", " ", models[[i]]@gof.names)
     models[[i]]@gof.names <- sub("\\ ", " ", models[[i]]@gof.names)
   }
   return(models)
 }
 
-
-# function which converts LaTeX code in GOF names to text code
-tex2screen <- function(models) {
-  for (i in 1:length(models)) {
-    models[[i]]@gof.names <- sub("\\$\\^2\\$", "^2", models[[i]]@gof.names)
-    models[[i]]@gof.names <- sub("\\\\ ", " ", models[[i]]@gof.names)
-    models[[i]]@gof.names <- sub("\\ ", " ", models[[i]]@gof.names)
-  }
-  return(models)
-}
 
 # put models and GOFs into a common matrix
 aggregate.matrix <- function(models, gof.names, digits, returnobject="m") {
@@ -399,7 +393,7 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
       output.matrix[i,1] <- rownames(m)[i]
     }
     
-    # coefficients and standard deviations
+    # coefficients and standard errors
     for (i in 1:length(m[,1])) { #go through rows
       j <- 1 #column in the original, merged coef table
       k <- 2 #second column of output.matrix, i.e., coefficients
