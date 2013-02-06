@@ -56,6 +56,7 @@ Class			& Package			& Added		& Description \\
 \texttt{glm}		& \texttt{stats}		& 2012-06-19	& Generalized linear models \\
 \texttt{glmerMod}	& \texttt{lme4} (new)		& 2012-10-09	& Generalized linear mixed models \\
 \texttt{gls}		& \texttt{nlme}			& 2012-06-19	& Generalized least squares \\
+\texttt{gmm}		& \texttt{gmm}			& 2013-02-06	& Generalized method of moments estimation \\
 \texttt{lm}		& \texttt{stats}		& 2012-06-19	& Ordinary least squares \\
 \texttt{lme}		& \texttt{nlme}			& 2012-06-19	& Linear mixed-effects models \\
 \texttt{lmerMod}	& \texttt{lme4} (new)		& 2012-10-08	& Linear mixed-effects models \\

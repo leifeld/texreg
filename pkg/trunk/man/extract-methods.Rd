@@ -10,6 +10,7 @@
 \alias{extract,glm-method}
 \alias{extract,glmerMod-method}
 \alias{extract,gls-method}
+\alias{extract,gmm-method}
 \alias{extract,lm-method}
 \alias{extract,lme-method}
 \alias{extract,lmerMod-method}
@@ -72,6 +73,10 @@ An extract function for glmerMod objects from the (new) \pkg{lme4} package.
 
 \item{\code{extract.gls}}{
 An extract function for gls objects from the \pkg{nlme} package.
+}
+
+\item{\code{extract.gmm}}{
+An extract function for gmm objects from the \pkg{gmm} package.
 }
 
 \item{\code{extract.lm}}{
