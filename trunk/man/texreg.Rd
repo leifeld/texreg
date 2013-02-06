@@ -1,6 +1,7 @@
 \name{texreg}
 \alias{texreg}
 \alias{htmlreg}
+\alias{screenreg}
 \alias{write.texreg}
 \title{Convert regression output to LaTeX or HTML tables}
 \description{Conversion of R regression output to LaTeX or HTML tables.}
@@ -17,13 +18,19 @@ htmlreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     caption="Statistical models", custom.names=NA, 
     model.names=NA, digits=2, override.coef=0, override.se=0, 
     override.pval=0, omit.coef=NA, file=NA, ...)
+screenreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
+    strong.signif=FALSE, custom.names=NA, model.names=NA, 
+    digits=2, outer.rule="=", inner.rule="-", column.spacing=2, 
+    override.coef=0, override.se=0, override.pval=0, 
+    omit.coef=NA, file=NA, ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
 and goodness-of-fit statistics of statistical models into LaTeX 
-tables or HTML tables. A list of several models can be combined 
-in a single table. The output is customizable. New model types can 
-be easily implemented.
+tables or HTML tables or into nicely formatted screen output for 
+the R console. A list of several models can be combined in a 
+single table. The output is customizable. New model types can be 
+easily implemented.
 }
 \arguments{
 \item{l}{ A statistical model or a list of statistical models. Lists of models can be specified as \code{l = list(model.1, model.2, ...)}. Different object types can also be mixed. }
@@ -52,6 +59,9 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{override.pval}{ Set custom values for the p values. New p values are provided as a list of numeric vectors. The list contains vectors of p values for each model. There must be as many vectors of p values as there are models. For example, if there are two models with three coefficients each, the argument could be specified as \code{override.pval=list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.pval=c(0.05, 0.06, 0.07)}. }
 \item{omit.coef}{ A character string which is used as a regular expression to remove coefficient rows from the table. For example, \code{omit.coef="group"} deletes all coefficient rows from the table where the name of the coefficient contains the character sequence "group". }
 \item{file}{ Using this argument, the resulting table is written to a file rather than to the R prompt. The file name can be specified as a character string. Writing a table to a file can be useful for working with MS Office or LibreOffice. For example, an HTML table can be written to a file with the extension \code{.doc} and opened with MS Word. The table can then be simply copied into any Word document, retaining the formatting of the table. Note that LibreOffice can import only plain HTML; CSS decorations are not supported; the resulting tables do not retain the full formatting in LibreOffice. }
+\item{outer.rule}{ The character which is used to draw the outer horizontal line above and below a table (only for the \code{screenreg()} function). If an empty character object is provided (i.e., \code{outer.rule=""}), there will be no outer horizontal lines. Recommended values are \code{""}, \code{"="}, \code{"-"}, \code{"_"}, or \code{"#"}. }
+\item{inner.rule}{ The character which is used to draw the inner horizontal line above and below a table (only for the \code{screenreg()} function). If an empty character object is provided (i.e., \code{outer.rule=""}), there will be no inner horizontal lines. Recommended values are \code{""}, \code{"-"}, or \code{"_"}. }
+\item{column.spacing}{ The amount of space between any two columns of a table (only for the \code{screenreg()} function). By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}. }
 \item{...}{ Custom options to be passed on to the extract function. }
 }
 \seealso{

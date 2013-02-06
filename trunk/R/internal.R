@@ -232,6 +232,16 @@ tex2html <- function(models) {
 }
 
 
+# function which converts LaTeX code in GOF names to text code
+tex2screen <- function(models) {
+  for (i in 1:length(models)) {
+    models[[i]]@gof.names <- sub("\\$\\^2\\$", "^2", models[[i]]@gof.names)
+    models[[i]]@gof.names <- sub("\\\\ ", " ", models[[i]]@gof.names)
+    models[[i]]@gof.names <- sub("\\ ", " ", models[[i]]@gof.names)
+  }
+  return(models)
+}
+
 # put models and GOFs into a common matrix
 aggregate.matrix <- function(models, gof.names, digits, returnobject="m") {
 
@@ -377,8 +387,8 @@ modelnames <- function(models, model.names) {
 
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
-    se.prefix, se.suffix, star.prefix, star.suffix, strong.signif, stars, 
-    dcolumn=TRUE, symbol) {
+    se.prefix, se.suffix, star.prefix, star.suffix, strong.signif, 
+    stars, dcolumn=TRUE, symbol) {
 
   # write coefficient rows
   if (single.row==TRUE) {
@@ -493,8 +503,9 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           }
           output.matrix[(i*2)-1,k] <- paste(dollar, coeftostring(m[i,j], 
               leading.zero, digits=digits), p, dollar, sep="")
-          output.matrix[(i*2),k] <- paste(dollar, "(", coeftostring(m[i,j+1], 
-              leading.zero, digits=digits), ")", dollar, sep="")
+          output.matrix[(i*2),k] <- paste(dollar, "(", 
+              coeftostring(m[i,j+1], leading.zero, digits=digits), ")", 
+              dollar, sep="")
         }
         k <- k+1
         j <- j+3
@@ -503,6 +514,88 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
   }
   
   return(output.matrix)
+}
+
+
+# Format a column (given as vector) of the output matrix nicely by adding spaces
+format.column <- function(x, single.row=FALSE, digits=2) {
+  
+  #max length before first dot and max length of parentheses
+  dots <- gregexpr("\\.", x)
+  parentheses <- regexpr("\\(.+\\)", x)
+  first.length <- 0
+  paren.length <- 0
+  for (i in 1:length(x)) {
+    first.dot <- dots[[i]][1]
+    paren <- attributes(parentheses)$match.length[i]
+    if (x[i] == "-Inf") {
+      first.dot <- nchar(x[i]) - digits
+    } else if (first.dot == -1) {
+      temp <- nchar(x[i]) + 1
+      if (temp > first.length) {
+        first.length <- temp
+      }
+    } else if (first.dot > first.length) {
+      first.length <- first.dot
+    }
+    if (paren > paren.length) {
+      paren.length <- paren
+    }
+  }
+  
+  for (i in 1:length(x)) {
+    
+    #fill with spaces at the beginning
+    first.dot <- dots[[i]][1]
+    if (x[i] == "-Inf") {
+      first.dot <- nchar(x[i]) - digits
+    } else if (first.dot == -1) {
+      first.dot <- nchar(x[i]) + 1
+    }
+    if (nchar(x[i]) == 0) {
+      difference <- 0
+    } else {
+      difference <- first.length - first.dot
+    }
+    spaces <- paste(rep(" ", difference), collapse="")
+    x[i] <- paste(spaces, x[i], sep="")
+    
+    #adjust indentation for SEs
+    if (single.row==TRUE) {
+      paren <- attributes(parentheses)$match.length[i]
+      if (paren < 0) {
+        paren <- 0
+      }
+      difference <- paren.length - paren + 1 #+1 because strsplit takes one away
+      spaces <- paste(rep(" ", difference), collapse="")
+      components <- strsplit(x[i], " \\(")[[1]]
+      if (length(components) == 2) {
+        x[i] <- paste(components[1], spaces, "(", components[2], sep="")
+      }
+    }
+  }
+  
+  #fill with spaces at the end to make them all equally long
+  max.x <- max(nchar(x))
+  for (i in 1:length(x)) {
+    difference <- max.x - nchar(x[i])
+    spaces <- paste(rep(" ", difference), collapse="")
+    x[i] <- paste(x[i], spaces, sep="")
+  }
+
+  return(x)
+}
+
+
+# fill a column/vector with spaces at the end
+fill.spaces <- function(x) {
+  nc <- nchar(x)
+  width <- max(nc)
+  for (i in 1:length(x)) {
+    spaces <- paste(rep(" ", width - nc[i]), collapse="")
+    x[i] <- paste(x[i], spaces, sep="")
+  }
+  return(x)
 }
 
 
