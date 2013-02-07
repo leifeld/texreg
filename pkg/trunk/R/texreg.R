@@ -30,7 +30,7 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   # create output table with significance stars etc.
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
       leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix=" ", 
-      star.suffix="", strong.signif, stars, dcolumn=TRUE, symbol="\\.")
+      star.suffix="", strong.signif, stars, dcolumn=TRUE, symbol=".")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
