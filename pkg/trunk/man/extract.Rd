@@ -53,7 +53,8 @@ extract.glm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE,
     include.deviance=TRUE, include.nobs=TRUE, ...)
 extract.glmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...)
+    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
+    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
 extract.gls(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.nobs=TRUE, ...)
 extract.gmm(model, include.obj.fcn=TRUE, include.overidentification=FALSE, 
@@ -64,7 +65,8 @@ extract.lme(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE,
     include.nobs=TRUE, ...)
 extract.lmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...)
+    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
+    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
 extract.lmrob(model, include.nobs=TRUE, ...)
 extract.lnam(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, ...)
@@ -72,17 +74,20 @@ extract.lrm(model, include.pseudors=TRUE, include.lr=TRUE, include.nobs=TRUE,
     ...)
 extract.mer(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...)
+    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
+    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
 extract.negbin(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=TRUE, ...)
 extract.nlmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...)
+    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
+    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
 extract.plm(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.nobs=TRUE, ...)
 extract.pmg(model, include.nobs=TRUE, ...)
-extract.polr(model, include.thresholds=FALSE, include.aic=TRUE, include.bic=TRUE,
-    include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE, ...)
+extract.polr(model, include.thresholds=FALSE, include.aic=TRUE, 
+    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
+    include.nobs=TRUE, ...)
 extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=TRUE, ...)
 extract.rlm(model, include.nobs=TRUE, ...)
@@ -93,8 +98,9 @@ extract.simex(model, jackknife=TRUE, include.nobs=TRUE, ...)
 extract.stergm(model, beside=FALSE, include.formation=TRUE, 
     include.dissolution=TRUE, include.nvertices=TRUE, include.aic=FALSE, 
     include.bic=FALSE, include.loglik=FALSE, ...)
-extract.svyglm(model, include.aic=FALSE, include.bic=FALSE, include.loglik=FALSE,
-    include.deviance=TRUE, include.dispersion=TRUE, include.nobs=TRUE, ...)
+extract.svyglm(model, include.aic=FALSE, include.bic=FALSE, 
+    include.loglik=FALSE,include.deviance=TRUE, include.dispersion=TRUE, 
+    include.nobs=TRUE, ...)
 extract.systemfit(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.nobs=TRUE, ...)
 extract.tobit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
@@ -141,6 +147,8 @@ to convert them into texreg objects.
 \item{include.wald}{ If available: should the Wald statistic be included? }
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
+\item{mcmc.pvalues}{ In linear mixed effects models: compute MCMC-based p-values instead of naive p-values. This will only affect the output if the argument \code{include.pvalues=TRUE} is also set. Warning: computing MCMC-based p-values may take some time. }
+\item{mcmc.size}{ In linear mixed effects models: the MCMC sample size from which p-values are derived (if the arguments \code{include.pvalues=TRUE} and \code{mcmc.pvalues=TRUE} are also set). Note: high values may take considerable computing time. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
 }

@@ -682,111 +682,6 @@ setMethod("extract", signature=className("lme", "nlme"),
     definition = extract.lme)
 
 
-# extension for lmerMod objects (lme4 package, version 0.99999911-0)
-extract.lmerMod <- function(model, include.pvalues=FALSE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...) {
-  
-  Vcov <- vcov(model, useScale = FALSE, ...)
-  Vcov <- as.matrix(Vcov)
-  betas <- fixef(model, ...)
-  se <- sqrt(diag(Vcov))
-  zval <- betas / se
-  pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
-
-  lik <- logLik(model)[1]
-  aic <- AIC(model)
-  bic <- BIC(model)
-  dev <- deviance(model)
-  n <- dim(model.frame(model))[1]
-  # n <- nobs(model)  #alternative method
-  grps <- sapply(model@flist, function(x) length(levels(x)))
-  grp.names <- names(grps)
-  grp.names <- paste("Groups:", grp.names)
-  
-  vc <- VarCorr(model)
-  varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
-      attr(vc, "sc")^2)                     # residual variance
-  varnames <- names(varcomps)
-  varnames[length(varnames)] <- "Residual"
-  varnames <- gsub("\\.", "---", varnames)
-  varnames <- gsub("---\\(Intercept)", "", varnames)
-  varnames <- paste("Variance:", varnames)
-  
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic==TRUE) {
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic==TRUE) {
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik==TRUE) {
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance==TRUE) {
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs==TRUE) {
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  if (include.groups==TRUE) {
-    gof <- c(gof, grps)
-    gof.names <- c(gof.names, grp.names)
-    gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
-  }
-  if (include.variance==TRUE) {
-    gof <- c(gof, varcomps)
-    gof.names <- c(gof.names, varnames)
-    gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
-  }
-  
-  if (include.pvalues==FALSE) {
-    tr <- createTexreg(
-        coef.names=names(betas), 
-        coef=betas, 
-        se=se,
-        gof.names=gof.names,
-        gof=gof,
-        gof.decimal=gof.decimal
-    )
-  } else {
-    tr <- createTexreg(
-        coef.names=names(betas), 
-        coef=betas, 
-        se=se,
-        pvalues=pval,
-        gof.names=gof.names,
-        gof=gof,
-        gof.decimal=gof.decimal
-    )
-  }
-  return(tr)
-}
-
-setMethod("extract", signature=className("lmerMod", "lme4"), 
-    definition = extract.lmerMod)
-
-extract.glmerMod <- extract.lmerMod
-setMethod("extract", signature=className("glmerMod", "lme4"), 
-    definition = extract.glmerMod)
-
-extract.nlmerMod <- extract.lmerMod
-setMethod("extract", signature=className("nlmerMod", "lme4"), 
-    definition = extract.nlmerMod)
-
-
 # extension for lmrob objects (robustbase package)
 extract.lmrob <- function(model, include.nobs = TRUE, ...) {
   s <- summary(model, ...)
@@ -937,70 +832,83 @@ setMethod("extract", signature=className("lrm", "Design"),
     definition = extract.lrm)
 
 
-# extension for mer objects (lme4 package, version 0.999999-0)
+# extension for mer (and lmerMod, glmerMod and nlmerMod) objects (lme4 package)
 extract.mer <- function(model, include.pvalues=FALSE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, ...) {
+    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
+    mcmc.pvalues=FALSE, mcmc.size=5000, ...) {
   
   Vcov <- vcov(model, useScale = FALSE, ...)
   Vcov <- as.matrix(Vcov)
   betas <- fixef(model, ...)
   se <- sqrt(diag(Vcov))
-  zval <- betas / se
-  pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
-
-  lik <- logLik(model)[1]
-  aic <- AIC(model)
-  bic <- BIC(model)
-  dev <- deviance(model)
-  n <- dim(model.frame(model))[1]
-  grps <- sapply(model@flist, function(x) length(levels(x)))
-  grp.names <- names(grps)
-  grp.names <- paste("Groups:", grp.names)
-  
-  vc <- VarCorr(model)
-  varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
-      attr(vc, "sc")^2)                     # residual variance
-  varnames <- names(varcomps)
-  varnames[length(varnames)] <- "Residual"
-  varnames <- gsub("\\.", "---", varnames)
-  varnames <- gsub("---\\(Intercept)", "", varnames)
-  varnames <- paste("Variance:", varnames)
+  if (include.pvalues == FALSE) {
+    #do not include p-values (default)
+  } else if (mcmc.pvalues == FALSE) { #naive p-values
+    zval <- betas / se
+    pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+  } else if (exists("mcmcsamp")) { # mcmc-based p-values, only available up to 
+    tval <- betas / se             # the stable lme4 version 0.999999-0 on CRAN;
+    m <- asS4(model)               # not working with version 0.99999911-0
+    ncoef <- length(betas)
+    mcmc <- mcmcsamp(m, n = mcmc.size)
+    hpd <- HPDinterval(mcmc)
+    pval <- 2 * (1 - pt(abs(tval), nrow(m@frame) - ncoef))
+  } else {
+    stop(paste("MCMC sampling is not available in the currently installed", 
+        "version of the lme4 package. Please use naive p-values instead or", 
+        "switch off p-values completely when using texreg, or install an", 
+        "older version of lme4 (like the stable CRAN release)."))
+  }
   
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
   if (include.aic==TRUE) {
+    aic <- AIC(model)
     gof <- c(gof, aic)
     gof.names <- c(gof.names, "AIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.bic==TRUE) {
+    bic <- BIC(model)
     gof <- c(gof, bic)
     gof.names <- c(gof.names, "BIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.loglik==TRUE) {
+    lik <- logLik(model)[1]
     gof <- c(gof, lik)
     gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.deviance==TRUE) {
+    dev <- deviance(model)
     gof <- c(gof, dev)
     gof.names <- c(gof.names, "Deviance")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs==TRUE) {
+    n <- dim(model.frame(model))[1]
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups==TRUE) {
+    grps <- sapply(model@flist, function(x) length(levels(x)))
+    grp.names <- names(grps)
+    grp.names <- paste("Num. groups:", grp.names)
     gof <- c(gof, grps)
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
   }
   if (include.variance==TRUE) {
+    vc <- VarCorr(model)
+    varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
+        attr(vc, "sc")^2)                     # residual variance
+    varnames <- names(varcomps)
+    varnames[length(varnames)] <- "Residual"
+    varnames <- paste("Variance:", varnames)
     gof <- c(gof, varcomps)
     gof.names <- c(gof.names, varnames)
     gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
@@ -1031,6 +939,18 @@ extract.mer <- function(model, include.pvalues=FALSE, include.aic=TRUE,
 
 setMethod("extract", signature=className("mer", "lme4"), 
     definition = extract.mer)
+
+extract.lmerMod <- extract.mer
+setMethod("extract", signature=className("lmerMod", "lme4"), 
+    definition = extract.lmerMod)
+
+extract.glmerMod <- extract.mer
+setMethod("extract", signature=className("glmerMod", "lme4"), 
+    definition = extract.glmerMod)
+
+extract.nlmerMod <- extract.mer
+setMethod("extract", signature=className("nlmerMod", "lme4"), 
+    definition = extract.nlmerMod)
 
 
 # extension for plm objects (from the plm package)
