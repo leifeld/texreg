@@ -11,20 +11,21 @@ texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     strong.signif=FALSE, symbol="\\\\cdot", use.packages=TRUE, 
     caption="Statistical models", label="table:coefficients", 
     dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NA, model.names=NA, digits=2, override.coef=0, 
-    override.se=0, override.pval=0, omit.coef=NA, file=NA, 
-    return.string=FALSE, ...)
+    custom.names=NULL, custom.gof.names=NULL, model.names=NULL, 
+    digits=2, override.coef=0, override.se=0, override.pval=0, 
+    omit.coef=NA, file=NA, return.string=FALSE, ...)
 htmlreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, symbol="&middot;", 
-    caption="Statistical models", custom.names=NA, 
-    model.names=NA, digits=2, override.coef=0, override.se=0, 
-    override.pval=0, omit.coef=NA, file=NA, 
-    return.string=FALSE, ...)
-screenreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
-    strong.signif=FALSE, custom.names=NA, model.names=NA, 
-    digits=2, outer.rule="=", inner.rule="-", column.spacing=2, 
+    caption="Statistical models", custom.names=NULL, 
+    custom.gof.names=NULL, model.names=NULL, digits=2, 
     override.coef=0, override.se=0, override.pval=0, 
     omit.coef=NA, file=NA, return.string=FALSE, ...)
+screenreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
+    strong.signif=FALSE, custom.names=NULL, custom.gof.names=NULL, 
+    model.names=NULL, digits=2, outer.rule="=", inner.rule="-", 
+    column.spacing=2, override.coef=0, override.se=0, 
+    override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, 
+    ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -51,9 +52,10 @@ easily implemented.
 \item{dcolumn}{ Use the \code{dcolumn} LaTeX package to get a nice alignment of the coefficients. }
 \item{booktabs}{ Use the \code{booktabs} LaTeX package to get thick horizontal rules in the output table. }
 \item{scriptsize}{ To save horizontal space on the page, the table can be set in script size instead of normal text size by setting \code{scriptsize=TRUE}. }
-\item{custom.names}{ By default, texreg uses the coefficient names which are stored in the models. The \code{custom.names} argument can be used to replace them by other character strings in the order of appearance. For example, if a table shows a total of three different independent variables (including the intercept), the argument \code{custom names=c("Intercept", "variable 1", "variable 2")} will replace their names in this order.
+\item{custom.names}{ By default, texreg uses the coefficient names which are stored in the models. The \code{custom.names} argument can be used to replace them by other character strings in the order of appearance. For example, if a table shows a total of three different coefficients (including the intercept), the argument \code{custom names=c("Intercept", "variable 1", "variable 2")} will replace their names in this order.
 
 Sometimes it happens that the same variable has a different name in different models. In this case, the user can use this function to assign identical names. If possible, the rows will then be merged into a single row unless both rows contain values in the same column. }
+\item{custom.gof.names}{ A character vector which is used to replace the names of the goodness-of-fit statistics at the bottom of the table. The vector must have the same length as the number of GOF statistics in the final table. The argument works like the \code{custom.names} argument, but for the GOF values. }
 \item{model.names}{ A string vector of labels for the models. By default, the models are named Model 1, Model 2, etc. Specifying \code{model.names=c("My name 1", "My name 2")} etc. overrides the default behavior. }
 \item{digits}{ Set the number of decimal places for coefficients, standard errors and goodness-of-fit statistics. Do not use negative values! }
 \item{override.coef}{ Set custom values for the coefficients. New coefficients are provided as a list of numeric vectors. The list contains vectors of coefficients for each model. There must be as many vectors of coefficients as there are models. For example, if there are two models with three model terms each, the argument could be specified as \code{override.coef=list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.coef=c(0.05, 0.06, 0.07)}. }

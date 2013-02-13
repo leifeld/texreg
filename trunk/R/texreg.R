@@ -2,12 +2,13 @@
 # Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
 # for bug reports, help or feature requests.
 
+
 # screenreg function
 screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
-    strong.signif=FALSE, custom.names=NA, model.names=NA, digits=2, 
-    outer.rule="=", inner.rule="-", column.spacing=2, override.coef=0, 
-    override.se=0, override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, 
-    ...) {
+    strong.signif=FALSE, custom.names=NULL, custom.gof.names=NULL, 
+    model.names=NULL, digits=2, outer.rule="=", inner.rule="-", 
+    column.spacing=2, override.coef=0, override.se=0, override.pval=0, 
+    omit.coef=NA, file=NA, return.string=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   models <- override(models, override.coef, override.se, override.pval)
@@ -15,10 +16,12 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   gof.names <- get.gof(models) #extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
-  gofs <- aggregate.matrix(models, gof.names, digits, returnobject="gofs")
-  m <- aggregate.matrix(models, gof.names, digits, returnobject="m")
-  decimal.matrix <- aggregate.matrix(models, gof.names, digits, 
-      returnobject="decimal.matrix")
+  gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject="gofs")
+  m <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject="m")
+  decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
+      digits, returnobject="decimal.matrix")
   
   m <- customnames(m, custom.names) #rename coefficients
   m <- rearrangeMatrix(m) #resort matrix and conflate duplicate entries
@@ -154,18 +157,21 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     table=TRUE, sideways=FALSE, float.pos="", stars=TRUE, strong.signif=FALSE, 
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NA, model.names=NA, digits=2, override.coef=0, override.se=0, 
-    override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, ...) {
+    custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
+    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, file=NA, 
+    return.string=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   gof.names <- get.gof(models) #extract names of GOFs
   models <- override(models, override.coef, override.se, override.pval)
   
   # arrange coefficients and GOFs nicely in a matrix
-  gofs <- aggregate.matrix(models, gof.names, digits, returnobject="gofs")
-  m <- aggregate.matrix(models, gof.names, digits, returnobject="m")
-  decimal.matrix <- aggregate.matrix(models, gof.names, digits, 
-      returnobject="decimal.matrix")
+  gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject="gofs")
+  m <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject="m")
+  decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
+      digits, returnobject="decimal.matrix")
   
   m <- customnames(m, custom.names) #rename coefficients
   m <- rearrangeMatrix(m) #resort matrix and conflate duplicate entries
@@ -396,8 +402,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
 # htmlreg function
 htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, symbol="&middot;", caption="Statistical models", 
-    custom.names=NA, model.names=NA, digits=2, override.coef=0, override.se=0, 
-    override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, ...) {
+    custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
+    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, file=NA, 
+    return.string=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   
@@ -406,10 +413,12 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   gof.names <- get.gof(models) #extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
-  gofs <- aggregate.matrix(models, gof.names, digits, returnobject="gofs")
-  m <- aggregate.matrix(models, gof.names, digits, returnobject="m")
-  decimal.matrix <- aggregate.matrix(models, gof.names, digits, 
-      returnobject="decimal.matrix")
+  gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject="gofs")
+  m <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject="m")
+  decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
+      digits, returnobject="decimal.matrix")
   
   m <- customnames(m, custom.names) #rename coefficients
   m <- rearrangeMatrix(m) #resort matrix and conflate duplicate entries
