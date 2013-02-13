@@ -237,7 +237,8 @@ tex.replace <- function(models, type="html") {
 
 
 # put models and GOFs into a common matrix
-aggregate.matrix <- function(models, gof.names, digits, returnobject="m") {
+aggregate.matrix <- function(models, gof.names, custom.gof.names, digits, 
+    returnobject="m") {
 
   # aggregate GOF statistics in a matrix and create list of coef blocks
   gofs <- matrix(nrow=length(gof.names), ncol=length(models))
@@ -311,7 +312,24 @@ aggregate.matrix <- function(models, gof.names, digits, returnobject="m") {
   if (returnobject == "m") {
     return(m)
   } else if (returnobject == "gofs") {
+  
+    #replace GOF names by custom names
+    if (is.null(custom.gof.names)) {
+      #do nothing
+    } else if (class(custom.gof.names) != "character") {
+      stop("Custom GOF names must be provided as a vector of strings.")
+    } else if (length(custom.gof.names) != length(gof.names)) {
+      stop(paste("There are", length(gof.names), 
+          "GOF statistics, but you provided", length(custom.gof.names), 
+          "custom names for them."))
+    } else if (any(is.na(custom.gof.names))) {
+      stop("Custom GOF names are not allowed to contain NA values.")
+    } else {
+      rownames(gofs) <- custom.gof.names
+    }
+    
     return(gofs)
+    
   } else if (returnobject == "decimal.matrix") {
     return(decimal.matrix)
   }
@@ -320,8 +338,9 @@ aggregate.matrix <- function(models, gof.names, digits, returnobject="m") {
 
 # use custom coefficient names if provided
 customnames <- function(m, custom.names) {
-  
-  if (length(custom.names) > 1) {
+  if (is.null(custom.names)) {
+    return(m)
+  } else if (length(custom.names) > 1) {
     if (!class(custom.names) == "character") {
       stop("Custom coefficient names must be provided as a vector of strings!")
     } else if (length(custom.names) != length(rownames(m))) {
@@ -336,9 +355,26 @@ customnames <- function(m, custom.names) {
   } else if (length(custom.names) == 1 & class(custom.names) == "character") {
     rownames(m) <- custom.names
   }
-  
   return(m)
 }
+
+## use custom GOF names if provided
+#customgof <- function(gof.names, custom.gof.names) {
+#  if (is.null(custom.gof.names)) {
+#    return(gof.names)
+#  } else if (class(custom.gof.names) != "character") {
+#    stop("Custom GOF names must be provided as a vector of strings.")
+#  } else if (length(custom.gof.names) != length(gof.names)) {
+#    stop(paste("There are", length(gof.names), 
+#        "GOF statistics, but you provided", length(custom.gof.names), 
+#        "custom names for them."))
+#  } else if (any(is.na(custom.gof.names))) {
+#    stop("Custom GOF names are not allowed to contain NA values.")
+#  } else {
+#    return(custom.gof.names)
+#  }
+#  return(m)
+#}
 
 
 # remove coefficient rows that match the omit.coef regular expression
@@ -356,7 +392,9 @@ omitcoef <- function(m, omit.coef) {
 
 # decide if default or custom model names should be used and return them
 modelnames <- function(models, model.names) {
-  if (length(model.names) > 1) {
+  if (is.null(model.names)) {
+    return(paste("Model", 1:length(models)))
+  } else if (length(model.names) > 1) {
     if (class(model.names) != "character") {
       stop("Model names must be specified as a vector of strings.")
     } else if (length(model.names) != length(models)) {
