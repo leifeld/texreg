@@ -51,6 +51,7 @@ Class			& Package			& Added		& Description \\
 \texttt{clogit}		& \texttt{survival}		& 2012-09-30	& Conditional logistic regression \\
 \texttt{coxph}		& \texttt{survival}		& 2012-10-14	& Cox proportional hazard models \\
 \texttt{coxph.penal}	& \texttt{survival}		& 2012-12-04	& Cox proportional hazard models with penalty splines \\
+\texttt{dynml}		& \texttt{dynlm}		& 2013-02-14	& Time series regression with ``ts'' data \\
 \texttt{ergm}		& \texttt{ergm}			& 2012-06-18	& Exponential random graph models \\
 \texttt{gee}		& \texttt{gee}			& 2012-10-14	& Generalized estimation equation \\
 \texttt{glm}		& \texttt{stats}		& 2012-06-19	& Generalized linear models \\
@@ -143,25 +144,26 @@ Now it is fairly tedious to copy every single coefficient and standard error to 
 To improve the situation, the following commands can do this automatically (the \LaTeX\ output code is shown below the R code, and the resulting table is shown in table \ref{tab:1}):
 <<>>=
 library(texreg)
-table <- texreg(m2)
+texreg(m2)
 @
 <<echo=FALSE,results=tex>>=
-table <- texreg(m2, use.packages=FALSE, label="tab:1")
+texreg(m2, use.packages=FALSE, label="tab:1")
 @
 
-The table is saved in the object \texttt{table}.
-Moreover, it is printed directly to the R console for easy copy \& paste.
-In order to print it to the R console again, the following command can be used:
+The resulting table is printed directly to the R console for easy copy \& paste.
+It can also be returned as a character string and saved in an object, say \texttt{tab}, by adding the \texttt{return.string=TRUE} argument.
+This way, it can be later printed again using the \texttt{cat()} function:
 <<results=hide>>=
-cat(table)
+tab <- texreg(m2, return.string=TRUE)
+cat(tab)
 @
 The \texttt{texreg} command also accepts multiple models as a \texttt{list} and merges them in a table.
 The output of the following command is shown in table \ref{tab:2}.
 <<eval=FALSE>>=
-table <- texreg(list(m1,m2))
+texreg(list(m1,m2))
 @
 <<results=tex,echo=FALSE>>=
-table <- texreg(list(m1,m2), use.packages=FALSE, label="tab:2")
+texreg(list(m1,m2), use.packages=FALSE, label="tab:2")
 @
 
 The texreg package contains many customizations.
@@ -174,7 +176,7 @@ The position of the table on the page or in the document can be specified using 
 The \texttt{custom.names} and \texttt{model.names} arguments can be used to specify the names of the model terms and the models, respectively.
 An example:
 <<results=tex>>=
-table <- texreg(list(m1, m2), use.packages=FALSE, label="tab:3", 
+texreg(list(m1, m2), use.packages=FALSE, label="tab:3", 
   caption="My regression table", scriptsize=TRUE, 
   custom.names=c("(Intercept)", "Treatment", "Control"), 
   model.names=c("First model", "Second model"), float.pos="b")
@@ -210,8 +212,8 @@ m6 <- ergm(nw ~ edges + mutual + twopath)
 The texreg command can then be used to create a table with the coefficients.
 Switching on \texttt{strong.signif} returns the significance levels used by the \texttt{ergm} package (three stars for $p$ values smaller than $0.001$ etc.) instead of using conventional significance stars:
 <<results=tex>>=
-table <- texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:4", 
-  scriptsize=FALSE, strong.signif=TRUE)
+texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:4", scriptsize=FALSE, 
+  strong.signif=TRUE)
 @
 Table \ref{tab:4} shows the result of this command.
 
@@ -219,8 +221,7 @@ Most academic journals require tables where the coefficient and the standard err
 In some situations, however, it makes sense to accommodate them in a single row.
 The \texttt{single.row} argument can take care of this:
 <<results=tex>>=
-table <- texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:5", 
-  single.row=TRUE)
+texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:5", single.row=TRUE)
 @
 The result is shown in table \ref{tab:5}.
 Note the difference between tables \ref{tab:4} and \ref{tab:5}.
@@ -232,25 +233,42 @@ library(nlme)
 m3 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
 @
 <<results=tex>>=
-table <- texreg(list(m3, m2, m6), label="tab:6", use.packages=FALSE)
+texreg(list(m3, m2, m6), label="tab:6", use.packages=FALSE)
 @
 The output is shown in table \ref{tab:6}.
 Note that different model types may report different kinds of goodness-of-fit statistics at the bottom of the table.
 
+Many people use robust standard errors.
+To include include them in a texreg table, the original standard errors can be replaced and new, custom values can be handed over.
+To do this, the argument \verb+override.se+ can be used.
+The argument expects a list of vectors, with one vector of standard errors for each model (which means that there should be as many elements in the list as there are models).
+Beside standard errors, there are similar arguments for $p$ values (\verb+override.pval+) and coefficients (\verb+override.coef+).
+
+\section{htmlreg and screenreg}
 Tables can also be converted into HTML code instead of \LaTeX\ code using the following command:
 <<results=hide>>=
-table <- htmlreg(list(m3, m2, m6))
+htmlreg(list(m3, m2, m6))
 @
 The output of either of the two commands can be written directly to a file by adding the \texttt{file} argument.
 This is especially handy because HTML files can be read by MS Word.
+So it is possible to use the texreg package not only with \LaTeX, but also with MS Office.
 An example:
 <<results=hide>>=
-table <- htmlreg(list(m3, m2, m6), file="mytable.doc")
+htmlreg(list(m3, m2, m6), file="mytable.doc")
+@
+The \texttt{htmlreg()} function works well with the \texttt{knitr} package for dynamic HTML report generation.
+In addition to HTML, \texttt{knitr} is also compatible with Markdown, a simplified markup language.
+texreg can work with Markdown as well, but a couple of arguments should be provided to make it work:
+the \verb+star.symbol="\\*"+ argument makes sure that Markdown does not interpret the significance stars as special Markdown syntax, and the \verb+doctype=FALSE+ argument makes sure that the HTML document type is not printed verbatim to the HTML file.
+The additional \verb+align.center=TRUE+ argument centers the table horizontally on the page.
+Here is an example (without printing the results because this vignette is not written in Markdown):
+<<results=hide>>=
+htmlreg(m3, doctype=FALSE, star.symbol="\\*", align.center=TRUE)
 @
 Finally, there is another function, which can print tables to the R console.
 The command will nicely arrange the spaces etc. of your tables and will greatly facilitate model comparison:
 <<>>=
-table <- screenreg(list(m3, m2, m6))
+screenreg(list(m3, m2, m6))
 @
 
 \section{Creating templates for new model types}\label{templates}

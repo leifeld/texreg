@@ -358,24 +358,6 @@ customnames <- function(m, custom.names) {
   return(m)
 }
 
-## use custom GOF names if provided
-#customgof <- function(gof.names, custom.gof.names) {
-#  if (is.null(custom.gof.names)) {
-#    return(gof.names)
-#  } else if (class(custom.gof.names) != "character") {
-#    stop("Custom GOF names must be provided as a vector of strings.")
-#  } else if (length(custom.gof.names) != length(gof.names)) {
-#    stop(paste("There are", length(gof.names), 
-#        "GOF statistics, but you provided", length(custom.gof.names), 
-#        "custom names for them."))
-#  } else if (any(is.na(custom.gof.names))) {
-#    stop("Custom GOF names are not allowed to contain NA values.")
-#  } else {
-#    return(custom.gof.names)
-#  }
-#  return(m)
-#}
-
 
 # remove coefficient rows that match the omit.coef regular expression
 omitcoef <- function(m, omit.coef) {
@@ -419,8 +401,8 @@ modelnames <- function(models, model.names) {
 
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
-    se.prefix, se.suffix, star.prefix, star.suffix, strong.signif, 
-    stars, dcolumn=TRUE, symbol) {
+    se.prefix, se.suffix, star.prefix, star.suffix, star.char="*", 
+    strong.signif, stars, dcolumn=TRUE, symbol) {
 
   # write coefficient rows
   if (single.row==TRUE) {
@@ -445,11 +427,12 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
               digits=digits), se.suffix, sep="")
           if (strong.signif == TRUE && stars==TRUE) {
             if (m[i,j+2] <= 0.001) {
-              p <- paste(star.prefix, "***", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.char, 
+                  star.suffix, sep="")
             } else if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, "**", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
             } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, "*", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.suffix, sep="")
             } else if (m[i,j+2] <= 0.1) {
               p <- paste(star.prefix, symbol, star.suffix, sep="")
             } else {
@@ -457,11 +440,12 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
             }
           } else if (stars==TRUE) {
             if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, "***", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.char, 
+                  star.suffix, sep="")
             } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, "**", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
             } else if (m[i,j+2] <= 0.1) {
-              p <- paste(star.prefix, "*", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.suffix, sep="")
             } else {
               p <- ""
             }
@@ -505,11 +489,12 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
         } else {
           if (strong.signif == TRUE && stars==TRUE) {
             if (m[i,j+2] <= 0.001) {
-              p <- paste(star.prefix, "***", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.char, 
+                  star.suffix, sep="")
             } else if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, "**", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
             } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, "*", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.suffix, sep="")
             } else if (m[i,j+2] <= 0.1) {
               p <- paste(star.prefix, symbol, star.suffix, sep="")
             } else {
@@ -517,11 +502,12 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
             }
           } else if (stars==TRUE) {
             if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, "***", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.char, 
+                  star.suffix, sep="")
             } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, "**", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
             } else if (m[i,j+2] <= 0.1) {
-              p <- paste(star.prefix, "*", star.suffix, sep="")
+              p <- paste(star.prefix, star.char, star.suffix, sep="")
             } else {
               p <- ""
             }

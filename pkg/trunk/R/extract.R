@@ -626,6 +626,10 @@ extract.lm <- function(model, include.rsquared=TRUE, include.adjrs=TRUE,
 setMethod("extract", signature=className("lm", "stats"), 
     definition = extract.lm)
 
+extract.dynlm <- extract.lm
+setMethod("extract", signature=className("dynlm", "dynlm"),
+    definition = extract.dynlm)
+
 
 # extension for lme objects
 extract.lme <- function(model, include.aic=TRUE, include.bic=TRUE, 

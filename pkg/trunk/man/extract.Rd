@@ -4,6 +4,7 @@
 \alias{extract.clogit}
 \alias{extract.coxph}
 \alias{extract.coxph.penal}
+\alias{extract.dynlm}
 \alias{extract.ergm}
 \alias{extract.gee}
 \alias{extract.glm}
@@ -46,6 +47,8 @@ extract.coxph(model, include.aic=TRUE, include.rsquared=TRUE,
 extract.coxph.penal(model, include.aic=TRUE, include.rsquared=TRUE, 
     include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
     include.missings=TRUE, include.zph=TRUE, ...)
+extract.dynlm(model, include.rsquared=TRUE, include.adjrs=TRUE, 
+    include.nobs=TRUE, ...)
 extract.ergm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     ...)
 extract.gee(model, robust=TRUE, include.dispersion=TRUE, include.nobs=TRUE, ...)
