@@ -33,7 +33,8 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   # create output table with significance stars etc.
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
       leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix=" ", 
-      star.suffix="", strong.signif, stars, dcolumn=TRUE, symbol=".")
+      star.suffix="", star.char="*", strong.signif, stars, dcolumn=TRUE, 
+      symbol=".")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
@@ -287,7 +288,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   output.matrix <- outputmatrix(m, single.row, 
       neginfstring="\\multicolumn{1}{c}{$-$Inf}", leading.zero, digits, 
       se.prefix=" \\; (", se.suffix=")", star.prefix="^{", star.suffix="}", 
-      strong.signif, stars, dcolumn=dcolumn, symbol)
+      star.char="*", strong.signif, stars, dcolumn=dcolumn, symbol)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
@@ -403,8 +404,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
 htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, symbol="&middot;", caption="Statistical models", 
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
-    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, file=NA, 
-    return.string=FALSE, ...) {
+    doctype=TRUE, star.symbol="*", align.center=FALSE, override.coef=0, 
+    override.se=0, override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, 
+    ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   
@@ -429,8 +431,9 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   
   # create output table with significance stars etc.
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
-      leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix="<sup>", 
-      star.suffix="</sup>", strong.signif, stars, dcolumn=TRUE, symbol)
+      leading.zero, digits, se.prefix=" (", se.suffix=")", 
+      star.char=star.symbol, star.prefix="<sup>", star.suffix="</sup>", 
+      strong.signif, stars, dcolumn=TRUE, symbol)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
@@ -440,26 +443,28 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   output.matrix <- rbind(output.matrix, gof.matrix)
   
   # write table header
-  if (single.row==TRUE) {
+  if (single.row == TRUE) {
     numcols <- 2 * length(models)
   } else {
     numcols <- length(models)
   }
   
-  if (strong.signif == TRUE && stars==TRUE) {
-    note <- paste("<sup>***</sup>p&lt;0.001, ", 
-        "<sup>**</sup>p&lt;0.01, <sup>*</sup>p&lt;0.05, <sup>", symbol, 
-        "</sup>p&lt;0.1", sep="")
-  } else if (stars==TRUE) {
-    note <- paste("<sup>***</sup>p&lt;0.01, ", 
-        "<sup>**</sup>p&lt;0.05, <sup>*</sup>p&lt;0.1", sep="")
+  if (doctype == TRUE) {
+    doct <- "<!DOCTYPE html>\n"
+  } else {
+    doct <- ""
+  }
+  
+  if (align.center == FALSE) {
+    tabdef <- "    <table cellspacing=\"0\">\n"
+  } else {
+    tabdef <- "    <table cellspacing=\"0\" align=\"center\">\n"
   }
   
   string <- paste(
       "\n", 
-      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" ", 
-      "\"http://www.w3.org/TR/html4/loose.dtd\">\n\n", 
-      "<html>\n\n", 
+      doct, 
+      "<html>\n", 
       "  <head>\n", 
       "    <title>", caption, "</title>\n", 
       "    <style type=\"text/css\">\n", 
@@ -491,9 +496,7 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
       "    </style>\n", 
       "  </head>\n\n", 
       "  <body>\n", 
-      "    <table cellspacing=\"0\">\n", 
-      "      <caption align=\"bottom\" style=\"font-size:0.8em\"><span>", note, 
-      "</span></caption>\n", 
+      tabdef, 
       "      <tr>\n", 
       "        <th class=\"modelnames\"></th>\n", 
       sep="")
@@ -533,6 +536,22 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     }
     string <- paste(string, "      </tr>\n", sep="")
   }
+  
+  #significance legend
+  if (strong.signif == TRUE && stars==TRUE) {
+    note <- paste("<sup>", star.symbol, star.symbol, star.symbol, 
+        "</sup>p&lt;0.001, ", "<sup>", star.symbol, star.symbol, 
+        "</sup>p&lt;0.01, <sup>", star.symbol, "</sup>p&lt;0.05, <sup>", 
+        symbol, "</sup>p&lt;0.1", sep="")
+  } else if (stars==TRUE) {
+    note <- paste("<sup>", star.symbol, star.symbol, star.symbol, 
+        "</sup>p&lt;0.01, ", "<sup>", star.symbol, star.symbol, 
+        "</sup>p&lt;0.05, <sup>", star.symbol, "</sup>p&lt;0.1", sep="")
+  }
+  
+  string <- paste(string, "      <tr>\n", "        <td colspan=\"", 
+      (1 + length(models)), "\"><span style=\"font-size:0.8em\">", note, 
+      "</span></td>\n", "      </tr>\n", sep="")
   
   # write table footer
   string <- paste(string, "    </table>\n")

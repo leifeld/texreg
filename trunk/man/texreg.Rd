@@ -18,6 +18,7 @@ htmlreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     strong.signif=FALSE, symbol="&middot;", 
     caption="Statistical models", custom.names=NULL, 
     custom.gof.names=NULL, model.names=NULL, digits=2, 
+    doctype=TRUE, star.symbol="*", align.center=FALSE, 
     override.coef=0, override.se=0, override.pval=0, 
     omit.coef=NA, file=NA, return.string=FALSE, ...)
 screenreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
@@ -66,6 +67,9 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{return.string}{ Should the table be returned as a character object, which can later be printed again using the \code{cat()} function? }
 \item{outer.rule}{ The character which is used to draw the outer horizontal line above and below a table (only for the \code{screenreg()} function). If an empty character object is provided (i.e., \code{outer.rule=""}), there will be no outer horizontal lines. Recommended values are \code{""}, \code{"="}, \code{"-"}, \code{"_"}, or \code{"#"}. }
 \item{inner.rule}{ The character which is used to draw the inner horizontal line above and below a table (only for the \code{screenreg()} function). If an empty character object is provided (i.e., \code{outer.rule=""}), there will be no inner horizontal lines. Recommended values are \code{""}, \code{"-"}, or \code{"_"}. }
+\item{doctype}{ For the \code{htmlreg()} function: should the first line of the HTML code contain the DOCTYPE definition? If \code{TRUE}, the HTML 5 version is used. If \code{FALSE}, no DOCTYPE will be included. Omitting the DOCTYPE can be helpful when the \pkg{knitr} package is used with Markdown scripts to generate HTML code. If \pkg{knitr} and Markdown are used and the DOCTYPE is included, the DOCTYPE line will be printed verbatim in the resulting HTML document. }
+\item{star.symbol}{ For the \code{htmlreg()} function: alternative characters for the significance stars can be specified. This is useful if \pkg{knitr} and Markdown are used for HTML report generation. In Markdown, asterisks or stars are interpreted as special characters, so they have to be escaped. To make \code{htmlreg()} compatible with Markdown, specify \code{star.symbol="\\*"}. }
+\item{align.center}{ For the \code{htmlreg()} function: should the resulting table be horizontally aligned at the center of the page? }
 \item{column.spacing}{ The amount of space between any two columns of a table (only for the \code{screenreg()} function). By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}. }
 \item{...}{ Custom options to be passed on to the extract function. }
 }

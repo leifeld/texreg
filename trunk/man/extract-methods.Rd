@@ -5,6 +5,7 @@
 \alias{extract,clogit-method}
 \alias{extract,coxph-method}
 \alias{extract,coxph.penal-method}
+\alias{extract,dynlm-method}
 \alias{extract,ergm-method}
 \alias{extract,gee-method}
 \alias{extract,glm-method}
@@ -53,6 +54,10 @@ An extract function for coxph objects from the \pkg{survival} package.
 
 \item{\code{extract.coxph.penal}}{
 An extract function for coxph.penal objects from the \pkg{survival} package.
+}
+
+\item{\code{extract.dynlm}}{
+An extract function for dynlm objects from the \pkg{dynlm} package.
 }
 
 \item{\code{extract.ergm}}{
