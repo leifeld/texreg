@@ -8,7 +8,8 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     strong.signif=FALSE, custom.names=NULL, custom.gof.names=NULL, 
     model.names=NULL, digits=2, outer.rule="=", inner.rule="-", 
     column.spacing=2, override.coef=0, override.se=0, override.pval=0, 
-    omit.coef=NA, file=NA, return.string=FALSE, ...) {
+    omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, file=NA, 
+    return.string=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   models <- override(models, override.coef, override.se, override.pval)
@@ -29,6 +30,11 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
   
   modnames <- modelnames(models, model.names) #use (custom) model names
+  
+  # reorder GOF and coef matrix
+  m <- reorder(m, reorder.coef)
+  gofs <- reorder(gofs, reorder.gof)
+  decimal.matrix <- reorder(decimal.matrix, reorder.gof)
   
   # create output table with significance stars etc.
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
@@ -159,8 +165,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
-    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, file=NA, 
-    return.string=FALSE, ...) {
+    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, 
+    reorder.coef=NULL, reorder.gof=NULL, file=NA, return.string=FALSE, 
+    caption.above=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   gof.names <- get.gof(models) #extract names of GOFs
@@ -180,6 +187,11 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
   
   modnames <- modelnames(models, model.names) #use (custom) model names
+  
+  # reorder GOF and coef matrix
+  m <- reorder(m, reorder.coef)
+  gofs <- reorder(gofs, reorder.gof)
+  decimal.matrix <- reorder(decimal.matrix, reorder.gof)
   
   # what is the optimal length of the labels?
   lab.list <- c(rownames(m), gof.names)
@@ -216,6 +228,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     } else {
       string <- paste(string, "\\begin{", t, "table}[", float.pos, "]\n", 
           sep="")
+    }
+    if (caption.above == TRUE) {
+      string <- paste(string, "\\caption{", caption, "}\n", sep="")
     }
     string <- paste(string, "\\begin{center}\n", sep="")
     if (scriptsize == TRUE) {
@@ -373,9 +388,11 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     if (scriptsize == TRUE) {
       string <- paste(string, "\\normalsize\n", sep="")
     }
-    string <- paste(string, "\\end{center}\n", sep="")
-    string <- paste(string, "\\caption{", caption, "}\n", sep="")
+    if (caption.above == FALSE) {
+      string <- paste(string, "\\caption{", caption, "}\n", sep="")
+    }
     string <- paste(string, "\\label{", label, "}\n", sep="")
+    string <- paste(string, "\\end{center}\n", sep="")
     if (sideways == TRUE) {
       t <- "sideways"
     } else {
@@ -405,8 +422,8 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     strong.signif=FALSE, symbol="&middot;", caption="Statistical models", 
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
     doctype=TRUE, star.symbol="*", align.center=FALSE, override.coef=0, 
-    override.se=0, override.pval=0, omit.coef=NA, file=NA, return.string=FALSE, 
-    ...) {
+    override.se=0, override.pval=0, omit.coef=NA, reorder.coef=NULL, 
+    reorder.gof=NULL, file=NA, return.string=FALSE, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   
@@ -428,6 +445,11 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
   
   modnames <- modelnames(models, model.names) #use (custom) model names
+  
+  # reorder GOF and coef matrix
+  m <- reorder(m, reorder.coef)
+  gofs <- reorder(gofs, reorder.gof)
+  decimal.matrix <- reorder(decimal.matrix, reorder.gof)
   
   # create output table with significance stars etc.
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
