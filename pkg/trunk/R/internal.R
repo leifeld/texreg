@@ -366,7 +366,13 @@ omitcoef <- function(m, omit.coef) {
       stop("omit.coef must be a character string!")
     }
     remove.rows <- grep(omit.coef, rownames(m))
-    m <- m[-remove.rows,]
+    if (length(remove.rows) == 0) {
+      return(m)
+    } else if (length(remove.rows) == nrow(m)) {
+      stop("You were trying to remove all coefficients using omit.coef.")
+    } else {
+      m <- m[-remove.rows,]
+    }
   }
   return(m)
 }
@@ -636,4 +642,32 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn=TRUE, leading.zero,
   return(gof.matrix)
 }
 
+# reorder a matrix according to a vector of new positions
+reorder <- function(mat, new.order) {
+  if (is.null(new.order)) {
+    return(mat)
+  } else if (nrow(mat) != length(new.order)) {
+    stop(paste("Error when reordering matrix: there are", nrow(mat), 
+        "rows, but you provided", length(new.order), "numbers."))
+  } else if (class(new.order) == "list") {
+    stop("Arguments reorder.coef and reorder.gof must be provided as a vector.")
+  } else if (any(is.na(new.order))) {
+    stop("reorder.coef and reorder.gof arguments must not contain NA values.")
+  } else if (length(new.order) != length(unique(new.order))) {
+    stop(paste("There are two identical values in the reorder.coef or", 
+        "reorder.gof argument. Ties are not allowed."))
+  } else if (max(new.order) != nrow(mat)) {
+    stop(paste("Table cannot be reordered because you provided a number that",
+        "exceeds the number of rows of the relevant part of the table."))
+  }
+  new.sorted <- sort(new.order)
+  for (i in 2:length(new.sorted)) {
+    if (new.sorted[i] - 1 != new.sorted[i-1]) {
+      stop(paste("Table cannot be reordered because there are non-adjacent", 
+          "values in the reorder.coef or reorder.gof vector you provided."))
+    }
+  }
+  new.mat <- mat[new.order,]
+  return(new.mat)
+}
 
