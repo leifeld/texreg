@@ -28,5 +28,8 @@ To display citation information, execute \code{citation("texreg")}.
 \author{
 Philip Leifeld (\url{http://www.philipleifeld.de})
 }
-\keyword{Programming|programming|interface}
-\keyword{Programming|IO}
+\keyword{print}
+\keyword{misc}
+\keyword{utilities}
+\keyword{IO}
+\keyword{programming|interface}
