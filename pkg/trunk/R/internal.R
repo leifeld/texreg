@@ -408,8 +408,9 @@ modelnames <- function(models, model.names) {
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
     se.prefix, se.suffix, star.prefix, star.suffix, star.char="*", 
-    strong.signif, stars, dcolumn=TRUE, symbol) {
-
+    strong.signif, stars, dcolumn=TRUE, symbol, bold, bold.prefix, 
+    bold.suffix) {
+  
   # write coefficient rows
   if (single.row==TRUE) {
     output.matrix <- matrix(ncol=(length(m)/3)+1, nrow=length(m[,1]))
@@ -463,8 +464,15 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           } else {
             dollar <- "$"
           }
-          entry <- paste(dollar, coeftostring(m[i,j], leading.zero, 
-              digits=digits), std, p, dollar, sep="")
+          if (m[i,j+2] < bold) {
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else {
+            bold.pref <- ""
+            bold.suff <- ""
+          }
+          entry <- paste(dollar, bold.pref, coeftostring(m[i,j], leading.zero, 
+              digits=digits), bold.suff, std, p, dollar, sep="")
           output.matrix[i,k] <- entry
           
         }
@@ -525,8 +533,16 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           } else {
             dollar <- "$"
           }
-          output.matrix[(i*2)-1,k] <- paste(dollar, coeftostring(m[i,j], 
-              leading.zero, digits=digits), p, dollar, sep="")
+          if (m[i,j+2] < bold) {
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else {
+            bold.pref <- ""
+            bold.suff <- ""
+          }
+          output.matrix[(i*2)-1,k] <- paste(dollar, bold.pref, 
+              coeftostring(m[i,j], leading.zero, digits=digits), bold.suff, p, 
+              dollar, sep="")
           output.matrix[(i*2),k] <- paste(dollar, "(", 
               coeftostring(m[i,j+1], leading.zero, digits=digits), ")", 
               dollar, sep="")

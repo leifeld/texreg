@@ -40,7 +40,7 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
       leading.zero, digits, se.prefix=" (", se.suffix=")", star.prefix=" ", 
       star.suffix="", star.char="*", strong.signif, stars, dcolumn=TRUE, 
-      symbol=".")
+      symbol=".", bold=0, bold.prefix="", bold.suffix="")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
@@ -167,7 +167,19 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
     override.coef=0, override.se=0, override.pval=0, omit.coef=NA, 
     reorder.coef=NULL, reorder.gof=NULL, file=NA, return.string=FALSE, 
-    caption.above=FALSE, ...) {
+    caption.above=FALSE, bold=0.00, ...) {
+  
+  #check dcolumn vs. bold
+  if (dcolumn==TRUE && bold > 0) {
+    dcolumn <- FALSE
+    msg <- paste("The dcolumn package and the bold argument cannot be used at", 
+        "the same time. Switching off dcolumn.")
+    if (stars == TRUE) {
+      warning(paste(msg, "You should also consider setting stars=FALSE."))
+    } else {
+      warning(msg)
+    }
+  }
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   gof.names <- get.gof(models) #extract names of GOFs
@@ -303,7 +315,8 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   output.matrix <- outputmatrix(m, single.row, 
       neginfstring="\\multicolumn{1}{c}{$-$Inf}", leading.zero, digits, 
       se.prefix=" \\; (", se.suffix=")", star.prefix="^{", star.suffix="}", 
-      star.char="*", strong.signif, stars, dcolumn=dcolumn, symbol)
+      star.char="*", strong.signif, stars, dcolumn=dcolumn, symbol, bold, 
+      bold.prefix="\\textbf{", bold.suffix="}")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
@@ -423,7 +436,7 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
     doctype=TRUE, star.symbol="*", align.center=FALSE, override.coef=0, 
     override.se=0, override.pval=0, omit.coef=NA, reorder.coef=NULL, 
-    reorder.gof=NULL, file=NA, return.string=FALSE, ...) {
+    reorder.gof=NULL, file=NA, return.string=FALSE, bold=0.00, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   
@@ -455,7 +468,8 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
       leading.zero, digits, se.prefix=" (", se.suffix=")", 
       star.char=star.symbol, star.prefix="<sup>", star.suffix="</sup>", 
-      strong.signif, stars, dcolumn=TRUE, symbol)
+      strong.signif, stars, dcolumn=TRUE, symbol, bold, bold.prefix="<b>", 
+      bold.suffix="</b>")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
@@ -569,6 +583,8 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     note <- paste("<sup>", star.symbol, star.symbol, star.symbol, 
         "</sup>p&lt;0.01, ", "<sup>", star.symbol, star.symbol, 
         "</sup>p&lt;0.05, <sup>", star.symbol, "</sup>p&lt;0.1", sep="")
+  } else {
+    note <- ""
   }
   
   string <- paste(string, "      <tr>\n", "        <td colspan=\"", 

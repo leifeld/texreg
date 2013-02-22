@@ -22,13 +22,14 @@ htmlreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     doctype=TRUE, star.symbol="*", align.center=FALSE, 
     override.coef=0, override.se=0, override.pval=0, 
     omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, file=NA, 
-    return.string=FALSE, ...)
+    return.string=FALSE, bold=0.00, ...)
 screenreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, custom.names=NULL, custom.gof.names=NULL, 
     model.names=NULL, digits=2, outer.rule="=", inner.rule="-", 
     column.spacing=2, override.coef=0, override.se=0, 
     override.pval=0, omit.coef=NA, reorder.coef=NULL, 
-    reorder.gof=NULL, file=NA, return.string=FALSE, ...)
+    reorder.gof=NULL, file=NA, return.string=FALSE, bold=0.00, 
+    ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -76,6 +77,7 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{align.center}{ For the \code{htmlreg()} function: should the resulting table be horizontally aligned at the center of the page? }
 \item{column.spacing}{ The amount of space between any two columns of a table (only for the \code{screenreg()} function). By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}. }
 \item{caption.above}{ Should the caption of the table be placed above the table? By default, it is placed underneath the table. }
+\item{bold}{ The p value threshold below which the coefficient shall be formatted in a bold font. For example, \code{bold=0.05} will cause all coefficients which are significant at the 95\% level to be formatted in bold. Note that this is not compatible with the dcolumn argument in the \code{texreg} function. If both are \code{TRUE}, dcolumn is switched off and a warning message appears. Note also that it is advisable to use \code{stars=FALSE} together with the \code{bold} argument. }
 \item{...}{ Custom options to be passed on to the extract function. }
 }
 \seealso{
@@ -105,5 +107,8 @@ cat(table.string)
 table.string <- htmlreg(list(model.1, model.2), file="texreg.doc")
 unlink("texreg.doc")
 }
-\keyword{Programming|programming|interface}
-\keyword{Programming|IO}
+\keyword{print}
+\keyword{misc}
+\keyword{utilities}
+\keyword{IO}
+\keyword{programming|interface}
