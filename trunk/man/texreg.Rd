@@ -12,14 +12,15 @@ texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     caption="Statistical models", label="table:coefficients", 
     dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, 
-    digits=2, override.coef=0, override.se=0, override.pval=0, 
-    omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, file=NA, 
-    return.string=FALSE, caption.above=FALSE, ...)
+    digits=2, center=TRUE, override.coef=0, override.se=0, 
+    override.pval=0, omit.coef=NA, reorder.coef=NULL, 
+    reorder.gof=NULL, file=NA, return.string=FALSE, 
+    caption.above=FALSE, bold=0.00, ...)
 htmlreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, symbol="&middot;", 
     caption="Statistical models", custom.names=NULL, 
     custom.gof.names=NULL, model.names=NULL, digits=2, 
-    doctype=TRUE, star.symbol="*", align.center=FALSE, 
+    doctype=TRUE, star.symbol="*", center=FALSE, 
     override.coef=0, override.se=0, override.pval=0, 
     omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, file=NA, 
     return.string=FALSE, bold=0.00, ...)
@@ -28,7 +29,7 @@ screenreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     model.names=NULL, digits=2, outer.rule="=", inner.rule="-", 
     column.spacing=2, override.coef=0, override.se=0, 
     override.pval=0, omit.coef=NA, reorder.coef=NULL, 
-    reorder.gof=NULL, file=NA, return.string=FALSE, bold=0.00, 
+    reorder.gof=NULL, file=NA, return.string=FALSE, 
     ...)
 }
 \details{
@@ -74,7 +75,7 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{inner.rule}{ The character which is used to draw the inner horizontal line above and below a table (only for the \code{screenreg()} function). If an empty character object is provided (i.e., \code{outer.rule=""}), there will be no inner horizontal lines. Recommended values are \code{""}, \code{"-"}, or \code{"_"}. }
 \item{doctype}{ For the \code{htmlreg()} function: should the first line of the HTML code contain the DOCTYPE definition? If \code{TRUE}, the HTML 5 version is used. If \code{FALSE}, no DOCTYPE will be included. Omitting the DOCTYPE can be helpful when the \pkg{knitr} package is used with Markdown scripts to generate HTML code. If \pkg{knitr} and Markdown are used and the DOCTYPE is included, the DOCTYPE line will be printed verbatim in the resulting HTML document. }
 \item{star.symbol}{ For the \code{htmlreg()} function: alternative characters for the significance stars can be specified. This is useful if \pkg{knitr} and Markdown are used for HTML report generation. In Markdown, asterisks or stars are interpreted as special characters, so they have to be escaped. To make \code{htmlreg()} compatible with Markdown, specify \code{star.symbol="\\*"}. }
-\item{align.center}{ For the \code{htmlreg()} function: should the resulting table be horizontally aligned at the center of the page? }
+\item{center}{ Should the table be horizontally aligned at the center of the page? }
 \item{column.spacing}{ The amount of space between any two columns of a table (only for the \code{screenreg()} function). By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}. }
 \item{caption.above}{ Should the caption of the table be placed above the table? By default, it is placed underneath the table. }
 \item{bold}{ The p value threshold below which the coefficient shall be formatted in a bold font. For example, \code{bold=0.05} will cause all coefficients which are significant at the 95\% level to be formatted in bold. Note that this is not compatible with the dcolumn argument in the \code{texreg} function. If both are \code{TRUE}, dcolumn is switched off and a warning message appears. Note also that it is advisable to use \code{stars=FALSE} together with the \code{bold} argument. }
