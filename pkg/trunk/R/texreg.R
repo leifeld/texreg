@@ -165,7 +165,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
     label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
-    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, 
+    center=TRUE, override.coef=0, override.se=0, override.pval=0, omit.coef=NA, 
     reorder.coef=NULL, reorder.gof=NULL, file=NA, return.string=FALSE, 
     caption.above=FALSE, bold=0.00, ...) {
   
@@ -244,7 +244,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     if (caption.above == TRUE) {
       string <- paste(string, "\\caption{", caption, "}\n", sep="")
     }
-    string <- paste(string, "\\begin{center}\n", sep="")
+    if (center == TRUE) {
+      string <- paste(string, "\\begin{center}\n", sep="")
+    }
     if (scriptsize == TRUE) {
       string <- paste(string, "\\scriptsize\n", sep="")
     }
@@ -405,7 +407,9 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
       string <- paste(string, "\\caption{", caption, "}\n", sep="")
     }
     string <- paste(string, "\\label{", label, "}\n", sep="")
-    string <- paste(string, "\\end{center}\n", sep="")
+    if (center == TRUE) {
+      string <- paste(string, "\\end{center}\n", sep="")
+    }
     if (sideways == TRUE) {
       t <- "sideways"
     } else {
@@ -434,7 +438,7 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
 htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, symbol="&middot;", caption="Statistical models", 
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
-    doctype=TRUE, star.symbol="*", align.center=FALSE, override.coef=0, 
+    doctype=TRUE, star.symbol="*", center=FALSE, override.coef=0, 
     override.se=0, override.pval=0, omit.coef=NA, reorder.coef=NULL, 
     reorder.gof=NULL, file=NA, return.string=FALSE, bold=0.00, ...) {
   
@@ -491,7 +495,7 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     doct <- ""
   }
   
-  if (align.center == FALSE) {
+  if (center == FALSE) {
     tabdef <- "    <table cellspacing=\"0\">\n"
   } else {
     tabdef <- "    <table cellspacing=\"0\" align=\"center\">\n"
