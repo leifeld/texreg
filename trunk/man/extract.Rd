@@ -24,6 +24,7 @@
 \alias{extract.pmg}
 \alias{extract.polr}
 \alias{extract.Relogit}
+\alias{extract.rem.dyad}
 \alias{extract.rlm}
 \alias{extract.rq}
 \alias{extract.sclm}
@@ -93,6 +94,8 @@ extract.polr(model, include.thresholds=FALSE, include.aic=TRUE,
     include.nobs=TRUE, ...)
 extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=TRUE, ...)
+extract.rem.dyad(model, include.nvertices=TRUE, include.events=TRUE, 
+    include.aic=TRUE, include.aicc=TRUE, include.bic=TRUE, ...)
 extract.rlm(model, include.nobs=TRUE, ...)
 extract.rq(model, include.nobs=TRUE, include.percentile=TRUE, ...)
 extract.sclm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
@@ -125,6 +128,7 @@ to convert them into texreg objects.
 \item{beside}{ If available: should the model terms be arranged below each other or beside each other (default)? For example, in a stergm model, the formation and dissolution coefficients can be arranged in two different ways. }
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
+\item{include.aicc}{ If available: should AICc be reported? This is a version of AIC with a correction for finite sample sizes. }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
 \item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }

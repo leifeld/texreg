@@ -23,7 +23,7 @@
   bookmarksnumbered
 }
 
-\title{texreg: Conversion of R regression output to \LaTeX\ tables}
+\title{texreg: Conversion of R regression output to \LaTeX\ tables\thanks{The author would like to thank S.Q. Chang, Skyler Cranmer, Sebastian Daza, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Francesco Sarracino, Matthieu Stigler, G{\'a}bor Uhrin, and Yanghao Wang for valuable input.}}
 \author{Philip Leifeld $<$\href{mailto:philip.leifeld@eawag.ch}{philip.leifeld@eawag.ch}$>$}
 
 \begin{document}
@@ -71,6 +71,7 @@ Class			& Package			& Added		& Description \\
 \texttt{pmg}		& \texttt{plm}			& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
 \texttt{polr}		& \texttt{MASS}			& 2012-10-12	& Ordered logistic or probit regression \\
 \texttt{Relogit}	& \texttt{Zelig}		& 2012-10-14	& Rare events logistic regression \\
+\texttt{rem.dyad}	& \texttt{relevent}		& 2013-02-28	& Relational event model for dyadic data \\
 \texttt{rlm}		& \texttt{MASS}			& 2012-11-12	& Robust fitting of linear models \\
 \texttt{rq}		& \texttt{quantreg}		& 2012-08-01	& Quantile regression models \\
 \texttt{sclm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
