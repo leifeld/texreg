@@ -1139,6 +1139,67 @@ setMethod("extract", signature=className("polr", "MASS"),
     definition = extract.polr)
 
 
+# extension for rem.dyad objects (relevent package)
+extract.rem.dyad <- function(model, include.nvertices=TRUE, 
+    include.events=TRUE, include.aic=TRUE, include.aicc=TRUE, 
+    include.bic=TRUE, ...) {
+  
+  coef <- model$coef
+  coefnames <- names(coef)
+  se <- diag(model$cov)^0.5
+  zval <- coef/se
+  pval <- 2 * (1 - pnorm(abs(zval)))
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nvertices==TRUE) {
+    num.nodes <- model$n
+    gof <- c(gof, num.nodes)
+    gof.names <- c(gof.names, "Num.\ nodes")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.events==TRUE) {
+    num.events <- model$m
+    gof <- c(gof, num.events)
+    gof.names <- c(gof.names, "Num.\ events")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.aic==TRUE) {
+    aic <- model$AIC
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.aicc==TRUE) {
+    aicc <- model$AICC
+    gof <- c(gof, aicc)
+    gof.names <- c(gof.names, "AICC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic==TRUE) {
+    bic <- model$BIC
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=coefnames, 
+      coef=coef, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("rem.dyad", "relevent"), 
+    definition = extract.rem.dyad)
+
+
 # extension for rlm objects (MASS package)
 extract.rlm <- function (model, include.nobs=TRUE, ...) {
   s <- summary(model, ...)

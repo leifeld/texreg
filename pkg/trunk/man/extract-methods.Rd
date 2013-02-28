@@ -25,6 +25,7 @@
 \alias{extract,pmg-method}
 \alias{extract,polr-method}
 \alias{extract,Relogit-method}
+\alias{extract,rem.dyad-method}
 \alias{extract,rlm-method}
 \alias{extract,rq-method}
 \alias{extract,sclm-method}
@@ -134,6 +135,10 @@ An extract function for polr objects from the \pkg{MASS} package.
 
 \item{\code{extract.Relogit}}{
 An extract function for Relogit objects from the \pkg{Zelig} package.
+}
+
+\item{\code{extract.rem.dyad}}{
+An extract function for rem.dyad objects from the \pkg{relevent} package.
 }
 
 \item{\code{extract.rlm}}{
