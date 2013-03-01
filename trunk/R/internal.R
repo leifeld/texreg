@@ -405,11 +405,55 @@ modelnames <- function(models, model.names) {
 }
 
 
+# check if stars argument is OK
+check.stars <- function(stars) {
+  if (is.null(stars)) {
+    s <- numeric(0)
+  } else if (class(stars) != "numeric") {
+    stop("The stars argument must be a numeric vector.")
+  } else if (any(is.na(stars))) {
+    stop("NA value are not allowed in the stars argument.")
+  } else {
+    s <- stars
+  }
+  return(s)
+}
+
+
+# create stars string
+stars.string <- function(pval, stars, star.char, star.prefix, star.suffix, 
+    symbol) {
+  st <- sort(stars)
+  if (length(unique(st)) != length(st)) {
+    stop("Duplicate elements are not allowed in the stars argument.")
+  }
+  if (length(st) > 4) {
+    stop("A maximum of four values is allowed in the stars argument.")
+  } else if (length(st) > 2 && pval < st[1]) { # three stars
+    p <- paste(star.prefix, star.char, star.char, star.char, 
+        star.suffix, sep="")
+  } else if ( # two stars
+      (length(st) > 2 && pval < st[2]) || 
+      (length(st) == 2 && pval < st[1]) ) {
+    p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
+  } else if ( # one star
+      (length(st) > 2 && pval < st[3]) || 
+      (length(st) == 2 && pval < st[2]) || 
+      (length(st) == 1 && pval < st) ) {
+    p <- paste(star.prefix, star.char, star.suffix, sep="")
+  } else if (length(st) == 4 && pval < st[4]) { # symbol
+    p <- paste(star.prefix, symbol, star.suffix, sep="")
+  } else { # not significant
+    p <- ""
+  }
+  return(p) 
+}
+
+
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
     se.prefix, se.suffix, star.prefix, star.suffix, star.char="*", 
-    strong.signif, stars, dcolumn=TRUE, symbol, bold, bold.prefix, 
-    bold.suffix) {
+    stars, dcolumn=TRUE, symbol, bold, bold.prefix, bold.suffix) {
   
   # write coefficient rows
   if (single.row==TRUE) {
@@ -432,33 +476,10 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
         } else {
           std <- paste(se.prefix, coeftostring(m[i,j+1], leading.zero, 
               digits=digits), se.suffix, sep="")
-          if (strong.signif == TRUE && stars==TRUE) {
-            if (m[i,j+2] <= 0.001) {
-              p <- paste(star.prefix, star.char, star.char, star.char, 
-                  star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, star.char, star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.1) {
-              p <- paste(star.prefix, symbol, star.suffix, sep="")
-            } else {
-              p <- ""
-            }
-          } else if (stars==TRUE) {
-            if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, star.char, star.char, star.char, 
-                  star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.1) {
-              p <- paste(star.prefix, star.char, star.suffix, sep="")
-            } else {
-              p <- ""
-            }
-          } else {
-              p <- ""
-          }
+          
+          p <- stars.string(m[i,j+2], stars, star.char, star.prefix, 
+            star.suffix, symbol)
+          
           if (dcolumn == TRUE) {
             dollar <- ""
           } else {
@@ -501,33 +522,10 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           output.matrix[(i*2)-1,k] <- neginfstring #upper row
           output.matrix[(i*2),k] <- "" #lower std row
         } else {
-          if (strong.signif == TRUE && stars==TRUE) {
-            if (m[i,j+2] <= 0.001) {
-              p <- paste(star.prefix, star.char, star.char, star.char, 
-                  star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, star.char, star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.1) {
-              p <- paste(star.prefix, symbol, star.suffix, sep="")
-            } else {
-              p <- ""
-            }
-          } else if (stars==TRUE) {
-            if (m[i,j+2] <= 0.01) {
-              p <- paste(star.prefix, star.char, star.char, star.char, 
-                  star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.05) {
-              p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
-            } else if (m[i,j+2] <= 0.1) {
-              p <- paste(star.prefix, star.char, star.suffix, sep="")
-            } else {
-              p <- ""
-            }
-          } else {
-              p <- ""
-          }
+          
+          p <- stars.string(m[i,j+2], stars, star.char, star.prefix, 
+            star.suffix, symbol)
+          
           if (dcolumn == TRUE) {
             dollar <- ""
           } else {
