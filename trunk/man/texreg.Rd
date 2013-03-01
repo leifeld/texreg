@@ -18,12 +18,11 @@ texreg(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     caption.above=FALSE, bold=0.00, ...)
 htmlreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, symbol="&middot;", 
-    caption="Statistical models", custom.names=NULL, 
-    custom.gof.names=NULL, model.names=NULL, digits=2, 
-    doctype=TRUE, star.symbol="*", center=FALSE, 
-    override.coef=0, override.se=0, override.pval=0, 
+    caption="", custom.names=NULL, custom.gof.names=NULL, 
+    model.names=NULL, digits=2, doctype=TRUE, star.symbol="*", 
+    center=FALSE, override.coef=0, override.se=0, override.pval=0, 
     omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, file=NA, 
-    return.string=FALSE, bold=0.00, ...)
+    return.string=FALSE, caption.above=FALSE, bold=0.00, ...)
 screenreg(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
     strong.signif=FALSE, custom.names=NULL, custom.gof.names=NULL, 
     model.names=NULL, digits=2, outer.rule="=", inner.rule="-", 

@@ -436,11 +436,11 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
 
 # htmlreg function
 htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE, 
-    strong.signif=FALSE, symbol="&middot;", caption="Statistical models", 
-    custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
-    doctype=TRUE, star.symbol="*", center=FALSE, override.coef=0, 
-    override.se=0, override.pval=0, omit.coef=NA, reorder.coef=NULL, 
-    reorder.gof=NULL, file=NA, return.string=FALSE, bold=0.00, ...) {
+    strong.signif=FALSE, symbol="&middot;", caption="", custom.names=NULL, 
+    custom.gof.names=NULL, model.names=NULL, digits=2, doctype=TRUE, 
+    star.symbol="*", center=FALSE, override.coef=0, override.se=0, 
+    override.pval=0, omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, 
+    file=NA, return.string=FALSE, caption.above=FALSE, bold=0.00, ...) {
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   
@@ -501,6 +501,18 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
     tabdef <- "    <table cellspacing=\"0\" align=\"center\">\n"
   }
   
+  if (is.null(caption) || !is.character(caption)) {
+    stop("The caption must be provided as a (possibly empty) character vector.")
+  } else if (caption != "" && caption.above == FALSE) {
+    cap <- paste("      <caption align=\"bottom\" style=\"margin-top:0.3em\">", 
+        caption, "</caption>\n", sep="")
+  } else if (caption != "" && caption.above == TRUE) {
+    cap <- paste("      <caption align=\"top\" style=\"margin-bottom:0.3em\">", 
+        caption, "</caption>\n", sep="")
+  } else {
+    cap <- ""
+  }
+  
   string <- paste(
       "\n", 
       doct, 
@@ -537,6 +549,7 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, stars=TRUE,
       "  </head>\n\n", 
       "  <body>\n", 
       tabdef, 
+      cap, 
       "      <tr>\n", 
       "        <th class=\"modelnames\"></th>\n", 
       sep="")
