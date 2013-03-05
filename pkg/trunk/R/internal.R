@@ -221,10 +221,10 @@ override <- function(models, override.coef, override.se, override.pval) {
 
 
 # function which converts LaTeX code in GOF names to HTML oder text/screen code
-tex.replace <- function(models, type="html") {
+tex.replace <- function(models, type="html", style="") {
   for (i in 1:length(models)) {
     if (type == "html") {
-      r <- "<sup>2</sup>"
+      r <- paste0("<sup", style, ">2</sup>")
     } else if (type == "screen") {
       r <- "^2"
     }

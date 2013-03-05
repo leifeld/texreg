@@ -258,16 +258,24 @@ An example:
 htmlreg(list(m3, m2, m6), file="mytable.doc")
 @
 The \texttt{htmlreg()} function works well with the \texttt{knitr} package for dynamic HTML report generation.
+However, some additional arguments should be specified when \texttt{knitr} is used.
+These arguments make sure that only the table is returned, without any header information:
+<<results=hide>
+htmlreg(list(m3, m2, m6), doctype=FALSE, html.tag=FALSE, head.tag=FALSE, 
+    body.tag=FALSE, inline.css=TRUE)
+@
 In addition to HTML, \texttt{knitr} is also compatible with Markdown, a simplified markup language.
-texreg can work with Markdown as well, but a couple of arguments should be provided to make it work:
-the \verb+star.symbol="\\*"+ argument makes sure that Markdown does not interpret the significance stars as special Markdown syntax, and the \verb+doctype=FALSE+ argument makes sure that the HTML document type is not printed verbatim to the HTML file.
-The additional \verb+align.center=TRUE+ argument centers the table horizontally on the page.
-Here is an example (without printing the results because this vignette is not written in Markdown):
+texreg can work with Markdown as well, but an additional argument should be provided to make it work:
+the \verb+star.symbol="\\*"+ argument makes sure that Markdown does not interpret the significance stars as special Markdown syntax.
+The additional (and optional) \verb+align.center=TRUE+ argument centers the table horizontally on the page.
+Here is an example:
 <<results=hide>>=
-htmlreg(m3, doctype=FALSE, star.symbol="\\*", align.center=TRUE)
+htmlreg(list(m3, m2, m6), doctype=FALSE, html.tag=FALSE, head.tag=FALSE, 
+    body.tag=FALSE, inline.css=TRUE, star.symbol="\\*", align.center=TRUE)
 @
 Finally, there is another function, which can print tables to the R console.
-The command will nicely arrange the spaces etc. of your tables and will greatly facilitate model comparison:
+The command will nicely arrange the spaces etc. of your tables and will greatly facilitate model comparison (as a substitute of the default \texttt{summary} function).
+To show the three models side-by-side in your R console, type the following code:
 <<>>=
 screenreg(list(m3, m2, m6))
 @
