@@ -24,7 +24,8 @@ htmlreg(l, single.row=FALSE, leading.zero=TRUE,
     center=FALSE, override.coef=0, override.se=0, override.pval=0, 
     omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, file=NA, 
     return.string=FALSE, caption.above=FALSE, bold=0.00, 
-    custom.note=NULL, ...)
+    custom.note=NULL, html.tag=TRUE, body.tag=TRUE, head.tag=TRUE, 
+    inline.css=FALSE, ...)
 screenreg(l, single.row=FALSE, leading.zero=TRUE, 
     stars=c(0.001, 0.01, 0.05, 0.1), symbol=".", 
     custom.names=NULL, custom.gof.names=NULL, model.names=NULL, 
@@ -80,6 +81,10 @@ Sometimes it happens that the same variable has a different name in different mo
 \item{column.spacing}{ The amount of space between any two columns of a table (only for the \code{screenreg()} function). By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}. }
 \item{caption.above}{ Should the caption of the table be placed above the table? By default, it is placed underneath the table. }
 \item{bold}{ The p value threshold below which the coefficient shall be formatted in a bold font. For example, \code{bold=0.05} will cause all coefficients which are significant at the 95\% level to be formatted in bold. Note that this is not compatible with the dcolumn argument in the \code{texreg} function. If both are \code{TRUE}, dcolumn is switched off and a warning message appears. Note also that it is advisable to use \code{stars=FALSE} together with the \code{bold} argument. }
+\item{html.tag}{ Should the table code (and possibly the <body> and <head> tags) be enclosed in an <html> tag? Suppressing this tag is recommended when knitr is used. }
+\item{head.tag}{ Should the <head> tag (including CSS definitions and title/caption) be included in the HTML code? Suppressing this tag is recommended when knitr is used. }
+\item{body.tag}{ Should the table code be enclosed in a <body> HTML tag? Suppressing this tag is recommended when knitr is used. }
+\item{inline.css}{ Should the CSS stylesheets be embedded directly in the code of the table (\code{inline.css=TRUE}), or should the CSS stylesheets be enclosed in the <head> tag, that is, separated from the table code (\code{inline.css=FALSE})? Having inline CSS code makes the code of the table more complex, but sometimes it may be helpful when only the table shall be printed, without the head of the HTML file (for example when the table is embedded in a knitr report). }
 \item{...}{ Custom options to be passed on to the extract function. }
 }
 \seealso{

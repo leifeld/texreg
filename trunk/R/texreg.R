@@ -496,14 +496,35 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE,
     doctype=TRUE, star.symbol="*", center=FALSE, override.coef=0, 
     override.se=0, override.pval=0, omit.coef=NA, reorder.coef=NULL, 
     reorder.gof=NULL, file=NA, return.string=FALSE, caption.above=FALSE, 
-    bold=0.00, custom.note=NULL, ...) {
+    bold=0.00, custom.note=NULL, html.tag=TRUE, body.tag=TRUE, head.tag=TRUE, 
+    inline.css=FALSE, ...) {
   
   stars <- check.stars(stars)
   
   models <- get.data(l, ...) #extract relevant coefficients, SEs, GOFs, etc.
   
+  # inline CSS definitions
+  if (inline.css == TRUE) {
+    css.table <- " style=\"border: none;\""
+    css.th <- paste0(" style=\"text-align: left; border-top: 2px solid ", 
+        "black; border-bottom: 1px solid black; padding-right: 12px;\"")
+    css.midrule <- " style=\"border-top: 1px solid black;\""
+    css.bottomrule <- " style=\"border-bottom: 2px solid black;\""
+    css.td <- " style=\"padding-right: 12px; border: none;\""
+    css.caption <- " float: left;"
+    css.sup <- " style=\"vertical-align: 4px;\""
+  } else {
+    css.table <- ""
+    css.th <- ""
+    css.midrule <- ""
+    css.bottomrule <- ""
+    css.td <- ""
+    css.caption <- ""
+    css.sup <- ""
+  }
+  
   models <- override(models, override.coef, override.se, override.pval)
-  models <- tex.replace(models, type="html") #convert TeX code to HTML code
+  models <- tex.replace(models, type="html", style=css.sup) #TeX --> HTML
   gof.names <- get.gof(models) #extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
@@ -529,8 +550,9 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE,
   # create output table with significance stars etc.
   output.matrix <- outputmatrix(m, single.row, neginfstring="-Inf", 
       leading.zero, digits, se.prefix=" (", se.suffix=")", 
-      star.char=star.symbol, star.prefix="<sup>", star.suffix="</sup>", 
-      stars, dcolumn=TRUE, symbol, bold, bold.prefix="<b>", bold.suffix="</b>")
+      star.char=star.symbol, star.prefix=paste0("<sup", css.sup, ">"), 
+      star.suffix="</sup>", stars, dcolumn=TRUE, symbol, bold, 
+      bold.prefix="<b>", bold.suffix="</b>")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
@@ -547,104 +569,155 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE,
   }
   
   if (doctype == TRUE) {
-    doct <- "<!DOCTYPE html>\n"
+    doct <- paste0("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 ", 
+        "Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n")
   } else {
     doct <- ""
   }
   
-  if (center == FALSE) {
-    tabdef <- "    <table cellspacing=\"0\">\n"
+  # determine indentation for table
+  if (html.tag == TRUE) {
+    h.ind <- "  "
   } else {
-    tabdef <- "    <table cellspacing=\"0\" align=\"center\">\n"
+    h.ind <- ""
+  }
+  if (body.tag == TRUE) {
+    b.ind <- "  "
+  } else {
+    b.ind <- ""
+  }
+  if (head.tag == TRUE) {
+    d.ind <- "  "
+  } else {
+    d.ind <- ""
+  }
+  ind <- "  "
+  
+  # horizontal table alignment
+  if (center == FALSE) {
+    tabdef <- paste0(h.ind, b.ind, "<table cellspacing=\"0\"", css.table, ">\n")
+  } else {
+    tabdef <- paste0(h.ind, b.ind, 
+        "<table cellspacing=\"0\" align=\"center\"", css.table, ">\n")
   }
   
+  # set caption
   if (is.null(caption) || !is.character(caption)) {
     stop("The caption must be provided as a (possibly empty) character vector.")
   } else if (caption != "" && caption.above == FALSE) {
-    cap <- paste("      <caption align=\"bottom\" style=\"margin-top:0.3em\">", 
-        caption, "</caption>\n", sep="")
+    cap <- paste(h.ind, b.ind, ind, 
+        "<caption align=\"bottom\" style=\"margin-top:0.3em;", css.caption, 
+        "\">", caption, "</caption>\n", sep="")
   } else if (caption != "" && caption.above == TRUE) {
-    cap <- paste("      <caption align=\"top\" style=\"margin-bottom:0.3em\">", 
-        caption, "</caption>\n", sep="")
+    cap <- paste(h.ind, b.ind, ind, 
+        "<caption align=\"top\" style=\"margin-bottom:0.3em;", css.caption, 
+        "\">", caption, "</caption>\n", sep="")
   } else {
     cap <- ""
   }
   
+  # HTML header with CSS definitions
+  string <- paste0("\n", doct)
+  if (html.tag == TRUE) {
+    string <- paste0(string, "<html>\n")
+  }
+  
+  if (inline.css == TRUE) {
+    css.header <- ""
+  } else {
+    css.header <- paste0(
+        h.ind, d.ind, "<style type=\"text/css\">\n", 
+        h.ind, d.ind, ind, "table {\n", 
+        h.ind, d.ind, ind, ind, "border: none;\n", 
+        h.ind, d.ind, ind, "}\n", 
+        h.ind, d.ind, ind, "th {\n", 
+        h.ind, d.ind, ind, ind, "text-align: left;\n", 
+        h.ind, d.ind, ind, ind, "border-top: 2px solid black;\n", 
+        h.ind, d.ind, ind, ind, "border-bottom: 1px solid black;\n", 
+        h.ind, d.ind, ind, ind, "padding-right: 12px;\n", 
+        h.ind, d.ind, ind, "}\n", 
+        h.ind, d.ind, ind, ".midRule {\n", 
+        h.ind, d.ind, ind, ind, "border-top: 1px solid black;\n", 
+        h.ind, d.ind, ind, "}\n", 
+        h.ind, d.ind, ind, ".bottomRule {\n", 
+        h.ind, d.ind, ind, ind, "border-bottom: 2px solid black;\n", 
+        h.ind, d.ind, ind, "}\n", 
+        h.ind, d.ind, ind, "td {\n", 
+        h.ind, d.ind, ind, ind, "padding-right: 12px;\n", 
+        h.ind, d.ind, ind, ind, "border: none;\n", 
+        h.ind, d.ind, ind, "}\n", 
+        h.ind, d.ind, ind, "caption span {\n", 
+        h.ind, d.ind, ind, ind, "float: left;\n", 
+        h.ind, d.ind, ind, "}\n", 
+        h.ind, d.ind, ind, "sup {\n", 
+        h.ind, d.ind, ind, ind, "vertical-align: 4px;\n", 
+        h.ind, d.ind, ind, "}\n", 
+        h.ind, d.ind, "</style>\n"
+    )
+  }
+
+  if (head.tag == TRUE) {
+    string <- paste0(string, 
+        h.ind, "<head>\n", 
+        h.ind, d.ind, "<title>", caption, "</title>\n", 
+        css.header, 
+        h.ind, "</head>\n\n")
+  }
+  if (body.tag == TRUE) {
+    string <- paste0(string, h.ind, "<body>\n")
+  }
   string <- paste(
-      "\n", 
-      doct, 
-      "<html>\n", 
-      "  <head>\n", 
-      "    <title>", caption, "</title>\n", 
-      "    <style type=\"text/css\">\n", 
-      "      table {\n", 
-      "        border: none;\n", 
-      "      }\n", 
-      "      th {\n", 
-      "        text-align: left;\n", 
-      "        border-top: 2px solid black;\n", 
-      "        border-bottom: 1px solid black;\n", 
-      "        padding-right: 12px;\n", 
-      "      }\n", 
-      "      .midRule {\n", 
-      "        border-top: 1px solid black;\n", 
-      "      }\n", 
-      "      .bottomRule {\n", 
-      "        border-bottom: 2px solid black;\n", 
-      "      }\n", 
-      "      td {\n", 
-      "        padding-right: 12px;\n", 
-      "        border: none;\n", 
-      "      }\n", 
-      "      caption span {\n", 
-      "        float: left;\n", 
-      "      }\n", 
-      "      sup {\n", 
-      "        vertical-align: 4px;\n", 
-      "      }\n", 
-      "    </style>\n", 
-      "  </head>\n\n", 
-      "  <body>\n", 
+      string, 
       tabdef, 
       cap, 
-      "      <tr>\n", 
-      "        <th class=\"modelnames\"></th>\n", 
+      h.ind, b.ind, ind, "<tr>\n", 
+      h.ind, b.ind, ind, ind, "<th", css.th, "></th>\n", 
       sep="")
   
   # specify model names (header row)
   for (i in 1:length(models)) {
     string <- paste(string, 
-        "        <th><b>", 
+        h.ind, b.ind, ind, ind, "<th", css.th, "><b>", 
         modnames[i], "</b></th>\n", sep="")
   }
-  string <- paste(string, "      </tr>\n", sep="")
+  string <- paste(string, h.ind, b.ind, ind, "</tr>\n", sep="")
   
   # write coefficients to string object
   for (i in 1:(length(output.matrix[,1])-length(gof.names))) {
-    string <- paste(string, "      <tr>\n", sep="")
+    string <- paste(string, h.ind, b.ind, ind, "<tr>\n", sep="")
     for (j in 1:length(output.matrix[1,])) {
-      string <- paste(string, "        <td>", 
-          output.matrix[i,j], "</td>\n", sep="")
+      string <- paste0(string, h.ind, b.ind, ind, ind, "<td", css.td, ">", 
+      output.matrix[i,j], "</td>\n")
     }
-    string <- paste(string, "      </tr>\n", sep="")
+    string <- paste(string, h.ind, b.ind, ind, "</tr>\n", sep="")
   }
   
   for (i in (length(output.matrix[,1])-(length(gof.names)-1)):
       (length(output.matrix[,1]))) {
-    string <- paste(string, "      <tr>\n", sep="")
+    string <- paste(string, h.ind, b.ind, ind, "<tr>\n", sep="")
     for (j in 1:length(output.matrix[1,])) {
       if (i == length(output.matrix[,1])-(length(gof.names)-1)) {
-        string <- paste(string, "        <td class=\"midRule\">", 
-            output.matrix[i,j], "</td>\n", sep="")
+        if (inline.css == TRUE) {
+          mr <- css.midrule
+        } else {
+          mr <- " class=\"midRule\""
+        }
+        string <- paste(string, h.ind, b.ind, ind, ind, 
+            "<td", mr, ">", output.matrix[i,j], "</td>\n", sep="")
       } else if (i == length(output.matrix[,1])) {
-        string <- paste(string, "        <td class=\"bottomRule\">", 
-            output.matrix[i,j], "</td>\n", sep="")
+        if (inline.css == TRUE) {
+          br <- css.bottomrule
+        } else {
+          br <- " class=\"bottomRule\""
+        }
+        string <- paste(string, h.ind, b.ind, ind, ind, 
+            "<td", br, ">", output.matrix[i,j], "</td>\n", sep="")
       } else {
-        string <- paste(string, "        <td>", 
+        string <- paste(string, h.ind, b.ind, ind, ind, "<td", css.td, ">", 
             output.matrix[i,j], "</td>\n", sep="")
       }
     }
-    string <- paste(string, "      </tr>\n", sep="")
+    string <- paste(string, h.ind, b.ind, ind, "</tr>\n", sep="")
   }
   
   # stars note
@@ -658,33 +731,43 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE,
       stop("Duplicate elements are not allowed in the stars argument.")
     }
     if (length(st) == 4) {
-      note <- paste("<sup>", star.symbol, star.symbol, star.symbol, 
-          "</sup>p &lt; ", st[1], ", <sup>", star.symbol, star.symbol, 
-          "</sup>p &lt; ", st[2], ", <sup>", star.symbol, "</sup>p &lt; ", st[3], 
-          ", <sup>", symbol, "</sup>p &lt; ", st[4], sep="")
+      note <- paste("<sup", css.sup, ">", star.symbol, star.symbol, star.symbol,
+          "</sup>p &lt; ", st[1], ", <sup", css.sup, ">", 
+          star.symbol, star.symbol, "</sup", css.sup, ">p &lt; ", st[2], 
+          ", <sup", css.sup, ">", star.symbol, "</sup>p &lt; ", 
+          st[3], ", <sup", css.sup, ">", symbol, "</sup>p &lt; ", 
+          st[4], sep="")
     } else if (length(st) == 3) {
-      note <- paste("<sup>", star.symbol, star.symbol, star.symbol, 
-          "</sup>p &lt; ", st[1], ", <sup>", star.symbol, star.symbol, 
-          "</sup>p &lt; ", st[2], ", <sup>", star.symbol, "</sup>p &lt; ", st[3], 
-          sep="")
+      note <- paste("<sup", css.sup, ">", star.symbol, star.symbol, star.symbol,
+          "</sup>p &lt; ", st[1], ", <sup", css.sup, ">", star.symbol, 
+          star.symbol, "</sup>p &lt; ", st[2], ", <sup", css.sup, ">", 
+          star.symbol, "</sup>p &lt; ", st[3], sep="")
     } else if (length(st) == 2) {
-      note <- paste("<sup>", star.symbol, star.symbol, "</sup>p &lt; ", st[1], 
-          ", <sup>", star.symbol, "</sup>p &lt; ", st[2], sep="")
+      note <- paste("<sup", css.sup, ">", star.symbol, star.symbol, 
+          "</sup>p &lt; ", st[1], ", <sup", css.sup, ">", star.symbol, 
+          "</sup>p &lt; ", st[2], sep="")
     } else if (length(st) == 1) {
-      note <- paste("<sup>", star.symbol, "</sup>p &lt; ", st[1], sep="")
+      note <- paste0("<sup", css.sup, ">", star.symbol, "</sup>p &lt; ", st[1])
     } else {
       note <- ""
     }
   }
   
-  string <- paste(string, "      <tr>\n", "        <td colspan=\"", 
-      (1 + length(models)), "\"><span style=\"font-size:0.8em\">", note, 
-      "</span></td>\n", "      </tr>\n", sep="")
+  string <- paste(string, h.ind, b.ind, ind, "<tr>\n", h.ind, b.ind, ind, ind, 
+      "<td", css.td, " colspan=\"", (1 + length(models)), 
+      "\"><span style=\"font-size:0.8em\">", note, "</span></td>\n", h.ind, 
+      b.ind, ind, "</tr>\n", sep="")
   
   # write table footer
-  string <- paste(string, "    </table>\n")
-  
-  string <- paste(string, "  </body>\n</html>\n\n", sep="")
+  string <- paste0(string, h.ind, b.ind, "</table>\n")
+  if (body.tag == TRUE) {
+    string <- paste0(string, h.ind, "</body>\n")
+  }
+  if (html.tag == TRUE) {
+    string <- paste0(string, "</html>\n\n")
+  } else {
+    string <- paste0(string, "\n")
+  }
   
   if (is.na(file)) {
     cat(string)
