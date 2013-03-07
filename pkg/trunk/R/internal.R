@@ -656,6 +656,7 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn=TRUE, leading.zero,
   return(gof.matrix)
 }
 
+
 # reorder a matrix according to a vector of new positions
 reorder <- function(mat, new.order) {
   if (is.null(new.order)) {
@@ -685,3 +686,41 @@ reorder <- function(mat, new.order) {
   return(new.mat)
 }
 
+
+# compute column width left and right of the decimal separator
+compute.width <- function(v, left=TRUE, single.row=FALSE) {
+  if (single.row == FALSE) {
+    v[which(!grepl("\\.", v))] <- paste0(v[which(!grepl("\\.", v))], ".")
+    ssp <- strsplit(v, "\\.")
+    left.side <- character()
+    right.side <- character()
+    for (i in 1:length(ssp)) {
+      if (length(ssp[[i]]) == 1) {
+        ssp[[i]][2] <- ""
+      }
+      left.side[i] <- ssp[[i]][1]
+      right.side[i] <- ssp[[i]][2]
+    }
+  } else {
+    ssp <- strsplit(v, "\\)")
+    left.side <- character()
+    right.side <- character()
+    for (i in 1:length(ssp)) {
+      if (length(ssp[[i]]) == 0) {
+        # do nothing because empty cell
+      } else {
+        left.side <- append(left.side, ssp[[i]][1])
+        right.side <- append(right.side, ssp[[i]][2])
+      }
+    }
+  }
+  if (left == TRUE) {
+    left.side <- sub("\\\\; ", "", left.side)
+    v.length <- max(nchar(left.side), na.rm=TRUE)
+  } else {
+    right.side <- sub("\\^\\{", "", right.side)
+    right.side <- sub("\\}", "", right.side)
+    v.length <- max(nchar(right.side), na.rm=TRUE)
+  }
+  return(v.length)
+}
