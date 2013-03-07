@@ -241,6 +241,20 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
   }
   
+  # create output table with significance stars etc.
+  output.matrix <- outputmatrix(m, single.row, 
+      neginfstring="\\multicolumn{1}{c}{$-$Inf}", leading.zero, digits, 
+      se.prefix=" \\; (", se.suffix=")", star.prefix="^{", star.suffix="}", 
+      star.char="*", stars, dcolumn=dcolumn, symbol, bold, 
+      bold.prefix="\\textbf{", bold.suffix="}")
+  
+  # create GOF matrix (the lower part of the final output matrix)
+  gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
+      digits)
+  
+  # combine the coefficient and gof matrices vertically
+  output.matrix <- rbind(output.matrix, gof.matrix)
+  
   string <- ""
   
   # write table header
@@ -281,32 +295,29 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   string <- paste(string, "\\begin{tabular}{l ", sep="")
   
   #define columns of the table
-  for(i in 1:length(models)) {
-    gof.list <- as.vector(gofs[,i])
-    gof.list.string <- NULL
-    for (j in 1:length(gof.list)) {
-      gof.list.string[j] <- coeftostring(gof.list[j], leading.zero, 
-          digits=digits)
-    }
-    if (dcolumn == TRUE) {
-      dec.left <- max(c(nchar(gof.list.string)-3), 3)
-      if (single.row == TRUE) {
-        dec.right <- 3
-        separator <- ")"
-        dec.left <- 11
-      } else {
-        dec.right <- 5
-        separator <- "."
-      }
-      if (no.margin == FALSE) {
-        margin.arg <- ""
-      } else {
-        margin.arg <- "@{}"
-      }
-      string <- paste(string, "D{", separator, "}{", separator, "}{", dec.left, 
-          separator, dec.right, "} ", margin.arg, sep="")
+  if (single.row == TRUE) {
+    separator <- ")"
+  } else {
+    separator <- "."
+  }
+  if (no.margin == FALSE) {
+    margin.arg <- ""
+  } else {
+    margin.arg <- "@{}"
+  }
+  for (i in 2:ncol(output.matrix)) {
+    if (dcolumn == FALSE) {
+      string <- paste0(string, "c ")
     } else {
-      string <- paste(string, "c ", sep="")
+      if (single.row == TRUE) {
+        dl <- compute.width(output.matrix[,i], left=TRUE, single.row=TRUE)
+        dr <- compute.width(output.matrix[,i], left=FALSE, single.row=TRUE)
+      } else {
+        dl <- compute.width(output.matrix[,i], left=TRUE, single.row=FALSE)
+        dr <- compute.width(output.matrix[,i], left=FALSE, single.row=FALSE)
+      }
+      string <- paste0(string, "D{", separator, "}{", separator, "}{", 
+          dl, separator, dr, "}", margin.arg, " ")
     }
   }
   
@@ -339,20 +350,6 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   } else {
     string <- paste(string, " \\\\\n", "\\hline\n", sep="")
   }
-  
-  # create output table with significance stars etc.
-  output.matrix <- outputmatrix(m, single.row, 
-      neginfstring="\\multicolumn{1}{c}{$-$Inf}", leading.zero, digits, 
-      se.prefix=" \\; (", se.suffix=")", star.prefix="^{", star.suffix="}", 
-      star.char="*", stars, dcolumn=dcolumn, symbol, bold, 
-      bold.prefix="\\textbf{", bold.suffix="}")
-  
-  # create GOF matrix (the lower part of the final output matrix)
-  gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
-      digits)
-  
-  # combine the coefficient and gof matrices vertically
-  output.matrix <- rbind(output.matrix, gof.matrix)
   
   # fill with spaces
   max.lengths <- numeric(length(output.matrix[1,]))
