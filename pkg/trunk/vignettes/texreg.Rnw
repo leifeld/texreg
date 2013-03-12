@@ -23,7 +23,7 @@
   bookmarksnumbered
 }
 
-\title{texreg: Conversion of R regression output to \LaTeX\ tables\thanks{The author would like to thank S.Q. Chang, Skyler Cranmer, Sebastian Daza, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Francesco Sarracino, Matthieu Stigler, G{\'a}bor Uhrin, and Yanghao Wang for valuable input.}}
+\title{texreg: Conversion of Statistical Model Output in R to \LaTeX\ and HTML Tables\thanks{The author would like to thank S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Yanghao Wang, and Yihui Xie for valuable input.}}
 \author{Philip Leifeld $<$\href{mailto:philip.leifeld@eawag.ch}{philip.leifeld@eawag.ch}$>$}
 
 \begin{document}
@@ -31,14 +31,14 @@
 \maketitle
 
 \section{Motivation}
-The texreg package for the statistical computing environment R was designed to convert regression model output from multiple models into tables for inclusion in \LaTeX\ documents.
-It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \texttt{outreg}, \texttt{stargazer} and \texttt{memisc}, which can also convert R tables to \LaTeX\ tables.
+The \texttt{texreg} package for the statistical computing environment \texttt{R} was designed to convert regression model output from multiple models into tables for inclusion in \LaTeX\ or HTML documents.
+It is an alternative to packages like \texttt{xtable}, \texttt{apsrtable}, \texttt{outreg}, \texttt{stargazer} and \texttt{memisc}, which can also convert \texttt{R} tables to \LaTeX\ tables.
 Only a subset of these packages is able to merge multiple regression models in a single table.
-Those packages which can do this do not support important model types such as \texttt{lme} or \texttt{mer} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages).
-texreg, in contrast, accepts these model types and can also merge multiple models in a single table.
+Those packages which can do this do not support important model types such as \texttt{lme} or \texttt{mer} (linear mixed effects models) and \texttt{ergm} objects (exponential random graph models from the \href{http://www.statnet.org}{statnet} suite of packages), or are not customizable and extendable.
+\texttt{texreg}, in contrast, accepts these model types and can also merge multiple models in a single table.
 Currently supported model types are listed in table \ref{tab:types}.
 New model types can be easily implemented (see section \ref{templates}).
-texreg can be used within Sweave and knitr.
+\texttt{texreg} can be used within Sweave and knitr.
 \LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
 
 \begin{table}[t]
@@ -87,10 +87,10 @@ Class			& Package			& Added		& Description \\
 \label{tab:types}
 \end{table}
 
-Beside \LaTeX\ output, texreg can also export nicely formatted tables to MS Word files, HTML files (which can be viewed in any web browser), or it can print nicely formatted regression tables directly to the screen (that is, to the R console) for easier model comparison.
+Beside \LaTeX\ output, \texttt{texreg} can also export nicely formatted tables to MS Word files, HTML files (which can be viewed in any web browser), or it can print nicely formatted regression tables directly to the screen (that is, to the \texttt{R} console) for easier model comparison.
 
 \section{Installation}\label{installation}
-It should be possible to install texreg using a simple command:
+It should be possible to install \texttt{texreg} using a simple command:
 <<results=hide, eval=FALSE>>=
 install.packages("texreg")
 @
@@ -99,7 +99,7 @@ The most recent version can always be installed with this command (usually more 
 install.packages("texreg", repos="http://R-Forge.R-project.org")
 @
 If this is not possible for some reason, the source files and binaries can be downloaded from \url{http://r-forge.r-project.org/projects/texreg/} (click on ``R packages'').
-To load the package in R once it has been installed, enter the following command:
+To load the package in \texttt{R} once it has been installed, enter the following command:
 <<results=hide>>=
 library(texreg)
 @
@@ -107,11 +107,11 @@ The package can be updated to the most recent version by typing:
 <<results=hide, eval=FALSE>>=
 update.packages("texreg", repos="http://R-Forge.R-project.org")
 @
-If the file is not available on the R-Forge repository, you can try to download it from the R-Forge project homepage (\url{http://r-forge.r-project.org/projects/texreg/}; click on ``R packages'') and install it manually by entering something like \verb+R CMD INSTALL texreg_1.xx.tar.gz+ (replace \texttt{xx} by the current version number) on the terminal (not the R terminal, but the normal command line of your operating system).
+If the file is not available on the R-Forge repository, you can try to download it from the R-Forge project homepage (\url{http://r-forge.r-project.org/projects/texreg/}; click on ``R packages'') and install it manually by entering something like \verb+R CMD INSTALL texreg_1.xx.tar.gz+ (replace \texttt{xx} by the current version number) on the terminal (not the \texttt{R} terminal, but the normal command line of your operating system).
 
 \section{Getting help}\label{help}
-This R package vignette is part of the texreg package.
-It can be displayed in R by entering the command:
+This \texttt{R} package vignette is part of the \texttt{texreg} package.
+It can be displayed in \texttt{R} by entering the command:
 <<results=hide>>=
 vignette("texreg")
 @
@@ -123,7 +123,7 @@ More specific help on the \texttt{texreg} command can be obtained by entering th
 <<results=hide>>=
 help(texreg)
 @
-If all else fails, more help can be obtained from the homepage of the texreg package.
+If all else fails, more help can be obtained from the homepage of the \texttt{texreg} package.
 Questions can be posted to a public forum at \url{http://r-forge.r-project.org/projects/texreg/}.
 
 \section{texreg examples}
@@ -142,16 +142,16 @@ The coefficients, standard errors, $p$ values etc. can be displayed as follows:
 summary(m2)
 @
 Now it is fairly tedious to copy every single coefficient and standard error to a \LaTeX\ table when you design your academic paper.
-To improve the situation, the following commands can do this automatically (the \LaTeX\ output code is shown below the R code, and the resulting table is shown in table \ref{tab:1}):
+To improve the situation, the following commands can do this automatically (the \LaTeX\ output code is shown below the \texttt{R} code, and the resulting table is shown in table \ref{tab:1}):
 <<>>=
 library(texreg)
-texreg(m2)
+texreg(m2, booktabs=TRUE, dcolumn=TRUE)
 @
 <<echo=FALSE,results=tex>>=
-texreg(m2, use.packages=FALSE, label="tab:1")
+texreg(m2, use.packages=FALSE, label="tab:1", booktabs=TRUE, dcolumn=TRUE, float.pos="p")
 @
-
-The resulting table is printed directly to the R console for easy copy \& paste.
+Note that the \texttt{booktabs} and \texttt{dcolumn} arguments were used to create more fancy tables than the default behavior using the \texttt{booktabs} and the \texttt{dcolumn} \LaTeX\ packages (for nicer top and bottom rules, and for decimal point alignment of coefficients and standard errors).
+The resulting table is printed directly to the \texttt{R} console for easy copy \& paste.
 It can also be returned as a character string and saved in an object, say \texttt{tab}, by adding the \texttt{return.string=TRUE} argument.
 This way, it can be later printed again using the \texttt{cat()} function:
 <<results=hide>>=
@@ -160,14 +160,18 @@ cat(tab)
 @
 The \texttt{texreg} command also accepts multiple models as a \texttt{list} and merges them in a table.
 The output of the following command is shown in table \ref{tab:2}.
+Note the additional \texttt{caption} argument to set the caption of the table.
 <<eval=FALSE>>=
-texreg(list(m1,m2))
+texreg(list(m1,m2), booktabs=TRUE, dcolumn=TRUE, caption="Multiple models")
 @
 <<results=tex,echo=FALSE>>=
-texreg(list(m1,m2), use.packages=FALSE, label="tab:2")
+texreg(list(m1,m2), booktabs=TRUE, dcolumn=TRUE, use.packages=FALSE, label="tab:2", float.pos="p", caption="Multiple models")
 @
+Tables~\ref{tab:1} and~\ref{tab:2} consume more horizontal space than is actually necessary.
+This is due to the long note regarding significance thresholds for the $p$ values.
+To avoid this problem, the note can be replaced by a shorter note using the \texttt{custom.note} argument.
 
-The texreg package contains many customizations.
+The \texttt{texreg} package contains many customizations.
 Among other options, the \texttt{use.packages} argument can be used to switch off package loading at the beginning of the table code.
 Using the \texttt{label} argument, the label of the table can be set.
 In a similar way, the \texttt{caption} argument takes care of the caption.
@@ -177,10 +181,10 @@ The position of the table on the page or in the document can be specified using 
 The \texttt{custom.names} and \texttt{model.names} arguments can be used to specify the names of the model terms and the models, respectively.
 An example:
 <<results=tex>>=
-texreg(list(m1, m2), use.packages=FALSE, label="tab:3", 
-  caption="My regression table", scriptsize=TRUE, 
-  custom.names=c("(Intercept)", "Treatment", "Control"), 
-  model.names=c("First model", "Second model"), float.pos="b")
+texreg(list(m1, m2), booktabs=TRUE, dcolumn=TRUE, use.packages=FALSE, 
+    label="tab:3", caption="Custom coefficient and model names", 
+    custom.coef.names=c("(Intercept)",  "Treatment", "Control"), 
+    custom.model.names=c("First model", "Second model"), float.pos="p")
 @
 The output of this command is shown as table \ref{tab:3}.
 Another argument is \texttt{table}.
@@ -190,10 +194,7 @@ The \texttt{no.margin} argument can be used to control the cell spacing of the t
 If set to \texttt{TRUE}, regular margins are used.
 By default, no margins are used in order not to waste any horizontal space on the page.
 
-texreg employs functions from the \texttt{booktabs} and \texttt{dcolumn} packages to generate beautiful tables.
-If these packages should not be used when generating tables, the arguments \texttt{booktabs} and \texttt{dcolumn}, respectively, can be set to \texttt{FALSE}.
-
-The texreg package can also handle \texttt{ergm} objects (that is, exponential random graph models, which are used in social network analysis).
+The \texttt{texreg} package can also handle \texttt{ergm} objects (that is, exponential random graph models, which are used in social network analysis).
 Here is an example:
 the following code creates a network matrix.
 <<>>=
@@ -210,37 +211,43 @@ m4 <- ergm(nw ~ edges)
 m5 <- ergm(nw ~ edges + mutual)
 m6 <- ergm(nw ~ edges + mutual + twopath)
 @
-The texreg command can then be used to create a table with the coefficients.
-Switching on \texttt{strong.signif} returns the significance levels used by the \texttt{ergm} package (three stars for $p$ values smaller than $0.001$ etc.) instead of using conventional significance stars:
+The \texttt{texreg} command can then be used to create a table with the coefficients.
+The \texttt{summary} function for \texttt{ergm} objects attaches centered dots to weakly significant model terms by default (that is, a $\cdot$ is used to denote $p$ values between $0.05$ and $0.1$).
+This behavior can be imitated by modifying the \texttt{stars} argument and adding a fourth significance level as follows:
 <<results=tex>>=
-texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:4", scriptsize=FALSE, 
-  strong.signif=TRUE)
+texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:4", booktabs=TRUE, 
+    dcolumn=TRUE, float.pos="p", caption="Centered dots for weak significance", 
+    stars=c(0.001, 0.01, 0.05, 0.1))
 @
 Table \ref{tab:4} shows the result of this command.
+Note that the legend under the table is now extended, but the model terms do not feature any $p$ values between $0.05$ and $0.1$ in this case.
 
 Most academic journals require tables where the coefficient and the standard error are stored in two separate rows of the table, as shown in tables \ref{tab:1} to \ref{tab:4}.
 In some situations, however, it makes sense to accommodate them in a single row.
 The \texttt{single.row} argument can take care of this:
 <<results=tex>>=
-texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:5", single.row=TRUE)
+texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:5", booktabs=TRUE, 
+    dcolumn=TRUE, single.row=TRUE, float.pos="p", caption="In a single row")
 @
 The result is shown in table \ref{tab:5}.
 Note the difference between tables \ref{tab:4} and \ref{tab:5}.
 
-The texreg command can also combine the output of different model types in a single table.
+The \texttt{texreg} command can also combine the output of different model types in a single table.
 Consider the following example of an \texttt{lm} object, an \texttt{lme} (linear mixed-effects) model and an \texttt{ergm} object:
 <<results=hide>>=
 library(nlme)
 m3 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
 @
 <<results=tex>>=
-texreg(list(m3, m2, m6), label="tab:6", use.packages=FALSE)
+texreg(list(m3, m2, m6), label="tab:6", use.packages=FALSE, booktabs=TRUE, 
+    dcolumn=TRUE, float.pos="p", caption="Mixing different kinds of models")
 @
 The output is shown in table \ref{tab:6}.
 Note that different model types may report different kinds of goodness-of-fit statistics at the bottom of the table.
+These can be switched on or off (see \verb+?extract+ for details).
 
 Many people use robust standard errors.
-To include include them in a texreg table, the original standard errors can be replaced and new, custom values can be handed over.
+To include include them in a \texttt{texreg} table, the original standard errors can be replaced and new, custom values can be handed over.
 To do this, the argument \verb+override.se+ can be used.
 The argument expects a list of vectors, with one vector of standard errors for each model (which means that there should be as many elements in the list as there are models).
 Beside standard errors, there are similar arguments for $p$ values (\verb+override.pval+) and coefficients (\verb+override.coef+).
@@ -252,36 +259,34 @@ htmlreg(list(m3, m2, m6))
 @
 The output of either of the two commands can be written directly to a file by adding the \texttt{file} argument.
 This is especially handy because HTML files can be read by MS Word.
-So it is possible to use the texreg package not only with \LaTeX, but also with MS Office.
+So it is possible to use the \texttt{texreg} package not only with \LaTeX, but also with MS Office.
+If the table is exported to a file, it is advisable to include the full header information of the HTML file.
 An example:
 <<results=hide>>=
-htmlreg(list(m3, m2, m6), file="mytable.doc")
+htmlreg(list(m3, m2, m6), file="mytable.doc", inline.css=FALSE, doctype=TRUE, 
+    html.tag=TRUE, head.tag=TRUE, body.tag=TRUE)
 @
 The \texttt{htmlreg()} function works well with the \texttt{knitr} package for dynamic HTML report generation.
-However, some additional arguments should be specified when \texttt{knitr} is used.
-These arguments make sure that only the table is returned, without any header information:
-<<results=hide>
-htmlreg(list(m3, m2, m6), doctype=FALSE, html.tag=FALSE, head.tag=FALSE, 
-    body.tag=FALSE, inline.css=TRUE)
-@
+The default arguments should work well with \texttt{knitr} and HTML.
 In addition to HTML, \texttt{knitr} is also compatible with Markdown, a simplified markup language.
-texreg can work with Markdown as well, but an additional argument should be provided to make it work:
+\texttt{texreg} can work with Markdown as well, but an additional argument should be provided to make it work:
 the \verb+star.symbol="\\*"+ argument makes sure that Markdown does not interpret the significance stars as special Markdown syntax.
-The additional (and optional) \verb+align.center=TRUE+ argument centers the table horizontally on the page.
+The additional (and optional) \verb+center=TRUE+ argument centers the table horizontally on the page.
 Here is an example:
 <<results=hide>>=
-htmlreg(list(m3, m2, m6), doctype=FALSE, html.tag=FALSE, head.tag=FALSE, 
-    body.tag=FALSE, inline.css=TRUE, star.symbol="\\*", align.center=TRUE)
+htmlreg(list(m3, m2, m6), star.symbol="\\*", center=TRUE)
 @
-Finally, there is another function, which can print tables to the R console.
+
+Finally, there is another function, which can print tables to the \texttt{R} console.
 The command will nicely arrange the spaces etc. of your tables and will greatly facilitate model comparison (as a substitute of the default \texttt{summary} function).
-To show the three models side-by-side in your R console, type the following code:
+To show the three models side-by-side in your \texttt{R} console, type the following code:
 <<>>=
 screenreg(list(m3, m2, m6))
 @
+This is especially useful to prepare a table on screen and eventually export it to \LaTeX\ or HTML.
 
 \section{Creating templates for new model types}\label{templates}
-Implementing new kinds of statistical models is fairly easy (if you know how to modify R functions).
+Implementing new kinds of statistical models is fairly easy (if you know how to modify \texttt{R} functions).
 For any model type, there exists a function which extracts the relevant information from a model.
 For example, \texttt{extract.lm()} provides coefficients and goodness-of-fit statistics for \texttt{lm} objects, \texttt{extract.ergm()} provides this information for \texttt{ergm} objects, etc.
 
@@ -360,16 +365,16 @@ Then you would have to adjust the code above as follows:
 setMethod("extract", signature=className("clogit", "survival"), 
     definition = extract.clogit)
 \end{verbatim}
-After executing the definition of the function and the adjusted \texttt{setMethod} command, texreg can be used with your models.
+After executing the definition of the function and the adjusted \texttt{setMethod} command, \texttt{texreg} can be used with your models.
 
 If you write a new extract function and a \texttt{setMethod} configuration, it would be very helpful to post them in the forum (see section \ref{help}) in order to let other users profit from it.
-If it works and if you can provide a self-contained example, the code can be implemented in a future version of texreg.
+If it works and if you can provide a self-contained example, the code can be implemented in a future version of \texttt{texreg}.
 Please make sure that you do not modify anything else in the code, and that you stick to the formatting rules used in the remaining file; otherwise comparison with the original may be difficult.
-Please send an inquiry if you are interested in joining the texreg project and working directly on the code.
+Please send an inquiry if you are interested in joining the \texttt{texreg} project and working directly on the code.
 
 \section{How to obtain the source code}\label{source}
-If you would like to inspect the texreg source code in order to develop your own extensions, you can download the \texttt{.tar.gz} file from the repository homepage.
-To do this, you can either search the list of R-Forge contributions (\url{http://download.r-forge.r-project.org/src/contrib/}) for texreg, or click on the ``R packages'' link on the texreg package homepage at R-Forge (\url{http://r-forge.r-project.org/projects/texreg/}).
-Make sure you download the texreg file with the \texttt{.tar.gz} extension, open this compressed file (e.g., using 7Zip if you are on Windows), and open the \texttt{texreg.R} file in the \texttt{R/} directory.
+If you would like to inspect the \texttt{texreg} source code in order to develop your own extensions, you can download the \texttt{.tar.gz} file from the repository homepage.
+To do this, you can either search the list of R-Forge contributions (\url{http://download.r-forge.r-project.org/src/contrib/}) for \texttt{texreg}, or click on the ``R packages'' link on the \texttt{texreg} package homepage at R-Forge (\url{http://r-forge.r-project.org/projects/texreg/}).
+Make sure you download the \texttt{texreg} file with the \texttt{.tar.gz} extension, open this compressed file (e.g., using 7Zip if you are on Windows), and open the \texttt{texreg.R} file in the \texttt{R/} directory.
 
 \end{document}

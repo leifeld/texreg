@@ -4,12 +4,12 @@
 
 
 # screenreg function
-screenreg <- function(l, single.row=FALSE, leading.zero=TRUE, 
-    stars=c(0.001, 0.01, 0.05, 0.1), symbol=".", custom.names=NULL, 
-    custom.gof.names=NULL, model.names=NULL, digits=2, outer.rule="=", 
-    inner.rule="-", column.spacing=2, override.coef=0, override.se=0, 
-    override.pval=0, omit.coef=NA, reorder.coef=NULL, reorder.gof=NULL, 
-    file=NA, return.string=FALSE, custom.note=NULL, ...) {
+screenreg <- function(l, file=NA, single.row=FALSE, stars=c(0.001, 0.01, 0.05), 
+    custom.model.names=NULL, custom.coef.names=NULL, custom.gof.names=NULL, 
+    custom.note=NULL, digits=2, leading.zero=TRUE, symbol=".", override.coef=0, 
+    override.se=0, override.pval=0, omit.coef=NA, reorder.coef=NULL, 
+    reorder.gof=NULL, return.string=FALSE, column.spacing=2, outer.rule="=", 
+    inner.rule="-", ...) {
   
   stars <- check.stars(stars)
   
@@ -26,12 +26,12 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE,
   decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
       digits, returnobject="decimal.matrix")
   
-  m <- customnames(m, custom.names) #rename coefficients
+  m <- customnames(m, custom.coef.names) #rename coefficients
   m <- rearrangeMatrix(m) #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
   m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
   
-  modnames <- modelnames(models, model.names) #use (custom) model names
+  modnames <- modelnames(models, custom.model.names) #use (custom) model names
   
   # reorder GOF and coef matrix
   m <- reorder(m, reorder.coef)
@@ -185,14 +185,16 @@ screenreg <- function(l, single.row=FALSE, leading.zero=TRUE,
 
 
 # texreg function
-texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE, 
-    table=TRUE, sideways=FALSE, float.pos="", stars=c(0.001, 0.01, 0.05, 0.1), 
-    symbol="\\cdot", use.packages=TRUE, caption="Statistical models", 
-    label="table:coefficients", dcolumn=TRUE, booktabs=TRUE, scriptsize=FALSE, 
-    custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
-    center=TRUE, override.coef=0, override.se=0, override.pval=0, omit.coef=NA, 
-    reorder.coef=NULL, reorder.gof=NULL, file=NA, return.string=FALSE, 
-    caption.above=FALSE, bold=0.00, custom.note=NULL, ...) {
+
+texreg <- function(l, file=NA, single.row=FALSE, stars=c(0.001, 0.01, 0.05), 
+    custom.model.names=NULL, custom.coef.names=NULL, custom.gof.names=NULL, 
+    custom.note=NULL, digits=2, leading.zero=TRUE, symbol="\\cdot", 
+    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, 
+    reorder.coef=NULL, reorder.gof=NULL, return.string=FALSE, bold=0.00, 
+    center=TRUE, caption="Statistical models", caption.above=FALSE, 
+    label="table:coefficients", booktabs=FALSE, dcolumn=FALSE, sideways=FALSE, 
+    use.packages=TRUE, table=TRUE, no.margin=TRUE, scriptsize=FALSE, 
+    float.pos="", ...) {
   
   stars <- check.stars(stars)
   
@@ -220,12 +222,12 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
       digits, returnobject="decimal.matrix")
   
-  m <- customnames(m, custom.names) #rename coefficients
+  m <- customnames(m, custom.coef.names) #rename coefficients
   m <- rearrangeMatrix(m) #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
   m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
   
-  modnames <- modelnames(models, model.names) #use (custom) model names
+  modnames <- modelnames(models, custom.model.names) #use (custom) model names
   
   # reorder GOF and coef matrix
   m <- reorder(m, reorder.coef)
@@ -407,9 +409,6 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
   } else {
     string <- paste(string, "\\hline\n", sep="")
   }
-  if (is.null(custom.note) || custom.note != "") {
-    string <- paste(string, "\\vspace{-3mm}\\\\\n", sep="")
-  }
   
   # stars note
   if (!is.null(custom.note)) {
@@ -427,29 +426,27 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
     }
     if (length(st) == 4) {
       note <- paste("\\multicolumn{", length(models)+1, 
-        "}{l}{\\textsuperscript{***}$p<", st[1], 
+        "}{l}{\\scriptsize{\\textsuperscript{***}$p<", st[1], 
         "$, \n  \\textsuperscript{**}$p<", st[2], 
         "$, \n  \\textsuperscript{*}$p<", st[3], 
-        "$, \n  \\textsuperscript{$", symbol, "$}$p<", st[4], "$}\n", sep="")
+        "$, \n  \\textsuperscript{$", symbol, "$}$p<", st[4], "$}}\n", sep="")
     } else if (length(st) == 3) {
       note <- paste("\\multicolumn{", length(models)+1, 
-        "}{l}{\\textsuperscript{***}$p<", st[1], 
+        "}{l}{\\scriptsize{\\textsuperscript{***}$p<", st[1], 
         "$, \n  \\textsuperscript{**}$p<", st[2], 
-        "$, \n  \\textsuperscript{*}$p<", st[3], "$}\n", sep="")
+        "$, \n  \\textsuperscript{*}$p<", st[3], "$}}\n", sep="")
     } else if (length(st) == 2) {
       note <- paste("\\multicolumn{", length(models)+1, 
-        "}{l}{\\textsuperscript{**}$p<", st[1], 
-        "$, \n  \\textsuperscript{*}$p<", st[2], "$}\n", sep="")
+        "}{l}{\\scriptsize{\\textsuperscript{**}$p<", st[1], 
+        "$, \n  \\textsuperscript{*}$p<", st[2], "$}}\n", sep="")
     } else if (length(st) == 1) {
       note <- paste("\\multicolumn{", length(models)+1, 
-        "}{l}{\\textsuperscript{*}$p<", st[1], "$}\n", sep="")
+        "}{l}{\\scriptsize{\\textsuperscript{*}$p<", st[1], "$}}\n", sep="")
     } else {
       note <- ""
     }
   }
-  string <- paste(string, note, sep="")
-  
-  string <- paste(string, "\\end{tabular}\n", sep="")
+  string <- paste0(string, note, "\\end{tabular}\n")
   
   if (table == TRUE) {
     if (scriptsize == TRUE) {
@@ -487,14 +484,14 @@ texreg <- function(l, single.row=FALSE, no.margin=TRUE, leading.zero=TRUE,
 
 
 # htmlreg function
-htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE, 
-    stars=c(0.001, 0.01, 0.05, 0.1), symbol="&middot;", caption="", 
-    custom.names=NULL, custom.gof.names=NULL, model.names=NULL, digits=2, 
-    doctype=TRUE, star.symbol="*", center=FALSE, override.coef=0, 
-    override.se=0, override.pval=0, omit.coef=NA, reorder.coef=NULL, 
-    reorder.gof=NULL, file=NA, return.string=FALSE, caption.above=FALSE, 
-    bold=0.00, custom.note=NULL, html.tag=TRUE, body.tag=TRUE, head.tag=TRUE, 
-    inline.css=FALSE, ...) {
+htmlreg <- function(l, file=NA, single.row=FALSE, stars=c(0.001, 0.01, 0.05), 
+    custom.model.names=NULL, custom.coef.names=NULL, custom.gof.names=NULL, 
+    custom.note=NULL, digits=2, leading.zero=TRUE, symbol="&middot;", 
+    override.coef=0, override.se=0, override.pval=0, omit.coef=NA, 
+    reorder.coef=NULL, reorder.gof=NULL, return.string=FALSE, bold=0.00, 
+    center=TRUE, caption="Statistical models", caption.above=FALSE, 
+    star.symbol="*", inline.css=TRUE, doctype=TRUE, html.tag=FALSE, 
+    head.tag=FALSE, body.tag=FALSE, ...) {
   
   stars <- check.stars(stars)
   
@@ -532,12 +529,12 @@ htmlreg <- function(l, single.row=FALSE, leading.zero=TRUE,
   decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
       digits, returnobject="decimal.matrix")
   
-  m <- customnames(m, custom.names) #rename coefficients
+  m <- customnames(m, custom.coef.names) #rename coefficients
   m <- rearrangeMatrix(m) #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
   m <- omitcoef(m, omit.coef) #remove coefficient rows matching regex
   
-  modnames <- modelnames(models, model.names) #use (custom) model names
+  modnames <- modelnames(models, custom.model.names) #use (custom) model names
   
   # reorder GOF and coef matrix
   m <- reorder(m, reorder.coef)
