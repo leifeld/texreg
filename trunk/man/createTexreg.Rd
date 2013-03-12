@@ -9,7 +9,7 @@ createTexreg(coef.names, coef, se, pvalues=numeric(0),
 }
 \details{
 This function creates a texreg object. A texreg object contains 
-information about coefficients, standard errors, p-values 
+information about coefficients, standard errors, p values 
 (optional), and about goodness-of-fit statistics. texreg objects 
 are used by the texreg command to create LaTeX tables.
 }
@@ -34,9 +34,9 @@ model <- lme(distance ~ age, data = Orthodont, random = ~ 1) #estimate model
 coefficient.names <- rownames(summary(model)$tTable) #extract coefficient names
 coefficients <- summary(model)$tTable[,1] #extract coefficient values
 standard.errors <- summary(model)$tTable[,2] #extract standard errors
-significance <- summary(model)$tTable[,5] #extract p-values
+significance <- summary(model)$tTable[,5] #extract p values
 
-lik <- summary(model)$logLik #extract log likelihood #extract log likelihood
+lik <- summary(model)$logLik #extract log likelihood
 aic <- summary(model)$AIC #extract AIC
 bic <- summary(model)$BIC #extract BIC
 n <- nobs(model) #extract number of observations
