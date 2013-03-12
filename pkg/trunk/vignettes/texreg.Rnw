@@ -41,29 +41,34 @@ New model types can be easily implemented (see section \ref{templates}).
 \texttt{texreg} can be used within Sweave and knitr.
 \LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
 
-\begin{table}[t]
+\begin{table}[t!]
 \begin{center}
 \begin{tabular}{l l l l l}
 \toprule
 Class			& Package			& Added		& Description \\
 \midrule
+\texttt{betareg}	& \texttt{betareg}		& 2013-03-13	& Beta regression for rates and proportions \\
 \texttt{clm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
 \texttt{clogit}		& \texttt{survival}		& 2012-09-30	& Conditional logistic regression \\
 \texttt{coxph}		& \texttt{survival}		& 2012-10-14	& Cox proportional hazard models \\
 \texttt{coxph.penal}	& \texttt{survival}		& 2012-12-04	& Cox proportional hazard models with penalty splines \\
 \texttt{dynml}		& \texttt{dynlm}		& 2013-02-14	& Time series regression with ``ts'' data \\
 \texttt{ergm}		& \texttt{ergm}			& 2012-06-18	& Exponential random graph models \\
+\texttt{gam}		& \texttt{mgcv}			& 2013-03-13	& Generalized additive models \\
 \texttt{gee}		& \texttt{gee}			& 2012-10-14	& Generalized estimation equation \\
 \texttt{glm}		& \texttt{stats}		& 2012-06-19	& Generalized linear models \\
 \texttt{glmerMod}	& \texttt{lme4} (new)		& 2012-10-09	& Generalized linear mixed models \\
 \texttt{gls}		& \texttt{nlme}			& 2012-06-19	& Generalized least squares \\
 \texttt{gmm}		& \texttt{gmm}			& 2013-02-06	& Generalized method of moments estimation \\
+\texttt{ivreg}		& \texttt{AER}			& 2013-03-13	& Instrumental-variable regression using 2SLS \\
+\texttt{hurdle}		& \texttt{pscl}			& 2013-03-13	& Hurdle regression models for count data \\
 \texttt{lm}		& \texttt{stats}		& 2012-06-19	& Ordinary least squares \\
 \texttt{lme}		& \texttt{nlme}			& 2012-06-19	& Linear mixed-effects models \\
 \texttt{lmerMod}	& \texttt{lme4} (new)		& 2012-10-08	& Linear mixed-effects models \\
 \texttt{lmrob}		& \texttt{robustbase}		& 2012-11-12	& MM-type estimators for linear models \\
 \texttt{lnam}		& \texttt{sna}			& 2012-10-07	& Linear network autocorrelation models \\
 \texttt{mer}		& \texttt{lme4} (old)		& 2012-10-08	& Linear mixed-effects models \\
+\texttt{multinom}	& \texttt{nnet}			& 2013-03-13	& Multinomial log-linear models \\
 \texttt{negbin}		& \texttt{MASS}			& 2012-10-15	& Negative binomial generalized linear models \\
 \texttt{nlmerMod}	& \texttt{lme4} (new)		& 2012-10-09	& Nonlinear mixed-effects models \\
 \texttt{lrm}		& \texttt{rms}, \texttt{Design}	& 2012-07-04	& Logistic regression models \\
@@ -77,9 +82,12 @@ Class			& Package			& Added		& Description \\
 \texttt{sclm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
 \texttt{simex}		& \texttt{simex}		& 2012-10-15	& SIMEX algorithm for measurement error models \\
 \texttt{stergm}		& \texttt{tergm}		& 2012-10-23	& Separable temporal exponential random graph models \\
+\texttt{survreg}	& \texttt{survival}		& 2013-03-13	& Parametric survival regression models \\
+\texttt{survreg.penal}	& \texttt{survival}		& 2013-03-13	& Frailty survival models \\
 \texttt{svyglm}		& \texttt{survey}		& 2012-10-14	& Survey-weighted generalized linear models \\
 \texttt{systemfit}	& \texttt{systemfit}		& 2012-10-03	& Linear structural equations \\
 \texttt{tobit}		& \texttt{AER}			& 2012-10-15	& Tobit regression models for censored data \\
+\texttt{zeroinfl}	& \texttt{pscl}			& 2013-03-13	& Zero-inflated regression models \\
 \bottomrule
 \end{tabular}
 \end{center}
