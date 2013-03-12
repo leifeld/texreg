@@ -8,6 +8,61 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
     package="texreg")
 
 
+# extension for betareg objects (betareg package)
+extract.betareg <- function(model, include.precision=TRUE, 
+    include.pseudors=TRUE, include.loglik=TRUE, include.nobs=TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  coef.block <- s$coefficients$mean
+  if (include.precision == TRUE) {
+    phi <- s$coefficients$precision
+    rownames(phi) <- paste("Precision:", rownames(phi))
+    coef.block <- rbind(coef.block, phi)
+  }
+  names <- rownames(coef.block)
+  co <- coef.block[,1]
+  se <- coef.block[,2]
+  pval <- coef.block[,4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.pseudors==TRUE) {
+    pseudors <- model$pseudo.r.squared
+    gof <- c(gof, pseudors)
+    gof.names <- c(gof.names, "Pseudo R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik==TRUE) {
+    lik <- model$loglik
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("betareg", "betareg"), 
+    definition = extract.betareg)
+
+
 # extension for clm objects
 extract.clm <- function(model, include.thresholds=TRUE, include.aic=TRUE, 
     include.bic=TRUE, include.loglik=TRUE, include.nobs=TRUE, ...) {
@@ -355,6 +410,105 @@ setMethod("extract", signature=className("ergm", "ergm"),
     definition = extract.ergm)
 
 
+# extension for gam objects (mgcv package)
+extract.gam <- function(model, include.smooth=TRUE, include.aic=TRUE, 
+    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
+    include.dev.expl=TRUE, include.dispersion=TRUE, include.rsquared=TRUE, 
+    include.gcv=TRUE, include.nobs=TRUE, include.nsmooth=TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  coef.block <- s$p.table
+  if (include.smooth == TRUE) {
+    smooth <- s$s.table
+    rownames(smooth) <- paste0("EDF:\ ", rownames(smooth))
+    coef.block <- rbind(coef.block, smooth)
+  }
+  names <- rownames(coef.block)
+  co <- coef.block[,1]
+  se <- coef.block[,2]
+  pval <- coef.block[,4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic==TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik==TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance==TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.dev.expl==TRUE) {
+    dev.expl <- s$dev.expl
+    gof <- c(gof, dev.expl)
+    gof.names <- c(gof.names, "Deviance\ explained")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.dispersion==TRUE) {
+    dispersion <- s$dispersion
+    gof <- c(gof, dispersion)
+    gof.names <- c(gof.names, "Dispersion")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.rsquared==TRUE) {
+    rsq <- s$r.sq
+    gof <- c(gof, rsq)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.gcv==TRUE) {
+    gcv <- model$gcv.ubre
+    gof <- c(gof, gcv)
+    gof.names <- c(gof.names, "GCV\ score")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.nsmooth==TRUE) {
+    m <- s$m
+    gof <- c(gof, m)
+    gof.names <- c(gof.names, "Num.\ smooth\ terms")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("gam", "mgcv"), 
+    definition = extract.gam)
+
+
 # extension for gee objects (gee package)
 extract.gee <- function(model, robust=TRUE, include.dispersion=TRUE, 
     include.nobs=TRUE, ...) {
@@ -629,6 +783,10 @@ setMethod("extract", signature=className("lm", "stats"),
 extract.dynlm <- extract.lm
 setMethod("extract", signature=className("dynlm", "dynlm"),
     definition = extract.dynlm)
+
+extract.ivreg <- extract.lm
+setMethod("extract", signature=className("ivreg", "AER"),
+    definition = extract.ivreg)
 
 
 # extension for lme objects
@@ -955,6 +1113,73 @@ setMethod("extract", signature=className("glmerMod", "lme4"),
 extract.nlmerMod <- extract.mer
 setMethod("extract", signature=className("nlmerMod", "lme4"), 
     definition = extract.nlmerMod)
+
+
+# extension for multinom objects (nnet package)
+extract.multinom <- function(model, include.pvalues=TRUE, include.aic=TRUE, 
+    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
+    include.nobs=TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  names <- model$coefnames
+  co <- s$coefficients
+  se <- s$standard.errors
+  if (include.pvalues == TRUE) {
+    zval <- co / se
+    pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+  } else {
+    pval <- numeric(0)
+  }
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic==TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik==TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance==TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    n <- length(s$fitted.values)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("multinom", "nnet"), 
+    definition = extract.multinom)
 
 
 # extension for plm objects (from the plm package)
@@ -1482,6 +1707,71 @@ setMethod("extract", signature=className("stergm", "tergm"),
     definition = extract.stergm)
 
 
+# extension for survreg objects (survival package)
+extract.survreg <- function(model, include.aic=TRUE, include.bic=TRUE, 
+    include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  names <- rownames(s$table)
+  co <- s$table[,1]
+  se <- s$table[,2]
+  pval <- s$table[,4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic==TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik==TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance==TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=names, 
+      coef=co, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("survreg", "survival"), 
+    definition = extract.survreg)
+
+extract.survreg.penal <- extract.survreg
+setMethod("extract", signature=className("survreg.penal", "survival"), 
+    definition = extract.survreg.penal)
+
+
 # extension for svyglm objects (survey package)
 extract.svyglm <- function(model, include.aic=FALSE, include.bic=FALSE, 
     include.loglik=FALSE, include.deviance=TRUE, include.dispersion=TRUE, 
@@ -1681,4 +1971,117 @@ extract.tobit <- function(model, include.aic=TRUE, include.bic=TRUE,
 
 setMethod("extract", signature=className("tobit", "AER"), 
     definition = extract.tobit)
+
+
+# extension for zeroinfl objects (pscl package)
+extract.zeroinfl <- function(model, beside=FALSE, include.count=TRUE, 
+    include.zero=TRUE, include.aic=TRUE, include.loglik=TRUE, 
+    include.nobs=TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic==TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik==TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    n <- s$n
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  count <- s$coefficients$count
+  zero <- s$coefficients$zero
+  
+  if (beside == FALSE) {
+    if (include.count == TRUE && include.zero == TRUE) {
+      rownames(count) <- paste("Count model:", rownames(count))
+      rownames(zero) <- paste("Zero model:", rownames(zero))
+      coef.block <- rbind(count, zero)
+    } else if (include.count == TRUE) {
+      coef.block <- count
+    } else if (include.zero == TRUE) {
+      coef.block <- zero
+    } else {
+      stop(paste("Either the include.count or the include.zero argument", 
+          "must be TRUE."))
+    }
+    names <- rownames(coef.block)
+    co <- coef.block[,1]
+    se <- coef.block[,2]
+    pval <- coef.block[,4]
+    
+    tr <- createTexreg(
+        coef.names=names, 
+        coef=co, 
+        se=se, 
+        pvalues=pval, 
+        gof.names=gof.names, 
+        gof=gof, 
+        gof.decimal=gof.decimal
+    )
+    return(tr)
+  } else {
+    trList <- list()
+    
+    c.names <- rownames(count)
+    c.co <- count[,1]
+    c.se <- count[,2]
+    c.pval <- count[,4]
+    z.names <- rownames(zero)
+    z.co <- zero[,1]
+    z.se <- zero[,2]
+    z.pval <- zero[,4]
+    
+    if (include.count == TRUE) {
+      tr <- createTexreg(
+          coef.names=c.names, 
+          coef=c.co, 
+          se=c.se, 
+          pvalues=c.pval, 
+          gof.names=gof.names, 
+          gof=gof, 
+          gof.decimal=gof.decimal
+      )
+      trList[[length(trList)+1]] <- tr
+    }
+    
+    if (include.zero==TRUE) {
+      tr <- createTexreg(
+          coef.names=z.names, 
+          coef=z.co, 
+          se=z.se, 
+          pvalues=z.pval, 
+          gof.names=gof.names, 
+          gof=gof, 
+          gof.decimal=gof.decimal
+      )
+      trList[[length(trList)+1]] <- tr
+    }
+    if (length(trList) == 0) {
+      stop(paste("Either the include.count or the include.zero argument", 
+          "must be TRUE."))
+    }
+    return(trList)
+  }
+}
+
+setMethod("extract", signature=className("zeroinfl", "pscl"), 
+    definition = extract.zeroinfl)
+
+extract.hurdle <- extract.zeroinfl
+setMethod("extract", signature=className("hurdle", "pscl"), 
+    definition = extract.hurdle)
 
