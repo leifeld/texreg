@@ -1,6 +1,7 @@
 \name{extract-methods}
 \docType{methods}
 \alias{extract-methods}
+\alias{extract,aftreg-method}
 \alias{extract,betareg-method}
 \alias{extract,clm-method}
 \alias{extract,clogit-method}
@@ -26,6 +27,7 @@
 \alias{extract,multinom-method}
 \alias{extract,negbin-method}
 \alias{extract,nlmerMod-method}
+\alias{extract,phreg-method}
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
 \alias{extract,polr-method}
@@ -41,6 +43,7 @@
 \alias{extract,svyglm-method}
 \alias{extract,systemfit-method}
 \alias{extract,tobit-method}
+\alias{extract,weibreg-method}
 \alias{extract,zeroinfl-method}
 \title{Methods for Function \code{extract} in Package \pkg{texreg}}
 \description{
@@ -48,6 +51,10 @@ Methods for function \code{extract} in package \pkg{texreg}.
 }
 \section{Methods}{
 \describe{
+
+\item{\code{extract.aftreg}}{
+An extract function for aftreg objects from the \pkg{eha} package.
+}
 
 \item{\code{extract.betareg}}{
 An extract function for betareg objects from the \pkg{betareg} package.
@@ -149,6 +156,10 @@ An extract function for negbin objects from the \pkg{MASS} package.
 An extract function for nlmerMod objects from the (new) \pkg{lme4} package.
 }
 
+\item{\code{extract.phreg}}{
+An extract function for phreg objects from the \pkg{eha} package.
+}
+
 \item{\code{extract.plm}}{
 An extract function for plm objects from the \pkg{plm} package.
 }
@@ -207,6 +218,10 @@ An extract function for systemfit objects from the \pkg{systemfit} package.
 
 \item{\code{extract.tobit}}{
 An extract function for tobit objects from the \pkg{AER} package.
+}
+
+\item{\code{extract.weibreg}}{
+An extract function for weibreg objects from the \pkg{eha} package.
 }
 
 \item{\code{extract.zeroinfl}}{

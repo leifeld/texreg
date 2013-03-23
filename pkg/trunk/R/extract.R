@@ -1973,6 +1973,73 @@ setMethod("extract", signature=className("tobit", "AER"),
     definition = extract.tobit)
 
 
+# extension for weibreg objects (eha package)
+extract.weibreg <- function(model, include.loglik=TRUE, include.lr=TRUE, 
+    include.nobs=TRUE, include.events=TRUE, include.trisk=TRUE, ...) {
+  
+  coefs <- model$coefficients
+  coef.names <- names(coefs)
+  se <- sqrt(diag(model$var))
+  pval <- 1 - pchisq((coefs/se)^2, 1)
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.loglik==TRUE) {
+    lik <- model$loglik[2]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.lr==TRUE) {
+    lr <- -2 * (model$loglik[1] - model$loglik[2])
+    gof <- c(gof, lr)
+    gof.names <- c(gof.names, "LR test")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs==TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.events==TRUE) {
+    ev <- model$events
+    gof <- c(gof, ev)
+    gof.names <- c(gof.names, "Num.\ events")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.trisk==TRUE) {
+    trisk <- model$ttr
+    gof <- c(gof, trisk)
+    gof.names <- c(gof.names, "Total time at risk")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names=coef.names, 
+      coef=coefs, 
+      se=se, 
+      pvalues=pval, 
+      gof.names=gof.names, 
+      gof=gof, 
+      gof.decimal=gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature=className("weibreg", "eha"), 
+    definition = extract.weibreg)
+
+extract.phreg <- extract.weibreg
+setMethod("extract", signature=className("phreg", "eha"), 
+    definition = extract.phreg)
+
+extract.aftreg <- extract.weibreg
+setMethod("extract", signature=className("aftreg", "eha"), 
+    definition = extract.aftreg)
+
+
 # extension for zeroinfl objects (pscl package)
 extract.zeroinfl <- function(model, beside=FALSE, include.count=TRUE, 
     include.zero=TRUE, include.aic=TRUE, include.loglik=TRUE, 

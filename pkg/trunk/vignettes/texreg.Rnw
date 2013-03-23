@@ -41,12 +41,13 @@ New model types can be easily implemented (see section \ref{templates}).
 \texttt{texreg} can be used within Sweave and knitr.
 \LaTeX\ packages for creating fancy tables, like \texttt{dcolumn} or \texttt{booktabs}, are supported.
 
-\begin{table}[t!]
+\begin{table}[tp]
 \begin{center}
 \begin{tabular}{l l l l l}
 \toprule
 Class			& Package			& Added		& Description \\
 \midrule
+\texttt{aftreg}		& \texttt{eha}			& 2013-03-23	& Accelerated failure time regression \\
 \texttt{betareg}	& \texttt{betareg}		& 2013-03-13	& Beta regression for rates and proportions \\
 \texttt{clm}		& \texttt{ordinal}		& 2012-10-12	& Cumulative link models \\
 \texttt{clogit}		& \texttt{survival}		& 2012-09-30	& Conditional logistic regression \\
@@ -72,6 +73,7 @@ Class			& Package			& Added		& Description \\
 \texttt{negbin}		& \texttt{MASS}			& 2012-10-15	& Negative binomial generalized linear models \\
 \texttt{nlmerMod}	& \texttt{lme4} (new)		& 2012-10-09	& Nonlinear mixed-effects models \\
 \texttt{lrm}		& \texttt{rms}, \texttt{Design}	& 2012-07-04	& Logistic regression models \\
+\texttt{phreg}		& \texttt{eha}			& 2013-03-23	& Parametric proportional hazards regression \\
 \texttt{plm}		& \texttt{plm}			& 2012-08-01	& Linear models for panel data \\
 \texttt{pmg}		& \texttt{plm}			& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
 \texttt{polr}		& \texttt{MASS}			& 2012-10-12	& Ordered logistic or probit regression \\
@@ -87,6 +89,7 @@ Class			& Package			& Added		& Description \\
 \texttt{svyglm}		& \texttt{survey}		& 2012-10-14	& Survey-weighted generalized linear models \\
 \texttt{systemfit}	& \texttt{systemfit}		& 2012-10-03	& Linear structural equations \\
 \texttt{tobit}		& \texttt{AER}			& 2012-10-15	& Tobit regression models for censored data \\
+\texttt{weibreg}	& \texttt{eha}			& 2013-03-23	& Weibull regression \\
 \texttt{zeroinfl}	& \texttt{pscl}			& 2013-03-13	& Zero-inflated regression models \\
 \bottomrule
 \end{tabular}
