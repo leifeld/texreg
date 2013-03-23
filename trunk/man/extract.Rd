@@ -1,5 +1,6 @@
 \name{extract}
 \alias{extract}
+\alias{extract.aftreg}
 \alias{extract.betareg}
 \alias{extract.clm}
 \alias{extract.clogit}
@@ -25,6 +26,7 @@
 \alias{extract.multinom}
 \alias{extract.negbin}
 \alias{extract.nlmerMod}
+\alias{extract.phreg}
 \alias{extract.plm}
 \alias{extract.pmg}
 \alias{extract.polr}
@@ -40,11 +42,15 @@
 \alias{extract.svyglm}
 \alias{extract.systemfit}
 \alias{extract.tobit}
+\alias{extract.weibreg}
 \alias{extract.zeroinfl}
 \title{Extract coefficients and GOF measures from a statistical object}
 \description{Extract coefficients and GOF measures from a statistical object.}
 \usage{
 extract(model, ...)
+
+extract.aftreg(model, include.loglik=TRUE, include.lr=TRUE, include.nobs=TRUE, 
+    include.events=TRUE, include.trisk=TRUE, ...)
 
 extract.betareg(model, include.precision=TRUE, include.pseudors=TRUE, 
     include.loglik=TRUE, include.nobs=TRUE, ...)
@@ -133,6 +139,9 @@ extract.nlmerMod(model, include.pvalues=FALSE, include.aic=TRUE,
     include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
     mcmc.pvalues=FALSE, mcmc.size=5000, ...)
 
+extract.phreg(model, include.loglik=TRUE, include.lr=TRUE, include.nobs=TRUE, 
+    include.events=TRUE, include.trisk=TRUE, ...)
+
 extract.plm(model, include.rsquared=TRUE, include.adjrs=TRUE, 
     include.nobs=TRUE, ...)
 
@@ -177,6 +186,9 @@ extract.systemfit(model, include.rsquared=TRUE, include.adjrs=TRUE,
 extract.tobit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
     include.deviance=TRUE, include.nobs=FALSE, include.censnobs=TRUE, 
     include.wald=TRUE, ...)
+
+extract.weibreg(model, include.loglik=TRUE, include.lr=TRUE, include.nobs=TRUE, 
+    include.events=TRUE, include.trisk=TRUE, ...)
 
 extract.zeroinfl(model, beside=FALSE, include.count=TRUE, include.zero=TRUE,
     include.aic=TRUE, include.loglik=TRUE, include.nobs=TRUE, ...)
@@ -224,6 +236,7 @@ to convert them into texreg objects.
 \item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.smooth}{ If available: should the smooth terms of a GAM be reported? If they are reported, the EDF value is reported as the coefficient, and DF is included in parentheses (not standard errors because a chi-square test is used for the smooth terms). }
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
+\item{include.trisk}{ If available: should the total time at risk be reported (in event-history models)? }
 \item{include.variance}{ If available: should group variances be reported? }
 \item{include.wald}{ If available: should the Wald statistic be included? }
 \item{include.zero}{ If available: should the zero-inflation model of a zero-inflated regression or the zero hurdle model of a hurdle regression be included in the coefficients block (after the count model)? }
