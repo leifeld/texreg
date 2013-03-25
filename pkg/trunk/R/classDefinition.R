@@ -4,15 +4,15 @@
 
 
 # a class for texreg objects
-setClass(Class="texreg", 
-    representation=representation(
-        coef.names="character",  #row names of the coefficient block
-        coef="numeric",          #the coefficients
-        se="numeric",            #standard errors
-        pvalues="numeric",       #p-values
-        gof.names="character",   #row names of the goodness-of-fit block
-        gof="numeric",           #goodness-of-fit statistics
-        gof.decimal="logical"    #number of decimal places for each GOF value
+setClass(Class = "texreg", 
+    representation = representation(
+        coef.names = "character",  #row names of the coefficient block
+        coef = "numeric",          #the coefficients
+        se = "numeric",            #standard errors
+        pvalues = "numeric",       #p-values
+        gof.names = "character",   #row names of the goodness-of-fit block
+        gof = "numeric",           #goodness-of-fit statistics
+        gof.decimal = "logical"    #number of decimal places for each GOF value
     ), 
     validity=function(object) {
         if (length(object@coef.names) != length(object@coef) || 
@@ -46,12 +46,13 @@ setClass(Class="texreg",
 # constructor for texreg objects
 createTexreg <- function(coef.names, coef, se, pvalues=numeric(0), 
     gof.names=character(0), gof=numeric(0), gof.decimal=logical(0)) {
-  new("texreg", coef.names=coef.names, coef=coef, se=se, pvalues=pvalues, 
-      gof.names=gof.names, gof=gof, gof.decimal=gof.decimal)
+  new("texreg", coef.names = coef.names, coef = coef, se = se, 
+      pvalues = pvalues, gof.names = gof.names, gof = gof, 
+      gof.decimal = gof.decimal)
 }
 
 # define show method for pretty output of texreg objects
-setMethod(f="show", signature="texreg", definition=function(object) {
+setMethod(f = "show", signature = "texreg", definition = function(object) {
   if (length(object@pvalues) > 0) {
     cat("\n")
     coefBlock <- cbind(object@coef, object@se, object@pvalues)

@@ -5,16 +5,14 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
 citEntry(entry="Manual",
-  title = "texreg: Conversion of {R} Regression Output to {\\LaTeX} Tables",
+  title = paste0("texreg: Conversion of Statistical Model Output in {R}\n", 
+    "     to {\\LaTeX} and {HTML} Tables"),
   author = as.person("Philip Leifeld"),
   year = year,
   note = vers,
-  organization = paste("Swiss Federal Institute of Aquatic Science",
-    "and Technology (Eawag)"),
-  address = "Duebendorf, Switzerland",
-  textVersion = paste("Leifeld, Philip (", year, "). texreg: Conversion of R ", 
-    "Regression Output to LaTeX Tables. Swiss Federal Institute of Aquatic ",
-    "Science and Technology (Eawag), Duebendorf, Switzerland. ", vers, ".", 
-    sep=""),
+  organization = paste("University of Konstanz"),
+  textVersion = paste0("Leifeld, Philip (", year, "). texreg: Conversion of ", 
+    "Statistical Model Output in R to LaTeX and HTML Tables. University ",
+    "of Konstanz, Germany. ", vers, "."),
   url = "http://CRAN.R-project.org/package=texreg"
 )
