@@ -415,7 +415,8 @@ texreg <- function(l, file=NA, single.row=FALSE, stars=c(0.001, 0.01, 0.05),
     if (custom.note == "") {
       note <- ""
     } else {
-      note <- paste(custom.note, "\n", sep="")
+      note <- paste0("\\multicolumn{", length(models)+1, "}{l}{\\scriptsize{", 
+          custom.note, "}}\n")
     }
   } else if (is.null(stars)) {
     note <- "\n"
