@@ -49,149 +49,176 @@
 \usage{
 extract(model, ...)
 
-extract.aftreg(model, include.loglik=TRUE, include.lr=TRUE, include.nobs=TRUE, 
-    include.events=TRUE, include.trisk=TRUE, ...)
-
-extract.betareg(model, include.precision=TRUE, include.pseudors=TRUE, 
-    include.loglik=TRUE, include.nobs=TRUE, ...)
-
-extract.clm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE, 
-    include.loglik=TRUE, include.nobs=TRUE, ...)
-
-extract.clogit(model, include.aic=TRUE, include.rsquared=TRUE, 
-    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
-    include.missings=TRUE, ...)
-
-extract.coxph(model, include.aic=TRUE, include.rsquared=TRUE, 
-    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
-    include.missings=TRUE, include.zph=TRUE, ...)
-
-extract.coxph.penal(model, include.aic=TRUE, include.rsquared=TRUE, 
-    include.maxrs=TRUE, include.events=TRUE, include.nobs=TRUE, 
-    include.missings=TRUE, include.zph=TRUE, ...)
-
-extract.dynlm(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE, ...)
-
-extract.ergm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
+extract.aftreg(model, include.loglik = TRUE, include.lr = TRUE, 
+    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
     ...)
 
-extract.gam(model, include.smooth=TRUE, include.aic=TRUE, include.bic=TRUE, 
-    include.loglik=TRUE, include.deviance=TRUE, include.dev.expl=TRUE, 
-    include.dispersion=TRUE, include.rsquared=TRUE, include.gcv=TRUE, 
-    include.nobs=TRUE, include.nsmooth=TRUE, ...)
+extract.betareg(model, include.precision = TRUE, 
+    include.pseudors = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, ...)
 
-extract.gee(model, robust=TRUE, include.dispersion=TRUE, include.nobs=TRUE, ...)
-
-extract.glm(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
-    include.deviance=TRUE, include.nobs=TRUE, ...)
-
-extract.glmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
-    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
-
-extract.gls(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
-    include.nobs=TRUE, ...)
-
-extract.gmm(model, include.obj.fcn=TRUE, include.overidentification=FALSE, 
-    include.nobs=TRUE, ...)
-
-extract.hurdle(model, beside=FALSE, include.count=TRUE, include.zero=TRUE,
-    include.aic=TRUE, include.loglik=TRUE, include.nobs=TRUE, ...)
-
-extract.ivreg(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE, ...)
-
-extract.lm(model, include.rsquared=TRUE, include.adjrs=TRUE, include.nobs=TRUE, 
+extract.clm(model, include.thresholds = TRUE, include.aic = TRUE, 
+    include.bic=TRUE, include.loglik = TRUE, include.nobs = TRUE, 
     ...)
 
-extract.lme(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
-    include.nobs=TRUE, ...)
+extract.clogit(model, include.aic = TRUE, include.rsquared = TRUE, 
+    include.maxrs = TRUE, include.events = TRUE, 
+    include.nobs = TRUE, include.missings = TRUE, ...)
 
-extract.lmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
-    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
+extract.coxph(model, include.aic = TRUE, include.rsquared = TRUE, 
+    include.maxrs=TRUE, include.events = TRUE, 
+    include.nobs = TRUE, include.missings = TRUE, 
+    include.zph = TRUE, ...)
 
-extract.lmrob(model, include.nobs=TRUE, ...)
+extract.coxph.penal(model, include.aic = TRUE, 
+    include.rsquared = TRUE, include.maxrs = TRUE, 
+    include.events = TRUE, include.nobs = TRUE, 
+    include.missings = TRUE, include.zph = TRUE, ...)
 
-extract.lnam(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, ...)
+extract.dynlm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.nobs = TRUE, ...)
 
-extract.lrm(model, include.pseudors=TRUE, include.lr=TRUE, include.nobs=TRUE, 
+extract.ergm(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik=TRUE, ...)
+
+extract.gam(model, include.smooth = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.dev.expl = TRUE, 
+    include.dispersion = TRUE, include.rsquared = TRUE, 
+    include.gcv = TRUE, include.nobs = TRUE, 
+    include.nsmooth = TRUE, ...)
+
+extract.gee(model, robust = TRUE, include.dispersion = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.glm(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.glmerMod(model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, 
+    mcmc.pvalues = FALSE, mcmc.size = 5000, ...)
+
+extract.gls(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
+
+extract.gmm(model, include.obj.fcn = TRUE, 
+    include.overidentification = FALSE, include.nobs = TRUE, ...)
+
+extract.hurdle(model, beside = FALSE, include.count = TRUE, 
+    include.zero = TRUE, include.aic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.ivreg(model, include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.lm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.lme(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
+
+extract.lmerMod(model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, 
+    mcmc.pvalues = FALSE, mcmc.size = 5000, ...)
+
+extract.lmrob(model, include.nobs = TRUE, ...)
+
+extract.lnam(model, include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     ...)
 
-extract.mer(model, include.pvalues=FALSE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
+extract.lrm(model, include.pseudors = TRUE, include.lr = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.mer(model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, 
+    mcmc.pvalues = FALSE, mcmc.size = 5000, ...)
+
+extract.multinom(model, include.pvalues = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)
+
+extract.negbin(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.nlmerMod(model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, 
     mcmc.pvalues=FALSE, mcmc.size=5000, ...)
 
-extract.multinom(model, include.pvalues=TRUE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, ...)
+extract.phreg(model, include.loglik = TRUE, include.lr = TRUE, 
+    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
+    ...)
 
-extract.negbin(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
-    include.deviance=TRUE, include.nobs=TRUE, ...)
+extract.plm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.nobs = TRUE, ...)
 
-extract.nlmerMod(model, include.pvalues=FALSE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, include.groups=TRUE, include.variance=TRUE, 
-    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
+extract.pmg(model, include.nobs = TRUE, ...)
 
-extract.phreg(model, include.loglik=TRUE, include.lr=TRUE, include.nobs=TRUE, 
-    include.events=TRUE, include.trisk=TRUE, ...)
+extract.polr(model, include.thresholds = FALSE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)
 
-extract.plm(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE, ...)
+extract.Relogit(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, ...)
 
-extract.pmg(model, include.nobs=TRUE, ...)
+extract.rem.dyad(model, include.nvertices = TRUE, 
+    include.events = TRUE, include.aic = TRUE, include.aicc = TRUE, 
+    include.bic = TRUE, ...)
 
-extract.polr(model, include.thresholds=FALSE, include.aic=TRUE, 
-    include.bic=TRUE, include.loglik=TRUE, include.deviance=TRUE, 
-    include.nobs=TRUE, ...)
+extract.rlm(model, include.nobs = TRUE, ...)
 
-extract.Relogit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
-    include.deviance=TRUE, include.nobs=TRUE, ...)
+extract.rq(model, include.nobs = TRUE, include.percentile = TRUE, 
+    ...)
 
-extract.rem.dyad(model, include.nvertices=TRUE, include.events=TRUE, 
-    include.aic=TRUE, include.aicc=TRUE, include.bic=TRUE, ...)
+extract.sclm(model, include.thresholds = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, 
+    ...)
 
-extract.rlm(model, include.nobs=TRUE, ...)
+extract.simex(model, jackknife = TRUE, include.nobs = TRUE, ...)
 
-extract.rq(model, include.nobs=TRUE, include.percentile=TRUE, ...)
+extract.stergm(model, beside = FALSE, include.formation = TRUE, 
+    include.dissolution = TRUE, include.nvertices = TRUE, 
+    include.aic = FALSE, include.bic = FALSE, 
+    include.loglik = FALSE, ...)
 
-extract.sclm(model, include.thresholds=TRUE, include.aic=TRUE, include.bic=TRUE,
-    include.loglik=TRUE, include.nobs=TRUE, ...)
+extract.survreg(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, ...)
 
-extract.simex(model, jackknife=TRUE, include.nobs=TRUE, ...)
+extract.survreg.penal(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)
 
-extract.stergm(model, beside=FALSE, include.formation=TRUE, 
-    include.dissolution=TRUE, include.nvertices=TRUE, include.aic=FALSE, 
-    include.bic=FALSE, include.loglik=FALSE, ...)
+extract.svyglm(model, include.aic = FALSE, include.bic = FALSE, 
+    include.loglik = FALSE, include.deviance = TRUE, 
+    include.dispersion = TRUE, include.nobs = TRUE, ...)
 
-extract.survreg(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
-    include.deviance=TRUE, include.nobs=TRUE, ...)
+extract.systemfit(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, ...)
 
-extract.survreg.penal(model, include.aic=TRUE, include.bic=TRUE, 
-    include.loglik=TRUE, include.deviance=TRUE, include.nobs=TRUE, ...)
+extract.tobit(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = FALSE, include.censnobs = TRUE, include.wald=TRUE, 
+    ...)
 
-extract.svyglm(model, include.aic=FALSE, include.bic=FALSE, 
-    include.loglik=FALSE,include.deviance=TRUE, include.dispersion=TRUE, 
-    include.nobs=TRUE, ...)
+extract.weibreg(model, include.loglik = TRUE, include.lr = TRUE, 
+    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
+    ...)
 
-extract.systemfit(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE, ...)
-
-extract.tobit(model, include.aic=TRUE, include.bic=TRUE, include.loglik=TRUE, 
-    include.deviance=TRUE, include.nobs=FALSE, include.censnobs=TRUE, 
-    include.wald=TRUE, ...)
-
-extract.weibreg(model, include.loglik=TRUE, include.lr=TRUE, include.nobs=TRUE, 
-    include.events=TRUE, include.trisk=TRUE, ...)
-
-extract.zeroinfl(model, beside=FALSE, include.count=TRUE, include.zero=TRUE,
-    include.aic=TRUE, include.loglik=TRUE, include.nobs=TRUE, ...)
+extract.zeroinfl(model, beside = FALSE, include.count = TRUE, 
+    include.zero = TRUE, include.aic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, ...)
 }
 \details{
 extract() is a generic function which extracts coefficients and GOF measures 
@@ -242,8 +269,8 @@ to convert them into texreg objects.
 \item{include.zero}{ If available: should the zero-inflation model of a zero-inflated regression or the zero hurdle model of a hurdle regression be included in the coefficients block (after the count model)? }
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
-\item{mcmc.pvalues}{ In linear mixed effects models: compute MCMC-based p-values instead of naive p-values. This will only affect the output if the argument \code{include.pvalues=TRUE} is also set. Warning: computing MCMC-based p-values may take some time. }
-\item{mcmc.size}{ In linear mixed effects models: the MCMC sample size from which p-values are derived (if the arguments \code{include.pvalues=TRUE} and \code{mcmc.pvalues=TRUE} are also set). Note: high values may take considerable computing time. }
+\item{mcmc.pvalues}{ In linear mixed effects models: compute MCMC-based p values instead of naive p values. This will only affect the output if the argument \code{include.pvalues=TRUE} is also set. Warning: computing MCMC-based p values may take some time. }
+\item{mcmc.size}{ In linear mixed effects models: the MCMC sample size from which p values are derived (if the arguments \code{include.pvalues = TRUE} and \code{mcmc.pvalues = TRUE} are also set). Note: high values may take considerable computing time. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
 }

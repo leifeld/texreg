@@ -12,7 +12,7 @@
 
 
 # function which reformats a coefficient with two decimal places
-coeftostring <- function(x, lead.zero=FALSE, digits=2) {
+coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
   if (!is.finite(x)) {
     return("")
   }
@@ -23,20 +23,20 @@ coeftostring <- function(x, lead.zero=FALSE, digits=2) {
   
   actual.digits <- attributes(regexpr("\\.[0-9]+$", y))$match.length - 1
   if (grepl("\\.", y) == FALSE) { #no decimal places present
-    zeros <- paste(rep("0", digits), collapse="")
-    y <- paste(y, ".", zeros, sep="")
+    zeros <- paste(rep("0", digits), collapse = "")
+    y <- paste(y, ".", zeros, sep = "")
   } else if (grepl("\\.[0-9]$", y) == TRUE && digits > 1) { #only one decimal p.
-    zeros <- paste(rep("0", digits-1), collapse="")
-    y <- paste(y, zeros, sep="")
+    zeros <- paste(rep("0", digits - 1), collapse = "")
+    y <- paste(y, zeros, sep = "")
   } else if (actual.digits < digits) { #more desired digits than present
     fill <- digits - actual.digits
-    zeros <- paste(rep("0", fill), collapse="")
-    y <- paste(y, zeros, sep="")
+    zeros <- paste(rep("0", fill), collapse = "")
+    y <- paste(y, zeros, sep = "")
   }
   if (grepl("\\.$", y) == TRUE) {
     y <- gsub("\\.$", "", y)
   }
-  if (lead.zero==FALSE && (grepl("^0",y) == TRUE || grepl("^-0",y) == TRUE)) {
+  if (lead.zero == FALSE && (grepl("^0",y) == TRUE || grepl("^-0",y) == TRUE)) {
     y <- gsub("0\\.", "\\.", y)
   }
   return(y)
@@ -66,14 +66,14 @@ rearrangeMatrix <- function(m) {
   
   unique.names <- unique(rownames(m))              #unique row names in m
   num.unique <- length(unique.names)               #count these unique names
-  orig.width <- length(m[1,])                      #number of columns in m
-  q <- matrix(nrow=0, ncol=orig.width)             #new matrix with same width
+  orig.width <- length(m[1, ])                     #number of columns in m
+  q <- matrix(nrow = 0, ncol = orig.width)         #new matrix with same width
   for (i in 1:num.unique) {                        #go through unique row names
-    rows <- matrix(NA, nrow=0, ncol=orig.width)    #create matrix where re-
+    rows <- matrix(NA, nrow = 0, ncol = orig.width)#create matrix where re-
                                                    #arranged rows will be stored
     for (j in 1:orig.width) {                      #go through columns in m
       current.name <- unique.names[i]              #save row name
-      nonNa <- m[rownames(m)==current.name,j]      #create a vector of values
+      nonNa <- m[rownames(m) == current.name, j]   #create a vector of values
                                                    #with same rowname in the col
       nonNa <- nonNa[!is.na(nonNa)]                #retain only non-NA values
       for (k in 1:length(nonNa)) {                 #go through non-NA values
@@ -81,7 +81,7 @@ rearrangeMatrix <- function(m) {
           rows <- rbind(rows, rep(NA, orig.width)) #the values are stored
           rownames(rows)[k] <- unique.names[i]     #also add the row name
         }
-        rows[k,j] <- nonNa[k]                      #actually store the value
+        rows[k, j] <- nonNa[k]                     #actually store the value
       }
     }
     q <- rbind(q, rows)                            #add the new row(s) to q
@@ -176,7 +176,7 @@ override <- function(models, override.coef, override.se, override.pval) {
       se <- models[[i]]@se
     } else if (length(models[[i]]@se) != length(override.se[[i]])) {
       warning(paste("Number of SEs provided does not match number of ", 
-          "coefficients in model ", i, ". Using default SEs.", sep=""))
+          "coefficients in model ", i, ". Using default SEs.", sep = ""))
       se <- models[[i]]@se
     } else if (class(override.se[[i]]) != "numeric") {
       warning(paste("SEs provided for model", i, 
@@ -204,7 +204,7 @@ override <- function(models, override.coef, override.se, override.pval) {
     } else if (length(models[[i]]@se) != length(override.pval[[i]])) {
       # previous line: comparison with se because pvalues can be empty
       warning(paste("Number of p values provided does not match number of ", 
-          "coefficients in model ", i, ". Using default p values.", sep=""))
+          "coefficients in model ", i, ". Using default p values.", sep = ""))
       pval <- models[[i]]@pvalues
     } else if (class(override.pval[[i]]) != "numeric") {
       warning(paste("p values provided for model", i, 
@@ -221,7 +221,7 @@ override <- function(models, override.coef, override.se, override.pval) {
 
 
 # function which converts LaTeX code in GOF names to HTML oder text/screen code
-tex.replace <- function(models, type="html", style="") {
+tex.replace <- function(models, type = "html", style = "") {
   for (i in 1:length(models)) {
     if (type == "html") {
       r <- paste0("<sup", style, ">2</sup>")
@@ -238,13 +238,13 @@ tex.replace <- function(models, type="html", style="") {
 
 # put models and GOFs into a common matrix
 aggregate.matrix <- function(models, gof.names, custom.gof.names, digits, 
-    returnobject="m") {
+    returnobject = "m") {
 
   # aggregate GOF statistics in a matrix and create list of coef blocks
-  gofs <- matrix(nrow=length(gof.names), ncol=length(models))
+  gofs <- matrix(nrow = length(gof.names), ncol = length(models))
   row.names(gofs) <- gof.names
   coefs <- list()
-  decimal.matrix <- matrix(nrow=length(gof.names), ncol=length(models))
+  decimal.matrix <- matrix(nrow = length(gof.names), ncol = length(models))
   for (i in 1:length(models)) {
     cf <- models[[i]]@coef
     se <- models[[i]]@se
@@ -289,20 +289,20 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
   } else if (length(coefs) > 1) {
     m <- coefs[[1]]
     for (i in 2:length(coefs)) {
-      m <- merge(m, coefs[[i]], by=0, all=TRUE)
-      rownames(m) <- m[,1]
-      m <- m[,colnames(m)!="Row.names"]
+      m <- merge(m, coefs[[i]], by = 0, all = TRUE)
+      rownames(m) <- m[, 1]
+      m <- m[, colnames(m) != "Row.names"]
       colnames(m) <- NULL
     }
   }
   colnames(m) <- rep(colnames(coefs[[1]]), length(coefs))
   
   # reorder merged coefficient table
-  m.temp <- matrix(nrow=nrow(m), ncol=ncol(m))
+  m.temp <- matrix(nrow = nrow(m), ncol = ncol(m))
   for (i in 1:nrow(m)) {
     new.row <- which(coef.order == rownames(m)[i])
     for (j in 1:length(m[i,])) {
-      m.temp[new.row,j] <- m[i,j]
+      m.temp[new.row, j] <- m[i, j]
     }
   }
   rownames(m.temp) <- coef.order
@@ -371,7 +371,7 @@ omitcoef <- function(m, omit.coef) {
     } else if (length(remove.rows) == nrow(m)) {
       stop("You were trying to remove all coefficients using omit.coef.")
     } else {
-      m <- m[-remove.rows,]
+      m <- m[-remove.rows, ]
     }
   }
   return(m)
@@ -429,21 +429,20 @@ stars.string <- function(pval, stars, star.char, star.prefix, star.suffix,
   }
   if (length(st) > 4) {
     stop("A maximum of four values is allowed in the stars argument.")
-  } else if (length(st) > 2 && pval < st[1]) { # three stars
-    p <- paste(star.prefix, star.char, star.char, star.char, 
-        star.suffix, sep="")
-  } else if ( # two stars
+  } else if (length(st) > 2 && pval < st[1]) {  # three stars
+    p <- paste0(star.prefix, star.char, star.char, star.char, star.suffix)
+  } else if (  # two stars
       (length(st) > 2 && pval < st[2]) || 
       (length(st) == 2 && pval < st[1]) ) {
-    p <- paste(star.prefix, star.char, star.char, star.suffix, sep="")
-  } else if ( # one star
+    p <- paste0(star.prefix, star.char, star.char, star.suffix)
+  } else if (  # one star
       (length(st) > 2 && pval < st[3]) || 
       (length(st) == 2 && pval < st[2]) || 
       (length(st) == 1 && pval < st) ) {
-    p <- paste(star.prefix, star.char, star.suffix, sep="")
-  } else if (length(st) == 4 && pval < st[4]) { # symbol
-    p <- paste(star.prefix, symbol, star.suffix, sep="")
-  } else { # not significant
+    p <- paste0(star.prefix, star.char, star.suffix)
+  } else if (length(st) == 4 && pval < st[4]) {  # symbol
+    p <- paste0(star.prefix, symbol, star.suffix)
+  } else {  # not significant
     p <- ""
   }
   return(p) 
@@ -452,32 +451,32 @@ stars.string <- function(pval, stars, star.char, star.prefix, star.suffix,
 
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
-    se.prefix, se.suffix, star.prefix, star.suffix, star.char="*", 
-    stars, dcolumn=TRUE, symbol, bold, bold.prefix, bold.suffix) {
+    se.prefix, se.suffix, star.prefix, star.suffix, star.char = "*", 
+    stars, dcolumn = TRUE, symbol, bold, bold.prefix, bold.suffix) {
   
   # write coefficient rows
-  if (single.row==TRUE) {
-    output.matrix <- matrix(ncol=(length(m)/3)+1, nrow=length(m[,1]))
+  if (single.row == TRUE) {
+    output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
     
     # row labels
     for (i in 1:length(rownames(m))) {
-      output.matrix[i,1] <- rownames(m)[i]
+      output.matrix[i, 1] <- rownames(m)[i]
     }
     
     # coefficients and standard errors
-    for (i in 1:length(m[,1])) { #go through rows
+    for (i in 1:length(m[, 1])) { #go through rows
       j <- 1 #column in the original, merged coef table
       k <- 2 #second column of output.matrix, i.e., coefficients
       while (j <= length(m)) {
-        if (is.na(m[i,j])) {
-          output.matrix[i,k] <- ""
-        } else if (m[i,j] == -Inf) {
-          output.matrix[i,k] <- neginfstring
+        if (is.na(m[i, j])) {
+          output.matrix[i, k] <- ""
+        } else if (m[i, j] == -Inf) {
+          output.matrix[i, k] <- neginfstring
         } else {
-          std <- paste(se.prefix, coeftostring(m[i,j+1], leading.zero, 
-              digits=digits), se.suffix, sep="")
+          std <- paste(se.prefix, coeftostring(m[i, j + 1], leading.zero, 
+              digits = digits), se.suffix, sep = "")
           
-          p <- stars.string(m[i,j+2], stars, star.char, star.prefix, 
+          p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
             star.suffix, symbol)
           
           if (dcolumn == TRUE) {
@@ -485,45 +484,45 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           } else {
             dollar <- "$"
           }
-          if (m[i,j+2] < bold) {
+          if (m[i, j + 2] < bold) {
             bold.pref <- bold.prefix
             bold.suff <- bold.suffix
           } else {
             bold.pref <- ""
             bold.suff <- ""
           }
-          entry <- paste(dollar, bold.pref, coeftostring(m[i,j], leading.zero, 
-              digits=digits), bold.suff, std, p, dollar, sep="")
-          output.matrix[i,k] <- entry
+          entry <- paste(dollar, bold.pref, coeftostring(m[i, j], leading.zero, 
+              digits = digits), bold.suff, std, p, dollar, sep = "")
+          output.matrix[i, k] <- entry
           
         }
-        k <- k+1
-        j <- j+3
+        k <- k + 1
+        j <- j + 3
       }
     }
   } else {
-    output.matrix <- matrix(ncol=(length(m)/3)+1, nrow=2*length(m[,1]))
+    output.matrix <- matrix(ncol = (length(m) / 3) + 1, 
+        nrow = 2 * length(m[, 1]))
     
     # row labels
     for (i in 1:length(rownames(m))) {
-      output.matrix[(i*2)-1,1] <- rownames(m)[i]
-      output.matrix[(i*2),1] <- ""
+      output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
+      output.matrix[(i * 2), 1] <- ""
     }
     
     # coefficients and standard deviations
-    for (i in 1:length(m[,1])) {
+    for (i in 1:length(m[, 1])) {
       j <- 1
       k <- 2
       while (j <= length(m)) {
-        if (is.na(m[i,j]) || is.nan(m[i,j])) {
-          output.matrix[(i*2)-1,k] <- "" #upper coefficient row
-          output.matrix[(i*2),k] <- "" #lower std row
-        } else if (m[i,j] == -Inf) {
-          output.matrix[(i*2)-1,k] <- neginfstring #upper row
-          output.matrix[(i*2),k] <- "" #lower std row
+        if (is.na(m[i, j]) || is.nan(m[i, j])) {
+          output.matrix[(i * 2) - 1, k] <- ""  #upper coefficient row
+          output.matrix[(i * 2), k] <- ""  #lower std row
+        } else if (m[i, j] == -Inf) {
+          output.matrix[(i * 2) - 1, k] <- neginfstring  #upper row
+          output.matrix[(i * 2), k] <- ""  #lower std row
         } else {
-          
-          p <- stars.string(m[i,j+2], stars, star.char, star.prefix, 
+          p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
             star.suffix, symbol)
           
           if (dcolumn == TRUE) {
@@ -531,22 +530,22 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           } else {
             dollar <- "$"
           }
-          if (m[i,j+2] < bold) {
+          if (m[i, j + 2] < bold) {
             bold.pref <- bold.prefix
             bold.suff <- bold.suffix
           } else {
             bold.pref <- ""
             bold.suff <- ""
           }
-          output.matrix[(i*2)-1,k] <- paste(dollar, bold.pref, 
-              coeftostring(m[i,j], leading.zero, digits=digits), bold.suff, p, 
-              dollar, sep="")
-          output.matrix[(i*2),k] <- paste(dollar, "(", 
-              coeftostring(m[i,j+1], leading.zero, digits=digits), ")", 
-              dollar, sep="")
+          output.matrix[(i * 2) - 1, k] <- paste(dollar, bold.pref, 
+              coeftostring(m[i, j], leading.zero, digits = digits), bold.suff, 
+              p, dollar, sep = "")
+          output.matrix[(i * 2), k] <- paste(dollar, "(", 
+              coeftostring(m[i, j + 1], leading.zero, digits = digits), ")", 
+              dollar, sep = "")
         }
-        k <- k+1
-        j <- j+3
+        k <- k + 1
+        j <- j + 3
       }
     }
   }
@@ -556,7 +555,7 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
 
 
 # Format a column (given as vector) of the output matrix nicely by adding spaces
-format.column <- function(x, single.row=FALSE, digits=2) {
+format.column <- function(x, single.row = FALSE, digits = 2) {
   
   #max length before first dot and max length of parentheses
   dots <- gregexpr("\\.", x)
@@ -599,16 +598,16 @@ format.column <- function(x, single.row=FALSE, digits=2) {
     x[i] <- paste(spaces, x[i], sep="")
     
     #adjust indentation for SEs
-    if (single.row==TRUE) {
+    if (single.row == TRUE) {
       paren <- attributes(parentheses)$match.length[i]
       if (paren < 0) {
         paren <- 0
       }
-      difference <- paren.length - paren + 1 #+1 because strsplit takes one away
-      spaces <- paste(rep(" ", difference), collapse="")
+      difference <- paren.length - paren + 1  #+1 because strsplit takes 1 away
+      spaces <- paste(rep(" ", difference), collapse = "")
       components <- strsplit(x[i], " \\(")[[1]]
       if (length(components) == 2) {
-        x[i] <- paste(components[1], spaces, "(", components[2], sep="")
+        x[i] <- paste(components[1], spaces, "(", components[2], sep = "")
       }
     }
   }
@@ -617,8 +616,8 @@ format.column <- function(x, single.row=FALSE, digits=2) {
   max.x <- max(nchar(x))
   for (i in 1:length(x)) {
     difference <- max.x - nchar(x[i])
-    spaces <- paste(rep(" ", difference), collapse="")
-    x[i] <- paste(x[i], spaces, sep="")
+    spaces <- paste(rep(" ", difference), collapse = "")
+    x[i] <- paste(x[i], spaces, sep = "")
   }
 
   return(x)
@@ -630,27 +629,28 @@ fill.spaces <- function(x) {
   nc <- nchar(x)
   width <- max(nc)
   for (i in 1:length(x)) {
-    spaces <- paste(rep(" ", width - nc[i]), collapse="")
-    x[i] <- paste(x[i], spaces, sep="")
+    spaces <- paste(rep(" ", width - nc[i]), collapse = "")
+    x[i] <- paste(x[i], spaces, sep = "")
   }
   return(x)
 }
 
 
 # Return the goodness-of-fit matrix (i.e., the lower block of the final matrix)
-gofmatrix <- function(gofs, decimal.matrix, dcolumn=TRUE, leading.zero, 
+gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
     digits) {
   if (dcolumn == TRUE) {
     dollar <- ""
   } else {
     dollar <- "$"
   }
-  gof.matrix <- matrix(nrow=nrow(gofs), ncol=ncol(gofs)+1) #incl. labels
-  for (i in 1:length(gofs[,1])) {
-    gof.matrix[i,1] <- rownames(gofs)[i]
-    for (j in 1:length(gofs[1,])) {
-      strg <- coeftostring(gofs[i,j], leading.zero, digits=decimal.matrix[i,j])
-      gof.matrix[i,j+1] <- paste(dollar, strg, dollar, sep="")
+  gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
+  for (i in 1:length(gofs[, 1])) {
+    gof.matrix[i, 1] <- rownames(gofs)[i]
+    for (j in 1:length(gofs[1, ])) {
+      strg <- coeftostring(gofs[i, j], leading.zero, 
+          digits = decimal.matrix[i, j])
+      gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
     }
   }
   return(gof.matrix)
@@ -677,18 +677,18 @@ reorder <- function(mat, new.order) {
   }
   new.sorted <- sort(new.order)
   for (i in 2:length(new.sorted)) {
-    if (new.sorted[i] - 1 != new.sorted[i-1]) {
+    if (new.sorted[i] - 1 != new.sorted[i - 1]) {
       stop(paste("Table cannot be reordered because there are non-adjacent", 
           "values in the reorder.coef or reorder.gof vector you provided."))
     }
   }
-  new.mat <- mat[new.order,]
+  new.mat <- mat[new.order, ]
   return(new.mat)
 }
 
 
 # compute column width left and right of the decimal separator
-compute.width <- function(v, left=TRUE, single.row=FALSE) {
+compute.width <- function(v, left = TRUE, single.row = FALSE) {
   if (single.row == FALSE) {
     v[which(!grepl("\\.", v))] <- paste0(v[which(!grepl("\\.", v))], ".")
     ssp <- strsplit(v, "\\.")
@@ -716,11 +716,11 @@ compute.width <- function(v, left=TRUE, single.row=FALSE) {
   }
   if (left == TRUE) {
     left.side <- sub("\\\\; ", "", left.side)
-    v.length <- max(nchar(left.side), na.rm=TRUE)
+    v.length <- max(nchar(left.side), na.rm = TRUE)
   } else {
     right.side <- sub("\\^\\{", "", right.side)
     right.side <- sub("\\}", "", right.side)
-    v.length <- max(nchar(right.side), na.rm=TRUE)
+    v.length <- max(nchar(right.side), na.rm = TRUE)
   }
   return(v.length)
 }

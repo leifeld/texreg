@@ -24,7 +24,7 @@
 }
 
 \title{texreg: Conversion of Statistical Model Output in R to \LaTeX\ and HTML Tables\thanks{The author would like to thank S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Yanghao Wang, and Yihui Xie for valuable input.}}
-\author{Philip Leifeld $<$\href{mailto:philip.leifeld@eawag.ch}{philip.leifeld@eawag.ch}$>$}
+\author{Philip Leifeld $<$\href{mailto:philip.leifeld@uni-konstanz.de}{philip.leifeld@uni-konstanz.de}$>$}
 
 \begin{document}
 
@@ -143,7 +143,7 @@ The following example was taken from the \texttt{lm()} help file.
 <<>>=
 ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
 trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
-group <- gl(2,10,20, labels=c("Ctl","Trt"))
+group <- gl(2,10,20, labels = c("Ctl","Trt"))
 weight <- c(ctl, trt)
 m1 <- lm(weight ~ group)
 m2 <- lm(weight ~ group - 1) # omitting intercept
@@ -156,27 +156,31 @@ Now it is fairly tedious to copy every single coefficient and standard error to 
 To improve the situation, the following commands can do this automatically (the \LaTeX\ output code is shown below the \texttt{R} code, and the resulting table is shown in table \ref{tab:1}):
 <<>>=
 library(texreg)
-texreg(m2, booktabs=TRUE, dcolumn=TRUE)
+texreg(m2, booktabs = TRUE, dcolumn = TRUE)
 @
 <<echo=FALSE,results=tex>>=
-texreg(m2, use.packages=FALSE, label="tab:1", booktabs=TRUE, dcolumn=TRUE, float.pos="p")
+texreg(m2, use.packages = FALSE, label = "tab:1", booktabs = TRUE, 
+    dcolumn = TRUE, float.pos = "p")
 @
 Note that the \texttt{booktabs} and \texttt{dcolumn} arguments were used to create more fancy tables than the default behavior using the \texttt{booktabs} and the \texttt{dcolumn} \LaTeX\ packages (for nicer top and bottom rules, and for decimal point alignment of coefficients and standard errors).
 The resulting table is printed directly to the \texttt{R} console for easy copy \& paste.
 It can also be returned as a character string and saved in an object, say \texttt{tab}, by adding the \texttt{return.string=TRUE} argument.
 This way, it can be later printed again using the \texttt{cat()} function:
 <<results=hide>>=
-tab <- texreg(m2, return.string=TRUE)
+tab <- texreg(m2, return.string = TRUE)
 cat(tab)
 @
 The \texttt{texreg} command also accepts multiple models as a \texttt{list} and merges them in a table.
 The output of the following command is shown in table \ref{tab:2}.
 Note the additional \texttt{caption} argument to set the caption of the table.
 <<eval=FALSE>>=
-texreg(list(m1,m2), booktabs=TRUE, dcolumn=TRUE, caption="Multiple models")
+texreg(list(m1, m2), booktabs = TRUE, dcolumn = TRUE, 
+    caption = "Multiple models")
 @
 <<results=tex,echo=FALSE>>=
-texreg(list(m1,m2), booktabs=TRUE, dcolumn=TRUE, use.packages=FALSE, label="tab:2", float.pos="p", caption="Multiple models")
+texreg(list(m1, m2), booktabs = TRUE, dcolumn = TRUE, 
+    use.packages = FALSE, label = "tab:2", float.pos = "p", 
+    caption = "Multiple models")
 @
 Tables~\ref{tab:1} and~\ref{tab:2} consume more horizontal space than is actually necessary.
 This is due to the long note regarding significance thresholds for the $p$ values.
@@ -192,10 +196,12 @@ The position of the table on the page or in the document can be specified using 
 The \texttt{custom.names} and \texttt{model.names} arguments can be used to specify the names of the model terms and the models, respectively.
 An example:
 <<results=tex>>=
-texreg(list(m1, m2), booktabs=TRUE, dcolumn=TRUE, use.packages=FALSE, 
-    label="tab:3", caption="Custom coefficient and model names", 
-    custom.coef.names=c("(Intercept)",  "Treatment", "Control"), 
-    custom.model.names=c("First model", "Second model"), float.pos="p")
+texreg(list(m1, m2), booktabs = TRUE, dcolumn = TRUE, 
+    use.packages = FALSE, label = "tab:3", 
+    caption = "Custom coefficient and model names", 
+    custom.coef.names = c("(Intercept)",  "Treatment", "Control"), 
+    custom.model.names = c("First model", "Second model"), 
+    float.pos = "p")
 @
 The output of this command is shown as table \ref{tab:3}.
 Another argument is \texttt{table}.
@@ -209,8 +215,8 @@ The \texttt{texreg} package can also handle \texttt{ergm} objects (that is, expo
 Here is an example:
 the following code creates a network matrix.
 <<>>=
-mat <- rbinom(400,1,0.16)  #create a matrix
-mat <- matrix(mat, nrow=20)
+mat <- rbinom(400, 1, 0.16)  #create a matrix
+mat <- matrix(mat, nrow = 20)
 @
 Using the \texttt{network} package, the matrix can be converted into a network object.
 The \texttt{ergm()} command from the \texttt{ergm} package can be used to fit some models:
@@ -226,9 +232,10 @@ The \texttt{texreg} command can then be used to create a table with the coeffici
 The \texttt{summary} function for \texttt{ergm} objects attaches centered dots to weakly significant model terms by default (that is, a $\cdot$ is used to denote $p$ values between $0.05$ and $0.1$).
 This behavior can be imitated by modifying the \texttt{stars} argument and adding a fourth significance level as follows:
 <<results=tex>>=
-texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:4", booktabs=TRUE, 
-    dcolumn=TRUE, float.pos="p", caption="Centered dots for weak significance", 
-    stars=c(0.001, 0.01, 0.05, 0.1))
+texreg(list(m4, m5, m6), use.packages = FALSE, label = "tab:4", 
+    booktabs = TRUE, dcolumn = TRUE, float.pos = "p", 
+    caption = "Centered dots for weak significance", 
+    stars = c(0.001, 0.01, 0.05, 0.1))
 @
 Table \ref{tab:4} shows the result of this command.
 Note that the legend under the table is now extended, but the model terms do not feature any $p$ values between $0.05$ and $0.1$ in this case.
@@ -237,8 +244,9 @@ Most academic journals require tables where the coefficient and the standard err
 In some situations, however, it makes sense to accommodate them in a single row.
 The \texttt{single.row} argument can take care of this:
 <<results=tex>>=
-texreg(list(m4, m5, m6), use.packages=FALSE, label="tab:5", booktabs=TRUE, 
-    dcolumn=TRUE, single.row=TRUE, float.pos="p", caption="In a single row")
+texreg(list(m4, m5, m6), use.packages = FALSE, label = "tab:5", 
+    booktabs = TRUE, dcolumn = TRUE, single.row = TRUE, 
+    float.pos = "p", caption = "In a single row")
 @
 The result is shown in table \ref{tab:5}.
 Note the difference between tables \ref{tab:4} and \ref{tab:5}.
@@ -250,8 +258,9 @@ library(nlme)
 m3 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
 @
 <<results=tex>>=
-texreg(list(m3, m2, m6), label="tab:6", use.packages=FALSE, booktabs=TRUE, 
-    dcolumn=TRUE, float.pos="p", caption="Mixing different kinds of models")
+texreg(list(m3, m2, m6), label = "tab:6", use.packages = FALSE, 
+    booktabs = TRUE, dcolumn = TRUE, 
+    caption = "Mixing different kinds of models")
 @
 The output is shown in table \ref{tab:6}.
 Note that different model types may report different kinds of goodness-of-fit statistics at the bottom of the table.
@@ -274,8 +283,9 @@ So it is possible to use the \texttt{texreg} package not only with \LaTeX, but a
 If the table is exported to a file, it is advisable to include the full header information of the HTML file.
 An example:
 <<results=hide>>=
-htmlreg(list(m3, m2, m6), file="mytable.doc", inline.css=FALSE, doctype=TRUE, 
-    html.tag=TRUE, head.tag=TRUE, body.tag=TRUE)
+htmlreg(list(m3, m2, m6), file = "mytable.doc", inline.css = FALSE, 
+    doctype = TRUE, html.tag = TRUE, head.tag = TRUE, 
+    body.tag = TRUE)
 @
 The \texttt{htmlreg()} function works well with the \texttt{knitr} package for dynamic HTML report generation.
 The default arguments should work well with \texttt{knitr} and HTML.
@@ -285,7 +295,7 @@ the \verb+star.symbol="\\*"+ argument makes sure that Markdown does not interpre
 The additional (and optional) \verb+center=TRUE+ argument centers the table horizontally on the page.
 Here is an example:
 <<results=hide>>=
-htmlreg(list(m3, m2, m6), star.symbol="\\*", center=TRUE)
+htmlreg(list(m3, m2, m6), star.symbol = "\\*", center = TRUE)
 @
 
 Finally, there is another function, which can print tables to the \texttt{R} console.
@@ -317,15 +327,15 @@ Once you have located all these data, you can create a \texttt{texreg} object an
 The following code provides an example.
 It shows the \texttt{extract.lm()} function:
 \begin{verbatim}
-extract.lm <- function(model, include.rsquared=TRUE, include.adjrs=TRUE, 
-    include.nobs=TRUE, ...) {
+extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.nobs = TRUE, ...) {
   
   s <- summary(model, ...)                   # save the summary statistics
   
   names <- rownames(s$coef)                  # extract coefficient names
-  co <- s$coef[,1]                           # extract the coefficient values
-  se <- s$coef[,2]                           # extract the standard errors
-  pval <- s$coef[,4]                         # extract the p-values
+  co <- s$coef[, 1]                          # extract the coefficient values
+  se <- s$coef[, 2]                          # extract the standard errors
+  pval <- s$coef[, 4]                        # extract the p-values
   
   rs <- s$r.squared                          # extract R-squared
   adj <- s$adj.r.squared                     # extract adjusted R-squared
@@ -334,30 +344,30 @@ extract.lm <- function(model, include.rsquared=TRUE, include.adjrs=TRUE,
   gof <- numeric()                           # create a vector for the GOFs
   gof.names <- character()                   # create a vector for the GOF names
   gof.decimal <- logical()                   # should the GOFs have dec. places?
-  if (include.rsquared==TRUE) {              # if the user wants r-squared...
+  if (include.rsquared == TRUE) {            # if the user wants r-squared...
     gof <- c(gof, rs)                        # add it to the GOF list
     gof.names <- c(gof.names, "R$^2$")       # add its name to the list
     gof.decimal <- c(gof.decimal, TRUE)      # and make sure it has dec. places
   }
-  if (include.adjrs==TRUE) {                 # same for adjusted r-squared
+  if (include.adjrs == TRUE) {               # same for adjusted r-squared
     gof <- c(gof, adj)
     gof.names <- c(gof.names, "Adj.\ R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.nobs==TRUE) {                  # same for number of observations
+  if (include.nobs == TRUE) {                # same for number of observations
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)     # but these are integer numbers
   }
   
   tr <- createTexreg(                        # create a texreg object
-      coef.names=names, 
-      coef=co, 
-      se=se, 
-      pvalues=pval,                          # p-values are only needed when
-      gof.names=gof.names,                   # signif. stars shall be printed
-      gof=gof, 
-      gof.decimal=gof.decimal                # (optional)
+      coef.names = names, 
+      coef = co, 
+      se = se, 
+      pvalues = pval,                        # p-values are only needed when
+      gof.names = gof.names,                 # signif. stars shall be printed
+      gof = gof, 
+      gof.decimal = gof.decimal              # (optional)
   )
   return(tr)                                 # return texreg object to texreg
 }
@@ -366,14 +376,14 @@ After writing a custom function, the function has to be registered.
 In other words, you have to tell the more general \texttt{extract} function that objects of the new class should be handled by using your custom function.
 In the above example, this is achieved with the following code:
 \begin{verbatim}
-setMethod("extract", signature=className("lm", "stats"), 
+setMethod("extract", signature = className("lm", "stats"), 
     definition = extract.lm)
 \end{verbatim}
 Let's say you have written an extension for \texttt{clogit} objects called \texttt{extract.clogit()}.
 The \texttt{clogit} command (and the corresponding class definition) can be found in the \texttt{survival} package.
 Then you would have to adjust the code above as follows:
 \begin{verbatim}
-setMethod("extract", signature=className("clogit", "survival"), 
+setMethod("extract", signature = className("clogit", "survival"), 
     definition = extract.clogit)
 \end{verbatim}
 After executing the definition of the function and the adjusted \texttt{setMethod} command, \texttt{texreg} can be used with your models.

@@ -3,7 +3,7 @@
 \title{Convert coefficients into standardized strings}
 \description{Convert coefficients into standardized strings.}
 \usage{
-coeftostring(x, lead.zero=FALSE, digits=2)
+coeftostring(x, lead.zero = FALSE, digits = 2)
 }
 \details{
 This function converts numbers into strings and standardizes 
@@ -22,5 +22,5 @@ the texreg function.
 Philip Leifeld (\url{http://www.philipleifeld.de})
 }
 \examples{
-coeftostring(-0.345, lead.zero=FALSE) #this should give "-.34"
+coeftostring(-0.345, lead.zero = FALSE) #this should give "-.34"
 }
