@@ -23,7 +23,7 @@
   bookmarksnumbered
 }
 
-\title{texreg: Conversion of Statistical Model Output in R to \LaTeX\ and HTML Tables\thanks{The author would like to thank S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Yanghao Wang, and Yihui Xie for valuable input.}}
+\title{texreg: Conversion of Statistical Model Output in R to \LaTeX\ and HTML Tables\thanks{The author would like to thank S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Yanghao Wang, and Yihui Xie for valuable input.}}
 \author{Philip Leifeld $<$\href{mailto:philip.leifeld@uni-konstanz.de}{philip.leifeld@uni-konstanz.de}$>$}
 
 \begin{document}
