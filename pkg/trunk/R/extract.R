@@ -147,8 +147,13 @@ extract.coxph <- function(model, include.aic = TRUE, include.rsquared = TRUE,
   
   coefficient.names <- rownames(s$coef)
   coefficients <- s$coef[,1 ]
-  standard.errors <- s$coef[, 3]
-  significance <- s$coef[, 5]
+  if (is.null(model$naive.var)) {
+    standard.errors <- s$coef[, 3]
+    significance <- s$coef[, 5]
+  } else {
+    standard.errors <- s$coef[, 4]
+    significance <- s$coef[, 6]
+  }
   
   aic <- extractAIC(model)[2]
   event <- model$nevent
