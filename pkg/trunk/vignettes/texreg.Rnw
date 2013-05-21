@@ -23,7 +23,7 @@
   bookmarksnumbered
 }
 
-\title{texreg: Conversion of Statistical Model Output in R to \LaTeX\ and HTML Tables\thanks{The author would like to thank S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Yanghao Wang, and Yihui Xie for valuable input.}}
+\title{texreg: Conversion of Statistical Model Output in R to \LaTeX\ and HTML Tables\thanks{The author would like to thank S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Gupta Gupta, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Yanghao Wang, and Yihui Xie for valuable input.}}
 \author{Philip Leifeld $<$\href{mailto:philip.leifeld@uni-konstanz.de}{philip.leifeld@uni-konstanz.de}$>$}
 
 \begin{document}
@@ -68,11 +68,12 @@ Class			& Package			& Added		& Description \\
 \texttt{lmerMod}	& \texttt{lme4} (new)		& 2012-10-08	& Linear mixed-effects models \\
 \texttt{lmrob}		& \texttt{robustbase}		& 2012-11-12	& MM-type estimators for linear models \\
 \texttt{lnam}		& \texttt{sna}			& 2012-10-07	& Linear network autocorrelation models \\
+\texttt{lrm}		& \texttt{rms}, \texttt{Design}	& 2012-07-04	& Logistic regression models \\
+\texttt{maBina}		& \texttt{erer}			& 2013-05-21	& Marginal effects for logit and probit models \\
 \texttt{mer}		& \texttt{lme4} (old)		& 2012-10-08	& Linear mixed-effects models \\
 \texttt{multinom}	& \texttt{nnet}			& 2013-03-13	& Multinomial log-linear models \\
 \texttt{negbin}		& \texttt{MASS}			& 2012-10-15	& Negative binomial generalized linear models \\
 \texttt{nlmerMod}	& \texttt{lme4} (new)		& 2012-10-09	& Nonlinear mixed-effects models \\
-\texttt{lrm}		& \texttt{rms}, \texttt{Design}	& 2012-07-04	& Logistic regression models \\
 \texttt{phreg}		& \texttt{eha}			& 2013-03-23	& Parametric proportional hazards regression \\
 \texttt{plm}		& \texttt{plm}			& 2012-08-01	& Linear models for panel data \\
 \texttt{pmg}		& \texttt{plm}			& 2012-08-01	& Linear panel models with heterogeneous coefficients \\
@@ -291,8 +292,8 @@ The \texttt{htmlreg()} function works well with the \texttt{knitr} package for d
 The default arguments should work well with \texttt{knitr} and HTML.
 In addition to HTML, \texttt{knitr} is also compatible with Markdown, a simplified markup language.
 \texttt{texreg} can work with Markdown as well, but an additional argument should be provided to make it work:
-the \verb+star.symbol="\\*"+ argument makes sure that Markdown does not interpret the significance stars as special Markdown syntax.
-The additional (and optional) \verb+center=TRUE+ argument centers the table horizontally on the page.
+the \verb+star.symbol = "\\*"+ argument makes sure that Markdown does not interpret the significance stars as special Markdown syntax.
+The additional (and optional) \verb+center = TRUE+ argument centers the table horizontally on the page.
 Here is an example:
 <<results=hide>>=
 htmlreg(list(m3, m2, m6), star.symbol = "\\*", center = TRUE)

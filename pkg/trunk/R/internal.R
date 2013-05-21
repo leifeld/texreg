@@ -322,9 +322,9 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
       stop(paste("There are", length(gof.names), 
           "GOF statistics, but you provided", length(custom.gof.names), 
           "custom names for them."))
-    } else if (any(is.na(custom.gof.names))) {
-      stop("Custom GOF names are not allowed to contain NA values.")
     } else {
+      custom.gof.names[is.na(custom.gof.names)] <- 
+          rownames(gofs)[is.na(custom.gof.names)]
       rownames(gofs) <- custom.gof.names
     }
     
@@ -348,11 +348,13 @@ customnames <- function(m, custom.names) {
           "coefficients, but you provided", length(custom.names), 
           "custom names for them."))
     } else {
+      custom.names[is.na(custom.names)] <- rownames(m)[is.na(custom.names)]
       rownames(m) <- custom.names
     }
   } else if (!is.na(custom.names) & class(custom.names) != "character") {
     stop("Custom coefficient names must be provided as a vector of strings.")
-  } else if (length(custom.names) == 1 & class(custom.names) == "character") {
+  } else if (length(custom.names) == 1 & class(custom.names) == "character"
+      & is.na(custom.names)) {
     rownames(m) <- custom.names
   }
   return(m)

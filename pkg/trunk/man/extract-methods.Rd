@@ -23,6 +23,7 @@
 \alias{extract,lmrob-method}
 \alias{extract,lnam-method}
 \alias{extract,lrm-method}
+\alias{extract,maBina-method}
 \alias{extract,mer-method}
 \alias{extract,multinom-method}
 \alias{extract,negbin-method}
@@ -138,6 +139,10 @@ An extract function for lnam objects from the \pkg{sna} package.
 
 \item{\code{extract.lrm}}{
 An extract function for lrm objects from the \pkg{Design} or \pkg{rms} package.
+}
+
+\item{\code{extract.maBina}}{
+An extract function for maBina objects from the \pkg{erer} package.
 }
 
 \item{\code{extract.mer}}{
