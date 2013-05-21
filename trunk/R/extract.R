@@ -996,47 +996,17 @@ setMethod("extract", signature = className("lrm", "Design"),
 
 
 # extension for maBina objects (erer package)
-extract.maBina <- function(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, ...) {
+extract.maBina <- function(model, ...) {
   
   coefficient.names <- rownames(model$out)
   coefficients <- model$out[, 1]
   standard.errors <- model$out[, 2]
   significance <- model$out[, 4]
   
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    aic <- AIC(model$w)
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    bic <- BIC(model$w)
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    lik <- logLik(model$w)[1]
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance == TRUE) {
-    dev <- deviance(model$w)
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    n <- nobs(model$w)
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
+  w <- extract(model$w, ...)
+  gof <- w@gof
+  gof.names <- w@gof.names
+  gof.decimal <- w@gof.decimal
   
   tr <- createTexreg(
       coef.names = coefficient.names, 
