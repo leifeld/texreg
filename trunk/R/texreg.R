@@ -139,32 +139,33 @@ screenreg <- function(l, file = NA, single.row = FALSE,
   }
   
   # stars note
-  if (!is.null(custom.note)) {
-    if (custom.note == "") {
-      note <- "\n"
-    } else {
-      note <- paste0(custom.note, "\n\n")
-    }
-  } else if (is.null(stars)) {
-    note <- "\n"
+  if (is.null(stars)) {
+    snote <- ""
   } else {
     st <- sort(stars)
     if (length(unique(st)) != length(st)) {
       stop("Duplicate elements are not allowed in the stars argument.")
     }
     if (length(st) == 4) {
-      note <- paste0("*** p < ", st[1], ", ** p < ", st[2], ", * p < ", st[3], 
-          ", ", symbol, " p < ", st[4], "\n\n")
+      snote <- paste0("*** p < ", st[1], ", ** p < ", st[2], ", * p < ", st[3], 
+          ", ", symbol, " p < ", st[4])
     } else if (length(st) == 3) {
-      note <- paste0("*** p < ", st[1], ", ** p < ", st[2], ", * p < ", st[3], 
-          "\n\n")
+      snote <- paste0("*** p < ", st[1], ", ** p < ", st[2], ", * p < ", st[3])
     } else if (length(st) == 2) {
-      note <- paste0("** p < ", st[1], ", * p < ", st[2], "\n\n")
+      snote <- paste0("** p < ", st[1], ", * p < ", st[2])
     } else if (length(st) == 1) {
-      note <- paste0("* p < ", st, "\n\n")
+      snote <- paste0("* p < ", st)
     } else {
-      note <- "\n"
+      snote <- ""
     }
+  }
+  if (is.null(custom.note)) {
+    note <- paste0(snote, "\n\n")
+  } else if (custom.note == "") {
+    note <- "\n"
+  } else {
+    note <- paste0(custom.note, "\n\n")
+    note <- gsub("%stars", snote, note)
   }
   string <- paste0(string, note)
   
@@ -413,41 +414,40 @@ texreg <- function(l, file = NA, single.row = FALSE,
   }
   
   # stars note
-  if (!is.null(custom.note)) {
-    if (custom.note == "") {
-      note <- ""
-    } else {
-      note <- paste0("\\multicolumn{", length(models) + 1, "}{l}{\\scriptsize{",
-          custom.note, "}}\n")
-    }
-  } else if (is.null(stars)) {
-    note <- "\n"
+  if (is.null(stars)) {
+    snote <- ""
   } else {
     st <- sort(stars)
     if (length(unique(st)) != length(st)) {
       stop("Duplicate elements are not allowed in the stars argument.")
     }
     if (length(st) == 4) {
-      note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{\\textsuperscript{***}$p<", st[1], 
+      snote <- paste0("\\textsuperscript{***}$p<", st[1], 
         "$, \n  \\textsuperscript{**}$p<", st[2], 
         "$, \n  \\textsuperscript{*}$p<", st[3], 
-        "$, \n  \\textsuperscript{$", symbol, "$}$p<", st[4], "$}}\n")
+        "$, \n  \\textsuperscript{$", symbol, "$}$p<", st[4], "$")
     } else if (length(st) == 3) {
-      note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{\\textsuperscript{***}$p<", st[1], 
+      snote <- paste0("\\textsuperscript{***}$p<", st[1], 
         "$, \n  \\textsuperscript{**}$p<", st[2], 
-        "$, \n  \\textsuperscript{*}$p<", st[3], "$}}\n")
+        "$, \n  \\textsuperscript{*}$p<", st[3], "$")
     } else if (length(st) == 2) {
-      note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{\\textsuperscript{**}$p<", st[1], 
-        "$, \n  \\textsuperscript{*}$p<", st[2], "$}}\n")
+      snote <- paste0("\\textsuperscript{**}$p<", st[1], 
+        "$, \n  \\textsuperscript{*}$p<", st[2], "$")
     } else if (length(st) == 1) {
-      note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{\\textsuperscript{*}$p<", st[1], "$}}\n")
+      snote <- paste0("\\textsuperscript{*}$p<", st[1], "$")
     } else {
-      note <- ""
+      snote <- ""
     }
+  }
+  if (is.null(custom.note)) {
+    note <- paste0("\\multicolumn{", length(models) + 1, 
+        "}{l}{\\scriptsize{", snote, "}}\n")
+  } else if (custom.note == "") {
+    note <- ""
+  } else {
+    note <- paste0("\\multicolumn{", length(models) + 1, 
+        "}{l}{\\scriptsize{", custom.note, "}}\n")
+    note <- gsub("%stars", snote, note)
   }
   string <- paste0(string, note, "\\end{tabular}\n")
   
@@ -509,7 +509,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     css.midrule <- " style=\"border-top: 1px solid black;\""
     css.bottomrule <- " style=\"border-bottom: 2px solid black;\""
     css.td <- " style=\"padding-right: 12px; border: none;\""
-    css.caption <- " float: left;"
+    css.caption <- ""
     css.sup <- " style=\"vertical-align: 4px;\""
   } else {
     css.table <- ""
@@ -644,9 +644,6 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
         h.ind, d.ind, ind, ind, "padding-right: 12px;\n", 
         h.ind, d.ind, ind, ind, "border: none;\n", 
         h.ind, d.ind, ind, "}\n", 
-        h.ind, d.ind, ind, "caption span {\n", 
-        h.ind, d.ind, ind, ind, "float: left;\n", 
-        h.ind, d.ind, ind, "}\n", 
         h.ind, d.ind, ind, "sup {\n", 
         h.ind, d.ind, ind, ind, "vertical-align: 4px;\n", 
         h.ind, d.ind, ind, "}\n", 
@@ -719,37 +716,42 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   }
   
   # stars note
-  if (!is.null(custom.note)) {
-    note <- custom.note
-  } else if (is.null(stars)) {
-    note <- "\n"
+  if (is.null(stars)) {
+    snote <- ""
   } else {
     st <- sort(stars)
     if (length(unique(st)) != length(st)) {
       stop("Duplicate elements are not allowed in the stars argument.")
     }
     if (length(st) == 4) {
-      note <- paste0("<sup", css.sup, ">", star.symbol, star.symbol, 
+      snote <- paste0("<sup", css.sup, ">", star.symbol, star.symbol, 
           star.symbol, "</sup>p &lt; ", st[1], ", <sup", css.sup, ">", 
           star.symbol, star.symbol, "</sup", css.sup, ">p &lt; ", st[2], 
           ", <sup", css.sup, ">", star.symbol, "</sup>p &lt; ", 
           st[3], ", <sup", css.sup, ">", symbol, "</sup>p &lt; ", st[4])
     } else if (length(st) == 3) {
-      note <- paste0("<sup", css.sup, ">", star.symbol, star.symbol, 
+      snote <- paste0("<sup", css.sup, ">", star.symbol, star.symbol, 
           star.symbol, "</sup>p &lt; ", st[1], ", <sup", css.sup, ">", 
           star.symbol, star.symbol, "</sup>p &lt; ", st[2], ", <sup", css.sup, 
           ">", star.symbol, "</sup>p &lt; ", st[3])
     } else if (length(st) == 2) {
-      note <- paste0("<sup", css.sup, ">", star.symbol, star.symbol, 
+      snote <- paste0("<sup", css.sup, ">", star.symbol, star.symbol, 
           "</sup>p &lt; ", st[1], ", <sup", css.sup, ">", star.symbol, 
           "</sup>p &lt; ", st[2])
     } else if (length(st) == 1) {
-      note <- paste0("<sup", css.sup, ">", star.symbol, "</sup>p &lt; ", st[1])
+      snote <- paste0("<sup", css.sup, ">", star.symbol, "</sup>p &lt; ", st[1])
     } else {
-      note <- ""
+      snote <- ""
     }
   }
-  
+  if (is.null(custom.note)) {
+    note <- snote
+  } else if (custom.note == "") {
+    note <- ""
+  } else {
+    note <- custom.note
+    note <- gsub("%stars", snote, note)
+  }
   string <- paste0(string, h.ind, b.ind, ind, "<tr>\n", h.ind, b.ind, ind, ind, 
       "<td", css.td, " colspan=\"", (1 + length(models)), 
       "\"><span style=\"font-size:0.8em\">", note, "</span></td>\n", h.ind, 

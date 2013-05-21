@@ -22,6 +22,7 @@
 \alias{extract.lmrob}
 \alias{extract.lnam}
 \alias{extract.lrm}
+\alias{extract.maBina}
 \alias{extract.mer}
 \alias{extract.multinom}
 \alias{extract.negbin}
@@ -133,6 +134,10 @@ extract.lnam(model, include.rsquared = TRUE, include.adjrs = TRUE,
     ...)
 
 extract.lrm(model, include.pseudors = TRUE, include.lr = TRUE, 
+    include.nobs = TRUE, ...)
+
+extract.maBina(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
 
 extract.mer(model, include.pvalues = FALSE, include.aic = TRUE, 
