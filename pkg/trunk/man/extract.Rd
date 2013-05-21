@@ -136,9 +136,7 @@ extract.lnam(model, include.rsquared = TRUE, include.adjrs = TRUE,
 extract.lrm(model, include.pseudors = TRUE, include.lr = TRUE, 
     include.nobs = TRUE, ...)
 
-extract.maBina(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, ...)
+extract.maBina(model, ...)
 
 extract.mer(model, include.pvalues = FALSE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
