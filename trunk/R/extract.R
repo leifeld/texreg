@@ -619,9 +619,9 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
 setMethod("extract", signature = className("glm", "stats"), 
     definition = extract.glm)
 
-extract.Relogit <- extract.glm
-setMethod("extract", signature = className("Relogit", "Zelig"), 
-    definition = extract.Relogit)
+extract.brglm <- extract.glm
+setMethod("extract", signature = className("brglm", "brglm"), 
+    definition = extract.glm)
 
 extract.negbin <- extract.glm
 setMethod("extract", signature = className("negbin", "MASS"), 
@@ -1933,6 +1933,24 @@ setMethod("extract", signature = className("systemfit", "systemfit"),
     definition = extract.systemfit)
 
 
+# extension for texreg objects (texreg package)
+extract.texreg <- function(model, ...) {
+  tr <- createTexreg(
+    coef.names = model@coef.names,
+    coef = model@coef,
+    se = model@se,
+    pvalues = model@pvalues,
+    gof.names = model@gof.names,
+    gof = model@gof,
+    gof.decimal = model@gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("texreg", "texreg"), 
+    definition = extract.texreg)
+
+
 # extension for tobit objects (AER package)
 extract.tobit <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.deviance = TRUE, include.nobs = FALSE, 
@@ -2068,6 +2086,68 @@ setMethod("extract", signature = className("phreg", "eha"),
 extract.aftreg <- extract.weibreg
 setMethod("extract", signature = className("aftreg", "eha"), 
     definition = extract.aftreg)
+
+
+# extension for zelig objects (Zelig package; tested with relogit and logit)
+extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  coefficient.names <- rownames(s$coef)
+  coefficients <- s$coef[, 1]
+  standard.errors <- s$coef[, 2]
+  significance <- s$coef[, 4]
+  
+  aic <- AIC(model)
+  bic <- BIC(model)
+  lik <- logLik(model)[1]
+  dev <- s$deviance
+  n <- nrow(model$data)
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = coefficient.names, 
+      coef = coefficients, 
+      se = standard.errors, 
+      pvalues = significance, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("zelig", "Zelig"), 
+    definition = extract.zelig)
 
 
 # extension for zeroinfl objects (pscl package)
