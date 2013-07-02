@@ -22,5 +22,5 @@ the texreg function.
 Philip Leifeld (\url{http://www.philipleifeld.de})
 }
 \examples{
-coeftostring(-0.345, lead.zero = FALSE) #this should give "-.34"
+coeftostring(-0.345, lead.zero = FALSE)  # this should give "-.34"
 }

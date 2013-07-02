@@ -3,6 +3,7 @@
 \alias{extract-methods}
 \alias{extract,aftreg-method}
 \alias{extract,betareg-method}
+\alias{extract,brglm-method}
 \alias{extract,clm-method}
 \alias{extract,clogit-method}
 \alias{extract,coxph-method}
@@ -32,7 +33,6 @@
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
 \alias{extract,polr-method}
-\alias{extract,Relogit-method}
 \alias{extract,rem.dyad-method}
 \alias{extract,rlm-method}
 \alias{extract,rq-method}
@@ -43,8 +43,10 @@
 \alias{extract,survreg.penal-method}
 \alias{extract,svyglm-method}
 \alias{extract,systemfit-method}
+\alias{extract,texreg-method}
 \alias{extract,tobit-method}
 \alias{extract,weibreg-method}
+\alias{extract,zelig-method}
 \alias{extract,zeroinfl-method}
 \title{Methods for Function \code{extract} in Package \pkg{texreg}}
 \description{
@@ -59,6 +61,10 @@ An extract function for aftreg objects from the \pkg{eha} package.
 
 \item{\code{extract.betareg}}{
 An extract function for betareg objects from the \pkg{betareg} package.
+}
+
+\item{\code{extract.brglm}}{
+An extract function for brglm objects from the \pkg{brglm} package.
 }
 
 \item{\code{extract.clm}}{
@@ -177,10 +183,6 @@ An extract function for pmg objects from the \pkg{plm} package.
 An extract function for polr objects from the \pkg{MASS} package.
 }
 
-\item{\code{extract.Relogit}}{
-An extract function for Relogit objects from the \pkg{Zelig} package.
-}
-
 \item{\code{extract.rem.dyad}}{
 An extract function for rem.dyad objects from the \pkg{relevent} package.
 }
@@ -221,12 +223,20 @@ An extract function for svyglm objects from the \pkg{survey} package.
 An extract function for systemfit objects from the \pkg{systemfit} package.
 }
 
+\item{\code{extract.texreg}}{
+An extract function for texreg objects from the \pkg{texreg} package. The purpose is to allow for easy manipulation of the output. \code{texreg} objects can be created using the \link{createTexreg} function or using the \link{extract} function. After manipulating the object, it can be handed back to the \link{screenreg}, \link{texreg}, or \link{htmlreg} functions for creating a table.
+}
+
 \item{\code{extract.tobit}}{
 An extract function for tobit objects from the \pkg{AER} package.
 }
 
 \item{\code{extract.weibreg}}{
 An extract function for weibreg objects from the \pkg{eha} package.
+}
+
+\item{\code{extract.zelig}}{
+An extract function for zelig objects from the \pkg{Zelig} package. Has been tested with logit and relogit models as implemented in the \pkg{Zelig} package.
 }
 
 \item{\code{extract.zeroinfl}}{
