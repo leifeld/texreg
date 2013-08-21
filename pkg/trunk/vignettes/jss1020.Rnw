@@ -843,7 +843,7 @@ Questions can be posted to a public forum at \url{http://r-forge.r-project.org/p
 
 
 \section*{Acknowledgments}
-The author would like to thank Oleg Badunenko, S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Yanghao Wang, and Yihui Xie for their valuable input and ideas.
+The author would like to thank Oleg Badunenko, S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie for their valuable input and ideas.
 
 \newpage
 
