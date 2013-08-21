@@ -3,6 +3,7 @@
 \alias{extract.aftreg}
 \alias{extract.betareg}
 \alias{extract.brglm}
+\alias{extract.btergm}
 \alias{extract.clm}
 \alias{extract.clogit}
 \alias{extract.coxph}
@@ -64,6 +65,10 @@ extract.brglm(model, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
 
+extract.btergm(model, conf.level = 0.95, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, ...)
+
 extract.clm(model, include.thresholds = TRUE, include.aic = TRUE, 
     include.bic=TRUE, include.loglik = TRUE, include.nobs = TRUE, 
     ...)
@@ -102,11 +107,11 @@ extract.glm(model, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
 
-extract.glmerMod(model, include.pvalues = FALSE, include.aic = TRUE, 
+extract.glmerMod(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, include.variance = TRUE, 
-    mcmc.pvalues = FALSE, mcmc.size = 5000, ...)
+    mcmc = FALSE, mcmc.size = 5000, conf.level = 0.95, ...)
 
 extract.gls(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
@@ -127,11 +132,11 @@ extract.lm(model, include.rsquared = TRUE, include.adjrs = TRUE,
 extract.lme(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
 
-extract.lmerMod(model, include.pvalues = FALSE, include.aic = TRUE, 
+extract.lmerMod(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, include.variance = TRUE, 
-    mcmc.pvalues = FALSE, mcmc.size = 5000, ...)
+    mcmc = FALSE, mcmc.size = 5000, conf.level = 0.95, ...)
 
 extract.lmrob(model, include.nobs = TRUE, ...)
 
@@ -144,11 +149,11 @@ extract.lrm(model, include.pseudors = TRUE, include.lr = TRUE,
 
 extract.maBina(model, ...)
 
-extract.mer(model, include.pvalues = FALSE, include.aic = TRUE, 
+extract.mer(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, include.variance = TRUE, 
-    mcmc.pvalues = FALSE, mcmc.size = 5000, ...)
+    mcmc = FALSE, mcmc.size = 5000, conf.level = 0.95, ...)
 
 extract.multinom(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -158,11 +163,11 @@ extract.negbin(model, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
 
-extract.nlmerMod(model, include.pvalues = FALSE, include.aic = TRUE, 
+extract.nlmerMod(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, include.variance = TRUE, 
-    mcmc.pvalues=FALSE, mcmc.size=5000, ...)
+    mcmc = FALSE, mcmc.size = 5000, conf.level = 0.95, ...)
 
 extract.phreg(model, include.loglik = TRUE, include.lr = TRUE, 
     include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
@@ -244,6 +249,7 @@ to convert them into texreg objects.
 \arguments{
 \item{model}{ A statistical model object. }
 \item{beside}{ If available: should the model terms be arranged below each other or beside each other (default)? For example, in a stergm model, the formation and dissolution coefficients can be arranged in two columns of the table. }
+\item{conf.level}{Confidence level (\code{1 - alpha}) for computing confidence intervals. }
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
 \item{include.aicc}{ If available: should AICc be reported? This is a version of AIC with a correction for finite sample sizes. }
@@ -280,8 +286,8 @@ to convert them into texreg objects.
 \item{include.zero}{ If available: should the zero-inflation model of a zero-inflated regression or the zero hurdle model of a hurdle regression be included in the coefficients block (after the count model)? }
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
-\item{mcmc.pvalues}{ In linear mixed effects models: compute MCMC-based p values instead of naive p values. This will only affect the output if the argument \code{include.pvalues=TRUE} is also set. Warning: computing MCMC-based p values may take some time. }
-\item{mcmc.size}{ In linear mixed effects models: the MCMC sample size from which p values are derived (if the arguments \code{include.pvalues = TRUE} and \code{mcmc.pvalues = TRUE} are also set). Note: high values may take considerable computing time. }
+\item{mcmc}{ In linear mixed effects models: compute MCMC-based confidence intervals instead of naive p values. Note that MCMC is not available for all models in the \pkg{lme4} package. Warning: MCMC computations may take some time. }
+\item{mcmc.size}{ In linear mixed effects models: the MCMC sample size from which confidence intervals are derived. Note: high values may take considerable computing time. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
 }

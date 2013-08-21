@@ -63,6 +63,56 @@ setMethod("extract", signature = className("betareg", "betareg"),
     definition = extract.betareg)
 
 
+# extension for btergm objects
+extract.btergm <- function(model, conf.level = 0.95, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, ...) {
+  
+  tab <- btergm.ci(model, conf.level = conf.level, print = FALSE)
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = rownames(tab), 
+      coef = coef(model), 
+      ci.low = tab[, 1], 
+      ci.up = tab[, 2], 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("btergm", "btergm"), 
+    definition = extract.btergm)
+
+
 # extension for clm objects
 extract.clm <- function(model, include.thresholds = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, ...) {
@@ -1030,33 +1080,10 @@ setMethod("extract", signature = className("maBina", "erer"),
 
 
 # extension for mer (and lmerMod, glmerMod and nlmerMod) objects (lme4 package)
-extract.mer <- function(model, include.pvalues = FALSE, include.aic = TRUE, 
+extract.mer <- function(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, include.variance = TRUE, 
-    mcmc.pvalues = FALSE, mcmc.size=5000, ...) {
-  
-  Vcov <- vcov(model, useScale = FALSE, ...)
-  Vcov <- as.matrix(Vcov)
-  betas <- fixef(model, ...)
-  se <- sqrt(diag(Vcov))
-  if (include.pvalues == FALSE) {
-    #do not include p-values (default)
-  } else if (mcmc.pvalues == FALSE) { #naive p-values
-    zval <- betas / se
-    pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
-  } else if (exists("mcmcsamp")) { # mcmc-based p-values, only available up to 
-    tval <- betas / se             # the stable lme4 version 0.999999-0 on CRAN;
-    m <- asS4(model)               # not working with version 0.99999911-0
-    ncoef <- length(betas)
-    mcmc <- mcmcsamp(m, n = mcmc.size)
-    hpd <- HPDinterval(mcmc)
-    pval <- 2 * (1 - pt(abs(tval), nrow(m@frame) - ncoef))
-  } else {
-    stop(paste("MCMC sampling is not available in the currently installed", 
-        "version of the lme4 package. Please use naive p-values instead or", 
-        "switch off p values completely when using texreg, or install an", 
-        "older version of lme4 (like the stable CRAN release)."))
-  }
+    mcmc = FALSE, mcmc.size = 5000, conf.level = 0.95, ...) {
   
   gof <- numeric()
   gof.names <- character()
@@ -1106,21 +1133,53 @@ extract.mer <- function(model, include.pvalues = FALSE, include.aic = TRUE,
     varnames <- names(varcomps)
     varnames[length(varnames)] <- "Residual"
     varnames <- paste("Variance:", varnames)
+    if (is.na(attr(vc, "sc"))) {
+      varnames <- varnames[-length(varnames)]
+      varcomps <- varcomps[-length(varcomps)]
+    }
     gof <- c(gof, varcomps)
     gof.names <- c(gof.names, varnames)
     gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
   }
   
-  if (include.pvalues == FALSE) {
+  betas <- fixef(model, ...)
+  if (mcmc == TRUE && exists("mcmcsamp")) {
+    m <- asS4(model)
+    mcmc <- mcmcsamp(m, n = mcmc.size)
+    hpd <- HPDinterval(mcmc, prob = conf.level)
+    ci.l <- hpd$fixef[, 1]
+    ci.u <- hpd$fixef[, 2]
+    
     tr <- createTexreg(
         coef.names = names(betas), 
         coef = betas, 
-        se = se,
+        se = numeric(0),
+        pvalues = numeric(0),
+        ci.low = ci.l,
+        ci.up = ci.u,
         gof.names = gof.names,
         gof = gof,
         gof.decimal = gof.decimal
     )
   } else {
+    if (!exists("mcmcsamp")) {
+      warning(paste0("MCMC sampling not available in this lme4 version. ",
+          "Using standard errors and naive p values instead. Note that the p ",
+          "values may thus be inaccurate."))
+    } else if (include.pvalues == TRUE) {
+      cat(paste("Computing naive p values. Look at the help page of",
+          "extract.mer for details on MCMC confidence intervals.\n"))
+    }
+    Vcov <- vcov(model, useScale = FALSE, ...)
+    Vcov <- as.matrix(Vcov)
+    se <- sqrt(diag(Vcov))
+    if (include.pvalues == FALSE) {
+      pval <- numeric(0)
+    } else {  # naive p-values
+      zval <- betas / se
+      pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+    }
+    
     tr <- createTexreg(
         coef.names = names(betas), 
         coef = betas, 
@@ -1130,8 +1189,8 @@ extract.mer <- function(model, include.pvalues = FALSE, include.aic = TRUE,
         gof = gof,
         gof.decimal = gof.decimal
     )
+    return(tr)
   }
-  return(tr)
 }
 
 setMethod("extract", signature = className("mer", "lme4"), 

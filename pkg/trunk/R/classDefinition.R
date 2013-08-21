@@ -10,24 +10,32 @@ setClass(Class = "texreg",
         coef = "numeric",          #the coefficients
         se = "numeric",            #standard errors
         pvalues = "numeric",       #p-values
+        ci.low = "numeric",        #lower confidence interval
+        ci.up = "numeric",         #upper confidence interval
         gof.names = "character",   #row names of the goodness-of-fit block
         gof = "numeric",           #goodness-of-fit statistics
         gof.decimal = "logical"    #number of decimal places for each GOF value
     ), 
-    validity=function(object) {
-        if (length(object@coef.names) != length(object@coef) || 
-            length(object@coef.names) != length(object@se) ||
-            length(object@coef) != length(object@se)
-        ) {
-            stop("coef.names, coef, and se must have the same length!")
+    validity = function(object) {
+        if (length(object@coef.names) != length(object@coef)) {
+            stop("coef.names and coef must have the same length!")
         }
         if (length(object@pvalues) != 0 && 
             (length(object@coef.names) != length(object@pvalues) || 
-            length(object@coef) != length(object@pvalues) || 
-            length(object@se) != length(object@pvalues))
+            length(object@coef) != length(object@pvalues))
         ) {
           stop(paste("pvalues must have the same length as coef.names, coef,", 
               "and se, or it must have a length of zero."))
+        }
+        if ((length(object@ci.low) != length(object@ci.up)) || 
+            (length(object@ci.low) != 0 && length(object@ci.low) != 
+            length(object@coef))) {
+          stop("CIs must have a length of zero or the same length as coef.")
+        }
+        if (length(object@se) == 0 && (length(object@ci.low) == 0 || 
+            length(object@ci.up) == 0)) {
+          stop(paste("Either standard errors or confidence intervals",
+              "must be present."))
         }
         if (length(object@gof.names) != length(object@gof)) {
             stop("gof.names and gof must have the same length!")
@@ -44,23 +52,29 @@ setClass(Class = "texreg",
 )
 
 # constructor for texreg objects
-createTexreg <- function(coef.names, coef, se, pvalues=numeric(0), 
-    gof.names=character(0), gof=numeric(0), gof.decimal=logical(0)) {
+createTexreg <- function(coef.names, coef, se = numeric(0), pvalues = numeric(0), 
+    ci.low = numeric(0), ci.up = numeric(0), gof.names = character(0), 
+    gof = numeric(0), gof.decimal = logical(0)) {
   new("texreg", coef.names = coef.names, coef = coef, se = se, 
-      pvalues = pvalues, gof.names = gof.names, gof = gof, 
-      gof.decimal = gof.decimal)
+      pvalues = pvalues, ci.low = ci.low, ci.up = ci.up, gof.names = gof.names, 
+      gof = gof, gof.decimal = gof.decimal)
 }
 
 # define show method for pretty output of texreg objects
 setMethod(f = "show", signature = "texreg", definition = function(object) {
-  if (length(object@pvalues) > 0) {
-    cat("\n")
-    coefBlock <- cbind(object@coef, object@se, object@pvalues)
-    colnames(coefBlock) <- c("coef.", "s.e.", "p")
+  if (length(object@se) == 0) {
+    coefBlock <- cbind(object@coef, object@ci.low, object@ci.up)
+    colnames(coefBlock) <- c("coef.", "lower CI", "upper CI")
   } else {
-    cat("\nNo p-values were defined for this texreg object.\n")
-    coefBlock <- cbind(object@coef, object@se)
-    colnames(coefBlock) <- c("coef.", "s.e.")
+    if (length(object@pvalues) > 0) {
+      cat("\n")
+      coefBlock <- cbind(object@coef, object@se, object@pvalues)
+      colnames(coefBlock) <- c("coef.", "s.e.", "p")
+    } else {
+      cat("\nNo p-values were defined for this texreg object.\n")
+      coefBlock <- cbind(object@coef, object@se)
+      colnames(coefBlock) <- c("coef.", "s.e.")
+    }
   }
   rownames(coefBlock) <- object@coef.names
   dec <- object@gof.decimal

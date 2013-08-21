@@ -3,21 +3,26 @@
 \title{Create a texreg object}
 \description{Create a texreg object with coefficients and GOF statistics.}
 \usage{
-createTexreg(coef.names, coef, se, pvalues = numeric(0), 
-    gof.names = character(0), gof = numeric(0), 
+createTexreg(coef.names, coef, se, pvalues = numeric(0), ci.low = numeric(0), 
+    ci.up = numeric(0), gof.names = character(0), gof = numeric(0), 
     gof.decimal = logical(0))
 }
 \details{
 This function creates a texreg object. A texreg object contains 
 information about coefficients, standard errors, p values 
-(optional), and about goodness-of-fit statistics. texreg objects 
-are used by the texreg command to create LaTeX tables.
+(optional), and about goodness-of-fit statistics. Instead of standard
+errors and p values, a texreg object may also contain upper and
+lower bounds of a confidence interval. texreg objects 
+are used by the texreg command to create LaTeX tables and other
+representations of the model results.
 }
 \arguments{
 \item{coef.names}{ A vector of coefficient names. }
 \item{coef}{ The coefficient values. }
-\item{se}{ The standard errors. }
+\item{se}{ The standard errors. This is optional if the \code{ci.low} and \code{ci.up} slots are filled. }
 \item{pvalues}{ The p-values of the model. This is optional. }
+\item{ci.low}{ Lower bound of confidence interval (the actual values, not the confidence level). This is optional as long as \code{se} is available, but if it is provided, \code{ci.up} must also be provided. }
+\item{ci.up}{ Upper bound of confidence interval (the actual values, not the confidence level). This is optional as long as \code{se} is available, but if it is provided, \code{ci.low} must also be provided. }
 \item{gof.names}{ A vector of names of the goodness-of-fit statistics. }
 \item{gof}{ A vector of goodness-of-fit statistics. }
 \item{gof.decimal}{ A vector of boolean/logical values indicating for each GOF statistic if decimal places shall be used. This is optional. }

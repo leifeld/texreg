@@ -4,6 +4,7 @@
 \alias{extract,aftreg-method}
 \alias{extract,betareg-method}
 \alias{extract,brglm-method}
+\alias{extract,btergm-method}
 \alias{extract,clm-method}
 \alias{extract,clogit-method}
 \alias{extract,coxph-method}
@@ -65,6 +66,10 @@ An extract function for betareg objects from the \pkg{betareg} package.
 
 \item{\code{extract.brglm}}{
 An extract function for brglm objects from the \pkg{brglm} package.
+}
+
+\item{\code{extract.btergm}}{
+An extract function for btergm objects from the \pkg{btergm} package.
 }
 
 \item{\code{extract.clm}}{
