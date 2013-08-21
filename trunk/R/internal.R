@@ -6,8 +6,11 @@
 # display version number and date when the package is loaded
 .onAttach <- function(libname, pkgname) {
   desc  <- packageDescription(pkgname, libname)
-  packageStartupMessage('Version:  ', desc$Version, '\n', 'Date:     ', 
-      desc$Date)
+  packageStartupMessage(
+      'Version:  ', desc$Version, '\n', 
+      'Date:     ', desc$Date, '\n',
+      'Author:   ', 'Philip Leifeld (University of Konstanz)'
+  )
 }
 
 
@@ -238,10 +241,16 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
     cf <- models[[i]]@coef
     se <- models[[i]]@se
     pv <- models[[i]]@pvalues
-    if (length(pv) > 0) {
-      coef <- cbind(cf, se, pv)
-    } else { #p-values not provided -> use p-values of 0.99
-      coef <- cbind(cf, se, rep(0.99, length(cf)))
+    cil <- models[[i]]@ci.low
+    ciu <- models[[i]]@ci.up
+    if (length(se) == 0) {
+      coef <- cbind(cf, cil, ciu)
+    } else {
+      if (length(pv) > 0) {
+        coef <- cbind(cf, se, pv)
+      } else { #p-values not provided -> use p-values of 0.99
+        coef <- cbind(cf, se, rep(0.99, length(cf)))
+      }
     }
     rownames(coef) <- models[[i]]@coef.names
     coefs[[i]] <- coef
@@ -257,8 +266,8 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
         dec <- digits
       }
       row <- which(row.names(gofs) == rn)
-      gofs[row,col] <- val
-      decimal.matrix[row,col] <- dec
+      gofs[row, col] <- val
+      decimal.matrix[row, col] <- dec
     }
   }
   
@@ -443,7 +452,8 @@ stars.string <- function(pval, stars, star.char, star.prefix, star.suffix,
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
     se.prefix, se.suffix, star.prefix, star.suffix, star.char = "*", 
-    stars, dcolumn = TRUE, symbol, bold, bold.prefix, bold.suffix) {
+    stars, dcolumn = TRUE, symbol, bold, bold.prefix, bold.suffix, 
+    ci = rep(FALSE, length(m) / 3), semicolon = "; ", ci.star = TRUE) {
   
   # write coefficient rows
   if (single.row == TRUE) {
@@ -464,18 +474,46 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
         } else if (m[i, j] == -Inf) {
           output.matrix[i, k] <- neginfstring
         } else {
-          std <- paste(se.prefix, coeftostring(m[i, j + 1], leading.zero, 
-              digits = digits), se.suffix, sep = "")
           
-          p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
-            star.suffix, symbol)
+          # in case of CIs, replace brackets by square brackets
+          se.prefix.current <- se.prefix
+          se.suffix.current <- se.suffix
+          if (ci[k - 1] == TRUE) {
+            se.prefix.current <- gsub("\\(", "[", se.prefix.current)
+            se.suffix.current <- gsub("\\)", "]", se.suffix.current)
+          }
+          
+          if (ci[k - 1] == FALSE) {
+            std <- paste(se.prefix.current, coeftostring(m[i, j + 1], 
+                leading.zero, digits = digits), se.suffix.current, sep = "")
+          } else {
+            std <- paste(se.prefix.current, coeftostring(m[i, j + 1], 
+                leading.zero, digits = digits), semicolon, 
+                coeftostring(m[i, j + 2], leading.zero, digits = digits), 
+                se.suffix.current, sep = "")
+          }
+          
+          if (ci[k - 1] == FALSE) {
+            p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
+              star.suffix, symbol)
+          } else { # significance from confidence interval
+            if (ci.star == TRUE && (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
+              p <- paste0(star.prefix, star.char, star.suffix)
+            } else {
+              p <- ""
+            }
+          }
           
           if (dcolumn == TRUE) {
             dollar <- ""
           } else {
             dollar <- "$"
           }
-          if (m[i, j + 2] < bold) {
+          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { #significant pvalue
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
+              (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
             bold.pref <- bold.prefix
             bold.suff <- bold.suffix
           } else {
@@ -502,9 +540,9 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
     }
     
     # coefficients and standard deviations
-    for (i in 1:length(m[, 1])) {
-      j <- 1
-      k <- 2
+    for (i in 1:length(m[, 1])) {  # i = row
+      j <- 1  # j = column within model (from 1 to 3)
+      k <- 2  # k = column in output matrix (= model number + 1)
       while (j <= length(m)) {
         if (is.na(m[i, j]) || is.nan(m[i, j])) {
           output.matrix[(i * 2) - 1, k] <- ""  #upper coefficient row
@@ -513,15 +551,36 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           output.matrix[(i * 2) - 1, k] <- neginfstring  #upper row
           output.matrix[(i * 2), k] <- ""  #lower std row
         } else {
-          p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
-            star.suffix, symbol)
+          
+          # in case of CIs, replace brackets by square brackets
+          se.prefix.current <- "("
+          se.suffix.current <- ")"
+          if (ci[k - 1] == TRUE) {
+            se.prefix.current <- "["
+            se.suffix.current <- "]"
+          }
+          
+          if (ci[k - 1] == FALSE) {
+            p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
+              star.suffix, symbol)
+          } else { # significance from confidence interval
+            if (ci.star == TRUE && (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
+              p <- paste0(star.prefix, star.char, star.suffix)
+            } else {
+              p <- ""
+            }
+          }
           
           if (dcolumn == TRUE) {
             dollar <- ""
           } else {
             dollar <- "$"
           }
-          if (m[i, j + 2] < bold) {
+          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { #significant pvalue
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
+              (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
             bold.pref <- bold.prefix
             bold.suff <- bold.suffix
           } else {
@@ -531,9 +590,16 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           output.matrix[(i * 2) - 1, k] <- paste(dollar, bold.pref, 
               coeftostring(m[i, j], leading.zero, digits = digits), bold.suff, 
               p, dollar, sep = "")
-          output.matrix[(i * 2), k] <- paste(dollar, "(", 
-              coeftostring(m[i, j + 1], leading.zero, digits = digits), ")", 
-              dollar, sep = "")
+          if (ci[k - 1] == FALSE) {
+            output.matrix[(i * 2), k] <- paste(dollar, se.prefix.current, 
+                coeftostring(m[i, j + 1], leading.zero, digits = digits), 
+                se.suffix.current, dollar, sep = "")
+          } else {
+            output.matrix[(i * 2), k] <- paste(dollar, se.prefix.current, 
+                coeftostring(m[i, j + 1], leading.zero, digits = digits), 
+                semicolon, coeftostring(m[i, j + 2], leading.zero, 
+                digits = digits), se.suffix.current, dollar, sep = "")
+          }
         }
         k <- k + 1
         j <- j + 3
@@ -600,6 +666,44 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
       if (length(components) == 2) {
         x[i] <- paste(components[1], spaces, "(", components[2], sep = "")
       }
+    }
+  }
+  
+  #make all CIs have equal length
+  ci.lower.length <- 0
+  ci.upper.length <- 0
+  for (i in 1:length(x)) {
+    if (grepl("\\[.+\\]", x[i])) {
+      first <- sub(".*\\[(.+?); (.+?)\\].*", "\\1", x[i])
+      first <- nchar(first)
+      if (first > ci.lower.length) {
+        ci.lower.length <- first
+      }
+      last <- sub(".*\\[(.+?); (.+?)\\].*", "\\2", x[i])
+      last <- nchar(last)
+      if (last > ci.upper.length) {
+        ci.upper.length <- last
+      }
+    }
+  }
+  for (i in 1:length(x)) {
+    if (grepl("\\[.+\\]", x[i])) {
+      whitespace1 <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\1", x[i])
+      whitespace1 <- sub("\\s+$", "", whitespace1)
+      if (nchar(whitespace1) > 0) {
+        whitespace1 <- paste0(whitespace1, " ")
+      }
+      whitespace2 <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\4", x[i])
+      first <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\2", x[i])
+      difference <- ci.lower.length - nchar(first)
+      zeros <- paste(rep(" ", difference), collapse = "")
+      first <- paste0(zeros, first)
+      last <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\3", x[i])
+      difference <- ci.upper.length - nchar(last)
+      zeros <- rep(" ", difference, collapse = "")
+      last <- paste0(zeros, last)
+      #x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
+      x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
     }
   }
   
@@ -679,7 +783,7 @@ reorder <- function(mat, new.order) {
 
 
 # compute column width left and right of the decimal separator
-compute.width <- function(v, left = TRUE, single.row = FALSE) {
+compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   if (single.row == FALSE) {
     v[which(!grepl("\\.", v))] <- paste0(v[which(!grepl("\\.", v))], ".")
     ssp <- strsplit(v, "\\.")
@@ -688,12 +792,14 @@ compute.width <- function(v, left = TRUE, single.row = FALSE) {
     for (i in 1:length(ssp)) {
       if (length(ssp[[i]]) == 1) {
         ssp[[i]][2] <- ""
+      } else if (length(ssp[[i]]) == 3) {
+        ssp[[i]] <- c(ssp[[i]][1], paste0(ssp[[i]][2], ".", ssp[[i]][3]))
       }
       left.side[i] <- ssp[[i]][1]
       right.side[i] <- ssp[[i]][2]
     }
   } else {
-    ssp <- strsplit(v, "\\)")
+    ssp <- strsplit(v, paste0("\\", bracket))
     left.side <- character()
     right.side <- character()
     for (i in 1:length(ssp)) {
@@ -714,4 +820,32 @@ compute.width <- function(v, left = TRUE, single.row = FALSE) {
     v.length <- max(nchar(right.side), na.rm = TRUE)
   }
   return(v.length)
+}
+
+
+# convert SEs and p values to confidence intervals
+ciforce <- function(models, ci.force = rep(FALSE, length(models)), 
+    ci.level = 0.95) {
+  if (class(ci.force) == "logical" && length(ci.force) == 1) {
+    ci.force <- rep(ci.force, length(models))
+  }
+  if (class(ci.force) != "logical") {
+    stop("The 'ci.force' argument must be a vector of logical values.")
+  }
+  if (length(ci.force) != length(models)) {
+    stop(paste("There are", length(models), "models and", length(ci.force), 
+        "ci.force values."))
+  }
+  for (i in 1:length(models)) {
+    if (ci.force[i] == TRUE && length(models[[i]]@se) > 0) {
+      z <- qnorm(1 - ((1 - ci.level) / 2))
+      upper <- models[[i]]@coef + (z * models[[i]]@se)
+      lower <- models[[i]]@coef - (z * models[[i]]@se)
+      models[[i]]@ci.low <- lower
+      models[[i]]@ci.up <- upper
+      models[[i]]@se <- numeric(0)
+      models[[i]]@pvalues <- numeric(0)
+    }
+  }
+  return(models)
 }

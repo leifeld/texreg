@@ -9,14 +9,16 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = ".", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, column.spacing = 2, 
-    outer.rule = "=", inner.rule = "-", ...) {
+    reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
+    ci.level = 0.95, ci.star = TRUE, column.spacing = 2, outer.rule = "=", 
+    inner.rule = "-", ...) {
   
   stars <- check.stars(stars)
   
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
   models <- override(models, override.coef, override.se, override.pval)
   models <- tex.replace(models, type = "screen")  #convert TeX code to text code
+  models <- ciforce(models, ci.force = ci.force, ci.level = ci.level)
   gof.names <- get.gof(models)  #extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
@@ -40,11 +42,19 @@ screenreg <- function(l, file = NA, single.row = FALSE,
   decimal.matrix <- reorder(decimal.matrix, reorder.gof)
   
   # create output table with significance stars etc.
+  ci <- logical()
+  for (i in 1:length(models)) {
+    if (length(models[[i]]@se) == 0) {
+      ci[i] <- TRUE
+    } else {
+      ci[i] <- FALSE
+    }
+  }
   output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
       leading.zero, digits, se.prefix = " (", se.suffix = ")", 
       star.prefix = " ", star.suffix = "", star.char = "*", stars, 
       dcolumn = TRUE, symbol = symbol, bold = 0, bold.prefix = "", 
-      bold.suffix = "")
+      bold.suffix = "", ci = ci, ci.star = ci.star)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
@@ -141,7 +151,7 @@ screenreg <- function(l, file = NA, single.row = FALSE,
   # stars note
   if (is.null(stars)) {
     snote <- ""
-  } else {
+  } else if (any(ci == FALSE)) {
     st <- sort(stars)
     if (length(unique(st)) != length(st)) {
       stop("Duplicate elements are not allowed in the stars argument.")
@@ -158,6 +168,15 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     } else {
       snote <- ""
     }
+    if (ci.star == TRUE && nchar(snote) > 0 && any(ci)) {
+      snote <- paste(snote, "(or 0 outside the confidence interval).")
+    } else if (ci.star == TRUE && any(ci)) {
+      snote <- "* 0 outside the confidence interval"
+    }
+  } else if (ci.star == TRUE) {
+    snote <- "* 0 outside the confidence interval"
+  } else {
+    snote <- ""
   }
   if (is.null(custom.note)) {
     note <- paste0(snote, "\n\n")
@@ -194,10 +213,11 @@ texreg <- function(l, file = NA, single.row = FALSE,
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = "\\cdot", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, bold = 0.00, center = TRUE, 
+    reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
+    ci.level = 0.95, ci.star = TRUE, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, 
-    sideways=FALSE, use.packages = TRUE, table = TRUE, no.margin = TRUE, 
+    sideways = FALSE, use.packages = TRUE, table = TRUE, no.margin = TRUE, 
     scriptsize = FALSE, float.pos = "", ...) {
   
   stars <- check.stars(stars)
@@ -217,6 +237,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
   gof.names <- get.gof(models)  #extract names of GOFs
   models <- override(models, override.coef, override.se, override.pval)
+  models <- ciforce(models, ci.force = ci.force, ci.level = ci.level)
   
   # arrange coefficients and GOFs nicely in a matrix
   gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
@@ -248,11 +269,20 @@ texreg <- function(l, file = NA, single.row = FALSE,
   }
   
   # create output table with significance stars etc.
+  ci <- logical()
+  for (i in 1:length(models)) {
+    if (length(models[[i]]@se) == 0) {
+      ci[i] <- TRUE
+    } else {
+      ci[i] <- FALSE
+    }
+  }
   output.matrix <- outputmatrix(m, single.row, 
       neginfstring = "\\multicolumn{1}{c}{$-$Inf}", leading.zero, digits, 
       se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
-      star.suffix = "}", star.char = "*", stars, dcolumn = dcolumn, symbol, 
-      bold, bold.prefix = "\\textbf{", bold.suffix = "}")
+      star.suffix = "}", star.char = "*", stars, dcolumn = dcolumn, 
+      symbol, bold, bold.prefix = "\\textbf{", bold.suffix = "}", ci = ci, 
+      semicolon = ";\\ ", ci.star = ci.star)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
@@ -273,7 +303,10 @@ texreg <- function(l, file = NA, single.row = FALSE,
       string <- paste0(string, "\\usepackage{booktabs}\n")
     }
     if (dcolumn == TRUE) {
-      string <- paste0(string, "\\usepackage{dcolumn}\n\n")
+      string <- paste0(string, "\\usepackage{dcolumn}\n")
+    }
+    if (dcolumn == TRUE || booktabs == TRUE || sideways == TRUE) {
+      cat("\n")
     }
   }
   if (table == TRUE) {
@@ -300,27 +333,34 @@ texreg <- function(l, file = NA, single.row = FALSE,
   string <- paste0(string, "\\begin{tabular}{l ")
   
   #define columns of the table
-  if (single.row == TRUE) {
-    separator <- ")"
-  } else {
-    separator <- "."
-  }
   if (no.margin == FALSE) {
     margin.arg <- ""
   } else {
     margin.arg <- "@{}"
   }
   for (i in 2:ncol(output.matrix)) {
+    if (single.row == TRUE) {
+      if (ci[i - 1] == FALSE) {
+        separator <- ")"
+      } else {
+        separator <- "]"
+      }
+    } else {
+      separator <- "."
+    }
     if (dcolumn == FALSE) {
       string <- paste0(string, "c ")
     } else {
       if (single.row == TRUE) {
-        dl <- compute.width(output.matrix[, i], left = TRUE, single.row = TRUE)
-        dr <- compute.width(output.matrix[, i], left = FALSE, single.row = TRUE)
+        dl <- compute.width(output.matrix[, i], left = TRUE, single.row = TRUE, 
+            bracket = separator)
+        dr <- compute.width(output.matrix[, i], left = FALSE, single.row = TRUE,
+            bracket = separator)
       } else {
-        dl <- compute.width(output.matrix[, i], left = TRUE, single.row = FALSE)
+        dl <- compute.width(output.matrix[, i], left = TRUE, single.row = FALSE,
+            bracket = separator)
         dr <- compute.width(output.matrix[, i], left = FALSE, 
-            single.row = FALSE)
+            single.row = FALSE, bracket = separator)
       }
       string <- paste0(string, "D{", separator, "}{", separator, "}{", 
           dl, separator, dr, "}", margin.arg, " ")
@@ -416,7 +456,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
   # stars note
   if (is.null(stars)) {
     snote <- ""
-  } else {
+  } else if (any(ci == FALSE)) {
     st <- sort(stars)
     if (length(unique(st)) != length(st)) {
       stop("Duplicate elements are not allowed in the stars argument.")
@@ -438,6 +478,15 @@ texreg <- function(l, file = NA, single.row = FALSE,
     } else {
       snote <- ""
     }
+    if (ci.star == TRUE && nchar(snote) > 0 && any(ci)) {
+      snote <- paste(snote, "(or 0 outside the confidence interval).")
+    } else if (ci.star == TRUE && any(ci)) {
+      snote <- "\\textsuperscript{*} 0 outside the confidence interval"
+    }
+  } else if (ci.star == TRUE) {
+    snote <- "\\textsuperscript{*} 0 outside the confidence interval"
+  } else {
+    snote <- ""
   }
   if (is.null(custom.note)) {
     note <- paste0("\\multicolumn{", length(models) + 1, 
@@ -492,7 +541,8 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = "&middot;", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, bold = 0.00, center = TRUE, 
+    reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
+    ci.level = 0.95, ci.star = TRUE, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, star.symbol = "*", 
     inline.css = TRUE, doctype = TRUE, html.tag = FALSE, head.tag = FALSE, 
     body.tag = FALSE, ...) {
@@ -523,6 +573,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   
   models <- override(models, override.coef, override.se, override.pval)
   models <- tex.replace(models, type = "html", style = css.sup)  # TeX --> HTML
+  models <- ciforce(models, ci.force = ci.force, ci.level = ci.level)
   gof.names <- get.gof(models)  # extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
@@ -546,11 +597,19 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   decimal.matrix <- reorder(decimal.matrix, reorder.gof)
   
   # create output table with significance stars etc.
+  ci <- logical()
+  for (i in 1:length(models)) {
+    if (length(models[[i]]@se) == 0) {
+      ci[i] <- TRUE
+    } else {
+      ci[i] <- FALSE
+    }
+  }
   output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
       leading.zero, digits, se.prefix = " (", se.suffix = ")", 
       star.char = star.symbol, star.prefix = paste0("<sup", css.sup, ">"), 
-      star.suffix = "</sup>", stars, dcolumn = TRUE, symbol, bold, 
-      bold.prefix = "<b>", bold.suffix = "</b>")
+      star.suffix = "</sup>", stars, dcolumn = TRUE, symbol, bold = bold, 
+      bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, ci.star = ci.star)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
@@ -718,7 +777,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   # stars note
   if (is.null(stars)) {
     snote <- ""
-  } else {
+  } else if (any(ci == FALSE)) {
     st <- sort(stars)
     if (length(unique(st)) != length(st)) {
       stop("Duplicate elements are not allowed in the stars argument.")
@@ -743,6 +802,17 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     } else {
       snote <- ""
     }
+    if (ci.star == TRUE && nchar(snote) > 0 && any(ci)) {
+      snote <- paste(snote, "(or 0 outside the confidence interval).")
+    } else if (ci.star == TRUE && any(ci)) {
+      snote <- paste0("<sup>", star.symbol, 
+          "</sup> 0 outside the confidence interval")
+    }
+  } else if (ci.star == TRUE) {
+    snote <- paste0("<sup>", star.symbol, 
+        "</sup> 0 outside the confidence interval")
+  } else {
+    snote <- ""
   }
   if (is.null(custom.note)) {
     note <- snote

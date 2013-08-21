@@ -111,7 +111,7 @@ These platforms face similar complications as \proglang{\LaTeX} and \code{Sweave
 
 The ideal way to prepare \proglang{R} model output for \proglang{\LaTeX} and \proglang{HTML} tables would be a generic function which would directly output \proglang{\LaTeX} or \proglang{HTML} tables and for which custom methods for any model type could be written as extensions.
 While several attempts already exist (see section~\ref{comparison}), all of them have limitations.
-This article introduces the \pkg{texreg} package (version 1.28), which closes this gap and provides a unified framework for typesetting \proglang{\LaTeX} and \proglang{HTML} tables for various statistical models in \proglang{R}.
+This article introduces the \pkg{texreg} package (version 1.29), which closes this gap and provides a unified framework for typesetting \proglang{\LaTeX} and \proglang{HTML} tables for various statistical models in \proglang{R}.
 
 The remainder of this article is structured as follows:
 section~\ref{requirements} sets out a number of requirements which must be met.
@@ -214,6 +214,9 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{reorder.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the model terms \\
 \code{reorder.gof}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the GOF statistics \\
 \code{return.string}		& $\bullet$	& $\bullet$	& $\bullet$	& Return the table as a character vector? \\
+\code{ci.force}			& $\bullet$	& $\bullet$	& $\bullet$	& Convert standard errors to confidence intervals \\
+\code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
+\code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
 \code{bold}			& $\bullet$	& $\bullet$	& $\circ$	& $p$ value below which coefficients are bolded \\
 \code{center}			& $\bullet$	& $\bullet$	& $\circ$	& Horizontal alignment on the page \\
 \code{caption}			& $\bullet$	& $\bullet$	& $\circ$	& Set the caption of the table \\
@@ -278,6 +281,7 @@ Class			& Package			& Description \\
 \code{aftreg}		& \pkg{eha}			& Accelerated failure time regression \\
 \code{betareg}		& \pkg{betareg}			& Beta regression for rates and proportions \\
 \code{brglm}		& \pkg{brglm}			& Bias-reduced generalized linear models \\
+\code{btergm}		& \pkg{btergm}			& Temporal exponential random graph models \\
 \code{clm}		& \pkg{ordinal}			& Cumulative link models \\
 \code{clogit}		& \pkg{survival}		& Conditional logistic regression \\
 \code{coxph}		& \pkg{survival}		& Cox proportional hazard models \\
@@ -325,7 +329,7 @@ Class			& Package			& Description \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{List of 47 currently supported model types (as of July 2, 2013).}
+\caption{List of 47 currently supported model types (as of August 21, 2013).}
 \label{tab:types}
 \end{table}
 
@@ -381,7 +385,7 @@ An \code{extract} method aggregates various required pieces of information, like
 Which measures are used depends on the author of the specific \code{extract} method.
 It is also possible to let the user decide:
 beside the \code{model} argument, each extract method is allowed to have more arguments.
-For example, the \code{extract.mer()} function for \pkg{lme4} multilevel models \citep{bates2012lme4} has Boolean options like \code{include.variance} or \code{mcmc.pvalues}, which turn on the inclusion of random effect variances in the goodness-of-fit block, and computation of Markov-chain-Monte-Carlo-based (MCMC) $p$ values instead of the default na\"{\i}ve $p$ values, respectively.
+For example, the \code{extract.mer()} function for \pkg{lme4} multilevel models \citep{bates2012lme4} has Boolean options like \code{include.variance} or \code{mcmc}, which turn on the inclusion of random effect variances in the goodness-of-fit block, and computation of Markov-chain-Monte-Carlo-based (MCMC) confidence intervals instead of the default na\"{\i}ve $p$ values, respectively.
 When the main function is called in the first place, the user can include these custom arguments to finetune the behavior of the extract methods.
 
 Once the relevant data have been extracted from a model object, the \code{extract} method creates a \code{texreg} object by calling the \code{createTexreg()} function and handing over the extracted data.
@@ -391,8 +395,13 @@ The \code{texreg} object or the list of \code{texreg} objects is finally returne
 There is an S\,4 class definition for \code{texreg} objects.
 Such an object contains four vectors for the coefficients---the coefficient values (\code{numeric}), their names (\code{character}), standard errors (\code{numeric}), and $p$~values (\code{numeric})---, and three vectors for the goodness-of-fit statistics: the GOF values (\code{numeric}), their names (\code{character}), and dummy variables indicating whether it makes sense for the GOF value to have several decimal places (\code{logical}); for example, one would not want the number of observations to have any decimal places.
 
-The class contains validation rules which make sure that the four coefficient vectors all have the same length and that the three GOF vectors also all have the same length.
-There are two exceptions to this rule: the $p$~values and the decimal-place vector are optional and may also have a length of zero.
+As some types of statistical models report confidence intervals rather than standard errors and $p$ values, the \code{texreg} class definition can alternatively store lower and upper bounds of confidence intervals instead of standard errors and $p$ values.
+Which slots of the class are used depends on the \code{extract} function for the specific model.
+The functions in the \pkg{texreg} package check whether standard errors are present in the \code{texreg} object and use either standard errors or confidence intervals depending on availability.
+
+The \code{texreg} class contains validation rules which make sure that the four coefficient vectors all have the same length and that the three GOF vectors also all have the same length.
+There are several exceptions to this rule: the standard errors and $p$~values, the confidence intervals, and the decimal-place vector are optional and may also have a length of zero.
+However, either standard errors or confidence intervals must be present.
 
 The \code{texreg} class definition was written to facilitate the handling of the relevant pieces of information.
 Handing over lists of \code{texreg} objects between functions is more user-friendly than handing over lists of nested lists of vectors.
@@ -651,6 +660,29 @@ htmlreg(list(m1, m2, m3), star.symbol = "\\*", center = TRUE)
 The \verb+star.symbol = "\\*"+ argument makes sure that \proglang{Markdown} does not interpret the significance stars as special \proglang{Markdown} syntax.
 The additional (and optional) \code{center = TRUE} argument centers the table horizontally on the page.
 
+\subsection{Confidence intervals instead of standard errors}
+Most model types implemented in \pkg{texreg} report standard errors and $p$ values.
+However, some model types report confidence intervals by default.
+The \pkg{btergm} package \citep{leifeld2013btergm:} is an example.
+If confidence intervals are preferred to standard errors but not available by default, the \code{ci.force} argument allows conversion from standard errors to confidence intervals.
+
+If the \code{ci.star} argument is set, a star is added to estimates where the confidence interval does not contain $0$.
+Similarly, when the \code{bold} argument is used in conjunction with confidence intervals, \code{bold} values greater than $0$ cause \pkg{texreg} to bold estimates where $0$ is outside the confidence interval, regardless of the actual value of the \code{bold} argument.
+The \code{ci.level} argument determines at which confidence level the interval should be computed:
+<<results=tex>>=
+texreg(
+    list(m1, m1, m2), 
+    ci.force = c(FALSE, TRUE, TRUE), 
+    ci.star = TRUE, 
+    ci.level = 0.95, 
+    bold = 0.05,
+    float.pos = "h",
+    caption = "Enforcing confidence intervals.",
+    booktabs = TRUE,
+    use.packages = FALSE,
+    single.row = TRUE
+)
+@
 
 \section{Writing extensions for new models} \label{extensions}
 The previous examples have demonstrated how the \pkg{texreg} package can be used to convert statistical model output into plain-text, \proglang{\LaTeX}, \proglang{HTML}, and \proglang{Markdown} tables.
@@ -666,6 +698,7 @@ To get an overview of the model type one is interested in, it is recommended to 
 
 Any new extract function should retrieve the data shown in Table~\ref{tab:vectors} from a statistical model.\\
 Note that \code{pvalues} and \code{gof.decimal} are optional and can be omitted.
+Note also that either the \code{se} slot or the \code{ci.low} and \code{ci.up} slots must contain values.
 
 \begin{table}[t]
  \begin{center}
@@ -674,9 +707,11 @@ Note that \code{pvalues} and \code{gof.decimal} are optional and can be omitted.
    Arguments		& Description \\
    \midrule
    \code{coef.names}	& The names of the independent variables or coefficients. \\
-   \code{coef}	& The actual coefficients. These values must be in the same order as the \code{coef.names}. \\
-   \code{se}		& The standard errors, which will later be put in parentheses. These values must be in the same order as the \code{coef.names}. \\
+   \code{coef}		& The actual coefficients. These values must be in the same order as the \code{coef.names}. \\
+   \code{se}		& (\emph{optional}) The standard errors, which will later be put in parentheses. These values must be in the same order as the \code{coef.names}. \\
    \code{pvalues}	& (\emph{optional}) The $p$~values. They are used to add significance stars. These values must be in the same order as the \code{coef.names}. \\
+   \code{ci.low}	& (\emph{optional}) Lower bounds of the confidence intervals. An alternative to the \code{se} slot if confidence intervals are preferred. \\
+   \code{ci.up}		& (\emph{optional}) Upper bounds of the confidence intervals. An alternative to the \code{se} slot if confidence intervals are preferred. \\
    \code{gof.names}	& The names of some goodness-of-fit statistics to be added to the table. For example, the \code{extract.lm()} function extracts R$^2$, Adj.\ R$^2$ and Num.\ obs. \\
    \code{gof}		& A vector of goodness-of-fit statistics to be added to the table. These values must be in the same order as the \code{gof.names}. \\
    \code{gof.decimal}	& (\emph{optional}) A vector of logical (Boolean) values indicating for every GOF value whether the value should have decimal places in the output table. This is useful to avoid decimal places for the number of observations and similar count variables. \\
@@ -843,9 +878,8 @@ Questions can be posted to a public forum at \url{http://r-forge.r-project.org/p
 
 
 \section*{Acknowledgments}
-The author would like to thank Oleg Badunenko, S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie for their valuable input and ideas.
+The author would like to thank Oleg Badunenko, S.\,Q. Chang, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Markus Riester, Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie for their valuable input and ideas.
 
-\newpage
 
 \bibliography{jss1020}
 
