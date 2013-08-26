@@ -2,7 +2,6 @@
 \alias{texreg}
 \alias{htmlreg}
 \alias{screenreg}
-\alias{write.texreg}
 \title{Convert regression output to LaTeX or HTML tables}
 \description{Conversion of R regression output to LaTeX or HTML tables.}
 \usage{
@@ -82,7 +81,7 @@ identical.
 \item{single.row}{By default, a model parameter takes up two lines of the table: the standard error is listed in parentheses under the coefficient. This saves a lot of horizontal space on the page and is the default table format in most academic journals. If \code{single.row = TRUE} is activated, however, both coefficient and standard error are placed in a single table cell in the same line.}
 \item{stars}{The significance levels to be used to draw stars. Between 0 and 4 threshold values can be provided as a numeric vector. For example, \code{stars = numeric(0)} will not print any stars and will not print any note about significance levels below the table. \code{stars = 0.05} will attach one single star to all coefficients where the p value is below 0.05. \code{stars = c(0.001, 0.01, 0.05, 0.1)} will print one, two, or three stars, or a symbol as specified by the \code{symbol} argument depending on the p values.}
 \item{custom.model.names}{A character vector of labels for the models. By default, the models are named Model 1, Model 2, etc. Specifying \code{model.names = c("My name 1", "My name 2")} etc. overrides the default behavior.}
-\item{custom.coef.names}{By default, texreg uses the coefficient names which are stored in the models. The \code{custom.names} argument can be used to replace them by other character strings in the order of appearance. For example, if a table shows a total of three different coefficients (including the intercept), the argument \code{custom.coef.names = c("Intercept", "variable 1", "variable 2")} will replace their names in this order.
+\item{custom.coef.names}{By default, \pkg{texreg} uses the coefficient names which are stored in the models. The \code{custom.coef.names} argument can be used to replace them by other character strings in the order of appearance. For example, if a table shows a total of three different coefficients (including the intercept), the argument \code{custom.coef.names = c("Intercept", "variable 1", "variable 2")} will replace their names in this order.
 
 Sometimes it happens that the same variable has a different name in different models. In this case, the user can use this function to assign identical names. If possible, the rows will then be merged into a single row unless both rows contain values in the same column.
 
@@ -132,7 +131,7 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{...}{Custom options to be passed on to the extract function. For example, most extract methods provide custom options for the inclusion or exclusion of specific goodness-of-fit statistics, or for naive versus MCMC-based computation of p values. See the help entries of \link{extract} and \link{extract-methods} for more information.}
 }
 \seealso{
-\code{\link{texreg-package} \link{extract} \link{extract-methods}}
+\code{\link{texreg-package} \link{extract} \link{extract-methods} \link{plotreg}}
 }
 \author{
 Philip Leifeld (\url{http://www.philipleifeld.de})
