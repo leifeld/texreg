@@ -684,6 +684,25 @@ texreg(
 )
 @
 
+\subsection{Coefficient plots}
+Finally, it is possible to display the results of statistical models using a coefficient plot \citep[a forest plot applied to the estimates and confidence intervals or standard errors of a regression model; for another implementation, see][]{lander2013coefplot;}.
+Using the \code{plotreg} function, one or multiple statistical model objects can be plotted.
+Most of the arguments of the \code{screenreg}, \code{texreg}, and \code{htmlreg} functions are also supported by the \code{plotreg} function.
+Where confidence intervals are not natively available, the \code{plotreg} function converts standard errors into confidence intervals.
+Alternatively, the \code{use.se} argument can be used to plot error bars with one or two standard errors from the point estimate.
+The diagram produced by the following code is shown in figure~\ref{fig:plotreg}:
+<<results=hide,label=figure,fig=TRUE,include=FALSE, height=5, width=8>>=
+plotreg(m1, custom.coef.names = c("Intercept", "Group Trt"))
+@
+\begin{figure}[ht!]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{jss1020-figure}
+  \end{center}
+  \caption{Result of the \code{plotreg} function. Significant estimates are colored in red.}
+  \label{fig:plotreg}
+\end{figure}
+
+
 \section{Writing extensions for new models} \label{extensions}
 The previous examples have demonstrated how the \pkg{texreg} package can be used to convert statistical model output into plain-text, \proglang{\LaTeX}, \proglang{HTML}, and \proglang{Markdown} tables.
 Yet, this only works with model types known to \pkg{texreg}.
