@@ -899,6 +899,10 @@ extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
 setMethod("extract", signature = className("lme", "nlme"), 
     definition = extract.lme)
 
+extract.nlme <- extract.lme
+setMethod("extract", signature = className("nlme", "nlme"), 
+    definition = extract.nlme)
+
 
 # extension for lmrob objects (robustbase package)
 extract.lmrob <- function(model, include.nobs = TRUE, ...) {

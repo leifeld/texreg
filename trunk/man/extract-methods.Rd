@@ -29,6 +29,7 @@
 \alias{extract,mer-method}
 \alias{extract,multinom-method}
 \alias{extract,negbin-method}
+\alias{extract,nlme-method}
 \alias{extract,nlmerMod-method}
 \alias{extract,phreg-method}
 \alias{extract,plm-method}
@@ -109,7 +110,7 @@ An extract function for glm objects from the \pkg{stats} package.
 }
 
 \item{\code{extract.glmerMod}}{
-An extract function for glmerMod objects from the (new) \pkg{lme4} package.
+An extract function for glmerMod objects from the \pkg{lme4} package.
 }
 
 \item{\code{extract.gls}}{
@@ -137,7 +138,7 @@ An extract function for lme objects from the \pkg{nlme} package.
 }
 
 \item{\code{extract.lmerMod}}{
-An extract function for lmerMod objects from the (new) \pkg{lme4} package.
+An extract function for lmerMod objects from the \pkg{lme4} package.
 }
 
 \item{\code{extract.lmrob}}{
@@ -168,8 +169,12 @@ An extract function for multinom objects from the \pkg{nnet} package.
 An extract function for negbin objects from the \pkg{MASS} package.
 }
 
+\item{\code{extract.nlme}}{
+An extract function for nlme objects from the \pkg{nlme} package.
+}
+
 \item{\code{extract.nlmerMod}}{
-An extract function for nlmerMod objects from the (new) \pkg{lme4} package.
+An extract function for nlmerMod objects from the \pkg{lme4} package.
 }
 
 \item{\code{extract.phreg}}{

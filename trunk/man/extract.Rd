@@ -28,6 +28,7 @@
 \alias{extract.mer}
 \alias{extract.multinom}
 \alias{extract.negbin}
+\alias{extract.nlme}
 \alias{extract.nlmerMod}
 \alias{extract.phreg}
 \alias{extract.plm}
@@ -162,6 +163,9 @@ extract.multinom(model, include.pvalues = TRUE, include.aic = TRUE,
 extract.negbin(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
+
+extract.nlme(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
 extract.nlmerMod(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
