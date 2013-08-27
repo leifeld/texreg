@@ -269,7 +269,7 @@ The \pkg{apsrtable} package has custom functions for \code{coxph}, \code{gee}, \
 The \pkg{memisc} package features \code{aftreg}, \code{betareg}, \code{clm}, \code{dynml}, \code{glm}, \code{hurdle}, \code{ivreg}, \code{lm}, \code{lmer}, \code{mer}, \code{multinom}, \code{phreg}, \code{polr}, \code{tobit}, \code{simex}, \code{survreg}, \code{weibreg}, and \code{zeroinfl} models but cannot handle any network models and recent versions of \pkg{lme4} multilevel models \citep{bates2012lme4} (as of May 22, 2013).
 The \pkg{stargazer} package has built-in functions for \code{betareg}, \code{clm}, \code{clogit}, \code{coxph}, \code{ergm}, \code{gam}, \code{gee}, \code{glm}, \code{glmerMod}, \code{gls}, \code{hurdle}, \code{ivreg}, \code{lm}, \code{lmerMod}, \code{lmrob}, \code{multinom}, \code{nlmerMod}, \code{plm}, \code{pmg}, \code{polr}, \code{rlm}, \code{survreg}, \code{svyglm}, \code{tobit}, and \code{zeroinfl} objects as well as several \pkg{Zelig} adaptations \citep{owen2013zelig:}, but it does not support custom user extensions (as of May 22, 2013).
 
-\pkg{texreg}, in contrast, can deal with all of the above model types (that is, the union of all three packages), is extensible, and offers additional built-in functions for the following model classes: \code{brglm}, \code{coxph.penal}, \code{gmm}, \code{lme}, \code{lnam}, \code{maBina}, \code{rem.dyad}, \code{rq}, \code{sclm}, \code{stergm}, \code{systemfit}, \code{texreg}, and \code{zelig} objects (as of July 2, 2013).
+\pkg{texreg}, in contrast, can deal with all of the above model types (that is, the union of all three packages), is extensible, and offers additional built-in functions for the following model classes: \code{brglm}, \code{btergm}, \code{coxph.penal}, \code{gmm}, \code{lme}, \code{lnam}, \code{maBina}, \code{nlme}, \code{rem.dyad}, \code{rq}, \code{sclm}, \code{stergm}, \code{systemfit}, \code{texreg}, and \code{zelig} objects (as of July 2, 2013).
 Table~\ref{tab:types} gives an overview of currently implemented model types.
 
 \begin{table}[tp]
@@ -286,27 +286,28 @@ Class			& Package			& Description \\
 \code{clogit}		& \pkg{survival}		& Conditional logistic regression \\
 \code{coxph}		& \pkg{survival}		& Cox proportional hazard models \\
 \code{coxph.penal}	& \pkg{survival}		& Cox proportional hazard models with penalty splines \\
-\code{dynml}		& \pkg{dynlm}			& Time series regression with ``ts'' data \\
+\code{dynlm}		& \pkg{dynlm}			& Time series regression with ``ts'' data \\
 \code{ergm}		& \pkg{ergm}			& Exponential random graph models \\
 \code{gam}		& \pkg{mgcv}			& Generalized additive models \\
 \code{gee}		& \pkg{gee}			& Generalized estimation equation \\
 \code{glm}		& \pkg{stats}			& Generalized linear models \\
-\code{glmerMod}		& \pkg{lme4} (new)		& Generalized linear mixed models \\
+\code{glmerMod}		& \pkg{lme4}			& Generalized linear mixed models \\
 \code{gls}		& \pkg{nlme}			& Generalized least squares \\
 \code{gmm}		& \pkg{gmm}			& Generalized method of moments estimation \\
 \code{ivreg}		& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
 \code{hurdle}		& \pkg{pscl}			& Hurdle regression models for count data \\
 \code{lm}		& \pkg{stats}			& Ordinary least squares \\
 \code{lme}		& \pkg{nlme}			& Linear mixed-effects models \\
-\code{lmerMod}		& \pkg{lme4} (new)		& Linear mixed-effects models \\
+\code{lmerMod}		& \pkg{lme4}			& Linear mixed-effects models \\
 \code{lmrob}		& \pkg{robustbase}		& MM-type estimators for linear models \\
 \code{lnam}		& \pkg{sna}			& Linear network autocorrelation models \\
 \code{lrm}		& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
 \code{maBina}		& \pkg{erer}			& Marginal effects for binary response models \\
-\code{mer}		& \pkg{lme4} (old)		& Linear mixed-effects models \\
+\code{mer}		& \pkg{lme4}			& Linear mixed-effects models \\
 \code{multinom}		& \pkg{nnet}			& Multinomial log-linear models \\
 \code{negbin}		& \pkg{MASS}			& Negative binomial generalized linear models \\
-\code{nlmerMod}		& \pkg{lme4} (new)		& Nonlinear mixed-effects models \\
+\code{nlme}		& \pkg{nlme}			& Nonlinear mixed-effects models \\
+\code{nlmerMod}		& \pkg{lme4}			& Nonlinear mixed-effects models \\
 \code{phreg}		& \pkg{eha}			& Parametric proportional hazards regression \\
 \code{plm}		& \pkg{plm}			& Linear models for panel data \\
 \code{pmg}		& \pkg{plm}			& Linear panel models with heterogeneous coefficients \\
@@ -329,7 +330,7 @@ Class			& Package			& Description \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{List of 47 currently supported model types (as of August 21, 2013).}
+\caption{List of 49 currently supported model types (as of August 27, 2013).}
 \label{tab:types}
 \end{table}
 
