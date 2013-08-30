@@ -66,8 +66,9 @@ setMethod("extract", signature = className("betareg", "betareg"),
 # extension for btergm objects
 extract.btergm <- function(model, conf.level = 0.95, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, ...) {
-  
-  tab <- btergm.ci(model, conf.level = conf.level, print = FALSE)
+  #tab <- btergm.ci(model, conf.level = conf.level, print = FALSE)
+  tab <- t(apply(model@bootsamp, 2, function(model) quantile(model, 
+      c(((1 - conf.level) / 2), 1 - ((1 - conf.level) / 2)))))
   
   gof <- numeric()
   gof.names <- character()
@@ -1149,7 +1150,7 @@ extract.mer <- function(model, include.pvalues = TRUE, include.aic = TRUE,
   betas <- fixef(model, ...)
   if (mcmc == TRUE && exists("mcmcsamp")) {
     m <- asS4(model)
-    mcmc <- mcmcsamp(m, n = mcmc.size)
+    mcmc <- lme4::mcmcsamp(m, n = mcmc.size)
     hpd <- HPDinterval(mcmc, prob = conf.level)
     ci.l <- hpd$fixef[, 1]
     ci.u <- hpd$fixef[, 2]

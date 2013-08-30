@@ -1,4 +1,5 @@
 import("utils")
+import("methods")
 export("texreg")
 export("htmlreg")
 export("screenreg")
