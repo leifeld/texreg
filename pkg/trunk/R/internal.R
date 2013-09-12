@@ -453,7 +453,7 @@ stars.string <- function(pval, stars, star.char, star.prefix, star.suffix,
 outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
     se.prefix, se.suffix, star.prefix, star.suffix, star.char = "*", 
     stars, dcolumn = TRUE, symbol, bold, bold.prefix, bold.suffix, 
-    ci = rep(FALSE, length(m) / 3), semicolon = "; ", ci.star = TRUE) {
+    ci = rep(FALSE, length(m) / 3), semicolon = "; ", ci.test = 0) {
   
   # write coefficient rows
   if (single.row == TRUE) {
@@ -497,7 +497,8 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
             p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
               star.suffix, symbol)
           } else { # significance from confidence interval
-            if (ci.star == TRUE && (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
+            if (is.numeric(ci.test) && !is.na(ci.test) && 
+                (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
               p <- paste0(star.prefix, star.char, star.suffix)
             } else {
               p <- ""
@@ -564,7 +565,8 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
             p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
               star.suffix, symbol)
           } else { # significance from confidence interval
-            if (ci.star == TRUE && (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
+            if (is.numeric(ci.test) && !is.na(ci.test) && 
+                (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
               p <- paste0(star.prefix, star.char, star.suffix)
             } else {
               p <- ""

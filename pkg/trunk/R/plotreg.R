@@ -10,8 +10,8 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
     insignif.dark = "#1c5ba6", ...) {
   
   # check consistency of arguments
-  if (length(table(c(length(estimates), length(lower.inner), 
-      length(upper.inner), length(labels)))) > 1) {
+  if (length(table(c(length(estimates), length(lower.outer), 
+      length(upper.outer), length(labels)))) > 1) {
     stop("Vectors should have the same length.")
   }
   

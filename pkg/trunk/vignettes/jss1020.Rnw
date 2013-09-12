@@ -1,13 +1,12 @@
 %\VignetteIndexEntry{texreg: Conversion of statistical model output in R to LaTeX and HTML tables}
 %\VignetteDepends{}
-%\VignetteKeywords{typesetting, reporting, table, coefficients, regression, R, LaTeX, MS Word, HTML, Markdown}
+%\VignetteKeyword{typesetting, reporting, table, coefficients, regression, R, LaTeX, MS Word, HTML, Markdown}
 %\VignettePackage{texreg}
 \documentclass[nojss]{jss}
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
 \usepackage{dcolumn}
 \usepackage{rotating}
-\usepackage{paralist}
 \usepackage{tikz}
 \usetikzlibrary{trees}
 
@@ -97,13 +96,7 @@ Copying and pasting coefficients and standard errors one at a time often becomes
 
 An important tool for typesetting academic papers in many academic fields is \proglang{\LaTeX} \citep{lamport1986latex}.
 In fact, \proglang{R} and \proglang{\LaTeX} are closely linked by the \code{Sweave()} command in the \pkg{utils} package \citep{rcoreteam2012r}, which allows the integration of \proglang{R} commands in \proglang{\LaTeX} documents and their execution and evaluation at runtime \citep{leisch2002sweave}.
-In spite of this, common approaches for linking \proglang{R} model output and tables in \proglang{\LaTeX} include 
-\begin{inparaenum}[(1)]
- \item copying and pasting individual values after every change of the model, 
- \item custom user-written functions which convert a specific model into a matrix, 
- \item the use of sophisticated table-management packages (see next section), and
- \item the inclusion of single models in the form of the model summary instead of nicely aligned coefficient tables as a second best solution.
-\end{inparaenum}
+In spite of this, common approaches for linking \proglang{R} model output and tables in \proglang{\LaTeX} include copying and pasting individual values after every change of the model, custom user-written functions which convert a specific model into a matrix, the use of sophisticated table-management packages (see next section), and the inclusion of single models in the form of the model summary instead of nicely aligned coefficient tables as a second best solution.
 
 Popular alternatives for document preparation include \proglang{Microsoft Word} and the dynamic report generation \proglang{R} package \pkg{knitr} \citep{xie2012knitr}.
 Both \pkg{knitr} and \proglang{MS Word} accept \proglang{HTML} input, and \pkg{knitr} additionally supports \proglang{Markdown}, a simplified \proglang{HTML}-like markup language.
@@ -169,19 +162,14 @@ For \proglang{HTML} tables, cascading style sheets (\proglang{CSS}) should be us
 Academic journals may have different requirements regarding the number of digits to be printed, the inclusion of superscripted stars indicating significance, or the removal of leading zeroes.
 Similarly, there are best practices in different academic communities or for specific model types.
 For example, it is common practice to attach three stars to coefficients with $p$~values $\leq 0.001$ and small centered dots to coefficients with $p$~values between $0.05$ and $0.1$ in exponential random graph models, while less fine-grained significance levels are adopted in many other communities (for example, three stars for $p \leq 0.01$, or only one star or bold formatting for one single significance level).
-In yet other communities, journals or models, $p$~values or significance stars are not required or even deemed inappropriate \citep[see the \pkg{lme4} package by][]{bates2012lme4}.
+In yet other communities, journals or models, $p$~values or significance stars are not required or even deemed inappropriate \citep[see the \pkg{lme4} package by][]{bates2013lme4:}.
 
 \subsection{Customizability and usability} \label{customizability}
 Different users have different applications in mind.
 For this reason, a solution should be as flexible as possible and offer customization via arguments.
 For example, inclusion of an \proglang{HTML} table in a \pkg{knitr} \proglang{Markdown} document requires that only the table is printed without any header or document type information, and that significance stars are escaped using backslashes.
 
-In other situations, it may be important to 
-\begin{inparaenum}[(1)]
- \item omit certain coefficients (like random or fixed effects or thresholds), 
- \item reorder the coefficients in the model (e.g., because some models put interaction effects at the end of the list of coefficients), or 
- \item replace coefficients, standard errors, or $p$~values by custom vectors, for example when heteroskedasticity-consistent (``robust'') standard errors are used \citep{zeileis2004econometric}.
-\end{inparaenum}
+In other situations, it may be important to omit certain coefficients (like random or fixed effects or thresholds), reorder the coefficients in the model (e.g., because some models put interaction effects at the end of the list of coefficients), or replace coefficients, standard errors, or $p$~values by custom vectors, for example when heteroskedasticity-consistent (``robust'') standard errors are used \citep{zeileis2004econometric}.
 
 On the other hand, users should not be required to learn the meaning of all arguments before they can typeset their first table.
 The default arguments should serve the needs of occasional users.
@@ -266,10 +254,10 @@ In this regard, both packages are somewhat similar to the \pkg{texreg} package.
 This important feature is notably absent from \pkg{stargazer}.
 
 The \pkg{apsrtable} package has custom functions for \code{coxph}, \code{gee}, \code{glm}, \code{lm}, \code{lrm}, \code{negbin}, \code{svyglm} and \code{tobit} objects (as of May 22, 2013), but it does not feature any multilevel models or network models.
-The \pkg{memisc} package features \code{aftreg}, \code{betareg}, \code{clm}, \code{dynml}, \code{glm}, \code{hurdle}, \code{ivreg}, \code{lm}, \code{lmer}, \code{mer}, \code{multinom}, \code{phreg}, \code{polr}, \code{tobit}, \code{simex}, \code{survreg}, \code{weibreg}, and \code{zeroinfl} models but cannot handle any network models and recent versions of \pkg{lme4} multilevel models \citep{bates2012lme4} (as of May 22, 2013).
+The \pkg{memisc} package features \code{aftreg}, \code{betareg}, \code{clm}, \code{dynml}, \code{glm}, \code{hurdle}, \code{ivreg}, \code{lm}, \code{lmer}, \code{mer}, \code{multinom}, \code{phreg}, \code{polr}, \code{tobit}, \code{simex}, \code{survreg}, \code{weibreg}, and \code{zeroinfl} models but cannot handle any network models and recent versions of \pkg{lme4} multilevel models \citep{bates2013lme4:} (as of May 22, 2013).
 The \pkg{stargazer} package has built-in functions for \code{betareg}, \code{clm}, \code{clogit}, \code{coxph}, \code{ergm}, \code{gam}, \code{gee}, \code{glm}, \code{glmerMod}, \code{gls}, \code{hurdle}, \code{ivreg}, \code{lm}, \code{lmerMod}, \code{lmrob}, \code{multinom}, \code{nlmerMod}, \code{plm}, \code{pmg}, \code{polr}, \code{rlm}, \code{survreg}, \code{svyglm}, \code{tobit}, and \code{zeroinfl} objects as well as several \pkg{Zelig} adaptations \citep{owen2013zelig:}, but it does not support custom user extensions (as of May 22, 2013).
 
-\pkg{texreg}, in contrast, can deal with all of the above model types (that is, the union of all three packages), is extensible, and offers additional built-in functions for the following model classes: \code{brglm}, \code{btergm}, \code{coxph.penal}, \code{gmm}, \code{lme}, \code{lnam}, \code{maBina}, \code{nlme}, \code{rem.dyad}, \code{rq}, \code{sclm}, \code{stergm}, \code{systemfit}, \code{texreg}, and \code{zelig} objects (as of July 2, 2013).
+\pkg{texreg}, in contrast, can deal with all of the above model types (that is, the union of all three packages), is extensible, and offers additional built-in functions for the following model classes: \code{brglm}, \code{btergm}, \code{coxph.penal}, \code{gmm}, \code{lme}, \code{lme4}, \code{lnam}, \code{maBina}, \code{nlme}, \code{rem.dyad}, \code{rq}, \code{sclm}, \code{stergm}, \code{systemfit}, \code{texreg}, and \code{zelig} objects (as of September 12, 2013).
 Table~\ref{tab:types} gives an overview of currently implemented model types.
 
 \begin{table}[tp]
@@ -291,23 +279,22 @@ Class			& Package			& Description \\
 \code{gam}		& \pkg{mgcv}			& Generalized additive models \\
 \code{gee}		& \pkg{gee}			& Generalized estimation equation \\
 \code{glm}		& \pkg{stats}			& Generalized linear models \\
-\code{glmerMod}		& \pkg{lme4}			& Generalized linear mixed models \\
+\code{[gl|l|nl]merMod}	& \pkg{lme4} (old)		& Generalized linear mixed models \\
 \code{gls}		& \pkg{nlme}			& Generalized least squares \\
 \code{gmm}		& \pkg{gmm}			& Generalized method of moments estimation \\
 \code{ivreg}		& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
 \code{hurdle}		& \pkg{pscl}			& Hurdle regression models for count data \\
 \code{lm}		& \pkg{stats}			& Ordinary least squares \\
 \code{lme}		& \pkg{nlme}			& Linear mixed-effects models \\
-\code{lmerMod}		& \pkg{lme4}			& Linear mixed-effects models \\
+\code{lme4}		& \pkg{lme4} (new)		& Linear mixed-effects models \\
 \code{lmrob}		& \pkg{robustbase}		& MM-type estimators for linear models \\
 \code{lnam}		& \pkg{sna}			& Linear network autocorrelation models \\
 \code{lrm}		& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
 \code{maBina}		& \pkg{erer}			& Marginal effects for binary response models \\
-\code{mer}		& \pkg{lme4}			& Linear mixed-effects models \\
+\code{mer}		& \pkg{lme4} (old)		& Linear mixed-effects models \\
 \code{multinom}		& \pkg{nnet}			& Multinomial log-linear models \\
 \code{negbin}		& \pkg{MASS}			& Negative binomial generalized linear models \\
 \code{nlme}		& \pkg{nlme}			& Nonlinear mixed-effects models \\
-\code{nlmerMod}		& \pkg{lme4}			& Nonlinear mixed-effects models \\
 \code{phreg}		& \pkg{eha}			& Parametric proportional hazards regression \\
 \code{plm}		& \pkg{plm}			& Linear models for panel data \\
 \code{pmg}		& \pkg{plm}			& Linear panel models with heterogeneous coefficients \\
@@ -330,7 +317,7 @@ Class			& Package			& Description \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{List of 49 currently supported model types (as of August 27, 2013).}
+\caption{List of 50 currently supported model types (as of September 12, 2013).}
 \label{tab:types}
 \end{table}
 
@@ -386,7 +373,7 @@ An \code{extract} method aggregates various required pieces of information, like
 Which measures are used depends on the author of the specific \code{extract} method.
 It is also possible to let the user decide:
 beside the \code{model} argument, each extract method is allowed to have more arguments.
-For example, the \code{extract.mer()} function for \pkg{lme4} multilevel models \citep{bates2012lme4} has Boolean options like \code{include.variance} or \code{mcmc}, which turn on the inclusion of random effect variances in the goodness-of-fit block, and computation of Markov-chain-Monte-Carlo-based (MCMC) confidence intervals instead of the default na\"{\i}ve $p$ values, respectively.
+For example, the \code{extract.lme4()} function for \pkg{lme4} multilevel models \citep{bates2013lme4:} has Boolean options like \code{include.variance}, which turns on the inclusion of random effect variances in the goodness-of-fit block, and numeric arguments like \code{conf.level}, which sets the confidence level for computation of profile or bootstrapped confidence intervals.
 When the main function is called in the first place, the user can include these custom arguments to finetune the behavior of the extract methods.
 
 Once the relevant data have been extracted from a model object, the \code{extract} method creates a \code{texreg} object by calling the \code{createTexreg()} function and handing over the extracted data.
@@ -664,18 +651,18 @@ The additional (and optional) \code{center = TRUE} argument centers the table ho
 \subsection{Confidence intervals instead of standard errors}
 Most model types implemented in \pkg{texreg} report standard errors and $p$ values.
 However, some model types report confidence intervals by default.
-The \pkg{btergm} package \citep{leifeld2013btergm:} is an example.
+The \pkg{btergm} package \citep{leifeld2013btergm:} and the \pkg{lme4} package \citep{bates2013lme4:} are two examples.
 If confidence intervals are preferred to standard errors but not available by default, the \code{ci.force} argument allows conversion from standard errors to confidence intervals.
 
-If the \code{ci.star} argument is set, a star is added to estimates where the confidence interval does not contain $0$.
-Similarly, when the \code{bold} argument is used in conjunction with confidence intervals, \code{bold} values greater than $0$ cause \pkg{texreg} to bold estimates where $0$ is outside the confidence interval, regardless of the actual value of the \code{bold} argument.
-The \code{ci.level} argument determines at which confidence level the interval should be computed:
+A star is added to estimates where the confidence interval does not contain the value given by \code{ci.test} (to remove significance stars, \code{ci.test = NULL} can be set).
+When the \code{bold} argument is used in conjunction with confidence intervals, \code{bold} values greater than $0$ cause \pkg{texreg} to print estimates in bold where the \code{ci.test} value is outside the confidence interval, regardless of the actual value of the \code{bold} argument.
+The \code{ci.force.level} argument determines at which confidence level the interval should be computed:
 <<results=tex>>=
 texreg(
     list(m1, m1, m2), 
     ci.force = c(FALSE, TRUE, TRUE), 
-    ci.star = TRUE, 
-    ci.level = 0.95, 
+    ci.test = 0, 
+    ci.force.level = 0.95, 
     bold = 0.05,
     float.pos = "h",
     caption = "Enforcing confidence intervals.",
@@ -849,7 +836,7 @@ setMethod("extract", signature = className("lm", "stats"),
 @
 In addition to the simple example code shown above, this function has several arguments, which can be used to include or exclude various goodness-of-fit or summary statistics.
 Additional arguments can also be used in other contexts.
-For example, the user can decide whether random effect variances should be included in \pkg{texreg} tables of \code{mer} objects \citep[from the \pkg{lme4} package, see][]{bates2012lme4} by setting the \code{include.variance} argument.
+For example, the user can decide whether random effect variances should be included in \pkg{texreg} tables of \code{lme4} objects \citep[from the \pkg{lme4} package, see][]{bates2013lme4:} by setting the \code{include.variance} argument.
 Similarly, the output of \code{stergm} models \citep{handcock2012fit} or \code{hurdle} or \code{zeroinfl} models \citep{zeileis2008regression} can be typeset in two columns using the \code{beside} argument.
 
 New extract functions and methods can be easily used locally.
