@@ -10,7 +10,7 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     digits = 2, leading.zero = TRUE, symbol = ".", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.level = 0.95, ci.star = TRUE, column.spacing = 2, outer.rule = "=", 
+    ci.force.level = 0.95, ci.test = 0, column.spacing = 2, outer.rule = "=", 
     inner.rule = "-", ...) {
   
   stars <- check.stars(stars)
@@ -18,7 +18,7 @@ screenreg <- function(l, file = NA, single.row = FALSE,
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
   models <- override(models, override.coef, override.se, override.pval)
   models <- tex.replace(models, type = "screen")  #convert TeX code to text code
-  models <- ciforce(models, ci.force = ci.force, ci.level = ci.level)
+  models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  #extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
@@ -54,7 +54,7 @@ screenreg <- function(l, file = NA, single.row = FALSE,
       leading.zero, digits, se.prefix = " (", se.suffix = ")", 
       star.prefix = " ", star.suffix = "", star.char = "*", stars, 
       dcolumn = TRUE, symbol = symbol, bold = 0, bold.prefix = "", 
-      bold.suffix = "", ci = ci, ci.star = ci.star)
+      bold.suffix = "", ci = ci, ci.test = ci.test)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
@@ -168,13 +168,13 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     } else {
       snote <- ""
     }
-    if (ci.star == TRUE && nchar(snote) > 0 && any(ci)) {
-      snote <- paste(snote, "(or 0 outside the confidence interval).")
-    } else if (ci.star == TRUE && any(ci)) {
-      snote <- "* 0 outside the confidence interval"
+    if (is.numeric(ci.test) && !is.na(ci.test) && nchar(snote) > 0 && any(ci)) {
+      snote <- paste(snote, "(or", ci.test, "outside the confidence interval).")
+    } else if (is.numeric(ci.test) && !is.na(ci.test) && any(ci)) {
+      snote <- paste("*", ci.test, "outside the confidence interval")
     }
-  } else if (ci.star == TRUE) {
-    snote <- "* 0 outside the confidence interval"
+  } else if (is.numeric(ci.test) && !is.na(ci.test)) {
+    snote <- paste("*", ci.test, "outside the confidence interval")
   } else {
     snote <- ""
   }
@@ -214,7 +214,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
     digits = 2, leading.zero = TRUE, symbol = "\\cdot", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.level = 0.95, ci.star = TRUE, bold = 0.00, center = TRUE, 
+    ci.force.level = 0.95, ci.test = 0, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, 
     sideways = FALSE, use.packages = TRUE, table = TRUE, no.margin = TRUE, 
@@ -237,7 +237,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
   gof.names <- get.gof(models)  #extract names of GOFs
   models <- override(models, override.coef, override.se, override.pval)
-  models <- ciforce(models, ci.force = ci.force, ci.level = ci.level)
+  models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   
   # arrange coefficients and GOFs nicely in a matrix
   gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
@@ -282,7 +282,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
       se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
       star.suffix = "}", star.char = "*", stars, dcolumn = dcolumn, 
       symbol, bold, bold.prefix = "\\textbf{", bold.suffix = "}", ci = ci, 
-      semicolon = ";\\ ", ci.star = ci.star)
+      semicolon = ";\\ ", ci.test = ci.test)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
@@ -478,13 +478,15 @@ texreg <- function(l, file = NA, single.row = FALSE,
     } else {
       snote <- ""
     }
-    if (ci.star == TRUE && nchar(snote) > 0 && any(ci)) {
-      snote <- paste(snote, "(or 0 outside the confidence interval).")
-    } else if (ci.star == TRUE && any(ci)) {
-      snote <- "\\textsuperscript{*} 0 outside the confidence interval"
+    if (is.numeric(ci.test) && !is.na(ci.test) && nchar(snote) > 0 && any(ci)) {
+      snote <- paste(snote, "(or", ci.test, "outside the confidence interval).")
+    } else if (is.numeric(ci.test) && !is.na(ci.test) && any(ci)) {
+      snote <- paste("\\textsuperscript{*}", ci.test, 
+          "outside the confidence interval")
     }
-  } else if (ci.star == TRUE) {
-    snote <- "\\textsuperscript{*} 0 outside the confidence interval"
+  } else if (is.numeric(ci.test) && !is.na(ci.test)) {
+    snote <- paste("\\textsuperscript{*}", ci.test, 
+        "outside the confidence interval")
   } else {
     snote <- ""
   }
@@ -542,7 +544,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     digits = 2, leading.zero = TRUE, symbol = "&middot;", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.level = 0.95, ci.star = TRUE, bold = 0.00, center = TRUE, 
+    ci.force.level = 0.95, ci.test = 0, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, star.symbol = "*", 
     inline.css = TRUE, doctype = TRUE, html.tag = FALSE, head.tag = FALSE, 
     body.tag = FALSE, ...) {
@@ -573,7 +575,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   
   models <- override(models, override.coef, override.se, override.pval)
   models <- tex.replace(models, type = "html", style = css.sup)  # TeX --> HTML
-  models <- ciforce(models, ci.force = ci.force, ci.level = ci.level)
+  models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  # extract names of GOFs
   
   # arrange coefficients and GOFs nicely in a matrix
@@ -609,7 +611,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
       leading.zero, digits, se.prefix = " (", se.suffix = ")", 
       star.char = star.symbol, star.prefix = paste0("<sup", css.sup, ">"), 
       star.suffix = "</sup>", stars, dcolumn = TRUE, symbol, bold = bold, 
-      bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, ci.star = ci.star)
+      bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, ci.test = ci.test)
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
@@ -802,15 +804,15 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     } else {
       snote <- ""
     }
-    if (ci.star == TRUE && nchar(snote) > 0 && any(ci)) {
-      snote <- paste(snote, "(or 0 outside the confidence interval).")
-    } else if (ci.star == TRUE && any(ci)) {
-      snote <- paste0("<sup>", star.symbol, 
-          "</sup> 0 outside the confidence interval")
+    if (is.numeric(ci.test) && !is.na(ci.test) && nchar(snote) > 0 && any(ci)) {
+      snote <- paste(snote, "(or", ci.test, "outside the confidence interval).")
+    } else if (is.numeric(ci.test) && !is.na(ci.test) && any(ci)) {
+      snote <- paste0("<sup>", star.symbol, "</sup> ", ci.test, 
+          " outside the confidence interval")
     }
-  } else if (ci.star == TRUE) {
-    snote <- paste0("<sup>", star.symbol, 
-        "</sup> 0 outside the confidence interval")
+  } else if (is.numeric(ci.test) && !is.na(ci.test)) {
+    snote <- paste0("<sup>", star.symbol, "</sup> ", ci.test, 
+        " outside the confidence interval")
   } else {
     snote <- ""
   }
