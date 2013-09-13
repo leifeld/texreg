@@ -1179,7 +1179,7 @@ extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95,
   } else if (packageVersion("lme4") >= 1.0 && naive == FALSE) {
     if ("confint.merMod" %in% methods("confint")) {
       ci <- tryCatch({
-          ci <- lme4::confint(model, level = conf.level, nsim = nsim, ...)
+          ci <- confint(model, level = conf.level, nsim = nsim, ...)
         },
         error = function(err) {
           naive <- TRUE
@@ -1644,6 +1644,48 @@ extract.rq <- function(model, include.nobs = TRUE, include.percentile = TRUE,
 
 setMethod("extract", signature = className("rq", "quantreg"), 
     definition = extract.rq)
+
+
+# extension for sienaFit objects (RSiena package)
+extract.sienaFit <- function(model, include.iterations = TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  #rate.names <- attributes(summary(model)$f)$condEffects[, 1]
+  rate.names <- paste("Rate parameter period", 1:length(model$rate))
+  theta.names <- s$effects$effectName
+  coef.names <- c(rate.names, theta.names)
+  
+  coefs <- c(model$rate, model$theta)
+  
+  se <- c(model$vrate, sqrt(diag(model$covtheta)))
+  
+  pval <- pval <- 2 * pnorm(-abs(coefs / se))
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.iterations == TRUE) {
+    n <- s$n
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Iterations")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+    coef.names = coef.names, 
+    coef = coefs, 
+    se = se,
+    pvalues = pval, 
+    gof.names = gof.names, 
+    gof = gof, 
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("sienaFit", "RSiena"), 
+    definition = extract.sienaFit)
 
 
 # extension for simex objects

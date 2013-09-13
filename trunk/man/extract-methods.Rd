@@ -40,6 +40,7 @@
 \alias{extract,rlm-method}
 \alias{extract,rq-method}
 \alias{extract,sclm-method}
+\alias{extract,sienaFit-method}
 \alias{extract,simex-method}
 \alias{extract,stergm-method}
 \alias{extract,survreg-method}
@@ -212,6 +213,10 @@ An extract function for rq objects from the \pkg{quantreg} package.
 
 \item{\code{extract.sclm}}{
 An extract function for sclm objects from the \pkg{ordinal} package.
+}
+
+\item{\code{extract.sienaFit}}{
+An extract function for sienaFit objects from the \pkg{RSiena} package.
 }
 
 \item{\code{extract.simex}}{

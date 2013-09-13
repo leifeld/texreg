@@ -39,6 +39,7 @@
 \alias{extract.rlm}
 \alias{extract.rq}
 \alias{extract.sclm}
+\alias{extract.sienaFit}
 \alias{extract.simex}
 \alias{extract.stergm}
 \alias{extract.survreg}
@@ -206,6 +207,8 @@ extract.sclm(model, include.thresholds = TRUE, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, 
     ...)
 
+extract.sienaFit(model, include.iterations = TRUE, ...)
+
 extract.simex(model, jackknife = TRUE, include.nobs = TRUE, ...)
 
 extract.stergm(model, beside = FALSE, include.formation = TRUE, 
@@ -275,6 +278,7 @@ to convert them into texreg objects.
 \item{include.formation}{ If available: should the coefficients for the formation phase in a STERGM be reported? }
 \item{include.gcv}{ If available: should the GCV score be reported (in GAMs)? }
 \item{include.groups}{ If available: should the number of groups be reported? }
+\item{include.iterations}{ If available: should the number of iterations be included? }
 \item{include.loglik}{ If available: should the log-likelihood be reported? }
 \item{include.lr}{ If available: should the likelihood ratio test be reported? }
 \item{include.maxrs}{If available: should the maximum possible R-squared be reported? }

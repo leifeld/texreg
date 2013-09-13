@@ -104,7 +104,7 @@ These platforms face similar complications as \proglang{\LaTeX} and \code{Sweave
 
 The ideal way to prepare \proglang{R} model output for \proglang{\LaTeX} and \proglang{HTML} tables would be a generic function which would directly output \proglang{\LaTeX} or \proglang{HTML} tables and for which custom methods for any model type could be written as extensions.
 While several attempts already exist (see section~\ref{comparison}), all of them have limitations.
-This article introduces the \pkg{texreg} package (version 1.29), which closes this gap and provides a unified framework for typesetting \proglang{\LaTeX} and \proglang{HTML} tables for various statistical models in \proglang{R}.
+This article introduces the \pkg{texreg} package (version 1.29.4), which closes this gap and provides a unified framework for typesetting \proglang{\LaTeX} and \proglang{HTML} tables for various statistical models in \proglang{R}.
 
 The remainder of this article is structured as follows:
 section~\ref{requirements} sets out a number of requirements which must be met.
@@ -303,6 +303,7 @@ Class			& Package			& Description \\
 \code{rlm}		& \pkg{MASS}			& Robust fitting of linear models \\
 \code{rq}		& \pkg{quantreg}		& Quantile regression models \\
 \code{sclm}		& \pkg{ordinal}			& Cumulative link models \\
+\code{sienaFit}		& \pkg{RSiena}			& Stochastic actor-oriented models for networks \\
 \code{simex}		& \pkg{simex}			& SIMEX algorithm for measurement error models \\
 \code{stergm}		& \pkg{tergm}			& Separable temporal exponential random graph models \\
 \code{survreg}		& \pkg{survival}		& Parametric survival regression models \\
@@ -317,7 +318,7 @@ Class			& Package			& Description \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{List of 50 currently supported model types (as of September 12, 2013).}
+\caption{List of 51 currently supported model types (as of September 13, 2013).}
 \label{tab:types}
 \end{table}
 
