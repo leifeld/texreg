@@ -1085,7 +1085,7 @@ setMethod("extract", signature = className("maBina", "erer"),
 
 
 # extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
-extract.lme4 <- function(model, nsim = 1000, conf.level = 0.95, 
+extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...) {
@@ -1126,13 +1126,13 @@ extract.lme4 <- function(model, nsim = 1000, conf.level = 0.95,
   if (include.groups == TRUE) {
     grps <- sapply(model@flist, function(x) length(levels(x)))
     grp.names <- names(grps)
-    grp.names <- paste("Num. groups:", grp.names)
+    grp.names <- paste("Num.\ groups:", grp.names)
     gof <- c(gof, grps)
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
   }
   if (include.variance == TRUE) {
-    vc <- VarCorr(model)
+    vc <- lme4::VarCorr(model)
     varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
         attr(vc, "sc")^2)                     # residual variance
     varnames <- names(varcomps)
@@ -1147,45 +1147,65 @@ extract.lme4 <- function(model, nsim = 1000, conf.level = 0.95,
     gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
   }
   
-  betas <- fixef(model, ...)
-  if (packageVersion("lme4") < 1.0) {
+  betas <- lme4::fixef(model, ...)
+  if (packageVersion("lme4") < 1.0 && naive == FALSE) {
+    message(paste("You may want to update to a more recent version of the", 
+        "lme4 package."))
     if (exists("mcmcsamp")) {
-      naive <- FALSE
-      cat(paste0("Computing MCMC-based confidence intervals with ", nsim, 
-          " iterations at a confidence level of ", conf.level, ". You may want",
-          " to upgrade to a more recent version of the lme4 package.\n\n"))
       m <- asS4(model)
-      mcmc <- lme4::mcmcsamp(m, n = nsim)
-      hpd <- HPDinterval(mcmc, prob = conf.level)
-      ci.l <- hpd$fixef[, 1]
-      ci.u <- hpd$fixef[, 2]
+      mcmc <- tryCatch({
+          mcmc <- lme4::mcmcsamp(m, n = nsim)
+        },
+        error = function(err) {
+          message(paste("MCMC sampling not available for this model.",
+              "Using naive p values instead."))
+        }
+      )
+      if (is.null(mcmc)) {
+        naive <- TRUE
+      } else {
+        message(paste0("Computing MCMC-based confidence intervals with ", nsim, 
+            " iterations at a confidence level of ", conf.level, "."))
+        hpd <- HPDinterval(mcmc, prob = conf.level)
+        ci.l <- hpd$fixef[, 1]
+        ci.u <- hpd$fixef[, 2]
+        naive <- FALSE
+      }
     } else {
       naive <- TRUE
-      cat(paste0("mcmcsamp function not found. Using standard errors and ", 
-          "naive p values instead. Note that the p values may be inaccurate. ", 
-          "You may want to upgrade to a more recent version of the lme4 ", 
-          "package.\n\n"))
+      message(paste0("mcmcsamp function not found. Using naive p values ", 
+          "instead."))
     }
-  } else if (packageVersion("lme4") >= 1.0) {
+  } else if (packageVersion("lme4") >= 1.0 && naive == FALSE) {
     if ("confint.merMod" %in% methods("confint")) {
-      naive <- FALSE
-      cat(paste0("Computing confidence intervals with ", nsim, 
-          " iterations at a confidence level of ", conf.level, ". Use ", 
-          "arguments \"method = 'profile'\" or \"method = 'boot'\" ", 
-          "to tweak CIs.\n\n"))
-      ci <- confint(model, level = conf.level, nsim = nsim, ...)
-      last <- nrow(ci)
-      number <- length(betas)
-      first <- last - number + 1
-      ci <- ci[first:last, ]
-      ci.l <- ci[, 1]
-      ci.u <- ci[, 2]
+      ci <- tryCatch({
+          ci <- lme4::confint(model, level = conf.level, nsim = nsim, ...)
+        },
+        error = function(err) {
+          naive <- TRUE
+          message(paste("Confidence intervals not available for", 
+              "this model. Using naive p values instead."))
+        }
+      )
+      if (is.null(ci)) {
+        naive <- TRUE
+      } else {
+        message(paste0("Computing confidence intervals with ", nsim, 
+            " iterations at a confidence level of ", conf.level, ". Use ", 
+            "arguments \"method = 'profile'\" or \"method = 'boot'\" ", 
+            "to tweak CIs."))
+        last <- nrow(ci)
+        number <- length(betas)
+        first <- last - number + 1
+        ci <- ci[first:last, ]
+        ci.l <- ci[, 1]
+        ci.u <- ci[, 2]
+        naive <- FALSE
+      }
     } else {
       naive <- TRUE
-      cat(paste0("confint.merMod method not found. Using standard errors ", 
-          "and naive p values instead. Note that the p values may be ", 
-          "inaccurate. You may want to upgrade to a more recent version of ", 
-          "the lme4 package.\n\n"))
+      message(paste0("confint.merMod method not found. Using naive p values ",
+          "instead."))
     }
   }
   

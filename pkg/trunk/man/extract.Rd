@@ -109,10 +109,11 @@ extract.glm(model, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
 
-extract.glmerMod(model, nsim = 1000, conf.level = 0.95, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+extract.glmerMod(model, naive = FALSE, nsim = 1000, 
+    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 extract.gls(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
@@ -133,15 +134,17 @@ extract.lm(model, include.rsquared = TRUE, include.adjrs = TRUE,
 extract.lme(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
 
-extract.lme4(model, nsim = 1000, conf.level = 0.95, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+extract.lme4(model, naive = FALSE, nsim = 1000, 
+    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
-extract.lmerMod(model, nsim = 1000, conf.level = 0.95, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+extract.lmerMod(model, naive = FALSE, nsim = 1000, 
+    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 extract.lmrob(model, include.nobs = TRUE, ...)
 
@@ -154,10 +157,11 @@ extract.lrm(model, include.pseudors = TRUE, include.lr = TRUE,
 
 extract.maBina(model, ...)
 
-extract.mer(model, nsim = 1000, conf.level = 0.95, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+extract.mer(model, naive = FALSE, nsim = 1000, 
+    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 extract.multinom(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -170,10 +174,11 @@ extract.negbin(model, include.aic = TRUE, include.bic = TRUE,
 extract.nlme(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
 
-extract.nlmerMod(model, nsim = 1000, conf.level = 0.95, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+extract.nlmerMod(model, naive = FALSE, nsim = 1000, 
+    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 extract.phreg(model, include.loglik = TRUE, include.lr = TRUE, 
     include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
@@ -292,6 +297,7 @@ to convert them into texreg objects.
 \item{include.zero}{ If available: should the zero-inflation model of a zero-inflated regression or the zero hurdle model of a hurdle regression be included in the coefficients block (after the count model)? }
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
+\item{naive}{ If available: use naive p values and standard errors. }
 \item{nsim}{ In linear mixed effects models: the MCMC sample size from which confidence intervals are derived (for old versions of the \pkg{lme4} package), or the number of simulations on which profile or bootstrapped confidence intervals should be based (for newer versions of the \pkg{lme4} package). Note: high values may take considerable computing time. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
