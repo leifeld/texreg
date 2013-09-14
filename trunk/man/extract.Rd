@@ -302,7 +302,7 @@ to convert them into texreg objects.
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
 \item{naive}{ If available: use naive p values and standard errors. }
-\item{nsim}{ In linear mixed effects models: the MCMC sample size from which confidence intervals are derived (for old versions of the \pkg{lme4} package), or the number of simulations on which profile or bootstrapped confidence intervals should be based (for newer versions of the \pkg{lme4} package). Note: high values may take considerable computing time. }
+\item{nsim}{ In linear mixed effects models: the MCMC sample size from which confidence intervals are derived (for old versions of the \pkg{lme4} package), or the number of simulations on which bootstrapped confidence intervals should be based (for newer versions of the \pkg{lme4} package; only if the argument \code{method = "boot"} is provided, otherwise CIs are based on profile likelihood). Note: high values may take considerable computing time. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
 }

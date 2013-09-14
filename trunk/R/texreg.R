@@ -481,11 +481,13 @@ texreg <- function(l, file = NA, single.row = FALSE,
     if (is.numeric(ci.test) && !is.na(ci.test) && nchar(snote) > 0 && any(ci)) {
       snote <- paste(snote, "(or", ci.test, "outside the confidence interval).")
     } else if (is.numeric(ci.test) && !is.na(ci.test) && any(ci)) {
-      snote <- paste("\\textsuperscript{*}", ci.test, 
+#      snote <- paste("\\textsuperscript{*}", ci.test,
+      snote <- paste("$^*$", ci.test,  
           "outside the confidence interval")
     }
   } else if (is.numeric(ci.test) && !is.na(ci.test)) {
-    snote <- paste("\\textsuperscript{*}", ci.test, 
+#    snote <- paste("\\textsuperscript{*}", ci.test,
+    snote <- paste("$^*$", ci.test,  
         "outside the confidence interval")
   } else {
     snote <- ""
@@ -498,7 +500,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
   } else {
     note <- paste0("\\multicolumn{", length(models) + 1, 
         "}{l}{\\scriptsize{", custom.note, "}}\n")
-    note <- gsub("%stars", snote, note)
+    note <- gsub("%stars", snote, note, perl = TRUE)
   }
   string <- paste0(string, note, "\\end{tabular}\n")
   

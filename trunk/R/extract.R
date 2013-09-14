@@ -1190,16 +1190,20 @@ extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95,
       if (is.null(ci)) {
         naive <- TRUE
       } else {
-        message(paste0("Computing confidence intervals with ", nsim, 
-            " iterations at a confidence level of ", conf.level, ". Use ", 
-            "arguments \"method = 'profile'\" or \"method = 'boot'\" ", 
-            "to tweak CIs."))
+        message(paste0("Computing confidence intervals at a confidence ",
+            "level of ", conf.level, ". Use ", 
+            "argument \"method = 'boot'\" for bootstrapped CIs."))
         last <- nrow(ci)
         number <- length(betas)
         first <- last - number + 1
         ci <- ci[first:last, ]
-        ci.l <- ci[, 1]
-        ci.u <- ci[, 2]
+        if (class(ci) == "matrix") {
+          ci.l <- ci[, 1]
+          ci.u <- ci[, 2]
+        } else {
+          ci.l <- ci[1]
+          ci.u <- ci[2]
+        }
         naive <- FALSE
       }
     } else {
