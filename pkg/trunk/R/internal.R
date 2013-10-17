@@ -111,7 +111,9 @@ get.gof <- function(models) {
   for (i in 1:length(models)) {
     gn <- models[[i]]@gof.names
     for (j in 1:length(gn)) {
-      if (!gn[j] %in% gof.names) {
+#      if (!gn[j] %in% gof.names) {
+      if (!is.null(gof.names) && length(gof.names) > 0 && 
+          !gn[j] %in% gof.names) {
         gof.names <- append(gof.names, gn[j])
       }
     }
@@ -254,20 +256,22 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
     }
     rownames(coef) <- models[[i]]@coef.names
     coefs[[i]] <- coef
-    for (j in 1:length(models[[i]]@gof)) {
-      rn <- models[[i]]@gof.names[j]
-      val <- models[[i]]@gof[j]
-      col <- i
-      if (is.na(models[[i]]@gof.decimal[j])) {
-        dec <- digits
-      } else if (models[[i]]@gof.decimal[j] == FALSE) {
-        dec <- 0
-      } else {
-        dec <- digits
+    if (length(models[[i]]@gof) > 0) {
+      for (j in 1:length(models[[i]]@gof)) {
+        rn <- models[[i]]@gof.names[j]
+        val <- models[[i]]@gof[j]
+        col <- i
+        if (is.na(models[[i]]@gof.decimal[j])) {
+          dec <- digits
+        } else if (models[[i]]@gof.decimal[j] == FALSE) {
+          dec <- 0
+        } else {
+          dec <- digits
+        }
+        row <- which(row.names(gofs) == rn)
+        gofs[row, col] <- val
+        decimal.matrix[row, col] <- dec
       }
-      row <- which(row.names(gofs) == rn)
-      gofs[row, col] <- val
-      decimal.matrix[row, col] <- dec
     }
   }
   
@@ -742,12 +746,14 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero,
     dollar <- "$"
   }
   gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
-  for (i in 1:length(gofs[, 1])) {
-    gof.matrix[i, 1] <- rownames(gofs)[i]
-    for (j in 1:length(gofs[1, ])) {
-      strg <- coeftostring(gofs[i, j], leading.zero, 
-          digits = decimal.matrix[i, j])
-      gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
+  if (length(gof.matrix) > 0) {
+    for (i in 1:length(gofs[, 1])) {
+      gof.matrix[i, 1] <- rownames(gofs)[i]
+      for (j in 1:length(gofs[1, ])) {
+        strg <- coeftostring(gofs[i, j], leading.zero, 
+            digits = decimal.matrix[i, j])
+        gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
+      }
     }
   }
   return(gof.matrix)

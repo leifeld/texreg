@@ -125,20 +125,22 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     }
   }
   
-  # mid rule 2
-  if (inner.rule != "") {
-    string <- paste0(string, i.rule, "\n")
-  }
-  
-  # write GOF part of the output matrix
-  for (i in (length(output.matrix[, 1]) - (length(gof.names) - 1)):
-      (length(output.matrix[, 1]))) {
-    for (j in 1:length(output.matrix[1, ])) {
-      string <- paste0(string, output.matrix[i, j])
-      if (j == length(output.matrix[1, ])) {
-        string <- paste0(string, "\n")
-      } else {
-        string <- paste0(string, spacing)
+  if (length(gof.names) > 0) {
+    # mid rule 2
+    if (inner.rule != "") {
+      string <- paste0(string, i.rule, "\n")
+    }
+    
+    # write GOF part of the output matrix
+    for (i in (length(output.matrix[, 1]) - (length(gof.names) - 1)):
+        (length(output.matrix[, 1]))) {
+      for (j in 1:length(output.matrix[1, ])) {
+        string <- paste0(string, output.matrix[i, j])
+        if (j == length(output.matrix[1, ])) {
+          string <- paste0(string, "\n")
+        } else {
+          string <- paste0(string, spacing)
+        }
       }
     }
   }
@@ -428,20 +430,24 @@ texreg <- function(l, file = NA, single.row = FALSE,
     }
   }
   
-  if (booktabs == TRUE) {
-    string <- paste0(string, "\\midrule\n")
-  } else {
-    string <- paste0(string, "\\hline\n")
-  }
-  
-  for (i in (length(output.matrix[, 1]) - (length(gof.names) - 1)):
-      (length(output.matrix[, 1]))) {
-    for (j in 1:length(output.matrix[1, ])) {
-      string <- paste0(string, output.matrix[i, j])
-      if (j == length(output.matrix[1, ])) {
-        string <- paste0(string, " \\\\\n")
-      } else {
-        string <- paste0(string, " & ")
+  if (length(gof.names) > 0) {
+    # lower mid rule
+    if (booktabs == TRUE) {
+      string <- paste0(string, "\\midrule\n")
+    } else {
+      string <- paste0(string, "\\hline\n")
+    }
+    
+    # write GOF block
+    for (i in (length(output.matrix[, 1]) - (length(gof.names) - 1)):
+        (length(output.matrix[, 1]))) {
+      for (j in 1:length(output.matrix[1, ])) {
+        string <- paste0(string, output.matrix[i, j])
+        if (j == length(output.matrix[1, ])) {
+          string <- paste0(string, " \\\\\n")
+        } else {
+          string <- paste0(string, " & ")
+        }
       }
     }
   }
@@ -562,6 +568,8 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
         "black; border-bottom: 1px solid black; padding-right: 12px;\"")
     css.midrule <- " style=\"border-top: 1px solid black;\""
     css.bottomrule <- " style=\"border-bottom: 2px solid black;\""
+    css.bottomrule.nogof <- paste(" style=\"padding-right: 12px;",
+        "border-bottom: 2px solid black;\"")
     css.td <- " style=\"padding-right: 12px; border: none;\""
     css.caption <- ""
     css.sup <- " style=\"vertical-align: 4px;\""
@@ -741,41 +749,55 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   string <- paste0(string, h.ind, b.ind, ind, "</tr>\n")
   
   # write coefficients to string object
-  for (i in 1:(length(output.matrix[, 1]) - length(gof.names))) {
+  coef.length <- length(output.matrix[, 1]) - length(gof.names)
+  for (i in 1:coef.length) {
     string <- paste0(string, h.ind, b.ind, ind, "<tr>\n")
     for (j in 1:length(output.matrix[1, ])) {
-      string <- paste0(string, h.ind, b.ind, ind, ind, "<td", css.td, ">", 
-      output.matrix[i,j], "</td>\n")
-    }
-    string <- paste0(string, h.ind, b.ind, ind, "</tr>\n")
-  }
-  
-  for (i in (length(output.matrix[, 1]) - (length(gof.names) - 1)):
-      (length(output.matrix[, 1]))) {
-    string <- paste0(string, h.ind, b.ind, ind, "<tr>\n")
-    for (j in 1:length(output.matrix[1, ])) {
-      if (i == length(output.matrix[, 1]) - (length(gof.names) - 1)) {
+      if (length(gof.names) == 0 && i == coef.length) { # no GOF block
         if (inline.css == TRUE) {
-          mr <- css.midrule
-        } else {
-          mr <- " class=\"midRule\""
-        }
-        string <- paste0(string, h.ind, b.ind, ind, ind, 
-            "<td", mr, ">", output.matrix[i,j], "</td>\n")
-      } else if (i == length(output.matrix[, 1])) {
-        if (inline.css == TRUE) {
-          br <- css.bottomrule
+          br <- css.bottomrule.nogof
         } else {
           br <- " class=\"bottomRule\""
         }
-        string <- paste0(string, h.ind, b.ind, ind, ind, 
-            "<td", br, ">", output.matrix[i,j], "</td>\n")
-      } else {
+        string <- paste0(string, h.ind, b.ind, ind, ind, "<td", br, ">", 
+            output.matrix[i,j], "</td>\n")
+      } else { # GOF block present
         string <- paste0(string, h.ind, b.ind, ind, ind, "<td", css.td, ">", 
             output.matrix[i,j], "</td>\n")
       }
     }
     string <- paste0(string, h.ind, b.ind, ind, "</tr>\n")
+  }
+  
+  if (length(gof.names) > 0) {
+    # write GOF block
+    for (i in (length(output.matrix[, 1]) - (length(gof.names) - 1)):
+        (length(output.matrix[, 1]))) {
+      string <- paste0(string, h.ind, b.ind, ind, "<tr>\n")
+      for (j in 1:length(output.matrix[1, ])) {
+        if (i == length(output.matrix[, 1]) - (length(gof.names) - 1)) {
+          if (inline.css == TRUE) {
+            mr <- css.midrule
+          } else {
+            mr <- " class=\"midRule\""  # add mid rule via style sheets
+          }
+          string <- paste0(string, h.ind, b.ind, ind, ind, 
+              "<td", mr, ">", output.matrix[i,j], "</td>\n")
+        } else if (i == length(output.matrix[, 1])) {
+          if (inline.css == TRUE) {
+            br <- css.bottomrule
+          } else {
+            br <- " class=\"bottomRule\""
+          }
+          string <- paste0(string, h.ind, b.ind, ind, ind, 
+              "<td", br, ">", output.matrix[i,j], "</td>\n")
+        } else {
+          string <- paste0(string, h.ind, b.ind, ind, ind, "<td", css.td, ">", 
+              output.matrix[i,j], "</td>\n")
+        }
+      }
+      string <- paste0(string, h.ind, b.ind, ind, "</tr>\n")
+    }
   }
   
   # stars note
