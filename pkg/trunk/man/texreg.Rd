@@ -130,6 +130,11 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 
 \item{...}{Custom options to be passed on to the extract function. For example, most extract methods provide custom options for the inclusion or exclusion of specific goodness-of-fit statistics. See the help entries of \link{extract} and \link{extract-methods} for more information.}
 }
+\references{
+Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 
+LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
+\url{http://www.jstatsoft.org/v55/i08/}.
+}
 \seealso{
 \code{\link{texreg-package} \link{extract} \link{extract-methods} \link{plotreg}}
 }

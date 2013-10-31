@@ -110,11 +110,11 @@ get.gof <- function(models) {
   gof.names <- character()  #names of all models in one vector
   for (i in 1:length(models)) {
     gn <- models[[i]]@gof.names
-    for (j in 1:length(gn)) {
-#      if (!gn[j] %in% gof.names) {
-      if (!is.null(gof.names) && length(gof.names) > 0 && 
-          !gn[j] %in% gof.names) {
-        gof.names <- append(gof.names, gn[j])
+    if (!is.null(gn) && length(gn) > 0) {
+      for (j in 1:length(gn)) {
+        if (!gn[j] %in% gof.names) {
+          gof.names <- append(gof.names, gn[j])
+        }
       }
     }
   }
