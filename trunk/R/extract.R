@@ -418,6 +418,27 @@ setMethod("extract", signature = className("clogit", "survival"),
     definition = extract.clogit)
 
 
+# extension for coeftest objects (lmtest package)
+extract.coeftest <- function(model, ...) {
+  
+  names <- rownames(model)
+  co <- model[, 1]
+  se <- model[, 2]
+  pval <- model[, 4]
+  
+  tr <- createTexreg(
+      coef.names = names, 
+      coef = co, 
+      se = se, 
+      pvalues = pval
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("coeftest", "lmtest"), 
+    definition = extract.coeftest)
+
+
 # extension for ergm objects
 extract.ergm <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, ...) {
@@ -2231,56 +2252,60 @@ extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE,
   
   s <- summary(model, ...)
   
-  coefficient.names <- rownames(s$coef)
-  coefficients <- s$coef[, 1]
-  standard.errors <- s$coef[, 2]
-  significance <- s$coef[, 4]
-  
-  aic <- AIC(model)
-  bic <- BIC(model)
-  lik <- logLik(model)[1]
-  dev <- s$deviance
-  n <- nrow(model$data)
-  
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
+  if ("relogit" %in% class(model) || "logit" %in% class(model)) {
+    coefficient.names <- rownames(s$coef)
+    coefficients <- s$coef[, 1]
+    standard.errors <- s$coef[, 2]
+    significance <- s$coef[, 4]
+    
+    aic <- AIC(model)
+    bic <- BIC(model)
+    lik <- logLik(model)[1]
+    dev <- s$deviance
+    n <- nrow(model$data)
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+      gof <- c(gof, aic)
+      gof.names <- c(gof.names, "AIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+      gof <- c(gof, bic)
+      gof.names <- c(gof.names, "BIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+      gof <- c(gof, lik)
+      gof.names <- c(gof.names, "Log Likelihood")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.deviance == TRUE) {
+      gof <- c(gof, dev)
+      gof.names <- c(gof.names, "Deviance")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+      gof <- c(gof, n)
+      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names, 
+        coef = coefficients, 
+        se = standard.errors, 
+        pvalues = significance, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+  } else {
+    stop("Only 'relogit'- and 'logit'-type Zelig models are supported.")
   }
-  if (include.bic == TRUE) {
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance == TRUE) {
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  
-  tr <- createTexreg(
-      coef.names = coefficient.names, 
-      coef = coefficients, 
-      se = standard.errors, 
-      pvalues = significance, 
-      gof.names = gof.names, 
-      gof = gof, 
-      gof.decimal = gof.decimal
-  )
-  return(tr)
 }
 
 setMethod("extract", signature = className("zelig", "Zelig"), 

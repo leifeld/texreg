@@ -7,6 +7,7 @@
 \alias{extract,btergm-method}
 \alias{extract,clm-method}
 \alias{extract,clogit-method}
+\alias{extract,coeftest-method}
 \alias{extract,coxph-method}
 \alias{extract,coxph.penal-method}
 \alias{extract,dynlm-method}
@@ -81,6 +82,10 @@ An extract function for clm objects from the \pkg{ordinal} package.
 
 \item{\code{extract.clogit}}{
 An extract function for clogit objects from the \pkg{survival} package.
+}
+
+\item{\code{extract.coeftest}}{
+An extract function for coeftest objects from the \pkg{lmtest} package.
 }
 
 \item{\code{extract.coxph}}{
@@ -263,6 +268,11 @@ An extract function for zelig objects from the \pkg{Zelig} package. Has been tes
 An extract function for zeroinfl objects from the \pkg{pscl} package.
 }
 }}
+\references{
+Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 
+LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
+\url{http://www.jstatsoft.org/v55/i08/}.
+}
 \seealso{
 \code{\link{texreg-package} \link{texreg} \link{extract}}
 }

@@ -1,18 +1,19 @@
-citHeader("To cite package texreg in publications use:")
+citHeader("To cite texreg in publications use:")
 
-if(!exists("meta") || is.null(meta)) meta <- packageDescription("texreg")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
-vers <- paste("R package version", meta$Version)
+citEntry(entry = "Article",
+  title        = "{texreg}: Conversion of Statistical Model Output in {R} to {\\LaTeX} and HTML Tables",
+  author       = personList(as.person("Philip Leifeld")),
+  journal      = "Journal of Statistical Software",
+  year         = "2013",
+  volume       = "55",
+  number       = "8",
+  pages        = "1--24",
+  url          = "http://www.jstatsoft.org/v55/i08/",
 
-citEntry(entry="Manual",
-  title = paste0("texreg: Conversion of Statistical Model Output in {R}\n", 
-    "     to {\\LaTeX} and {HTML} Tables"),
-  author = as.person("Philip Leifeld"),
-  year = year,
-  note = vers,
-  organization = paste("University of Konstanz"),
-  textVersion = paste0("Leifeld, Philip (", year, "). texreg: Conversion of ", 
-    "Statistical Model Output in R to LaTeX and HTML Tables. University ",
-    "of Konstanz, Germany. ", vers, "."),
-  url = "http://CRAN.R-project.org/package=texreg"
+  textVersion  =
+  paste("Philip Leifeld (2013).",
+        "texreg: Conversion of Statistical Model Output in R to LaTeX and HTML Tables.",
+        "Journal of Statistical Software, 55(8), 1-24.",
+        "URL http://www.jstatsoft.org/v55/i08/.")
 )
+

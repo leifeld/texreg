@@ -6,6 +6,7 @@
 \alias{extract.btergm}
 \alias{extract.clm}
 \alias{extract.clogit}
+\alias{extract.coeftest}
 \alias{extract.coxph}
 \alias{extract.coxph.penal}
 \alias{extract.dynlm}
@@ -79,6 +80,8 @@ extract.clm(model, include.thresholds = TRUE, include.aic = TRUE,
 extract.clogit(model, include.aic = TRUE, include.rsquared = TRUE, 
     include.maxrs = TRUE, include.events = TRUE, 
     include.nobs = TRUE, include.missings = TRUE, ...)
+
+extract.coeftest(model, ...)
 
 extract.coxph(model, include.aic = TRUE, include.rsquared = TRUE, 
     include.maxrs=TRUE, include.events = TRUE, 
@@ -305,6 +308,11 @@ to convert them into texreg objects.
 \item{nsim}{ In linear mixed effects models: the MCMC sample size from which confidence intervals are derived (for old versions of the \pkg{lme4} package), or the number of simulations on which bootstrapped confidence intervals should be based (for newer versions of the \pkg{lme4} package; only if the argument \code{method = "boot"} is provided, otherwise CIs are based on profile likelihood). Note: high values may take considerable computing time. }
 \item{robust}{ If available: report robust instead of native standard errors. }
 \item{...}{ Custom parameters. }
+}
+\references{
+Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 
+LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
+\url{http://www.jstatsoft.org/v55/i08/}.
 }
 \seealso{
 \code{\link{texreg-package} \link{texreg} \link{extract-methods}}
