@@ -926,6 +926,160 @@ setMethod("extract", signature = className("nlme", "nlme"),
     definition = extract.nlme)
 
 
+# extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
+extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95, 
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...) {
+  
+  if (packageVersion("lme4") < 1.0) {
+    message("Please update to a newer 'lme4' version for full compatibility.")
+  }
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- dim(model.frame(model))[1]
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.groups == TRUE) {
+    grps <- sapply(model@flist, function(x) length(levels(x)))
+    grp.names <- names(grps)
+    grp.names <- paste("Num.\ groups:", grp.names)
+    gof <- c(gof, grps)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
+  }
+  if (include.variance == TRUE) {
+    vc <- lme4::VarCorr(model)
+    varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
+        attr(vc, "sc")^2)                     # residual variance
+    varnames <- names(varcomps)
+    varnames[length(varnames)] <- "Residual"
+    varnames <- paste("Variance:", varnames)
+    if (is.na(attr(vc, "sc"))) {
+      varnames <- varnames[-length(varnames)]
+      varcomps <- varcomps[-length(varcomps)]
+    }
+    gof <- c(gof, varcomps)
+    gof.names <- c(gof.names, varnames)
+    gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
+  }
+  
+  betas <- lme4::fixef(model, ...)
+  if ("confint.merMod" %in% methods("confint") && naive == FALSE) {
+    ci <- tryCatch({
+        ci <- confint(model, level = conf.level, nsim = nsim, ...)
+      },
+      error = function(err) {
+        naive <- TRUE
+        message(paste("Confidence intervals not available for", 
+            "this model. Using naive p values instead."))
+      }
+    )
+    if (is.null(ci)) {
+      naive <- TRUE
+    } else {
+      message(paste0("Computing confidence intervals at a confidence ",
+          "level of ", conf.level, ". Use ", 
+          "argument \"method = 'boot'\" for bootstrapped CIs."))
+      last <- nrow(ci)
+      number <- length(betas)
+      first <- last - number + 1
+      ci <- ci[first:last, ]
+      if (class(ci) == "matrix") {
+        ci.l <- ci[, 1]
+        ci.u <- ci[, 2]
+      } else {
+        ci.l <- ci[1]
+        ci.u <- ci[2]
+      }
+      naive <- FALSE
+    }
+  } else {
+    naive <- TRUE
+    message(paste("confint.merMod method not found. Using naive p values",
+        "instead."))
+  }
+  
+  if (naive == TRUE) {
+    Vcov <- vcov(model, useScale = FALSE, ...)
+    Vcov <- as.matrix(Vcov)
+    se <- sqrt(diag(Vcov))
+    zval <- betas / se
+    pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+    
+    tr <- createTexreg(
+        coef.names = names(betas), 
+        coef = betas, 
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+  } else {
+    tr <- createTexreg(
+        coef.names = names(betas), 
+        coef = betas, 
+        ci.low = ci.l,
+        ci.up = ci.u,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+  }
+  
+  return(tr)
+}
+
+setMethod("extract", signature = className("lme4", "lme4"), 
+    definition = extract.lme4)
+
+extract.mer <- extract.lme4
+setMethod("extract", signature = className("mer", "lme4"), 
+    definition = extract.mer)
+
+extract.lmerMod <- extract.lme4
+setMethod("extract", signature = className("lmerMod", "lme4"), 
+    definition = extract.lmerMod)
+
+extract.glmerMod <- extract.lme4
+setMethod("extract", signature = className("glmerMod", "lme4"), 
+    definition = extract.glmerMod)
+
+extract.nlmerMod <- extract.lme4
+setMethod("extract", signature = className("nlmerMod", "lme4"), 
+    definition = extract.nlmerMod)
+
+
 # extension for lmrob objects (robustbase package)
 extract.lmrob <- function(model, include.nobs = TRUE, ...) {
   s <- summary(model, ...)
@@ -1103,160 +1257,6 @@ extract.maBina <- function(model, ...) {
 
 setMethod("extract", signature = className("maBina", "erer"), 
     definition = extract.maBina)
-
-
-# extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
-extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, include.groups = TRUE, 
-    include.variance = TRUE, ...) {
-  
-  if (packageVersion("lme4") < 1.0) {
-    message("Please update to a newer 'lme4' version for full compatibility.")
-  }
-  
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    aic <- AIC(model)
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    bic <- BIC(model)
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    lik <- logLik(model)[1]
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance == TRUE) {
-    dev <- deviance(model)
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    n <- dim(model.frame(model))[1]
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  if (include.groups == TRUE) {
-    grps <- sapply(model@flist, function(x) length(levels(x)))
-    grp.names <- names(grps)
-    grp.names <- paste("Num.\ groups:", grp.names)
-    gof <- c(gof, grps)
-    gof.names <- c(gof.names, grp.names)
-    gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
-  }
-  if (include.variance == TRUE) {
-    vc <- lme4::VarCorr(model)
-    varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
-        attr(vc, "sc")^2)                     # residual variance
-    varnames <- names(varcomps)
-    varnames[length(varnames)] <- "Residual"
-    varnames <- paste("Variance:", varnames)
-    if (is.na(attr(vc, "sc"))) {
-      varnames <- varnames[-length(varnames)]
-      varcomps <- varcomps[-length(varcomps)]
-    }
-    gof <- c(gof, varcomps)
-    gof.names <- c(gof.names, varnames)
-    gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
-  }
-  
-  betas <- lme4::fixef(model, ...)
-  if ("confint.merMod" %in% methods("confint")) {
-    ci <- tryCatch({
-        ci <- confint(model, level = conf.level, nsim = nsim, ...)
-      },
-      error = function(err) {
-        naive <- TRUE
-        message(paste("Confidence intervals not available for", 
-            "this model. Using naive p values instead."))
-      }
-    )
-    if (is.null(ci)) {
-      naive <- TRUE
-    } else {
-      message(paste0("Computing confidence intervals at a confidence ",
-          "level of ", conf.level, ". Use ", 
-          "argument \"method = 'boot'\" for bootstrapped CIs."))
-      last <- nrow(ci)
-      number <- length(betas)
-      first <- last - number + 1
-      ci <- ci[first:last, ]
-      if (class(ci) == "matrix") {
-        ci.l <- ci[, 1]
-        ci.u <- ci[, 2]
-      } else {
-        ci.l <- ci[1]
-        ci.u <- ci[2]
-      }
-      naive <- FALSE
-    }
-  } else {
-    naive <- TRUE
-    message(paste("confint.merMod method not found. Using naive p values",
-        "instead."))
-  }
-  
-  if (naive == TRUE) {
-    Vcov <- vcov(model, useScale = FALSE, ...)
-    Vcov <- as.matrix(Vcov)
-    se <- sqrt(diag(Vcov))
-    zval <- betas / se
-    pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
-    
-    tr <- createTexreg(
-        coef.names = names(betas), 
-        coef = betas, 
-        se = se,
-        pvalues = pval,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-  } else {
-    tr <- createTexreg(
-        coef.names = names(betas), 
-        coef = betas, 
-        ci.low = ci.l,
-        ci.up = ci.u,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-  }
-  
-  return(tr)
-}
-
-setMethod("extract", signature = className("lme4", "lme4"), 
-    definition = extract.lme4)
-
-extract.mer <- extract.lme4
-setMethod("extract", signature = className("mer", "lme4"), 
-    definition = extract.mer)
-
-extract.lmerMod <- extract.lme4
-setMethod("extract", signature = className("lmerMod", "lme4"), 
-    definition = extract.lmerMod)
-
-extract.glmerMod <- extract.lme4
-setMethod("extract", signature = className("glmerMod", "lme4"), 
-    definition = extract.glmerMod)
-
-extract.nlmerMod <- extract.lme4
-setMethod("extract", signature = className("nlmerMod", "lme4"), 
-    definition = extract.nlmerMod)
 
 
 # extension for multinom objects (nnet package)
