@@ -434,7 +434,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 52 supported model types (version 1.30).]{\label{tab:types} List of 52 supported model types (version 1.30).} \\
+\caption[List of 54 supported model types (version 1.31).]{\label{tab:types} List of 54 supported model types (version 1.31).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
@@ -448,7 +448,9 @@ Class			& Package			& Description \\
 `\code{coxph.penal}'	& \pkg{survival}		& Cox proportional hazard with penalty splines \\
 `\code{dynlm}'		& \pkg{dynlm}			& Time series regression \\
 `\code{ergm}'		& \pkg{ergm}			& Exponential random graph models \\
+`\code{fGARCH}'		& \pkg{fGarch}			& GARCH time series models \\
 `\code{gam}'		& \pkg{mgcv}			& Generalized additive models \\
+`\code{gamlss}'		& \pkg{gamlss}			& GAM for location scale and shape \\
 `\code{gee}'		& \pkg{gee}			& Generalized estimation equation \\
 `\code{glm}'		& \pkg{stats}			& Generalized linear models \\
 `\code{[gl|l|nl]merMod}'& \pkg{lme4} ($<$ 1.0) 		& Generalized linear mixed models \\
@@ -515,16 +517,16 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 `\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
-\pkg{texreg} (version 1.30), in contrast, can deal with all of the
+\pkg{texreg} (version 1.31), in contrast, can deal with all of the
 above model types (that is, the union of all three packages, except
 for some \pkg{Zelig} models), is extensible, and offers additional
 built-in functions for the following model classes: `\code{brglm}',
-`\code{btergm}',`\code{coxph.penal}', `\code{gmm}', `\code{lme}', 
-`\code{lme4}', `\code{lnam}', `\code{maBina}', `\code{nlme}',
-`\code{rem.dyad}', `\code{rq}', `\code{sclm}', `\code{stergm}',
-`\code{systemfit}', `\code{texreg}' and `\code{zelig}' (`\code{logit}'
-and `\code{relogit}') objects.  Table~\ref{tab:types} gives an
-overview of currently implemented model types.
+`\code{btergm}',`\code{coxph.penal}', `\code{fGARCH}', `\code{gamlss}', 
+`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{maBina}', 
+`\code{nlme}', `\code{rem.dyad}', `\code{rq}', `\code{sclm}', 
+`\code{stergm}', `\code{systemfit}', `\code{texreg}' and `\code{zelig}' 
+(`\code{logit}' and `\code{relogit}') objects.  Table~\ref{tab:types}
+gives an overview of currently implemented model types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
 Markdown, and \pkg{knitr} whereas the other packages
@@ -549,8 +551,6 @@ requirements (Section~\ref{specific}), and customizability
 \section[Under the hood: How texreg works]{Under the hood: How
   \pkg{texreg} works} \label{description} The \pkg{texreg} package
 consists of three main functions:
-
-\pagebreak
 
 \begin{enumerate}
 \item \code{texreg()} for {\LaTeX} output;
@@ -1282,9 +1282,9 @@ Questions can be posted to a public forum at \url{http://r-forge.r-project.org/p
 The author would like to thank Oleg Badunenko, Tom Carsey, S.\,Q. Chang,
 Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber,
 Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Markus Riester,
-Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor
-Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie for their valuable
-input and ideas.
+Francesco Sarracino, Giorgio Spedicato, Matthieu Stigler, Sebastian Ugbaje, 
+G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie for their
+valuable input and ideas.
 
 \bibliography{v55i08}
 
