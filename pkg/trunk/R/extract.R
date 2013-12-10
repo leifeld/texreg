@@ -64,39 +64,15 @@ setMethod("extract", signature = className("betareg", "betareg"),
 
 
 # extension for btergm objects
-extract.btergm <- function(model, conf.level = 0.95, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, ...) {
-  #tab <- btergm.ci(model, conf.level = conf.level, print = FALSE)
-  tab <- t(apply(model@bootsamp, 2, function(model) quantile(model, 
-      c(((1 - conf.level) / 2), 1 - ((1 - conf.level) / 2)))))
+extract.btergm <- function(model, conf.level = 0.95, ...) {
+  
+  tab <- btergm::btergm.ci(model, conf.level = conf.level, print = FALSE, ...)
+  #tab <- t(apply(model@bootsamp, 2, function(model) quantile(model, 
+  #    c(((1 - conf.level) / 2), 1 - ((1 - conf.level) / 2)))))
   
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    aic <- AIC(model)
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    bic <- BIC(model)
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    lik <- logLik(model)
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance == TRUE) {
-    dev <- deviance(model)
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
   
   tr <- createTexreg(
       coef.names = rownames(tab), 
@@ -488,6 +464,52 @@ setMethod("extract", signature = className("ergm", "ergm"),
     definition = extract.ergm)
 
 
+# extension for fGARCH objects (fGarch package)
+extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, ...) {
+  namesOfPars <- rownames(model@fit$matcoef)
+  co <- model@fit$matcoef[, 1]
+  se <- model@fit$matcoef[, 2]
+  pval <- model@fit$matcoef[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- length(model@data)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.aic == TRUE) {
+    aic <- model@fit$ics[1]
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- model@fit$value
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = namesOfPars,
+      coef = co,
+      se = se,
+      pvalues = pval,
+      gof.names = gof.names,
+      gof.decimal = gof.decimal,
+      gof = gof
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("fGARCH", "fGarch"), 
+    definition = extract.fGARCH)
+
+
 # extension for gam objects (mgcv package)
 extract.gam <- function(model, include.smooth = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, 
@@ -585,6 +607,72 @@ extract.gam <- function(model, include.smooth = TRUE, include.aic = TRUE,
 
 setMethod("extract", signature = className("gam", "mgcv"), 
     definition = extract.gam)
+
+
+# extension for gamlss objects (gamlss package)
+extract.gamlss <- function(model, robust = FALSE, include.nobs = TRUE, 
+    include.nagelkerke = TRUE, include.gaic = TRUE, ...) {
+  
+  # VCOV extraction; create coefficient block
+  covmat <- suppressWarnings(stats::vcov(model, type = "all", robust = robust, 
+      ...))
+  cf <- covmat$coef  # coefficients
+  namesOfPars <- names(cf)  # names of coefficients
+  se <- covmat$se  # standard errors
+  tvalue <- cf / se
+  pvalue <-  2 * pt(-abs(tvalue), model$df.res)  # p values
+  
+  #add the parameter names to coefficients
+  possiblePars <- c("mu", "sigma", "nu", "tau")
+  parIndex <- 0
+  parVector <- character()
+  for (i in 1:length(namesOfPars)) {
+    if (namesOfPars[i] == "(Intercept)") {
+      parIndex <- parIndex + 1
+    }
+    parName <- possiblePars[parIndex]
+    parVector <- c(parVector, parName)
+  }
+  namesOfPars <- paste(parVector, namesOfPars)
+  
+  # GOF block
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.nagelkerke == TRUE) {
+    nk <- gamlss::Rsq(model)
+    gof <- c(gof, nk)
+    gof.names <- c(gof.names, "Nagelkerke R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.gaic == TRUE) {
+    gaic <- gamlss::GAIC(model)
+    gof <- c(gof, gaic)
+    gof.names <- c(gof.names, "Generalized AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  # create and return texreg object
+  tr <- createTexreg(
+      coef.names = namesOfPars,
+      coef = cf,
+      se = se,
+      pvalues = pvalue,
+      gof.names = gof.names,
+      gof.decimal = gof.decimal,
+      gof = gof
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("gamlss", "gamlss"), 
+    definition = extract.gamlss)
 
 
 # extension for gee objects (gee package)

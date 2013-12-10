@@ -11,7 +11,9 @@
 \alias{extract.coxph.penal}
 \alias{extract.dynlm}
 \alias{extract.ergm}
+\alias{extract.fGARCH}
 \alias{extract.gam}
+\alias{extract.gamlss}
 \alias{extract.gee}
 \alias{extract.glm}
 \alias{extract.glmerMod}
@@ -69,9 +71,7 @@ extract.brglm(model, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
 
-extract.btergm(model, conf.level = 0.95, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, ...)
+extract.btergm(model, conf.level = 0.95, ...)
 
 extract.clm(model, include.thresholds = TRUE, include.aic = TRUE, 
     include.bic=TRUE, include.loglik = TRUE, include.nobs = TRUE, 
@@ -97,7 +97,10 @@ extract.dynlm(model, include.rsquared = TRUE, include.adjrs = TRUE,
     include.nobs = TRUE, ...)
 
 extract.ergm(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik=TRUE, ...)
+    include.loglik = TRUE, ...)
+
+extract.fGARCH(model, include.nobs = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, ...)
 
 extract.gam(model, include.smooth = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -105,6 +108,9 @@ extract.gam(model, include.smooth = TRUE, include.aic = TRUE,
     include.dispersion = TRUE, include.rsquared = TRUE, 
     include.gcv = TRUE, include.nobs = TRUE, 
     include.nsmooth = TRUE, ...)
+
+extract.gamlss(model, robust = FALSE, include.nobs = TRUE, 
+    include.nagelkerke = TRUE, include.gaic = TRUE, ...)
 
 extract.gee(model, robust = TRUE, include.dispersion = TRUE, 
     include.nobs = TRUE, ...)
@@ -279,6 +285,7 @@ to convert them into texreg objects.
 \item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }
 \item{include.formation}{ If available: should the coefficients for the formation phase in a STERGM be reported? }
+\item{include.gaic}{ If available: should the Generalized Akaike's information criterion (GAIC) be reported? }
 \item{include.gcv}{ If available: should the GCV score be reported (in GAMs)? }
 \item{include.groups}{ If available: should the number of groups be reported? }
 \item{include.iterations}{ If available: should the number of iterations be included? }
@@ -286,6 +293,7 @@ to convert them into texreg objects.
 \item{include.lr}{ If available: should the likelihood ratio test be reported? }
 \item{include.maxrs}{If available: should the maximum possible R-squared be reported? }
 \item{include.missings}{ If available: should the number of missing observations be reported (in survival models)? }
+\item{include.nagelkerke}{ If available: should Nagelkerke's R-squared be reported? }
 \item{include.nobs}{ If available: should the number of observations be reported? }
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
@@ -306,7 +314,7 @@ to convert them into texreg objects.
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
 \item{naive}{ If available: use naive p values and standard errors. }
 \item{nsim}{ In linear mixed effects models: the MCMC sample size from which confidence intervals are derived (for old versions of the \pkg{lme4} package), or the number of simulations on which bootstrapped confidence intervals should be based (for newer versions of the \pkg{lme4} package; only if the argument \code{method = "boot"} is provided, otherwise CIs are based on profile likelihood). Note: high values may take considerable computing time. }
-\item{robust}{ If available: report robust instead of native standard errors. }
+\item{robust}{ If available: report robust instead of naive standard errors. }
 \item{...}{ Custom parameters. }
 }
 \references{

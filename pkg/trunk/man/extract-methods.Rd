@@ -12,7 +12,9 @@
 \alias{extract,coxph.penal-method}
 \alias{extract,dynlm-method}
 \alias{extract,ergm-method}
+\alias{extract,fGARCH-method}
 \alias{extract,gam-method}
+\alias{extract,gamlss-method}
 \alias{extract,gee-method}
 \alias{extract,glm-method}
 \alias{extract,glmerMod-method}
@@ -104,8 +106,16 @@ An extract function for dynlm objects from the \pkg{dynlm} package.
 An extract function for ergm objects from the \pkg{ergm} package.
 }
 
+\item{\code{extract.fGARCH}}{
+An extract function for fGARCH objects from the \pkg{fGarch} package.
+}
+
 \item{\code{extract.gam}}{
 An extract function for gam objects from the \pkg{mgcv} package.
+}
+
+\item{\code{extract.gamlss}}{
+An extract function for gamlss objects from the \pkg{gamlss} package.
 }
 
 \item{\code{extract.gee}}{
