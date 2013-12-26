@@ -623,7 +623,7 @@ extract.gamlss <- function(model, robust = FALSE, include.nobs = TRUE,
   pvalue <-  2 * pt(-abs(tvalue), model$df.res)  # p values
   
   #add the parameter names to coefficients
-  possiblePars <- c("mu", "sigma", "nu", "tau")
+  possiblePars <- c("$\\mu$", "$\\sigma$", "$\\nu$", "$\\tau$")
   parIndex <- 0
   parVector <- character()
   for (i in 1:length(namesOfPars)) {
@@ -900,7 +900,7 @@ setMethod("extract", signature = className("gmm", "gmm"),
 
 # extension for lm objects
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, ...) {
+    include.nobs = TRUE, include.fstatistic = FALSE, ...) {
   s <- summary(model, ...)
   
   names <- rownames(s$coef)
@@ -929,6 +929,12 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.fstatistic == TRUE) {
+    fstat <- s$fstatistic[[1]]
+    gof <- c(gof, fstat)
+    gof.names <- c(gof.names, "F statistic")
+    gof.decimal <- c(gof.decimal, TRUE)
   }
   
   tr <- createTexreg(

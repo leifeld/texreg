@@ -94,7 +94,7 @@ extract.coxph.penal(model, include.aic = TRUE,
     include.missings = TRUE, include.zph = TRUE, ...)
 
 extract.dynlm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, ...)
+    include.nobs = TRUE, include.fstatistic = FALSE, ...)
 
 extract.ergm(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, ...)
@@ -136,10 +136,10 @@ extract.hurdle(model, beside = FALSE, include.count = TRUE,
     include.nobs = TRUE, ...)
 
 extract.ivreg(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, ...)
+    include.nobs = TRUE, include.fstatistic = FALSE, ...)
 
 extract.lm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, ...)
+    include.nobs = TRUE, include.fstatistic = FALSE, ...)
 
 extract.lme(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
@@ -285,6 +285,7 @@ to convert them into texreg objects.
 \item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }
 \item{include.formation}{ If available: should the coefficients for the formation phase in a STERGM be reported? }
+\item{include.fstatistic}{ If available: should the F statistic be reported? }
 \item{include.gaic}{ If available: should the Generalized Akaike's information criterion (GAIC) be reported? }
 \item{include.gcv}{ If available: should the GCV score be reported (in GAMs)? }
 \item{include.groups}{ If available: should the number of groups be reported? }

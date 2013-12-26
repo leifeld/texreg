@@ -1,6 +1,6 @@
 Package: texreg
-Version: 1.30.2
-Date: 2013-12-10
+Version: 1.30.3
+Date: 2013-12-26
 Title: Conversion of R regression output to LaTeX or HTML tables.
 Author: Philip Leifeld
 Maintainer: Philip Leifeld <philip.leifeld@uni-konstanz.de>
