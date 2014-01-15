@@ -20,6 +20,7 @@ screenreg <- function(l, file = NA, single.row = FALSE,
   models <- tex.replace(models, type = "screen")  #convert TeX code to text code
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  #extract names of GOFs
+  models <- correctDuplicateCoefNames(models)
   
   # arrange coefficients and GOFs nicely in a matrix
   gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
@@ -240,6 +241,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
   gof.names <- get.gof(models)  #extract names of GOFs
   models <- override(models, override.coef, override.se, override.pval)
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
+  models <- correctDuplicateCoefNames(models)
   
   # arrange coefficients and GOFs nicely in a matrix
   gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
@@ -586,6 +588,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   models <- tex.replace(models, type = "html", style = css.sup)  # TeX --> HTML
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  # extract names of GOFs
+  models <- correctDuplicateCoefNames(models)
   
   # arrange coefficients and GOFs nicely in a matrix
   gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
