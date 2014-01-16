@@ -271,7 +271,7 @@ An extract function for weibreg objects from the \pkg{eha} package.
 }
 
 \item{\code{extract.zelig}}{
-An extract function for zelig objects from the \pkg{Zelig} package. Has been tested with logit and relogit models as implemented in the \pkg{Zelig} package.
+An extract function for zelig objects from the \pkg{Zelig} package. Has been tested with ls, logit and relogit models as implemented in the \pkg{Zelig} package.
 }
 
 \item{\code{extract.zeroinfl}}{

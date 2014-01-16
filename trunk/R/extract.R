@@ -2342,49 +2342,77 @@ setMethod("extract", signature = className("aftreg", "eha"),
 
 # extension for zelig objects (Zelig package; tested with relogit and logit)
 extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, ...) {
+    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
+    include.rsquared = TRUE, include.adjrs = TRUE, include.fstatistic = TRUE, 
+    ...) {
   
   s <- summary(model, ...)
   
-  if ("relogit" %in% class(model) || "logit" %in% class(model)) {
+  if ("relogit" %in% class(model) || "logit" %in% class(model) || 
+      "ls" %in% class(model)) {
     coefficient.names <- rownames(s$coef)
     coefficients <- s$coef[, 1]
     standard.errors <- s$coef[, 2]
     significance <- s$coef[, 4]
     
-    aic <- AIC(model)
-    bic <- BIC(model)
-    lik <- logLik(model)[1]
-    dev <- s$deviance
-    n <- nrow(model$data)
-    
     gof <- numeric()
     gof.names <- character()
     gof.decimal <- logical()
     if (include.aic == TRUE) {
+      aic <- AIC(model)
       gof <- c(gof, aic)
       gof.names <- c(gof.names, "AIC")
       gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.bic == TRUE) {
+      bic <- BIC(model)
       gof <- c(gof, bic)
       gof.names <- c(gof.names, "BIC")
       gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.loglik == TRUE) {
+      lik <- logLik(model)[1]
       gof <- c(gof, lik)
       gof.names <- c(gof.names, "Log Likelihood")
       gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.deviance == TRUE) {
-      gof <- c(gof, dev)
-      gof.names <- c(gof.names, "Deviance")
-      gof.decimal <- c(gof.decimal, TRUE)
+      dev <- s$deviance
+      if (!is.null(dev)) {
+        gof <- c(gof, dev)
+        gof.names <- c(gof.names, "Deviance")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
     }
     if (include.nobs == TRUE) {
+      n <- nrow(model$data)
       gof <- c(gof, n)
       gof.names <- c(gof.names, "Num.\ obs.")
       gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.rsquared == TRUE) {
+      rs <- s$r.squared  #extract R-squared
+      if (!is.null(rs)) {
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+    }
+    if (include.adjrs == TRUE) {
+      adj <- s$adj.r.squared  #extract adjusted R-squared
+      if (!is.null(adj)) {
+        gof <- c(gof, adj)
+        gof.names <- c(gof.names, "Adj.\ R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+    }
+    if (include.fstatistic == TRUE) {
+      fstat <- s$fstatistic[[1]]
+      if (!is.null(fstat)) {
+        gof <- c(gof, fstat)
+        gof.names <- c(gof.names, "F statistic")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
     }
     
     tr <- createTexreg(
@@ -2398,7 +2426,7 @@ extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE,
     )
     return(tr)
   } else {
-    stop("Only 'relogit'- and 'logit'-type Zelig models are supported.")
+    stop("Only 'relogit'-, 'ls'-, and 'logit'-type Zelig models are supported.")
   }
 }
 
