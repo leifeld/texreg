@@ -252,8 +252,9 @@ extract.weibreg(model, include.loglik = TRUE, include.lr = TRUE,
     ...)
 
 extract.zelig(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, ...)
+    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
+    include.rsquared = TRUE, include.adjrs = TRUE, include.fstatistic = TRUE, 
+    ...)
 
 extract.zeroinfl(model, beside = FALSE, include.count = TRUE, 
     include.zero = TRUE, include.aic = TRUE, include.loglik = TRUE, 
