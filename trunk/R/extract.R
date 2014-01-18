@@ -66,7 +66,7 @@ setMethod("extract", signature = className("betareg", "betareg"),
 # extension for btergm objects
 extract.btergm <- function(model, conf.level = 0.95, ...) {
   
-  tab <- btergm::btergm.ci(model, conf.level = conf.level, print = FALSE, ...)
+  tab <- btergm::btergm.ci(model, conf.level = conf.level, print = FALSE)
   #tab <- t(apply(model@bootsamp, 2, function(model) quantile(model, 
   #    c(((1 - conf.level) / 2), 1 - ((1 - conf.level) / 2)))))
   
