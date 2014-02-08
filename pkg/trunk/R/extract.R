@@ -66,9 +66,7 @@ setMethod("extract", signature = className("betareg", "betareg"),
 # extension for btergm objects
 extract.btergm <- function(model, conf.level = 0.95, ...) {
   
-  tab <- btergm::btergm.ci(model, conf.level = conf.level, print = FALSE)
-  #tab <- t(apply(model@bootsamp, 2, function(model) quantile(model, 
-  #    c(((1 - conf.level) / 2), 1 - ((1 - conf.level) / 2)))))
+  tab <- confint(model, level = conf.level)
   
   gof <- numeric()
   gof.names <- character()
@@ -76,9 +74,9 @@ extract.btergm <- function(model, conf.level = 0.95, ...) {
   
   tr <- createTexreg(
       coef.names = rownames(tab), 
-      coef = coef(model), 
-      ci.low = tab[, 1], 
-      ci.up = tab[, 2], 
+      coef = tab[, 1], 
+      ci.low = tab[, 2], 
+      ci.up = tab[, 3], 
       gof.names = gof.names, 
       gof = gof, 
       gof.decimal = gof.decimal
@@ -1744,12 +1742,20 @@ extract.sienaFit <- function(model, include.iterations = TRUE, ...) {
   
   s <- summary(model, ...)
   
-  #rate.names <- attributes(summary(model)$f)$condEffects[, 1]
-  rate.names <- paste("Rate parameter period", 1:length(model$rate))
-  theta.names <- s$effects$effectName
-  coef.names <- c(rate.names, theta.names)
-  
   coefs <- c(model$rate, model$theta)
+  
+  theta.names <- s$effects$effectName
+  if (length(theta.names) == length(coefs)) {
+    coef.names <- theta.names
+  } else {
+    if (!is.null(model$rate)) {
+      rate <- model$rate
+    } else {
+      rate <- which(model$effects$type == "rate")
+    }
+    rate.names <- paste("Rate parameter period", 1:length(rate))
+    coef.names <- c(rate.names, theta.names)
+  }  
   
   se <- c(model$vrate, sqrt(diag(model$covtheta)))
   
