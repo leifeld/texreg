@@ -336,7 +336,7 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{label}			& $\bullet$	& $\circ$	& $\circ$	& Set the label of the table \\
 \code{booktabs}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{booktabs} package \citep{fear2005booktabs}? \\
 \code{dcolumn}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{dcolumn} package \citep{carlisle2001dcolumn}? \\
-\code{sideways}			& $\bullet$	& $\circ$	& $\circ$	& Use \code{sidewaystable} \citep{rahtz2008rotating}? \\
+\code{sideways}			& $\bullet$	& $\circ$	& $\circ$	& Use \code{sidewaystable} \citep{rahtz2008rotating} \\
 \code{use.packages}		& $\bullet$	& $\circ$	& $\circ$	& Print the \verb+\usepackage{}+ declarations? \\
 \code{table}			& $\bullet$	& $\circ$	& $\circ$	& Wrap \code{tabular} in a table environment? \\
 \code{no.margin}		& $\bullet$	& $\circ$	& $\circ$	& Remove margins between columns to save space \\
