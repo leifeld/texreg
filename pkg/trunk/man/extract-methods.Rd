@@ -35,6 +35,7 @@
 \alias{extract,negbin-method}
 \alias{extract,nlme-method}
 \alias{extract,nlmerMod-method}
+\alias{extract,pgmm-method}
 \alias{extract,phreg-method}
 \alias{extract,plm-method}
 \alias{extract,pmg-method}
@@ -196,6 +197,10 @@ An extract function for nlme objects from the \pkg{nlme} package.
 
 \item{\code{extract.nlmerMod}}{
 An extract function for nlmerMod objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{extract.pgmm}}{
+An extract function for pgmm objects from the \pkg{plm} package.
 }
 
 \item{\code{extract.phreg}}{

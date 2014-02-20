@@ -1418,6 +1418,72 @@ setMethod("extract", signature = className("multinom", "nnet"),
     definition = extract.multinom)
 
 
+# extension for pgmm objects (from the plm package)
+extract.pgmm <- function(model, include.nobs = TRUE, include.sargan = TRUE, 
+    include.wald = TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  coefficient.names <- rownames(s$coefficients)
+  coefficients <- s$coefficients[, 1]
+  standard.errors <- s$coefficients[, 2]
+  significance <- s$coefficients[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- attr(s, "pdim")$nT$n
+    T <- attr(s, "pdim")$nT$T
+    N <- attr(s, "pdim")$nT$N
+    ntot <- sum(unlist(s$residuals) != 0)
+    gof <- c(gof, n, T, N, ntot)
+    gof.names <- c(gof.names, "n", "T", "N", "Num.\ obs.\ used")
+    gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE, FALSE)
+  }
+  if (include.sargan == TRUE) {
+    sarg.stat <- s$sargan$statistic
+    sarg.par <- s$sargan$parameter
+    sarg.pval <- s$sargan$p.value
+    gof <- c(gof, sarg.stat, sarg.pval)
+    gof.names <- c(gof.names, paste0("Sargan Test: chisq(", sarg.par, ")"), 
+        "Sargan Test: p-value")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.wald == TRUE) {
+    wald.coef <- s$wald.coef$statistic[1]
+    wald.pval <- s$wald.coef$p.value[1]
+    wald.par <- s$wald.coef$parameter
+    td.coef <- s$wald.td$statistic[1]
+    td.pval <- s$wald.td$p.value[1]
+    td.par <- s$wald.td$parameter
+    gof <- c(gof, wald.coef, wald.pval, td.coef, td.pval)
+    gof.names <- c(
+        gof.names, 
+        paste0("Wald Test Coefficients: chisq(", wald.par, ")"), 
+        "Wald Test Coefficients: p-value", 
+        paste0("Wald Test Time Dummies: chisq(", td.par, ")"), 
+        "Wald Test Time Dummies: p-value"
+    )
+    gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = coefficient.names, 
+      coef = coefficients, 
+      se = standard.errors, 
+      pvalues = significance, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("pgmm", "plm"), 
+    definition = extract.pgmm)
+
+
 # extension for plm objects (from the plm package)
 extract.plm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE, 
     include.nobs = TRUE, ...) {
@@ -2219,48 +2285,52 @@ extract.tobit <- function(model, include.aic = TRUE, include.bic = TRUE,
   co <- s$coefficients[, 1]
   se <- s$coefficients[, 2]
   pval <- s$coefficients[, 4]
-
-  n <- nobs(model)
-  censnobs <- s$n
-  censnobs.names <- names(censnobs)
-  aic <- AIC(model)
-  bic <- BIC(model)
-  lik <- logLik(model)[1]
-  dev <- deviance(model)
-  wald <- s$wald
   
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
   if (include.aic == TRUE) {
+    aic <- AIC(model)
     gof <- c(gof, aic)
     gof.names <- c(gof.names, "AIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.bic == TRUE) {
+    bic <- BIC(model)
     gof <- c(gof, bic)
     gof.names <- c(gof.names, "BIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
     gof <- c(gof, lik)
     gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.deviance == TRUE) {
+    dev <- deviance(model)
     gof <- c(gof, dev)
     gof.names <- c(gof.names, "Deviance")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
+    n <- nobs(model)
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.censnobs == TRUE) {
+    censnobs <- s$n
+    censnobs.names <- names(censnobs)
     gof <- c(gof, censnobs)
     gof.names <- c(gof.names, censnobs.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(censnobs)))
+  }
+  if (include.wald == TRUE) {
+    wald <- s$wald
+    gof <- c(gof, wald)
+    gof.names <- c(gof.names, "Wald Test")
+    gof.decimal <- c(gof.decimal, TRUE)
   }
   
   tr <- createTexreg(
