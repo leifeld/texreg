@@ -34,6 +34,7 @@
 \alias{extract.negbin}
 \alias{extract.nlme}
 \alias{extract.nlmerMod}
+\alias{extract.pgmm}
 \alias{extract.phreg}
 \alias{extract.plm}
 \alias{extract.pmg}
@@ -190,6 +191,9 @@ extract.nlmerMod(model, naive = FALSE, nsim = 1000,
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
 
+extract.pgmm(model, include.nobs = TRUE, include.sargan = TRUE, 
+    include.wald = TRUE, ...)
+
 extract.phreg(model, include.loglik = TRUE, include.lr = TRUE, 
     include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
     ...)
@@ -306,6 +310,7 @@ to convert them into texreg objects.
 \item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
 \item{include.pvalues}{ If available: should the p values be reported (naive p values are not recommended for lme4 models, but see also the \code{mcmc.pvalues} argument)? }
 \item{include.rsquared}{ If available: should R-squared be reported? }
+\item{include.sargan}{ If available: should the Sargan test be reported? }
 \item{include.smooth}{ If available: should the smooth terms of a GAM be reported? If they are reported, the EDF value is reported as the coefficient, and DF is included in parentheses (not standard errors because a chi-square test is used for the smooth terms). }
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
 \item{include.trisk}{ If available: should the total time at risk be reported (in event-history models)? }
