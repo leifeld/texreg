@@ -10,7 +10,7 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     digits = 2, leading.zero = TRUE, symbol = ".", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, column.spacing = 2, outer.rule = "=", 
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, column.spacing = 2, outer.rule = "=", 
     inner.rule = "-", ...) {
   
   stars <- check.stars(stars)
@@ -56,6 +56,10 @@ screenreg <- function(l, file = NA, single.row = FALSE,
       star.prefix = " ", star.suffix = "", star.char = "*", stars, 
       dcolumn = TRUE, symbol = symbol, bold = 0, bold.prefix = "", 
       bold.suffix = "", ci = ci, ci.test = ci.test)
+  
+  # grouping
+  output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
+      single.row = single.row, prefix = "", suffix = "")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
@@ -217,8 +221,8 @@ texreg <- function(l, file = NA, single.row = FALSE,
     digits = 2, leading.zero = TRUE, symbol = "\\cdot", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, bold = 0.00, center = TRUE, 
-    caption = "Statistical models", caption.above = FALSE, 
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, bold = 0.00, 
+    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, 
     sideways = FALSE, use.packages = TRUE, table = TRUE, no.margin = TRUE, 
     scriptsize = FALSE, float.pos = "", ...) {
@@ -288,6 +292,10 @@ texreg <- function(l, file = NA, single.row = FALSE,
       star.suffix = "}", star.char = "*", stars, dcolumn = dcolumn, 
       symbol, bold, bold.prefix = "\\mathbf{", bold.suffix = "}", ci = ci, 
       semicolon = ";\\ ", ci.test = ci.test)
+  
+  # grouping
+  output.matrix <- grouping(output.matrix, groups, indentation = "\\quad ", 
+      single.row = single.row, prefix = "", suffix = "")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
@@ -553,10 +561,10 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     digits = 2, leading.zero = TRUE, symbol = "&middot;", override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, bold = 0.00, center = TRUE, 
-    caption = "Statistical models", caption.above = FALSE, star.symbol = "*", 
-    inline.css = TRUE, doctype = TRUE, html.tag = FALSE, head.tag = FALSE, 
-    body.tag = FALSE, ...) {
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, bold = 0.00, 
+    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
+    star.symbol = "*", inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
+    head.tag = FALSE, body.tag = FALSE, ...) {
   
   stars <- check.stars(stars)
   
@@ -624,6 +632,11 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
       star.char = star.symbol, star.prefix = paste0("<sup", css.sup, ">"), 
       star.suffix = "</sup>", stars, dcolumn = TRUE, symbol, bold = bold, 
       bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, ci.test = ci.test)
+  
+  # grouping
+  output.matrix <- grouping(output.matrix, groups, 
+      indentation = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", single.row = single.row, 
+      prefix = "", suffix = "")
   
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, leading.zero, 
