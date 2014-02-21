@@ -13,7 +13,7 @@ texreg(l, file = NA, single.row = FALSE, stars = c(0.001,
     override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, 
     ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    bold = 0.00, center = TRUE, 
+    groups = NULL, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, 
     dcolumn = FALSE, sideways = FALSE, use.packages = TRUE, 
@@ -28,7 +28,7 @@ htmlreg(l, file = NA, single.row = FALSE, stars = c(0.001,
     override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, 
     ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    bold = 0.00, center = TRUE, 
+    groups = NULL, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     star.symbol = "*", inline.css = TRUE, doctype = TRUE, 
     html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, 
@@ -42,8 +42,8 @@ screenreg(l, file = NA, single.row = FALSE, stars = c(0.001,
     override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, 
     ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    column.spacing = 2, outer.rule = "=", inner.rule = "-", 
-    ...)
+    groups = NULL, column.spacing = 2, outer.rule = "=", 
+    inner.rule = "-", ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -101,6 +101,7 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{ci.force}{Should confidence intervals be used instead of the default standard errors and p values? Most models implemented in the \pkg{texreg} package report standard errors and p values by default while few models report confidence intervals. However, the functions in the \pkg{texreg} package can convert standard errors and into confidence intervals if desired. To enforce confidence intervals instead of standard errors, the \code{ci.force} argument accepts either a logical value indicating whether all models or none of the models should be forced to report confidence intervals (\code{ci.force = TRUE} for all and \code{ci.force = FALSE} for none) or a vector of logical values indicating for each model separately whether the model should be forced to report confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}).}
 \item{ci.force.level}{If the \code{ci.force} argument is used to convert standard errors to confidence intervals, what confidence level should be used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 \item{ci.test}{If confidence intervals are reported, the \code{ci.test} argument specifies the reference value to establish whether a coefficient/CI is significant. The default value \code{ci.test = 0}, for example, will attach a significance star to coefficients if the confidence interval does not contain \code{0}. If no star should be printed at all, \code{ci.test = NULL} can be used. The \code{ci.test} argument works both for models with native support for confidence intervals and in cases where the \code{ci.force} argument is used.}
+\item{groups}{This argument can be used to group the rows of the table into blocks. For example, there could be one block for hypotheses and another block for control variables. Each group has a heading, and the row labels within a group are indented. The partitions must be handed over as a list of named numeric vectors, where each number is a row index and each name is the heading of the group. Example: \code{groups = list("first group" = 1:4, "second group" = 7:8)}.}
 
 \item{bold}{[only in the \code{texreg} and \code{htmlreg} functions] The p value threshold below which the coefficient shall be formatted in a bold font. For example, \code{bold = 0.05} will cause all coefficients which are significant at the 95\% level to be formatted in bold. Note that this is not compatible with the dcolumn argument in the \code{texreg} function. If both are \code{TRUE}, dcolumn is switched off and a warning message appears. Note also that it is advisable to use \code{stars = FALSE} together with the \code{bold} argument because having both bolded coefficients and significance stars usually does not make any sense.}
 \item{center}{[only in the \code{texreg} and \code{htmlreg} functions] Should the table be horizontally aligned at the center of the page?}

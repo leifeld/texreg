@@ -1438,17 +1438,17 @@ extract.pgmm <- function(model, include.nobs = TRUE, include.sargan = TRUE,
     N <- attr(s, "pdim")$nT$N
     ntot <- sum(unlist(s$residuals) != 0)
     gof <- c(gof, n, T, N, ntot)
-    gof.names <- c(gof.names, "n", "T", "N", "Num.\ obs.\ used")
+    gof.names <- c(gof.names, "n", "T", "Num.\ obs.", "Num.\ obs.\ used")
     gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE, FALSE)
   }
   if (include.sargan == TRUE) {
     sarg.stat <- s$sargan$statistic
     sarg.par <- s$sargan$parameter
     sarg.pval <- s$sargan$p.value
-    gof <- c(gof, sarg.stat, sarg.pval)
-    gof.names <- c(gof.names, paste0("Sargan Test: chisq(", sarg.par, ")"), 
+    gof <- c(gof, sarg.stat, sarg.par, sarg.pval)
+    gof.names <- c(gof.names, "Sargan Test: chisq", "Sargan Test: df", 
         "Sargan Test: p-value")
-    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+    gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE)
   }
   if (include.wald == TRUE) {
     wald.coef <- s$wald.coef$statistic[1]
@@ -1457,15 +1457,17 @@ extract.pgmm <- function(model, include.nobs = TRUE, include.sargan = TRUE,
     td.coef <- s$wald.td$statistic[1]
     td.pval <- s$wald.td$p.value[1]
     td.par <- s$wald.td$parameter
-    gof <- c(gof, wald.coef, wald.pval, td.coef, td.pval)
+    gof <- c(gof, wald.coef, wald.par, wald.pval, td.coef, td.par, td.pval)
     gof.names <- c(
         gof.names, 
-        paste0("Wald Test Coefficients: chisq(", wald.par, ")"), 
+        "Wald Test Coefficients: chisq", 
+        "Wald Test Coefficients: df", 
         "Wald Test Coefficients: p-value", 
-        paste0("Wald Test Time Dummies: chisq(", td.par, ")"), 
+        "Wald Test Time Dummies: chisq", 
+        "Wald Test Time Dummies: df", 
         "Wald Test Time Dummies: p-value"
     )
-    gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE, TRUE)
+    gof.decimal <- c(gof.decimal, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE)
   }
   
   tr <- createTexreg(

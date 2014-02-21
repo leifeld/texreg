@@ -137,7 +137,7 @@ function which would directly output {\LaTeX} or
 HTML tables and for which custom methods for any model type
 could be written as extensions.  While several attempts already exist
 (see Section~\ref{comparison}), all of them have limitations.  This
-article introduces the \pkg{texreg} package \citep{Leifeld:2013}, which
+article introduces the \pkg{texreg} package \citep{Leifeld:2014}, which
 closes this gap and provides a unified framework for typesetting
 {\LaTeX} and HTML tables for various statistical
 models in \proglang{R}. Package \pkg{texreg} is available from 
@@ -329,6 +329,7 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{ci.force}			& $\bullet$	& $\bullet$	& $\bullet$	& Convert standard errors to confidence intervals \\
 \code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
 \code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
+\code{groups}			& $\bullet$	& $\bullet$	& $\bullet$	& Partition rows of the table into groups with labels. \\
 \code{bold}			& $\bullet$	& $\bullet$	& $\circ$	& $p$~value below which coefficients are bolded \\
 \code{center}			& $\bullet$	& $\bullet$	& $\circ$	& Horizontal alignment on the page \\
 \code{caption}			& $\bullet$	& $\bullet$	& $\circ$	& Set the caption of the table \\
@@ -412,8 +413,6 @@ regard, both packages are somewhat similar to the \pkg{texreg}
 package.  \pkg{texreg}, however, offers more straightforward ways of
 custom model implementation.  This important feature is notably absent
 from \pkg{stargazer}.
-
-\pagebreak
 
 \begin{center}
 \begin{longtable}{l l l}
@@ -1016,7 +1015,7 @@ page.
 \subsection{Confidence intervals instead of standard errors}
 Most model types implemented in \pkg{texreg} report standard errors
 and $p$~values.  However, some model types report confidence intervals
-by default.  The \pkg{btergm} package \citep{leifeld2013btergm:} and
+by default.  The \pkg{btergm} package \citep{leifeld2014btergm:} and
 the \pkg{lme4} package \citep{bates2013lme4:} are two examples.  If
 confidence intervals are preferred to standard errors but they are not
 available by default, the \code{ci.force} argument allows conversion
