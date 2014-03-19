@@ -433,7 +433,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 55 supported model types (version 1.32).]{\label{tab:types} List of 55 supported model types (version 1.32).} \\
+\caption[List of 56 supported model types (version 1.32).]{\label{tab:types} List of 56 supported model types (version 1.32).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
@@ -464,6 +464,7 @@ Class			& Package			& Description \\
 `\code{lnam}'		& \pkg{sna}			& Linear network autocorrelation models \\
 `\code{lrm}'		& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
 `\code{maBina}'		& \pkg{erer}			& Marginal effects for binary response models \\
+`\code{mnlogit}' 	& \pkg{mnlogit}			& Multinomial choice models \\
 `\code{multinom}'	& \pkg{nnet}			& Multinomial log-linear models \\
 `\code{negbin}'		& \pkg{MASS}			& Negative binomial generalized linear models \\
 `\code{nlme}'		& \pkg{nlme}			& Nonlinear mixed-effects models \\

@@ -30,6 +30,7 @@
 \alias{extract.lrm}
 \alias{extract.maBina}
 \alias{extract.mer}
+\alias{extract.mnlogit}
 \alias{extract.multinom}
 \alias{extract.negbin}
 \alias{extract.nlme}
@@ -143,7 +144,8 @@ extract.lm(model, include.rsquared = TRUE, include.adjrs = TRUE,
     include.nobs = TRUE, include.fstatistic = FALSE, ...)
 
 extract.lme(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, ...)
+    include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = FALSE, ...)
 
 extract.lme4(model, naive = FALSE, nsim = 1000, 
     conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
@@ -174,6 +176,10 @@ extract.mer(model, naive = FALSE, nsim = 1000,
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
 
+extract.mnlogit(model, include.aic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.intercept = TRUE, include.iterations = FALSE, ...)
+
 extract.multinom(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
@@ -183,7 +189,8 @@ extract.negbin(model, include.aic = TRUE, include.bic = TRUE,
     include.nobs = TRUE, ...)
 
 extract.nlme(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, ...)
+    include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = FALSE, ...)
 
 extract.nlmerMod(model, naive = FALSE, nsim = 1000, 
     conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
@@ -293,7 +300,8 @@ to convert them into texreg objects.
 \item{include.fstatistic}{ If available: should the F statistic be reported? }
 \item{include.gaic}{ If available: should the Generalized Akaike's information criterion (GAIC) be reported? }
 \item{include.gcv}{ If available: should the GCV score be reported (in GAMs)? }
-\item{include.groups}{ If available: should the number of groups be reported? }
+\item{include.groups}{ If available: should the number of groups in a mixed-effects model (or \code{k} alternatives in a multinomial choice model) be reported? }
+\item{include.intercept}{ If available: should the intercept be included in the GOF block? }
 \item{include.iterations}{ If available: should the number of iterations be included? }
 \item{include.loglik}{ If available: should the log-likelihood be reported? }
 \item{include.lr}{ If available: should the likelihood ratio test be reported? }
