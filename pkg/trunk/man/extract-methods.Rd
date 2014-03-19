@@ -31,6 +31,7 @@
 \alias{extract,lrm-method}
 \alias{extract,maBina-method}
 \alias{extract,mer-method}
+\alias{extract,mnlogit-method}
 \alias{extract,multinom-method}
 \alias{extract,negbin-method}
 \alias{extract,nlme-method}
@@ -181,6 +182,10 @@ An extract function for maBina objects from the \pkg{erer} package.
 
 \item{\code{extract.mer}}{
 An extract function for mer objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{extract.mnlogit}}{
+An extract function for mnlogit objects from the \pkg{mnlogit} package.
 }
 
 \item{\code{extract.multinom}}{
