@@ -409,6 +409,8 @@ customnames <- function(m, custom.names) {
   } else if (length(custom.names) == 1 & class(custom.names) == "character"
       & is.na(custom.names)) {
     rownames(m) <- custom.names
+  } else if (length(custom.names) == length(rownames(m))) {
+    rownames(m) <- custom.names
   }
   return(m)
 }
