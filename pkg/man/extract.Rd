@@ -43,6 +43,7 @@
 \alias{extract.rem.dyad}
 \alias{extract.rlm}
 \alias{extract.rq}
+\alias{extract.sarlm}
 \alias{extract.sclm}
 \alias{extract.sienaFit}
 \alias{extract.simex}
@@ -222,6 +223,9 @@ extract.rlm(model, include.nobs = TRUE, ...)
 
 extract.rq(model, include.nobs = TRUE, include.percentile = TRUE, 
     ...)
+
+extract.sarlm(model, include.nobs = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, include.wald = TRUE, ...)
 
 extract.sclm(model, include.thresholds = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, 

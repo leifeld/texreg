@@ -1910,6 +1910,63 @@ setMethod("extract", signature = className("rq", "quantreg"),
     definition = extract.rq)
 
 
+# extension for sarlm objects (spdep package)
+extract.sarlm <- function(model, include.nobs = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, include.wald = TRUE, ...) {
+  s <- summary(model, ...)
+  
+  names <- rownames(s$Coef)
+  cf <- s$Coef[, 1]
+  se <- s$Coef[, 2]
+  p <- s$Coef[, 3]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  
+  if (include.nobs == TRUE) {
+    n <- length(s$fitted.values)
+    param <- s$parameters
+    gof <- c(gof, n, param)
+    gof.names <- c(gof.names, "Num.\ obs.", "Parameters")
+    gof.decimal <- c(gof.decimal, FALSE, FALSE)
+  }
+  if (include.aic == TRUE) {
+    aiclm <- s$AIC_lm.model
+    gof <- c(gof, aiclm)
+    gof.names <- c(gof.names, "AIC (Linear model)")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    ll <- s$LL
+    gof <- c(gof, ll)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.wald == TRUE) {
+    waldstat <- s$Wald1$statistic
+    waldp <- s$Wald1$p.value
+    gof <- c(gof, waldstat, waldp)
+    gof.names <- c(gof.names, "Wald test: statistic", "Wald test: p-value")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = names, 
+      coef = cf, 
+      se = se, 
+      pvalues = p, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("sarlm", "spdep"), 
+    definition = extract.sarlm)
+
+
 # extension for sienaFit objects (RSiena package)
 extract.sienaFit <- function(model, include.iterations = TRUE, ...) {
   
