@@ -44,6 +44,7 @@
 \alias{extract,rem.dyad-method}
 \alias{extract,rlm-method}
 \alias{extract,rq-method}
+\alias{extract,sarlm-method}
 \alias{extract,sclm-method}
 \alias{extract,sienaFit-method}
 \alias{extract,simex-method}
@@ -234,6 +235,10 @@ An extract function for rlm objects from the \pkg{MASS} package.
 
 \item{\code{extract.rq}}{
 An extract function for rq objects from the \pkg{quantreg} package.
+}
+
+\item{\code{extract.sarlm}}{
+An extract function for sarlm objects from the \pkg{spdep} package.
 }
 
 \item{\code{extract.sclm}}{
