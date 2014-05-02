@@ -10,8 +10,8 @@ plotreg(l, file = NA, custom.model.names = NULL,
     override.coef = 0, override.se = 0, override.pval = 0, 
     omit.coef = NA, reorder.coef = NULL, ci.level = 0.95, 
     use.se = FALSE, mfrow = TRUE, xlim = NULL, 
-    vertical.lines = TRUE, cex = 2.5, lwd.inner = 7, 
-    lwd.outer = 5, signif.light = "#fbc9b9", 
+    cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, 
+    lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
     signif.medium = "#f7523a", signif.dark = "#bd0017", 
     insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
     insignif.dark = "#1c5ba6", ...)
@@ -21,8 +21,8 @@ coefplot(labels, estimates, lower.inner = NULL,
     upper.outer = NULL, signif.outer = TRUE, 
     xlab = "Coefficients and confidence intervals", 
     main = "Coefficient plot", xlim = NULL, 
-    vertical.lines = TRUE, cex = 2.5, lwd.inner = 7, 
-    lwd.outer = 5, signif.light = "#fbc9b9", 
+    cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, 
+    lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
     signif.medium = "#f7523a", signif.dark = "#bd0017", 
     insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
     insignif.dark = "#1c5ba6", ...)
@@ -47,7 +47,9 @@ The \code{plotreg} function is a wrapper for the \code{coefplot} function and wo
 \item{ci.level}{If standard errors are converted to confidence intervals (because a model does not natively support CIs), what confidence level should be used for the outer confidence interval? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 \item{use.se}{Use one standard error for the inner horizontal bar and two standard errors from the estimate for the outer horizontal bar (instead of confidence intervals). Only available if standard errors can be extracted from the model using the respective \code{\link{extract}} function.}
 \item{mfrow}{If multiple models are handed over as the \code{l} argument, several plots are produced. If \code{mfrow = TRUE} is set, multiple diagrams are aligned on the same page. If \code{mfrow = FALSE} is set, each diagram per model comes out as a separate plot.}
-\item{vertical.lines}{Should gray vertical lines be plotted in the background for better orientation?}
+\item{xlim}{Horizontal limits. In the \code{coefplot} function, they must be provided as a vector with two numeric, e.g., \code{xlim = c(-5, 5)} for displaying a range from \code{-5} to \code{+5}. In the \code{plotreg} function, they can be provided either as such a vector with two values or as a list of vectors (with each entry corresponding to a model in \code{l}). }
+\item{lwd.zerobar}{ Line width of the vertical gray bar at the \code{x} value of \code{0}. To remove the line, set \code{lwd.zerobar = 0}. }
+\item{lwd.vbars}{ Line width of the thin vertical gray bars. To remove them completely, set \code{lwd.vbars = 0}. }
 
 \item{labels}{The names of the model terms. They are arranged on the left axis.}
 \item{estimates}{The coefficients (point estimates) of the model terms. They are depicted as bold dots in the coefficient plot.}
@@ -59,7 +61,6 @@ The \code{plotreg} function is a wrapper for the \code{coefplot} function and wo
 \item{signif.outer}{Different colors are used for significant estimates and confidence intervals. If \code{signif.outer = TRUE}, the outer CIs are used to evaluate significance, otherwise the inner CIs are used.}
 \item{xlab}{The label of the x axis.}
 \item{main}{The main title or heading of the plot.}
-\item{xlim}{Horizontal limits. They must be provided as a vector with two numeric, e.g., \code{xlim = c(-5, 5)} for displaying a range from \code{-5} to \code{+5}.}
 \item{cex}{Size of the point representing the estimate.}
 \item{lwd.inner}{Line width of the inner confidence interval.}
 \item{lwd.outer}{Line width of the outer confidence interval.}
