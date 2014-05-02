@@ -9,23 +9,23 @@ plotreg(l, file = NA, custom.model.names = NULL,
     custom.coef.names = NULL, custom.note = NULL, 
     override.coef = 0, override.se = 0, override.pval = 0, 
     omit.coef = NA, reorder.coef = NULL, ci.level = 0.95, 
-    use.se = FALSE, mfrow = TRUE, vertical.lines = TRUE, 
-    cex = 2.5, lwd.inner = 7, lwd.outer = 5, 
-    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
-    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
-    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", 
-    ...)
+    use.se = FALSE, mfrow = TRUE, xlim = NULL, 
+    vertical.lines = TRUE, cex = 2.5, lwd.inner = 7, 
+    lwd.outer = 5, signif.light = "#fbc9b9", 
+    signif.medium = "#f7523a", signif.dark = "#bd0017", 
+    insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
+    insignif.dark = "#1c5ba6", ...)
 
 coefplot(labels, estimates, lower.inner = NULL, 
     upper.inner = NULL, lower.outer = NULL, 
     upper.outer = NULL, signif.outer = TRUE, 
     xlab = "Coefficients and confidence intervals", 
-    main = "Coefficient plot", vertical.lines = TRUE, 
-    cex = 2.5, lwd.inner = 7, lwd.outer = 5, 
-    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
-    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
-    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", 
-    ...)
+    main = "Coefficient plot", xlim = NULL, 
+    vertical.lines = TRUE, cex = 2.5, lwd.inner = 7, 
+    lwd.outer = 5, signif.light = "#fbc9b9", 
+    signif.medium = "#f7523a", signif.dark = "#bd0017", 
+    insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
+    insignif.dark = "#1c5ba6", ...)
 }
 \details{
 The \code{coefplot} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals). It accepts raw data (the lower and upper bounds of inner and outer confidence intervals as well as the point estimates and their names) as input data. Significant coefficients and intervals can be plotted in a different color.
@@ -59,6 +59,7 @@ The \code{plotreg} function is a wrapper for the \code{coefplot} function and wo
 \item{signif.outer}{Different colors are used for significant estimates and confidence intervals. If \code{signif.outer = TRUE}, the outer CIs are used to evaluate significance, otherwise the inner CIs are used.}
 \item{xlab}{The label of the x axis.}
 \item{main}{The main title or heading of the plot.}
+\item{xlim}{Horizontal limits. They must be provided as a vector with two numeric, e.g., \code{xlim = c(-5, 5)} for displaying a range from \code{-5} to \code{+5}.}
 \item{cex}{Size of the point representing the estimate.}
 \item{lwd.inner}{Line width of the inner confidence interval.}
 \item{lwd.outer}{Line width of the outer confidence interval.}

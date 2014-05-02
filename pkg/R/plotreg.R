@@ -3,8 +3,8 @@
 coefplot <- function(labels, estimates, lower.inner = NULL, 
     upper.inner = NULL, lower.outer = NULL, upper.outer = NULL, 
     signif.outer = TRUE, xlab = "Coefficients and confidence intervals", 
-    main = "Coefficient plot", vertical.lines = TRUE, cex = 2.5, 
-    lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
+    main = "Coefficient plot", xlim = NULL, vertical.lines = TRUE, 
+    cex = 2.5, lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
     signif.medium = "#f7523a", signif.dark = "#bd0017", 
     insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
     insignif.dark = "#1c5ba6", ...) {
@@ -41,8 +41,13 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
   if (mx < 0) {
     mx <- 0
   }
+  if (!is.null(xlim) && length(xlim) == 2 && is.numeric(xlim)) {
+    mn <- xlim[1]
+    mx <- xlim[2]
+  }
   steps <- floor(mn):ceiling(mx)
   num <- length(labels)
+  
   
   # which terms are significant?
   if (class(signif.outer) == "logical" && 
@@ -133,11 +138,11 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
 plotreg <- function(l, file = NA, custom.model.names = NULL, 
     custom.coef.names = NULL, custom.note = NULL, override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
-    ci.level = 0.95, use.se = FALSE, mfrow = TRUE, vertical.lines = TRUE, 
-    cex = 2.5, lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
-    signif.medium = "#f7523a", signif.dark = "#bd0017", 
-    insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
-    insignif.dark = "#1c5ba6", ...) {
+    ci.level = 0.95, use.se = FALSE, mfrow = TRUE, xlim = NULL, 
+    vertical.lines = TRUE, cex = 2.5, lwd.inner = 7, lwd.outer = 5, 
+    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
+    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
+    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", ...) {
   
   if (!is.na(omit.coef) && !is.character(omit.coef)) {
     stop("omit.coef must be a character string!")
@@ -326,6 +331,27 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
           "coefficients."))
     }
     
+    # xlim argument
+    if (!is.null(xlim)) {
+      if (is.numeric(xlim) && length(xlim) == 2) {
+        xl <- xlim
+      } else if (length(xlim) != 2 || class(xlim) != "list") {
+        stop(paste("Horizontal limits ('xlim' argument) must be provided as", 
+            "a vector of two numerics or as a list of such vectors where each", 
+            "item corresponds to a model."))
+      } else if (class(xlim) == "list") {
+        if (length(xlim) != length(models)) {
+            stop(paste("There are", length(models), "models but", length(xlim), 
+                "xlim items."))
+        }
+        xl <- xlim[[i]]
+      } else {
+        xl <- NULL
+      }
+    } else {
+      xl <- xlim
+    }
+    
     # plot
     coefplot(
         labels = co.names, 
@@ -337,6 +363,7 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
         signif.outer = signif.outer,
         xlab = note, 
         main = model.names[i], 
+        xlim = xl, 
         vertical.lines = vertical.lines, 
         cex = cex, 
         lwd.inner = lwd.inner, 
