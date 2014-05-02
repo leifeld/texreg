@@ -3,8 +3,8 @@
 coefplot <- function(labels, estimates, lower.inner = NULL, 
     upper.inner = NULL, lower.outer = NULL, upper.outer = NULL, 
     signif.outer = TRUE, xlab = "Coefficients and confidence intervals", 
-    main = "Coefficient plot", xlim = NULL, vertical.lines = TRUE, 
-    cex = 2.5, lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
+    main = "Coefficient plot", xlim = NULL, cex = 2.5, lwd.zerobar = 4, 
+    lwd.vbars = 1, lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
     signif.medium = "#f7523a", signif.dark = "#bd0017", 
     insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
     insignif.dark = "#1c5ba6", ...) {
@@ -84,12 +84,10 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
   axis(side = 1, las = 0, lty = 0)
   
   # add vertical gray lines
-  if (vertical.lines == TRUE) {
-    zeros <- rep(0, length(steps))
-    ends <- rep((num + 1), length(steps))
-    segments(steps, zeros, steps, ends, col = "gray", lwd = 1)
-  }
-  segments(0, 0, 0, num + 1, lwd = 4, col = "grey75")
+  zeros <- rep(0, length(steps))
+  ends <- rep((num + 1), length(steps))
+  segments(steps, zeros, steps, ends, col = "gray", lwd = lwd.vbars)
+  segments(0, 0, 0, num + 1, lwd = lwd.zerobar, col = "grey75")
   
   # draw outer CIs
   if (outer == TRUE) {
@@ -139,8 +137,8 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
     custom.coef.names = NULL, custom.note = NULL, override.coef = 0, 
     override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
     ci.level = 0.95, use.se = FALSE, mfrow = TRUE, xlim = NULL, 
-    vertical.lines = TRUE, cex = 2.5, lwd.inner = 7, lwd.outer = 5, 
-    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
+    cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, lwd.inner = 7, 
+    lwd.outer = 5, signif.light = "#fbc9b9", signif.medium = "#f7523a", 
     signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
     insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", ...) {
   
@@ -364,8 +362,9 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
         xlab = note, 
         main = model.names[i], 
         xlim = xl, 
-        vertical.lines = vertical.lines, 
         cex = cex, 
+        lwd.zerobar = lwd.zerobar, 
+        lwd.vbars = lwd.vbars, 
         lwd.inner = lwd.inner, 
         lwd.outer = lwd.outer, 
         signif.light = signif.light,
