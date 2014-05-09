@@ -1314,27 +1314,27 @@ extract.lrm <- function(model, include.pseudors = TRUE, include.lr = TRUE,
   p <- pnorm(abs(model$coef / sqrt(diag(model$var))), 
       lower.tail = FALSE) * 2
   
-  pseudors <- model$stats[10]  # extract pseudo R-squared
-  LR <- model$stats[3]  # extract LR
-  n <- model$stats[1]  # extract number of observations
   
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- model$stats[1]  # extract number of observations
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
   if (include.pseudors == TRUE) {
+    pseudors <- model$stats[10]  # extract pseudo R-squared
     gof <- c(gof, pseudors)
     gof.names <- c(gof.names, "Pseudo R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.lr == TRUE) {
+    LR <- model$stats[3]  # extract LR
     gof <- c(gof, LR)
     gof.names <- c(gof.names, "L.R.")
     gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
   }
   
   tr <- createTexreg(
@@ -1521,6 +1521,64 @@ extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE,
 
 setMethod("extract", signature = className("multinom", "nnet"), 
     definition = extract.multinom)
+
+
+# extension for ols objects (rms package)
+extract.ols <- function (model, include.nobs = TRUE, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.fstatistic = FALSE, include.lr = TRUE, ...) {
+  
+  names <- attributes(model$coef)$names
+  co <- model$coef
+  se <- sqrt(diag(model$var))
+  pval <- pnorm(abs(model$coef/sqrt(diag(model$var))), lower.tail = FALSE) * 2
+ 
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- nobs(model) 
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.rsquared == TRUE) {
+    rs <- model$stats["R2"]
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.adjrs == TRUE) {
+    adj <- 1 - (1 - rs) * (n - 1)/(n - model$stats["d.f."] - 1)
+    gof <- c(gof, adj)
+    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.fstatistic == TRUE) {
+    tryCatch({
+      fs <- summary.lm(model)$fstatistic[[1]]  # won't work if penalty matrix
+      gof.names <- c(gof.names, "F statistic") # is given (whatever that is)
+      gof.decimal <- c(gof.decimal, TRUE)
+      gof <- c(gof, fs)
+    }, error = {
+      warning("F statistic could not be extracted.")
+    }, warning = {
+      warning("F statistic could not be extracted.")
+    })
+  }
+  if (include.lr == TRUE) {
+    LR <- model$stats["Model L.R."]
+    gof <- c(gof, LR)
+    gof.names <- c(gof.names, "L.R.")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(coef.names = names, coef = co, se = se, pvalues = pval, 
+      gof.names = gof.names, gof = gof, gof.decimal = gof.decimal)
+  return(tr)
+}
+
+setMethod("extract", signature = className("ols", "rms"), 
+    definition = extract.ols)
 
 
 # extension for pgmm objects (from the plm package)

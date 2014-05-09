@@ -468,6 +468,7 @@ Class			& Package			& Description \\
 `\code{multinom}'	& \pkg{nnet}			& Multinomial log-linear models \\
 `\code{negbin}'		& \pkg{MASS}			& Negative binomial generalized linear models \\
 `\code{nlme}'		& \pkg{nlme}			& Nonlinear mixed-effects models \\
+`\code{ols}'		& \pkg{rms}			& Ordinary least squares linear models \\
 `\code{pgmm}'		& \pkg{plm}			& GMM estimation for panel data \\
 `\code{phreg}'		& \pkg{eha}			& Parametric proportional hazards regression \\
 `\code{plm}'		& \pkg{plm}			& Linear models for panel data \\
