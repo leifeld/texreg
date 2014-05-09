@@ -35,6 +35,7 @@
 \alias{extract.negbin}
 \alias{extract.nlme}
 \alias{extract.nlmerMod}
+\alias{extract.ols}
 \alias{extract.pgmm}
 \alias{extract.phreg}
 \alias{extract.plm}
@@ -198,6 +199,10 @@ extract.nlmerMod(model, naive = FALSE, nsim = 1000,
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
+
+extract.ols(model, include.nobs = TRUE, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.fstatistic = FALSE, 
+    include.lr = TRUE, ...)
 
 extract.pgmm(model, include.nobs = TRUE, include.sargan = TRUE, 
     include.wald = TRUE, ...)
