@@ -9,7 +9,9 @@
   packageStartupMessage(
       'Version:  ', desc$Version, '\n', 
       'Date:     ', desc$Date, '\n',
-      'Author:   ', 'Philip Leifeld (University of Konstanz)'
+      'Author:   ', 'Philip Leifeld (University of Konstanz)', '\n\n', 
+      'Please cite the JSS article in your publications', 
+      '-- see citation("texreg").'
   )
 }
 

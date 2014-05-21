@@ -229,8 +229,8 @@ extract.rlm(model, include.nobs = TRUE, ...)
 extract.rq(model, include.nobs = TRUE, include.percentile = TRUE, 
     ...)
 
-extract.sarlm(model, include.nobs = TRUE, include.aic = TRUE, 
-    include.loglik = TRUE, include.wald = TRUE, ...)
+extract.sarlm(model, include.nobs = TRUE, include.lambda = TRUE, 
+    include.aic = TRUE, include.loglik = TRUE, include.wald = TRUE, ...)
 
 extract.sclm(model, include.thresholds = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, 
@@ -312,6 +312,7 @@ to convert them into texreg objects.
 \item{include.groups}{ If available: should the number of groups in a mixed-effects model (or \code{k} alternatives in a multinomial choice model) be reported? }
 \item{include.intercept}{ If available: should the intercept be included in the GOF block? }
 \item{include.iterations}{ If available: should the number of iterations be included? }
+\item{include.lambda}{ If available: should the lambda statistic and p-value be reported? }
 \item{include.loglik}{ If available: should the log-likelihood be reported? }
 \item{include.lr}{ If available: should the likelihood ratio test be reported? }
 \item{include.maxrs}{If available: should the maximum possible R-squared be reported? }

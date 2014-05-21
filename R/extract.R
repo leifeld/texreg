@@ -1969,14 +1969,14 @@ setMethod("extract", signature = className("rq", "quantreg"),
 
 
 # extension for sarlm objects (spdep package)
-extract.sarlm <- function(model, include.nobs = TRUE, include.aic = TRUE, 
-    include.loglik = TRUE, include.wald = TRUE, ...) {
+extract.sarlm <- function(model, include.nobs = TRUE, include.lambda = TRUE, 
+    include.aic = TRUE, include.loglik = TRUE, include.wald = TRUE, ...) {
   s <- summary(model, ...)
   
   names <- rownames(s$Coef)
   cf <- s$Coef[, 1]
   se <- s$Coef[, 2]
-  p <- s$Coef[, 3]
+  p <- s$Coef[, ncol(s$Coef)]
   
   gof <- numeric()
   gof.names <- character()
@@ -1989,11 +1989,19 @@ extract.sarlm <- function(model, include.nobs = TRUE, include.aic = TRUE,
     gof.names <- c(gof.names, "Num.\ obs.", "Parameters")
     gof.decimal <- c(gof.decimal, FALSE, FALSE)
   }
+  if (include.lambda == TRUE) {
+    lambda <- s$lambda
+    LRpval <- s$LR1$p.value[1]
+    gof <- c(gof, lambda, LRpval)
+    gof.names <- c(gof.names, "Lambda: statistic", "Lambda: p-value")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
   if (include.aic == TRUE) {
+    aic <- AIC(model)
     aiclm <- s$AIC_lm.model
-    gof <- c(gof, aiclm)
-    gof.names <- c(gof.names, "AIC (Linear model)")
-    gof.decimal <- c(gof.decimal, TRUE)
+    gof <- c(gof, aiclm, aic)
+    gof.names <- c(gof.names, "AIC (Linear model)", "AIC (Spatial model)")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
   }
   if (include.loglik == TRUE) {
     ll <- s$LL
