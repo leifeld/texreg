@@ -10,7 +10,7 @@
       'Version:  ', desc$Version, '\n', 
       'Date:     ', desc$Date, '\n',
       'Author:   ', 'Philip Leifeld (University of Konstanz)', '\n\n', 
-      'Please cite the JSS article in your publications', 
+      'Please cite the JSS article in your publications ', 
       '-- see citation("texreg").'
   )
 }
@@ -125,7 +125,8 @@ get.gof <- function(models) {
 
 
 # function which replaces coefs, SEs and p values by custom values if provided
-override <- function(models, override.coef, override.se, override.pval) {
+override <- function(models, override.coef, override.se, override.pval, 
+    override.ci.low, override.ci.up) {
   
   for (i in 1:length(models)) {
     
@@ -210,6 +211,71 @@ override <- function(models, override.coef, override.se, override.pval) {
       pval <- override.pval[[i]]
     }
     models[[i]]@pvalues <- pval
+    
+    # lower bound of confidence intervals
+    if (is.null(override.ci.low)) {
+      # do nothing
+    } else if (class(override.ci.low) != "list" && length(override.ci.low) 
+        == 1 && override.ci.low == 0) {
+      ci.low <- models[[i]]@ci.low
+    } else if (class(override.ci.low) == "numeric" && length(models) == 1 && 
+        length(override.ci.low) == length(models[[i]]@coef)) {
+      ci.low <- override.ci.low
+    } else if (class(override.ci.low) != "list") {
+      warning("CIs must be provided as a list. Using default CIs if available.")
+      ci.low <- models[[i]]@ci.low
+    } else if (length(override.ci.low) != length(models)) {
+      warning(paste("Number of lower CIs provided does not match number of", 
+          "models. Using default CIs if available."))
+      ci.low <- models[[i]]@ci.low
+    } else if (length(models[[i]]@coef) != length(override.ci.low[[i]])) {
+      # previous line: comparison with coef because CIs can be empty
+      warning(paste0("Number of lower CIs provided does not match number of ", 
+          "coefficients in model ", i, ". Using default CIs if available."))
+      ci.low <- models[[i]]@ci.low
+    } else if (class(override.ci.low[[i]]) != "numeric") {
+      warning(paste("Lower CIs provided for model", i, 
+          "are not numeric. Using default lower CIs."))
+      ci.low <- models[[i]]@ci.low
+    } else {
+      ci.low <- override.ci.low[[i]]
+    }
+    models[[i]]@ci.low <- ci.low
+    
+    # upper bound of confidence intervals
+    if (is.null(override.ci.up)) {
+      # do nothing
+    } else if (class(override.ci.up) != "list" && length(override.ci.up) 
+        == 1 && override.ci.up == 0) {
+      ci.up <- models[[i]]@ci.up
+    } else if (class(override.ci.up) == "numeric" && length(models) == 1 && 
+        length(override.ci.up) == length(models[[i]]@coef)) {
+      ci.up <- override.ci.up
+    } else if (class(override.ci.up) != "list") {
+      warning("CIs must be provided as a list. Using default CIs if available.")
+      ci.up <- models[[i]]@ci.up
+    } else if (length(override.ci.up) != length(models)) {
+      warning(paste("Number of lower CIs provided does not match number of", 
+          "models. Using default CIs if available."))
+      ci.up <- models[[i]]@ci.up
+    } else if (length(models[[i]]@coef) != length(override.ci.up[[i]])) {
+      # previous line: comparison with coef because CIs can be empty
+      warning(paste0("Number of lower CIs provided does not match number of ", 
+          "coefficients in model ", i, ". Using default CIs if available."))
+      ci.up <- models[[i]]@ci.up
+    } else if (class(override.ci.up[[i]]) != "numeric") {
+      warning(paste("Lower CIs provided for model", i, 
+          "are not numeric. Using default lower CIs."))
+      ci.up <- models[[i]]@ci.up
+    } else {
+      ci.up <- override.ci.up[[i]]
+    }
+    models[[i]]@ci.up <- ci.up
+    
+    if (length(models[[i]]@ci.low) > 0 && length(models[[i]]@ci.up) > 0) {
+      models[[i]]@se <- numeric()
+      models[[i]]@pvalues <- numeric()
+    }
   }
   
   return(models)
@@ -761,9 +827,8 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
       first <- paste0(zeros, first)
       last <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\3", x[i])
       difference <- ci.upper.length - nchar(last)
-      zeros <- rep(" ", difference, collapse = "")
+      zeros <- paste(rep(" ", difference), collapse = "")
       last <- paste0(zeros, last)
-      #x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
       x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
     }
   }

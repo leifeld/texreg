@@ -322,6 +322,8 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{override.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace coefficients by custom vectors \\
 \code{override.se}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace standard errors by custom vectors \\
 \code{override.pval}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace $p$~values by custom vectors \\
+\code{override.ci.low}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace lower confidence intervals \\
+\code{override.ci.up}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace upper confidence intervals \\
 \code{omit.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Remove rows using a regular expression \\
 \code{reorder.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the model terms \\
 \code{reorder.gof}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the GOF statistics \\
@@ -329,7 +331,7 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{ci.force}			& $\bullet$	& $\bullet$	& $\bullet$	& Convert standard errors to confidence intervals \\
 \code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
 \code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
-\code{groups}			& $\bullet$	& $\bullet$	& $\bullet$	& Partition rows of the table into groups with labels. \\
+\code{groups}			& $\bullet$	& $\bullet$	& $\bullet$	& Partition rows of the table into groups with labels \\
 \code{bold}			& $\bullet$	& $\bullet$	& $\circ$	& $p$~value below which coefficients are bolded \\
 \code{center}			& $\bullet$	& $\bullet$	& $\circ$	& Horizontal alignment on the page \\
 \code{caption}			& $\bullet$	& $\bullet$	& $\circ$	& Set the caption of the table \\
@@ -433,13 +435,13 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 56 supported model types (version 1.32).]{\label{tab:types} List of 56 supported model types (version 1.32).} \\
+\caption[List of 56 supported model types (version 1.33).]{\label{tab:types} List of 56 supported model types (version 1.33).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
 `\code{betareg}'	& \pkg{betareg}			& Beta regression for rates and proportions \\
 `\code{brglm}'		& \pkg{brglm}			& Bias-reduced generalized linear models \\
-`\code{btergm}'		& \pkg{btergm}			& Temporal exponential random graph models \\
+`\code{btergm}'		& \pkg{xergm}			& Temporal exponential random graph models \\
 `\code{clm}'		& \pkg{ordinal}			& Cumulative link models \\
 `\code{clogit}'		& \pkg{survival}		& Conditional logistic regression \\
 `\code{coeftest}'	& \pkg{lmtest}			& Wald tests of estimated coefficients \\
@@ -519,7 +521,7 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 `\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
-\pkg{texreg} (version 1.32), in contrast, can deal with all of the
+\pkg{texreg} (version 1.33), in contrast, can deal with all of the
 above model types (that is, the union of all three packages, except
 for some \pkg{Zelig} models), is extensible, and offers additional
 built-in functions for the following model classes: `\code{brglm}',
@@ -666,8 +668,9 @@ have to be preprocessed.  This entails two steps: first, coefficients,
 standard errors or $p$~values must be replaced by user-defined
 \code{numeric} vectors (for example if robust standard errors have
 been manually computed).  The arguments \code{override.coef},
-\code{override.se}, and \code{override.pvalues} serve to replace the
-coefficients, standard errors, and $p$~values, respectively.  Second,
+\code{override.se}, \code{override.pvalues}, \code{override.ci.low}, 
+and \code{override.ci.up} serve to replace the coefficients, standard 
+errors, $p$~values, and confidence intervals, respectively.  Second,
 {\LaTeX} -specific markup codes are replaced by their
 HTML or plain-text equivalents if \code{htmlreg()} or
 \code{screenreg()} are called instead of \code{texreg()}.
@@ -1017,7 +1020,7 @@ page.
 \subsection{Confidence intervals instead of standard errors}
 Most model types implemented in \pkg{texreg} report standard errors
 and $p$~values.  However, some model types report confidence intervals
-by default.  The \pkg{btergm} package \citep{leifeld2014btergm:} and
+by default.  The \pkg{xergm} package \citep{leifeld2014xergm:} and
 the \pkg{lme4} package \citep{bates2013lme4:} are two examples.  If
 confidence intervals are preferred to standard errors but they are not
 available by default, the \code{ci.force} argument allows conversion

@@ -135,7 +135,8 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
 # plotreg function
 plotreg <- function(l, file = NA, custom.model.names = NULL, 
     custom.coef.names = NULL, custom.note = NULL, override.coef = 0, 
-    override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
+    override.se = 0, override.pval = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
     ci.level = 0.95, use.se = FALSE, mfrow = TRUE, xlim = NULL, 
     cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, lwd.inner = 7, 
     lwd.outer = 5, signif.light = "#fbc9b9", signif.medium = "#f7523a", 
@@ -152,7 +153,8 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
   
   # extract texreg objects and override data
   models <- get.data(l, ...)
-  models <- override(models, override.coef, override.se, override.pval)
+  models <- override(models, override.coef, override.se, override.pval, 
+      override.ci.low, override.ci.up)
   
   # custom model names
   model.names <- character()
@@ -261,8 +263,8 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
       co <- dataframe[, 2]
       se <- dataframe[, 3]
       note <- "Bars denote SEs."
-      cat(paste0("Model ", i, 
-        ": bars denote one (inner) resp. two (outer) standard errors.\n"))
+      message(paste0("Model ", i, 
+        ": bars denote one (inner) resp. two (outer) standard errors."))
     } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
       co <- models[[i]]@coef
       co.names <- models[[i]]@coef.names
@@ -290,8 +292,8 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
       
       signif.outer <- TRUE
       note <- "Bars denote CIs."
-      cat(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
-          " (outer) confidence intervals (computed from standard errors).\n"))
+      message(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
+          " (outer) confidence intervals (computed from standard errors)."))
     } else {
       co <- models[[i]]@coef
       co.names <- models[[i]]@coef.names
@@ -314,8 +316,8 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
       
       signif.outer <- TRUE
       note <- "Bars denote CIs."
-      cat(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
-          " (outer) confidence intervals.\n"))
+      message(paste0("Model ", i, ": bars denote  ", ci.level, 
+          " confidence intervals."))
     }
     
     if (!is.null(custom.note)) {

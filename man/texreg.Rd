@@ -10,40 +10,41 @@ texreg(l, file = NA, single.row = FALSE, stars = c(0.001,
     custom.coef.names = NULL, custom.gof.names = NULL, 
     custom.note = NULL, digits = 2, leading.zero = TRUE, 
     symbol = "\\\\cdot", override.coef = 0, override.se = 0, 
-    override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, 
-    ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, bold = 0.00, center = TRUE, 
-    caption = "Statistical models", caption.above = FALSE, 
-    label = "table:coefficients", booktabs = FALSE, 
-    dcolumn = FALSE, sideways = FALSE, use.packages = TRUE, 
-    table = TRUE, no.margin = TRUE, scriptsize = FALSE, 
-    float.pos = "", ...)
+    override.pval = 0, override.ci.low = 0, override.ci.up = 0, 
+    omit.coef = NA, reorder.coef = NULL, reorder.gof = NULL, 
+    return.string = FALSE, ci.force = FALSE, 
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, 
+    bold = 0.00, center = TRUE, caption = "Statistical models", 
+    caption.above = FALSE, label = "table:coefficients", 
+    booktabs = FALSE, dcolumn = FALSE, sideways = FALSE, 
+    use.packages = TRUE, table = TRUE, no.margin = TRUE, 
+    scriptsize = FALSE, float.pos = "", ...)
 
 htmlreg(l, file = NA, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, 
     custom.note = NULL, digits = 2, leading.zero = TRUE, 
     symbol = "&middot;", override.coef = 0, override.se = 0, 
-    override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, 
-    ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, bold = 0.00, center = TRUE, 
-    caption = "Statistical models", caption.above = FALSE, 
-    star.symbol = "*", inline.css = TRUE, doctype = TRUE, 
-    html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, 
-    ...)
+    override.pval = 0, override.ci.low = 0, override.ci.up = 0, 
+    omit.coef = NA, reorder.coef = NULL, reorder.gof = NULL, 
+    return.string = FALSE, ci.force = FALSE, 
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, 
+    bold = 0.00, center = TRUE, caption = "Statistical models", 
+    caption.above = FALSE, star.symbol = "*", 
+    inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
+    head.tag = FALSE, body.tag = FALSE, ...)
 
 screenreg(l, file = NA, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, 
     custom.note = NULL, digits = 2, leading.zero = TRUE, 
     symbol = ".", override.coef = 0, override.se = 0, 
-    override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, 
-    ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, column.spacing = 2, outer.rule = "=", 
-    inner.rule = "-", ...)
+    override.pval = 0, override.ci.low = 0, override.ci.up = 0, 
+    omit.coef = NA, reorder.coef = NULL, reorder.gof = NULL, 
+    return.string = FALSE, ci.force = FALSE, 
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, 
+    column.spacing = 2, outer.rule = "=", inner.rule = "-", 
+    ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -94,6 +95,8 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{override.coef}{Set custom values for the coefficients. New coefficients are provided as a list of numeric vectors. The list contains vectors of coefficients for each model. There must be as many vectors of coefficients as there are models. For example, if there are two models with three model terms each, the argument could be specified as \code{override.coef = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.coef = c(0.05, 0.06, 0.07)}.}
 \item{override.se}{Set custom values for the standard errors. New standard errors are provided as a list of numeric vectors. The list contains vectors of standard errors for each model. There must be as many vectors of standard errors as there are models. For example, if there are two models with three coefficients each, the argument could be specified as \code{override.se = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.se = c(0.05, 0.06, 0.07)}. Overriding standard errors can be useful for the implementation of robust SEs, for example.}
 \item{override.pval}{Set custom values for the p values. New p values are provided as a list of numeric vectors. The list contains vectors of p values for each model. There must be as many vectors of p values as there are models. For example, if there are two models with three coefficients each, the argument could be specified as \code{override.pval = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model, custom values can be provided as a plain vector (not embedded in a list). For example: \code{override.pval = c(0.05, 0.06, 0.07)}. Overriding p values can be useful for the implementation of robust SEs and p values, for example.}
+\item{override.ci.low}{Set custom lower confidence interval bounds. This works like the other override arguments, with one exception: if confidence intervals are provided here and in the \code{override.ci.up} argument, the standard errors and p values as well as the \code{ci.force} argument are ignored.}
+\item{override.ci.up}{Set custom upper confidence interval bounds. This works like the other override arguments, with one exception: if confidence intervals are provided here and in the \code{override.ci.low} argument, the standard errors and p values as well as the \code{ci.force} argument are ignored.}
 \item{omit.coef}{A character string which is used as a regular expression to remove coefficient rows from the table. For example, \code{omit.coef = "group"} deletes all coefficient rows from the table where the name of the coefficient contains the character sequence "group". More complex regular expressions can be used to filter out several kinds of model terms, for example \code{omit.coef = "(thresh)|(ranef)"} to remove all model terms matching either "thresh" or "ranef".The \code{omit.coef} argument is processed after the \code{custom.coef.names} argument, so the regular expression should refer to the custom coefficient names. To omit GOF entries instead of coefficient entries, use the custom arguments of the extract functions instead (see the help entry of the \link{extract} function or \link{extract-methods}.}
 \item{reorder.coef}{Reorder the rows of the coefficient block of the resulting table in a custom way. The argument takes a vector of the same length as the number of coefficients. For example, if there are three coefficients, \code{reorder.coef = c(3, 2, 1)} will put the third coefficient in the first row and the first coefficient in the third row. Reordering can be sensible because interaction effects are often added to the end of the model output although they were specified earlier in the model formula. Note: Reordering takes place after processing custom coefficient names and after omitting coefficients, so the \code{custom.coef.names} and \code{omit.coef} arguments should follow the original order.}
 \item{reorder.gof}{Reorder the rows of the goodness-of-fit block of the resulting table in a custom way. The argument takes a vector of the same length as the number of GOF statistics. For example, if there are three goodness-of-fit rows, \code{reorder.gof = c(3, 2, 1)} will exchange the first and the third row. Note: Reordering takes place after processing custom GOF names, so the \code{custom.gof.names} argument should follow the original order.}
