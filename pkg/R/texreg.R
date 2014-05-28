@@ -8,15 +8,17 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = ".", override.coef = 0, 
-    override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
+    override.se = 0, override.pval = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, column.spacing = 2, outer.rule = "=", 
-    inner.rule = "-", ...) {
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, column.spacing = 2, 
+    outer.rule = "=", inner.rule = "-", ...) {
   
   stars <- check.stars(stars)
   
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
-  models <- override(models, override.coef, override.se, override.pval)
+  models <- override(models, override.coef, override.se, override.pval, 
+      override.ci.low, override.ci.up)
   models <- tex.replace(models, type = "screen")  #convert TeX code to text code
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  #extract names of GOFs
@@ -70,8 +72,8 @@ screenreg <- function(l, file = NA, single.row = FALSE,
   
   # reformat output matrix and add spaces
   if (ncol(output.matrix) == 2) {
-    temp <- matrix(format.column(output.matrix[, -1], single.row = single.row, 
-        digits = digits))
+    temp <- matrix(format.column(matrix(output.matrix[, -1]), 
+        single.row = single.row, digits = digits))
   } else {
     temp <- apply(output.matrix[, -1], 2, format.column, 
         single.row = single.row, digits = digits)
@@ -219,7 +221,8 @@ texreg <- function(l, file = NA, single.row = FALSE,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = "\\cdot", override.coef = 0, 
-    override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
+    override.se = 0, override.pval = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
     ci.force.level = 0.95, ci.test = 0, groups = NULL, bold = 0.00, 
     center = TRUE, caption = "Statistical models", caption.above = FALSE, 
@@ -243,7 +246,8 @@ texreg <- function(l, file = NA, single.row = FALSE,
   
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
   gof.names <- get.gof(models)  #extract names of GOFs
-  models <- override(models, override.coef, override.se, override.pval)
+  models <- override(models, override.coef, override.se, override.pval, 
+      override.ci.low, override.ci.up)
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   models <- correctDuplicateCoefNames(models)
   
@@ -559,7 +563,8 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = "&middot;", override.coef = 0, 
-    override.se = 0, override.pval = 0, omit.coef = NA, reorder.coef = NULL, 
+    override.se = 0, override.pval = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
     reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
     ci.force.level = 0.95, ci.test = 0, groups = NULL, bold = 0.00, 
     center = TRUE, caption = "Statistical models", caption.above = FALSE, 
@@ -592,7 +597,8 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     css.sup <- ""
   }
   
-  models <- override(models, override.coef, override.se, override.pval)
+  models <- override(models, override.coef, override.se, override.pval, 
+      override.ci.low = 0, override.ci.up = 0)
   models <- tex.replace(models, type = "html", style = css.sup)  # TeX --> HTML
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  # extract names of GOFs
