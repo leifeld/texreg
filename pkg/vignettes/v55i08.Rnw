@@ -2,8 +2,9 @@
 %\VignetteDepends{}
 %\VignetteKeyword{typesetting, reporting, table, coefficients, regression, R, LaTeX, MS Word, HTML, Markdown}
 %\VignettePackage{texreg}
+
 \documentclass[nojss]{jss}
-\usepackage{booktabs,dcolumn,rotating,paralist,thumbpdf,longtable}
+\usepackage{booktabs,dcolumn,rotating,thumbpdf,longtable}
 
 \usepackage{tikz}
 \usetikzlibrary{trees}
@@ -110,17 +111,15 @@ commands in {\LaTeX} documents and their execution and
 evaluation at runtime \citep{leisch2002sweave}.  In spite of this,
 common approaches for linking \proglang{R} model output and tables in
 {\LaTeX} include
-\begin{inparaenum}[(1)]
-\item copying and pasting individual values after every change of the
-  model,
-\item custom user-written functions which convert a specific model
-  into a matrix,
-\item the use of sophisticated table-management packages (see next
-  section), and
-\item the inclusion of single models in the form of the model summary
+(1) copying and pasting individual values after every change of the
+  model, 
+(2) custom user-written functions which convert a specific model
+  into a matrix, 
+(3) the use of sophisticated table-management packages (see next
+  section), and 
+(4) the inclusion of single models in the form of the model summary
   instead of nicely aligned coefficient tables as a second best
   solution.
-\end{inparaenum}
 
 Popular alternatives for document preparation include
 \proglang{Microsoft Word} and the dynamic report generation
@@ -273,15 +272,13 @@ printed without any header or document type information, and that
 significance stars are escaped using backslashes.
 
 In other situations, it may be important to 
-\begin{inparaenum}[(1)]
-\item omit certain coefficients (like random or fixed effects or
-  thresholds),
-\item reorder the coefficients in the model (e.g., because some models
-  put interaction effects at the end of the list of coefficients), or
-\item replace coefficients, standard errors, or $p$~values by custom
+(1) omit certain coefficients (like random or fixed effects or
+  thresholds), 
+(2) reorder the coefficients in the model (e.g., because some models
+  put interaction effects at the end of the list of coefficients), or 
+(3) replace coefficients, standard errors, or $p$~values by custom
   vectors, for example when heteroskedasticity-consistent (``robust'')
   standard errors are used \citep{zeileis2004econometric}.
-\end{inparaenum}
 
 \pagebreak
 

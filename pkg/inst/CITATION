@@ -1,7 +1,7 @@
 citHeader("To cite texreg in publications use:")
 
 citEntry(entry = "Article",
-  title        = "{texreg}: Conversion of Statistical Model Output in {R} to {\\LaTeX} and HTML Tables",
+  title        = "{texreg}: Conversion of Statistical Model Output in {R} to {\\LaTeX} and {HTML} Tables",
   author       = personList(as.person("Philip Leifeld")),
   journal      = "Journal of Statistical Software",
   year         = "2013",
