@@ -432,10 +432,11 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 56 supported model types (version 1.33).]{\label{tab:types} List of 56 supported model types (version 1.33).} \\
+\caption[List of 57 supported model types (version 1.33).]{\label{tab:types} List of 57 supported model types (version 1.33).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
+`\code{Arima}'		& \pkg{stats}			& ARIMA time series models \\
 `\code{betareg}'	& \pkg{betareg}			& Beta regression for rates and proportions \\
 `\code{brglm}'		& \pkg{brglm}			& Bias-reduced generalized linear models \\
 `\code{btergm}'		& \pkg{xergm}			& Temporal exponential random graph models \\

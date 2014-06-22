@@ -1,6 +1,7 @@
 \name{extract}
 \alias{extract}
 \alias{extract.aftreg}
+\alias{extract.Arima}
 \alias{extract.betareg}
 \alias{extract.brglm}
 \alias{extract.btergm}
@@ -66,6 +67,9 @@ extract(model, ...)
 extract.aftreg(model, include.loglik = TRUE, include.lr = TRUE, 
     include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
     ...)
+
+extract.Arima(model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.loglik = TRUE, ...)
 
 extract.betareg(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, 
