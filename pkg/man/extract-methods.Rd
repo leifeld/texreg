@@ -2,6 +2,7 @@
 \docType{methods}
 \alias{extract-methods}
 \alias{extract,aftreg-method}
+\alias{extract,Arima-method}
 \alias{extract,betareg-method}
 \alias{extract,brglm-method}
 \alias{extract,btergm-method}
@@ -68,6 +69,10 @@ Methods for function \code{extract} in package \pkg{texreg}.
 
 \item{\code{extract.aftreg}}{
 An extract function for aftreg objects from the \pkg{eha} package.
+}
+
+\item{\code{extract.Arima}}{
+An extract function for Arima objects from the \pkg{stats} package.
 }
 
 \item{\code{extract.betareg}}{
