@@ -12,14 +12,20 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
 extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE, 
     include.loglik = TRUE, ...) {
   
+  mask <- model$mask
   nam <- names(model$coef)
   co <- model$coef
-  se <- sqrt(diag(model$var.coef))
-  tval <- co / se
+  sdev <- sqrt(diag(model$var.coef))
+  
   if (include.pvalues == TRUE) {
-    pval <- (1 - pnorm(abs(model$coef) / se)) * 2
+    t.rat <- rep(NA, length(mask))
+    t.rat[mask] <- co[mask] / sdev
+    pt <- 2 * pnorm(-abs(t.rat))
+    setmp <- rep(NA, length(mask))
+    setmp[mask] <- sdev
   } else {
-    pval <- numeric()
+    pt <- numeric()
+    setmp <- sdev
   }
   
   gof <- numeric()
@@ -41,8 +47,8 @@ extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE,
   tr <- createTexreg(
       coef.names = nam, 
       coef = co, 
-      se = se, 
-      pvalues = pval, 
+      se = setmp, 
+      pvalues = pt, 
       gof.names = gof.names, 
       gof = gof, 
       gof.decimal = gof.decimal
