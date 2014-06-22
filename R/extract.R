@@ -8,6 +8,52 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
     package = "texreg")
 
 
+# extension for Arima objects (stats package)
+extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.loglik = TRUE, ...) {
+  
+  nam <- names(model$coef)
+  co <- model$coef
+  se <- sqrt(diag(model$var.coef))
+  tval <- co / se
+  if (include.pvalues == TRUE) {
+    pval <- (1 - pnorm(abs(model$coef) / se)) * 2
+  } else {
+    pval <- numeric()
+  }
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- model$loglik
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = nam, 
+      coef = co, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("Arima", "stats"), 
+    definition = extract.Arima)
+
+
 # extension for betareg objects (betareg package)
 extract.betareg <- function(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, include.nobs = TRUE, ...) {
