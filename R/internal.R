@@ -504,29 +504,44 @@ omitcoef <- function(m, omit.coef) {
 
 
 # decide if default or custom model names should be used and return them
-modelnames <- function(models, model.names) {
-  if (is.null(model.names)) {
-    return(paste("Model", 1:length(models)))
-  } else if (length(model.names) > 1) {
-    if (class(model.names) != "character") {
-      stop("Model names must be specified as a vector of strings.")
-    } else if (length(model.names) != length(models)) {
-      stop(paste("There are", length(models), "models, but you provided", 
-          length(model.names), "names for them."))
-    } else {
-      return(model.names)
-    }
-  } else if (!is.na(model.names) & class(model.names) != "character") {
-    stop("Model names must be specified as a vector of strings.")
-  } else if (class(model.names) == "character" & 
-      length(model.names) != length(models)) {
-    stop(paste("A single model name was specified. But there are in fact", 
-        length(models), "models."))
-  } else if (class(model.names) == "character") {
-    return(model.names)
-  } else {
-    return(paste("Model", 1:length(models)))
+modelnames <- function(model.list, tr.objects, model.names) {
+  
+  if (class(model.list)[1] != "list") {
+    model.list <- list(model.list)
   }
+  
+  mnames <- names(model.list)
+  if (is.null(mnames)) {
+    mnames <- character(length(model.list))
+  }
+  
+  for (i in 1:length(tr.objects)) {
+    nam <- tr.objects[[i]]@model.name
+    if (length(nam) == 1) {
+      model.names[i] <- nam
+    }
+  }
+  
+  if (is.null(model.names)) {
+    model.names <- rep(NA, length(model.list))
+  } else if (class(model.names) != "character") {
+    stop("Model names must be specified as a vector of strings.")
+  } else if (length(model.names) != length(model.list)) {
+    stop(paste("There are", length(model.list), "models, but you provided", 
+        length(model.names), "name(s) for them."))
+  }
+  
+  for (i in 1:length(model.names)) {
+    if (!is.na(model.names[i])) {
+      mnames[i] <- model.names[i]
+    } else if (mnames[i] == "") {
+      mnames[i] <- paste("Model", i)
+    } else {
+      # leave mnames[i] as is
+    }
+  }
+  
+  return(mnames)
 }
 
 
