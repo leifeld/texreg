@@ -5,7 +5,7 @@
 \usage{
 createTexreg(coef.names, coef, se, pvalues = numeric(0), ci.low = numeric(0), 
     ci.up = numeric(0), gof.names = character(0), gof = numeric(0), 
-    gof.decimal = logical(0))
+    gof.decimal = logical(0), model.name = character(0))
 }
 \details{
 This function creates a texreg object. A texreg object contains 
@@ -26,6 +26,7 @@ representations of the model results.
 \item{gof.names}{ A vector of names of the goodness-of-fit statistics. }
 \item{gof}{ A vector of goodness-of-fit statistics. }
 \item{gof.decimal}{ A vector of boolean/logical values indicating for each GOF statistic if decimal places shall be used. This is optional. }
+\item{model.name}{ The name of the model. In some cases, models consist of two separate columns because two separate data-generating processes are modeled. In these cases, it may make sense to specify default names for the columns (that is, for each \code{texreg} object). This argument is optional. }
 }
 \references{
 Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 

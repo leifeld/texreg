@@ -432,7 +432,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 57 supported model types (version 1.33).]{\label{tab:types} List of 57 supported model types (version 1.33).} \\
+\caption[List of 58 supported model types (version 1.33).]{\label{tab:types} List of 58 supported model types (version 1.33).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
@@ -453,6 +453,7 @@ Class			& Package			& Description \\
 `\code{gee}'		& \pkg{gee}			& Generalized estimation equation \\
 `\code{glm}'		& \pkg{stats}			& Generalized linear models \\
 `\code{[gl|l|nl]merMod}'& \pkg{lme4} ($<$ 1.0) 		& Generalized linear mixed models \\
+`\code{glmrob}  	& \pkg{robustbase}		& Robust fitting of generalized linear models \\
 `\code{gls}'		& \pkg{nlme}			& Generalized least squares \\
 `\code{gmm}'		& \pkg{gmm}			& Generalized method of moments estimation \\
 `\code{ivreg}'		& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
@@ -520,15 +521,15 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
 \pkg{texreg} (version 1.33), in contrast, can deal with all of the
-above model types (that is, the union of all three packages, except
-for some \pkg{Zelig} models), is extensible, and offers additional
-built-in functions for the following model classes: `\code{brglm}',
-`\code{btergm}',`\code{coxph.penal}', `\code{fGARCH}', `\code{gamlss}', 
-`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{maBina}', 
+above model types (that is, the union of all three packages, is 
+extensible, and offers additional built-in functions for the following 
+model classes: `\code{brglm}', `\code{btergm}',`\code{coxph.penal}', 
+`\code{fGARCH}', `\code{gamlss}', `\code{glmrob}', `\code{gmm}', 
+`\code{lme}', `\code{lme4}', `\code{lnam}', `\code{maBina}', 
 `\code{nlme}', `\code{rem.dyad}', `\code{rq}', `\code{sclm}', 
-`\code{stergm}', `\code{systemfit}', `\code{texreg}' and `\code{zelig}' 
-(`\code{logit}' and `\code{relogit}') objects.  Table~\ref{tab:types}
-gives an overview of currently implemented model types.
+`\code{stergm}', `\code{systemfit}', and `\code{texreg}' objects.
+Table~\ref{tab:types} gives an overview of currently implemented model 
+types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
 Markdown, and \pkg{knitr} whereas the other packages

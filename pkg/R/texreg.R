@@ -37,7 +37,7 @@ screenreg <- function(l, file = NA, single.row = FALSE,
   m <- as.data.frame(m)
   m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
   
-  modnames <- modelnames(models, custom.model.names)  #use (custom) model names
+  modnames <- modelnames(l, models, custom.model.names)  # model names
   
   # reorder GOF and coef matrix
   m <- reorder(m, reorder.coef)
@@ -265,7 +265,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
   m <- as.data.frame(m)
   m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
   
-  modnames <- modelnames(models, custom.model.names)  #use (custom) model names
+  modnames <- modelnames(l, models, custom.model.names)  # model names
   
   # reorder GOF and coef matrix
   m <- reorder(m, reorder.coef)
@@ -617,7 +617,7 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
   m <- as.data.frame(m)
   m <- omitcoef(m, omit.coef)  # remove coefficient rows matching regex
   
-  modnames <- modelnames(models, custom.model.names)  # use (custom) model names
+  modnames <- modelnames(l, models, custom.model.names)  # model names
   
   # reorder GOF and coef matrix
   m <- reorder(m, reorder.coef)

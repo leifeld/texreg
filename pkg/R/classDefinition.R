@@ -6,15 +6,16 @@
 # a class for texreg objects
 setClass(Class = "texreg", 
     representation = representation(
-        coef.names = "character",  #row names of the coefficient block
-        coef = "numeric",          #the coefficients
-        se = "numeric",            #standard errors
-        pvalues = "numeric",       #p-values
-        ci.low = "numeric",        #lower confidence interval
-        ci.up = "numeric",         #upper confidence interval
-        gof.names = "character",   #row names of the goodness-of-fit block
-        gof = "numeric",           #goodness-of-fit statistics
-        gof.decimal = "logical"    #number of decimal places for each GOF value
+        coef.names = "character",  # row names of the coefficient block
+        coef = "numeric",          # the coefficients
+        se = "numeric",            # standard errors
+        pvalues = "numeric",       # p-values
+        ci.low = "numeric",        # lower confidence interval
+        ci.up = "numeric",         # upper confidence interval
+        gof.names = "character",   # row names of the goodness-of-fit block
+        gof = "numeric",           # goodness-of-fit statistics
+        gof.decimal = "logical",   # number of decimal places for each GOF value
+        model.name = "character"   # name of the model
     ), 
     validity = function(object) {
         if (length(object@coef.names) != length(object@coef)) {
@@ -47,21 +48,28 @@ setClass(Class = "texreg",
           stop(paste("gof.decimal must have the same length as gof.names and", 
               "gof, or it must have a length of zero."))
         }
+        if (length(object@model.name) > 1) {
+          stop("Only one model name can be provided.")
+        }
         return(TRUE)
     }
 )
 
 # constructor for texreg objects
-createTexreg <- function(coef.names, coef, se = numeric(0), pvalues = numeric(0), 
-    ci.low = numeric(0), ci.up = numeric(0), gof.names = character(0), 
-    gof = numeric(0), gof.decimal = logical(0)) {
+createTexreg <- function(coef.names, coef, se = numeric(0), 
+    pvalues = numeric(0), ci.low = numeric(0), ci.up = numeric(0), 
+    gof.names = character(0), gof = numeric(0), gof.decimal = logical(0), 
+    model.name = character(0)) {
   new("texreg", coef.names = coef.names, coef = coef, se = se, 
       pvalues = pvalues, ci.low = ci.low, ci.up = ci.up, gof.names = gof.names, 
-      gof = gof, gof.decimal = gof.decimal)
+      gof = gof, gof.decimal = gof.decimal, model.name = model.name)
 }
 
 # define show method for pretty output of texreg objects
 setMethod(f = "show", signature = "texreg", definition = function(object) {
+  if (length(object@model.name) == 1) {
+    cat(paste("Model name:", object@model.name))
+  }
   if (length(object@se) == 0) {
     coefBlock <- cbind(object@coef, object@ci.low, object@ci.up)
     colnames(coefBlock) <- c("coef.", "lower CI", "upper CI")

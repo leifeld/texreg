@@ -739,7 +739,7 @@ extract.gee <- function(model, robust = TRUE, include.dispersion = TRUE,
     se <- coef(s)[, 2]
     zval <- coef(s)[, 3]
   }
-  pval <- pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+  pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
   
   n <- nobs(model)
   disp <- s$scale
@@ -1257,7 +1257,7 @@ setMethod("extract", signature = className("nlmerMod", "lme4"),
     definition = extract.nlmerMod)
 
 
-# extension for lmrob objects (robustbase package)
+# extension for lmrob and glmrob objects (robustbase package)
 extract.lmrob <- function(model, include.nobs = TRUE, ...) {
   s <- summary(model, ...)
 
@@ -1291,6 +1291,10 @@ extract.lmrob <- function(model, include.nobs = TRUE, ...) {
 
 setMethod("extract", signature = className("lmrob", "robustbase"), 
     definition = extract.lmrob)
+
+extract.glmrob <- extract.lmrob
+setMethod("extract", signature = className("glmrob", "robustbase"), 
+    definition = extract.glmrob)
 
 
 # extension for lnam objects (sna package)
@@ -2120,7 +2124,7 @@ extract.sienaFit <- function(model, include.iterations = TRUE, ...) {
   
   se <- c(model$vrate, sqrt(diag(model$covtheta)))
   
-  pval <- pval <- 2 * pnorm(-abs(coefs / se))
+  pval <- 2 * pnorm(-abs(coefs / se))
   
   gof <- numeric()
   gof.names <- character()
@@ -2328,7 +2332,8 @@ extract.stergm <- function(model, beside = FALSE, include.formation = TRUE,
           pvalues = f.pval, 
           gof.names = f.gof.names, 
           gof = f.gof, 
-          gof.decimal = f.gof.decimal
+          gof.decimal = f.gof.decimal, 
+          model.name = "Formation"
       )
       trList[[length(trList) + 1]] <- tr
     }
@@ -2341,7 +2346,8 @@ extract.stergm <- function(model, beside = FALSE, include.formation = TRUE,
           pvalues = d.pval, 
           gof.names = d.gof.names, 
           gof = d.gof, 
-          gof.decimal = d.gof.decimal
+          gof.decimal = d.gof.decimal, 
+          model.name = "Dissolution"
       )
       trList[[length(trList) + 1]] <- tr
     }
@@ -2720,11 +2726,17 @@ extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE,
   s <- summary(model, ...)
   
   if ("relogit" %in% class(model) || "logit" %in% class(model) || 
-      "ls" %in% class(model)) {
+      "ls" %in% class(model) || "probit" %in% class(model) || 
+      "ologit" %in% class(model)) {
     coefficient.names <- rownames(s$coef)
     coefficients <- s$coef[, 1]
     standard.errors <- s$coef[, 2]
-    significance <- s$coef[, 4]
+    if ("ologit" %in% class(model)) {
+      tval <- s$coef[, 3]
+      significance <- 2 * pt(-abs(tval), s$df.residual)
+    } else {
+      significance <- s$coef[, 4]
+    }
     
     gof <- numeric()
     gof.names <- character()
@@ -2796,8 +2808,50 @@ extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE,
         gof.decimal = gof.decimal
     )
     return(tr)
+  } else if ("mlogit" %in% class(model)) {
+    coefficient.names <- rownames(s@coef3)
+    coefficients <- s@coef3[, 1]
+    standard.errors <- s@coef3[, 2]
+    zval <- s@coef3[, 3]
+    significance <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.loglik == TRUE) {
+      lik <- logLik(model)[1]
+      gof <- c(gof, lik)
+      gof.names <- c(gof.names, "Log Likelihood")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.deviance == TRUE) {
+      dev <- deviance(s)
+      if (!is.null(dev)) {
+        gof <- c(gof, dev)
+        gof.names <- c(gof.names, "Deviance")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+    }
+    if (include.nobs == TRUE) {
+      n <- nrow(model$data)
+      gof <- c(gof, n)
+      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names, 
+        coef = coefficients, 
+        se = standard.errors, 
+        pvalues = significance, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+    return(tr)
   } else {
-    stop("Only 'relogit'-, 'ls'-, and 'logit'-type Zelig models are supported.")
+    stop(paste("Only the following Zelig models are currently supported:", 
+        "logit, ls, mlogit, ologit, probit, relogit."))
   }
 }
 
@@ -2885,7 +2939,8 @@ extract.zeroinfl <- function(model, beside = FALSE, include.count = TRUE,
           pvalues = c.pval, 
           gof.names = gof.names, 
           gof = gof, 
-          gof.decimal = gof.decimal
+          gof.decimal = gof.decimal, 
+          model.name = "Count model"
       )
       trList[[length(trList) + 1]] <- tr
     }
@@ -2898,7 +2953,8 @@ extract.zeroinfl <- function(model, beside = FALSE, include.count = TRUE,
           pvalues = z.pval, 
           gof.names = gof.names, 
           gof = gof, 
-          gof.decimal = gof.decimal
+          gof.decimal = gof.decimal, 
+          model.name = "Zero model"
       )
       trList[[length(trList) + 1]] <- tr
     }
