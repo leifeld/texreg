@@ -18,6 +18,7 @@
 \alias{extract.gee}
 \alias{extract.glm}
 \alias{extract.glmerMod}
+\alias{extract.glmmadmb}
 \alias{extract.glmrob}
 \alias{extract.gls}
 \alias{extract.gmm}
@@ -133,6 +134,12 @@ extract.glmerMod(model, naive = FALSE, nsim = 1000,
     include.loglik = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
+
+extract.glmmadmb(model, include.variance = TRUE, 
+    include.dispersion = TRUE, include.zero = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, ...)
 
 extract.glmrob(model, include.nobs = TRUE, ...)
 

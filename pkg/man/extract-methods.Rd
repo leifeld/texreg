@@ -19,6 +19,7 @@
 \alias{extract,gee-method}
 \alias{extract,glm-method}
 \alias{extract,glmerMod-method}
+\alias{extract,glmmadmb-method}
 \alias{extract,glmrob-method}
 \alias{extract,gls-method}
 \alias{extract,gmm-method}
@@ -138,6 +139,10 @@ An extract function for glm objects from the \pkg{stats} package.
 
 \item{\code{extract.glmerMod}}{
 An extract function for glmerMod objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{extract.glmmadmb}}{
+An extract function for glmmadmb objects from the \pkg{glmmADMB} package.
 }
 
 \item{\code{extract.glmrob}}{
