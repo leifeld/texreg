@@ -843,6 +843,105 @@ setMethod("extract", signature = className("negbin", "MASS"),
     definition = extract.negbin)
 
 
+# extension for glmmadmb objects (glmmADMB package)
+extract.glmmadmb <- function(model, include.variance = TRUE, 
+    include.dispersion = TRUE, include.zero = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, ...) {
+  
+  cf <- model$b
+  nam <- names(cf)
+  se <- model$stdbeta
+  tval <- cf / se
+  pval <- 2 * pnorm(-abs(tval))
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.variance == TRUE && !is.null(model$S)) {
+    vc <- VarCorr(model)
+    vari <- unlist(vc)
+    for (i in 1:length(vari)) {
+      gof <- c(gof, vari[i])
+      gof.names <- c(gof.names, paste("Variance:", names(vari)[i]))
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+  }
+  if (include.dispersion == TRUE && !is.null(model$alpha)) {
+    label <- switch(model$family, 
+        truncnbinom = "Dispersion", 
+        nbinom = "Dispersion",
+        gamma = "Shape",
+        beta = "Dispersion",
+        betabinom = "Dispersion",
+        gaussian = "Residual variance",
+        logistic = "Scale",
+        "Dispersion"
+    )
+    dsp.lab <- paste0(label, ": parameter")
+    sd.lab <- paste0(label, ": SD")
+    disp <- model$alpha
+    sd <- model$sd_alpha
+    gof <- c(gof, disp, sd)
+    gof.names <- c(gof.names, dsp.lab, sd.lab)
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.zero == TRUE && !is.null(model$pz)) {
+    zero <- model$pz
+    zero.sd <- model$sd_pz
+    gof <- c(gof, zero, zero.sd)
+    gof.names <- c(gof.names, "Zero inflation: parameter", "Zero inflation: SD")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- model$loglik
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.groups == TRUE && !is.null(model$q)) {
+    groups <- model$q
+    for (i in 1:length(groups)) {
+      gof <- c(gof, groups[i])
+      gof.names <- c(gof.names, paste("Num.\ groups:", names(groups)[i]))
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+  }
+  
+  tr <- createTexreg(
+      coef.names = nam, 
+      coef = cf, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("glmmadmb", "glmmADMB"), 
+    definition = extract.glmmadmb)
+
+
 # extension for gls objects
 extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...) {
@@ -2717,7 +2816,7 @@ setMethod("extract", signature = className("aftreg", "eha"),
     definition = extract.aftreg)
 
 
-# extension for zelig objects (Zelig package; tested with relogit and logit)
+# extension for zelig objects (Zelig package)
 extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
     include.rsquared = TRUE, include.adjrs = TRUE, include.fstatistic = TRUE, 
