@@ -475,24 +475,23 @@ extract.ergm <- function(model, include.aic = TRUE, include.bic = TRUE,
   standard.errors <- s$coefs[, 2]
   significance <- s$coefs[, 4]
   
-  lik <- model$mle.lik[1]
-  aic <- s$aic
-  bic <- s$bic
-  
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
-  if (include.aic == TRUE) {
+  if (include.aic == TRUE && !is.null(s$aic)) {
+    aic <- s$aic
     gof <- c(gof, aic)
     gof.names <- c(gof.names, "AIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.bic == TRUE) {
+  if (include.bic == TRUE && !is.null(s$bic)) {
+    bic <- s$bic
     gof <- c(gof, bic)
     gof.names <- c(gof.names, "BIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.loglik == TRUE) {
+  if (include.loglik == TRUE && !is.null(model$mle.lik)) {
+    lik <- model$mle.lik[1]
     gof <- c(gof, lik)
     gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
