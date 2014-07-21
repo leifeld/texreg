@@ -5,11 +5,11 @@
 \description{Create coefficient plots from statistical model output.}
 \usage{
 
-plotreg(l, file = NA, custom.model.names = NULL, 
+plotreg(l, file = NULL, custom.model.names = NULL, 
     custom.coef.names = NULL, custom.note = NULL, 
     override.coef = 0, override.se = 0, override.pval = 0, 
     override.ci.low = 0, override.ci.up = 0, 
-    omit.coef = NA, reorder.coef = NULL, ci.level = 0.95, 
+    omit.coef = NULL, reorder.coef = NULL, ci.level = 0.95, 
     use.se = FALSE, mfrow = TRUE, xlim = NULL, cex = 2.5, 
     lwd.zerobar = 4, lwd.vbars = 1, lwd.inner = 7, 
     lwd.outer = 5, signif.light = "#fbc9b9", 

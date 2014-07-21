@@ -133,18 +133,21 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
 
 
 # plotreg function
-plotreg <- function(l, file = NA, custom.model.names = NULL, 
+plotreg <- function(l, file = NULL, custom.model.names = NULL, 
     custom.coef.names = NULL, custom.note = NULL, override.coef = 0, 
     override.se = 0, override.pval = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     ci.level = 0.95, use.se = FALSE, mfrow = TRUE, xlim = NULL, 
     cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, lwd.inner = 7, 
     lwd.outer = 5, signif.light = "#fbc9b9", signif.medium = "#f7523a", 
     signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
     insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", ...) {
   
-  if (!is.na(omit.coef) && !is.character(omit.coef)) {
+  if (!is.null(omit.coef) && !is.na(omit.coef) && !is.character(omit.coef)) {
     stop("omit.coef must be a character string!")
+  }
+  if (is.null(omit.coef)) {
+    omit.coef <- NA
   }
   
   if (length(use.se) == 1) {
@@ -170,7 +173,7 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
   }
   
   # file output; check file extension
-  if (!is.na(file)) {
+  if (!is.null(file) && !is.na(file)) {
     if (grepl(".pdf$", file)) {
       pdf(file, ...)
     } else if (grepl(".jpe*g$", file)) {
@@ -379,7 +382,7 @@ plotreg <- function(l, file = NA, custom.model.names = NULL,
     )
   }
   
-  if (!is.na(file)) {
+  if (!is.null(file) && !is.na(file)) {
     dev.off()
   }
 }

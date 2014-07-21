@@ -324,7 +324,6 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{omit.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Remove rows using a regular expression \\
 \code{reorder.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the model terms \\
 \code{reorder.gof}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the GOF statistics \\
-\code{return.string}		& $\bullet$	& $\bullet$	& $\bullet$	& Return the table as a character vector? \\
 \code{ci.force}			& $\bullet$	& $\bullet$	& $\bullet$	& Convert standard errors to confidence intervals \\
 \code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
 \code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
@@ -798,15 +797,10 @@ The same table can be typeset in {\LaTeX} by exchanging
 additional arguments are demonstrated.  The {\LaTeX} output
 code is shown below the \proglang{R} code that generates the table.
 The resulting table is shown in Table~\ref{tab:3}.
-<<>>=
+<<results=tex>>=
 texreg(list(m1, m2), dcolumn = TRUE, booktabs = TRUE,
     use.packages = FALSE, label = "tab:3", caption = "Two linear models.",
-    float.pos = "tb")
-@
-<<results=tex,echo=false>>=
-texreg(list(m1, m2), dcolumn = TRUE, booktabs = TRUE,
-    use.packages = FALSE, label = "tab:3", caption = "Two linear models.",
-    float.pos = "tb")
+    float.pos = "hb")
 @
 The caption, label, and float position of the table are set
 explicitly.  The \pkg{dcolumn} package is used to align coefficients
@@ -836,18 +830,24 @@ instead of the default \code{table} environment.
 \subsection{Custom names, omission of terms, and customization of coefficients}
 
 Another example demonstrates how the {\LaTeX} code can be
-saved in an object using the \code{return.string} argument.  The
-result is shown in Table~\ref{tab:4}.
+saved in an object The result is shown in Table~\ref{tab:4}.
 <<results=tex>>=
 mytable <- texreg(list(m1, m2), label = "tab:4", 
     caption = "Bolded coefficients, custom notes, three digits.", 
-    float.pos = "h", return.string = TRUE, bold = 0.05, stars = 0,
-    custom.note = "Coefficients with $p < 0.05$ in \\textbf{bold}.", 
+    float.pos = "h", bold = 0.05, stars = 0,  custom.note = 
+    "Coefficients with $p < 0.05$ in \\textbf{bold}.", 
+    digits = 3, leading.zero = FALSE, omit.coef = "Inter")
+@
+<<results=tex, echo=false>>=
+texreg(list(m1, m2), label = "tab:4", 
+    caption = "Bolded coefficients, custom notes, three digits.", 
+    float.pos = "h", bold = 0.05, stars = 0,  custom.note = 
+    "Coefficients with $p < 0.05$ in \\textbf{bold}.", 
     digits = 3, leading.zero = FALSE, omit.coef = "Inter")
 @
 
-The table can be printed to the \proglang{R} console later using the
-\code{cat()} function.
+The table can be printed to the \proglang{R} console later by calling 
+the name of the object (in this case \code{mytable}).
 
 The example presented above introduced several additional arguments:
 \code{bold = 0.05} formats all coefficients with $p$~values $< 0.05$
@@ -883,7 +883,7 @@ library("nlme")
 m3 <- gls(follicles ~ sin(2 * pi * Time) + cos(2 * pi * Time), Ovary,
     correlation = corAR1(form = ~ 1 | Mare))
 
-table <- texreg(
+texreg(
     list(m1, m3),
     custom.coef.names = c(
         "Intercept", 
@@ -1048,7 +1048,7 @@ Using the \code{plotreg} function, one or multiple statistical model objects can
 Most of the arguments of the \code{screenreg}, \code{texreg}, and \code{htmlreg} functions are also supported by the \code{plotreg} function.
 Where confidence intervals are not natively available, the \code{plotreg} function converts standard errors into confidence intervals.
 Alternatively, the \code{use.se} argument can be used to plot error bars with one or two standard errors from the point estimate.
-The diagram produced by the following code is shown in figure~\ref{fig:plotreg}:
+The diagram produced by the following code is shown in Figure~\ref{fig:plotreg}:
 <<results=hide,label=figure,fig=TRUE,include=FALSE, height=5, width=8>>=
 plotreg(m1, custom.coef.names = c("Intercept", "Group Trt"))
 @
@@ -1288,8 +1288,8 @@ The author would like to thank Oleg Badunenko, Tom Carsey, S.\,Q. Chang,
 Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber,
 Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Markus Riester,
 Francesco Sarracino, Giorgio Spedicato, Matthieu Stigler, Sebastian Ugbaje, 
-G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie for their
-valuable input and ideas.
+Neil Shephard, G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie 
+for their valuable input and ideas.
 
 \bibliography{v55i08}
 

@@ -4,15 +4,15 @@
 
 
 # screenreg function
-screenreg <- function(l, file = NA, single.row = FALSE, 
+screenreg <- function(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = ".", override.coef = 0, 
     override.se = 0, override.pval = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, column.spacing = 2, 
-    outer.rule = "=", inner.rule = "-", ...) {
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, column.spacing = 2, outer.rule = "=", inner.rule = "-", 
+    ...) {
   
   stars <- check.stars(stars)
   
@@ -188,47 +188,43 @@ screenreg <- function(l, file = NA, single.row = FALSE,
     snote <- ""
   }
   if (is.null(custom.note)) {
-    note <- paste0(snote, "\n\n")
+    note <- paste0(snote, "\n")
   } else if (custom.note == "") {
-    note <- "\n"
+    note <- ""
   } else {
-    note <- paste0(custom.note, "\n\n")
+    note <- paste0(custom.note, "\n")
     note <- gsub("%stars", snote, note)
   }
   string <- paste0(string, note)
   
   #write to file
-  if (is.na(file)) {
-    cat(string)
+  if (is.null(file) || is.na(file)) {
+    class(string) <- c("character", "texregTable")
+    return(string)
   } else if (!is.character(file)) {
     stop("The 'file' argument must be a character string.")
   } else {
     sink(file)
     cat(string)
     sink()
-    cat(paste0("The table was written to the file '", file, "'.\n"))
-  }
-  
-  if (return.string == TRUE) {
-    return(string)
+    message(paste0("The table was written to the file '", file, "'.\n"))
   }
 }
 
 
 # texreg function
 
-texreg <- function(l, file = NA, single.row = FALSE, 
+texreg <- function(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = "\\cdot", override.coef = 0, 
     override.se = 0, override.pval = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, bold = 0.00, 
-    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
-    label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, 
-    sideways = FALSE, use.packages = TRUE, table = TRUE, no.margin = TRUE, 
-    scriptsize = FALSE, float.pos = "", ...) {
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, bold = 0.00, center = TRUE, caption = "Statistical models", 
+    caption.above = FALSE, label = "table:coefficients", booktabs = FALSE, 
+    dcolumn = FALSE, sideways = FALSE, use.packages = TRUE, table = TRUE, 
+    no.margin = TRUE, scriptsize = FALSE, float.pos = "", ...) {
   
   stars <- check.stars(stars)
   
@@ -323,7 +319,7 @@ texreg <- function(l, file = NA, single.row = FALSE,
       string <- paste0(string, "\\usepackage{dcolumn}\n")
     }
     if (dcolumn == TRUE || booktabs == TRUE || sideways == TRUE) {
-      cat("\n")
+      string <- paste0(string, "\n")
     }
   }
   if (table == TRUE) {
@@ -539,37 +535,34 @@ texreg <- function(l, file = NA, single.row = FALSE,
     } else {
       t <- ""
     }
-    string <- paste0(string, "\\end{", t, "table}\n\n")
+    string <- paste0(string, "\\end{", t, "table}\n")
   }
   
-  if (is.na(file)) {
-    cat(string)
+  if (is.null(file) || is.na(file)) {
+    class(string) <- c("character", "texregTable")
+    return(string)
   } else if (!is.character(file)) {
     stop("The 'file' argument must be a character string.")
   } else {
     sink(file)
     cat(string)
     sink()
-    cat(paste0("The table was written to the file '", file, "'.\n"))
-  }
-  if (return.string == TRUE) {
-    return(string)
+    message(paste0("The table was written to the file '", file, "'.\n"))
   }
 }
 
 
 # htmlreg function
-htmlreg <- function(l, file = NA, single.row = FALSE, 
+htmlreg <- function(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, custom.note = NULL, 
     digits = 2, leading.zero = TRUE, symbol = "&middot;", override.coef = 0, 
     override.se = 0, override.pval = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NA, reorder.coef = NULL, 
-    reorder.gof = NULL, return.string = FALSE, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, bold = 0.00, 
-    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
-    star.symbol = "*", inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
-    head.tag = FALSE, body.tag = FALSE, ...) {
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, bold = 0.00, center = TRUE, caption = "Statistical models", 
+    caption.above = FALSE, star.symbol = "*", inline.css = TRUE, 
+    doctype = TRUE, html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, ...) {
   
   stars <- check.stars(stars)
   
@@ -880,23 +873,19 @@ htmlreg <- function(l, file = NA, single.row = FALSE,
     string <- paste0(string, h.ind, "</body>\n")
   }
   if (html.tag == TRUE) {
-    string <- paste0(string, "</html>\n\n")
-  } else {
-    string <- paste0(string, "\n")
+    string <- paste0(string, "</html>\n")
   }
   
-  if (is.na(file)) {
-    cat(string)
+  if (is.null(file) || is.na(file)) {
+    class(string) <- c("character", "texregTable")
+    return(string)
   } else if (!is.character(file)) {
     stop("The 'file' argument must be a character string.")
   } else {
     sink(file)
     cat(string)
     sink()
-    cat(paste0("The table was written to the file '", file, "'.\n"))
-  }
-  if (return.string == TRUE) {
-    return(string)
+    message(paste0("The table was written to the file '", file, "'.\n"))
   }
 }
 
