@@ -88,7 +88,7 @@ rearrangeMatrix <- function(m) {
 get.data <- function(l, ...) {
 
   # if a single model is handed over, put model inside a list
-  if (!"list" %in% class(l)) {
+  if (!"list" %in% class(l)[1]) {
     l <- list(l)
   }
 
@@ -486,8 +486,8 @@ customnames <- function(m, custom.names) {
 
 # remove coefficient rows that match the omit.coef regular expression
 omitcoef <- function(m, omit.coef) {
-  if (!is.na(omit.coef)) {
-    if (!is.character(omit.coef)) {
+  if (!is.null(omit.coef)) {
+    if (!is.character(omit.coef) || is.na(omit.coef)) {
       stop("omit.coef must be a character string!")
     }
     remove.rows <- grep(omit.coef, rownames(m))
@@ -526,8 +526,8 @@ modelnames <- function(model.list, tr.objects, model.names) {
     model.names <- rep(NA, length(model.list))
   } else if (class(model.names) != "character") {
     stop("Model names must be specified as a vector of strings.")
-  } else if (length(model.names) != length(model.list)) {
-    stop(paste("There are", length(model.list), "models, but you provided", 
+  } else if (length(model.names) != length(tr.objects)) {
+    stop(paste("There are", length(tr.objects), "models, but you provided", 
         length(model.names), "name(s) for them."))
   }
   
@@ -1061,4 +1061,9 @@ grouping <- function(output.matrix, groups, indentation = "    ",
     }
   }
   return(output.matrix)
+}
+
+# print method for texreg table strings
+print.texregTable <- function(x, ...) {
+  cat(x, ...)
 }

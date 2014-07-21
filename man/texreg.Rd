@@ -5,46 +5,44 @@
 \title{Convert regression output to LaTeX or HTML tables}
 \description{Conversion of R regression output to LaTeX or HTML tables.}
 \usage{
-texreg(l, file = NA, single.row = FALSE, stars = c(0.001, 
+texreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, 
     custom.note = NULL, digits = 2, leading.zero = TRUE, 
     symbol = "\\\\cdot", override.coef = 0, override.se = 0, 
     override.pval = 0, override.ci.low = 0, override.ci.up = 0, 
-    omit.coef = NA, reorder.coef = NULL, reorder.gof = NULL, 
-    return.string = FALSE, ci.force = FALSE, 
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, 
-    bold = 0.00, center = TRUE, caption = "Statistical models", 
-    caption.above = FALSE, label = "table:coefficients", 
-    booktabs = FALSE, dcolumn = FALSE, sideways = FALSE, 
-    use.packages = TRUE, table = TRUE, no.margin = TRUE, 
-    scriptsize = FALSE, float.pos = "", ...)
+    omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL, 
+    ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, bold = 0.00, center = TRUE, 
+    caption = "Statistical models", caption.above = FALSE, 
+    label = "table:coefficients", booktabs = FALSE, 
+    dcolumn = FALSE, sideways = FALSE, use.packages = TRUE, 
+    table = TRUE, no.margin = TRUE, scriptsize = FALSE, 
+    float.pos = "", ...)
 
-htmlreg(l, file = NA, single.row = FALSE, stars = c(0.001, 
+htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, 
     custom.note = NULL, digits = 2, leading.zero = TRUE, 
     symbol = "&middot;", override.coef = 0, override.se = 0, 
     override.pval = 0, override.ci.low = 0, override.ci.up = 0, 
-    omit.coef = NA, reorder.coef = NULL, reorder.gof = NULL, 
-    return.string = FALSE, ci.force = FALSE, 
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, 
-    bold = 0.00, center = TRUE, caption = "Statistical models", 
-    caption.above = FALSE, star.symbol = "*", 
-    inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
-    head.tag = FALSE, body.tag = FALSE, ...)
+    omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL, 
+    ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, bold = 0.00, center = TRUE, 
+    caption = "Statistical models", caption.above = FALSE, 
+    star.symbol = "*", inline.css = TRUE, doctype = TRUE, 
+    html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, ...)
 
-screenreg(l, file = NA, single.row = FALSE, stars = c(0.001, 
+screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.gof.names = NULL, 
     custom.note = NULL, digits = 2, leading.zero = TRUE, 
     symbol = ".", override.coef = 0, override.se = 0, 
     override.pval = 0, override.ci.low = 0, override.ci.up = 0, 
-    omit.coef = NA, reorder.coef = NULL, reorder.gof = NULL, 
-    return.string = FALSE, ci.force = FALSE, 
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, 
-    column.spacing = 2, outer.rule = "=", inner.rule = "-", 
-    ...)
+    omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL, 
+    ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, column.spacing = 2, outer.rule = "=", 
+    inner.rule = "-", ...)
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -100,7 +98,6 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{omit.coef}{A character string which is used as a regular expression to remove coefficient rows from the table. For example, \code{omit.coef = "group"} deletes all coefficient rows from the table where the name of the coefficient contains the character sequence "group". More complex regular expressions can be used to filter out several kinds of model terms, for example \code{omit.coef = "(thresh)|(ranef)"} to remove all model terms matching either "thresh" or "ranef".The \code{omit.coef} argument is processed after the \code{custom.coef.names} argument, so the regular expression should refer to the custom coefficient names. To omit GOF entries instead of coefficient entries, use the custom arguments of the extract functions instead (see the help entry of the \link{extract} function or \link{extract-methods}.}
 \item{reorder.coef}{Reorder the rows of the coefficient block of the resulting table in a custom way. The argument takes a vector of the same length as the number of coefficients. For example, if there are three coefficients, \code{reorder.coef = c(3, 2, 1)} will put the third coefficient in the first row and the first coefficient in the third row. Reordering can be sensible because interaction effects are often added to the end of the model output although they were specified earlier in the model formula. Note: Reordering takes place after processing custom coefficient names and after omitting coefficients, so the \code{custom.coef.names} and \code{omit.coef} arguments should follow the original order.}
 \item{reorder.gof}{Reorder the rows of the goodness-of-fit block of the resulting table in a custom way. The argument takes a vector of the same length as the number of GOF statistics. For example, if there are three goodness-of-fit rows, \code{reorder.gof = c(3, 2, 1)} will exchange the first and the third row. Note: Reordering takes place after processing custom GOF names, so the \code{custom.gof.names} argument should follow the original order.}
-\item{return.string}{Should the table be returned as a character object, which can later be printed again using the \code{cat()} function?}
 \item{ci.force}{Should confidence intervals be used instead of the default standard errors and p values? Most models implemented in the \pkg{texreg} package report standard errors and p values by default while few models report confidence intervals. However, the functions in the \pkg{texreg} package can convert standard errors and into confidence intervals if desired. To enforce confidence intervals instead of standard errors, the \code{ci.force} argument accepts either a logical value indicating whether all models or none of the models should be forced to report confidence intervals (\code{ci.force = TRUE} for all and \code{ci.force = FALSE} for none) or a vector of logical values indicating for each model separately whether the model should be forced to report confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}).}
 \item{ci.force.level}{If the \code{ci.force} argument is used to convert standard errors to confidence intervals, what confidence level should be used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 \item{ci.test}{If confidence intervals are reported, the \code{ci.test} argument specifies the reference value to establish whether a coefficient/CI is significant. The default value \code{ci.test = 0}, for example, will attach a significance star to coefficients if the confidence interval does not contain \code{0}. If no star should be printed at all, \code{ci.test = NULL} can be used. The \code{ci.test} argument works both for models with native support for confidence intervals and in cases where the \code{ci.force} argument is used.}
