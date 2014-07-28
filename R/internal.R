@@ -27,12 +27,12 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
   
   y <- format(round(x, digits), nsmall = digits, scientific = FALSE)
   
-  #if (grepl("\\.0+$", y) == TRUE) {  # very small number
-  #  y <- format(x, nsmall = digits, scientific = TRUE)
-  #} else 
   if (lead.zero == FALSE && (grepl("^0", y) == TRUE ||  # leading zero
       grepl("^-0", y) == TRUE)) {
     y <- gsub("0\\.", "\\.", y)
+  }
+  if (x < 0 && grepl("^-", y) == FALSE) {  # very small negative numbers
+    y <- paste0("-", y)
   }
   return(y)
 }
