@@ -1,313 +1,632 @@
 \name{extract}
 \alias{extract}
+\alias{extract-methods}
 \alias{extract.aftreg}
+\alias{extract,aftreg-method}
 \alias{extract.Arima}
+\alias{extract,Arima-method}
 \alias{extract.betareg}
+\alias{extract,betareg-method}
 \alias{extract.brglm}
+\alias{extract,brglm-method}
 \alias{extract.btergm}
+\alias{extract,btergm-method}
 \alias{extract.clm}
+\alias{extract,clm-method}
 \alias{extract.clogit}
+\alias{extract,clogit-method}
 \alias{extract.coeftest}
+\alias{extract,coeftest-method}
 \alias{extract.coxph}
+\alias{extract,coxph-method}
 \alias{extract.coxph.penal}
+\alias{extract,coxph.penal-method}
 \alias{extract.dynlm}
+\alias{extract,dynlm-method}
 \alias{extract.ergm}
+\alias{extract,ergm-method}
 \alias{extract.fGARCH}
+\alias{extract,fGARCH-method}
 \alias{extract.gam}
+\alias{extract,gam-method}
 \alias{extract.gamlss}
+\alias{extract,gamlss-method}
 \alias{extract.gee}
+\alias{extract,gee-method}
 \alias{extract.glm}
+\alias{extract,glm-method}
 \alias{extract.glmerMod}
+\alias{extract,glmerMod-method}
 \alias{extract.glmmadmb}
+\alias{extract,glmmadmb-method}
 \alias{extract.glmrob}
+\alias{extract,glmrob-method}
 \alias{extract.gls}
+\alias{extract,gls-method}
 \alias{extract.gmm}
+\alias{extract,gmm-method}
 \alias{extract.hurdle}
+\alias{extract,hurdle-method}
 \alias{extract.ivreg}
+\alias{extract,ivreg-method}
 \alias{extract.lm}
+\alias{extract,lm-method}
 \alias{extract.lme}
+\alias{extract,lme-method}
 \alias{extract.lme4}
+\alias{extract,lme4-method}
 \alias{extract.lmerMod}
+\alias{extract,lmerMod-method}
 \alias{extract.lmrob}
+\alias{extract,lmrob-method}
 \alias{extract.lnam}
+\alias{extract,lnam-method}
 \alias{extract.lrm}
+\alias{extract,lrm-method}
 \alias{extract.maBina}
+\alias{extract,maBina-method}
 \alias{extract.mer}
+\alias{extract,mer-method}
 \alias{extract.mnlogit}
+\alias{extract,mnlogit-method}
 \alias{extract.multinom}
+\alias{extract,multinom-method}
 \alias{extract.negbin}
+\alias{extract,negbin-method}
 \alias{extract.nlme}
+\alias{extract,nlme-method}
 \alias{extract.nlmerMod}
+\alias{extract,nlmerMod-method}
 \alias{extract.ols}
+\alias{extract,ols-method}
 \alias{extract.pgmm}
+\alias{extract,pgmm-method}
 \alias{extract.phreg}
+\alias{extract,phreg-method}
 \alias{extract.plm}
+\alias{extract,plm-method}
 \alias{extract.pmg}
+\alias{extract,pmg-method}
 \alias{extract.polr}
+\alias{extract,polr-method}
 \alias{extract.rem.dyad}
+\alias{extract,rem.dyad-method}
 \alias{extract.rlm}
+\alias{extract,rlm-method}
 \alias{extract.rq}
+\alias{extract,rq-method}
 \alias{extract.sarlm}
+\alias{extract,sarlm-method}
 \alias{extract.sclm}
+\alias{extract,sclm-method}
 \alias{extract.sienaFit}
+\alias{extract,sienaFit-method}
 \alias{extract.simex}
+\alias{extract,simex-method}
 \alias{extract.stergm}
+\alias{extract,stergm-method}
 \alias{extract.survreg}
+\alias{extract,survreg-method}
 \alias{extract.survreg.penal}
+\alias{extract,survreg.penal-method}
 \alias{extract.svyglm}
+\alias{extract,svyglm-method}
 \alias{extract.systemfit}
+\alias{extract,systemfit-method}
 \alias{extract.texreg}
+\alias{extract,texreg-method}
 \alias{extract.tobit}
+\alias{extract,tobit-method}
 \alias{extract.weibreg}
+\alias{extract,weibreg-method}
 \alias{extract.zelig}
+\alias{extract,zelig-method}
 \alias{extract.zeroinfl}
+\alias{extract,zeroinfl-method}
+\docType{methods}
 \title{Extract coefficients and GOF measures from a statistical object}
-\description{Extract coefficients and GOF measures from a statistical object.}
+\description{
+Extract coefficients and GOF measures from a statistical object.
+}
+\details{
+\code{extract} is a generic function which extracts coefficients and GOF measures from statistical model objects. There are several extract methods for the specific model types, which are called by the generic extract function if it encounters a model known to be handled by the specific method. The output is a \code{texreg} object, which is subsequently used by the \link{texreg} function.
+}
 \usage{
 extract(model, ...)
 
-extract.aftreg(model, include.loglik = TRUE, include.lr = TRUE, 
-    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
-    ...)
+\S4method{extract}{aftreg}(model, include.loglik = TRUE, 
+    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE, 
+    include.trisk = TRUE, ...)
 
-extract.Arima(model, include.pvalues = FALSE, include.aic = TRUE, 
-    include.loglik = TRUE, ...)
+\S4method{extract}{Arima}(model, include.pvalues = FALSE, 
+    include.aic = TRUE, include.loglik = TRUE, ...)
 
-extract.betareg(model, include.precision = TRUE, 
+\S4method{extract}{betareg}(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, ...)
 
-extract.brglm(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{brglm}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{btergm}(model, level = 0.95, ...)
+
+\S4method{extract}{clm}(model, include.thresholds = TRUE, 
+    include.aic = TRUE, include.bic=TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, ...)
 
-extract.btergm(model, conf.level = 0.95, ...)
+\S4method{extract}{clogit}(model, include.aic = TRUE, 
+    include.rsquared = TRUE, include.maxrs = TRUE, 
+    include.events = TRUE, include.nobs = TRUE, 
+    include.missings = TRUE, ...)
 
-extract.clm(model, include.thresholds = TRUE, include.aic = TRUE, 
-    include.bic=TRUE, include.loglik = TRUE, include.nobs = TRUE, 
-    ...)
+\S4method{extract}{coeftest}(model, ...)
 
-extract.clogit(model, include.aic = TRUE, include.rsquared = TRUE, 
-    include.maxrs = TRUE, include.events = TRUE, 
-    include.nobs = TRUE, include.missings = TRUE, ...)
+\S4method{extract}{coxph}(model, include.aic = TRUE, 
+    include.rsquared = TRUE, include.maxrs=TRUE, 
+    include.events = TRUE, include.nobs = TRUE, 
+    include.missings = TRUE, include.zph = TRUE, ...)
 
-extract.coeftest(model, ...)
-
-extract.coxph(model, include.aic = TRUE, include.rsquared = TRUE, 
-    include.maxrs=TRUE, include.events = TRUE, 
-    include.nobs = TRUE, include.missings = TRUE, 
-    include.zph = TRUE, ...)
-
-extract.coxph.penal(model, include.aic = TRUE, 
+\S4method{extract}{coxph.penal}(model, include.aic = TRUE, 
     include.rsquared = TRUE, include.maxrs = TRUE, 
     include.events = TRUE, include.nobs = TRUE, 
     include.missings = TRUE, include.zph = TRUE, ...)
 
-extract.dynlm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, include.fstatistic = FALSE, ...)
+\S4method{extract}{dynlm}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, ...)
 
-extract.ergm(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, ...)
+\S4method{extract}{ergm}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, ...)
 
-extract.fGARCH(model, include.nobs = TRUE, include.aic = TRUE, 
-    include.loglik = TRUE, ...)
+\S4method{extract}{fGARCH}(model, include.nobs = TRUE, 
+    include.aic = TRUE, include.loglik = TRUE, ...)
 
-extract.gam(model, include.smooth = TRUE, include.aic = TRUE, 
+\S4method{extract}{gam}(model, include.smooth = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.dev.expl = TRUE, include.dispersion = TRUE, 
+    include.rsquared = TRUE, include.gcv = TRUE, 
+    include.nobs = TRUE, include.nsmooth = TRUE, ...)
+
+\S4method{extract}{gamlss}(model, robust = FALSE, 
+    include.nobs = TRUE, include.nagelkerke = TRUE, 
+    include.gaic = TRUE, ...)
+
+\S4method{extract}{gee}(model, robust = TRUE, 
+    include.dispersion = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{glm}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.dev.expl = TRUE, 
-    include.dispersion = TRUE, include.rsquared = TRUE, 
-    include.gcv = TRUE, include.nobs = TRUE, 
-    include.nsmooth = TRUE, ...)
+    include.deviance = TRUE, include.nobs = TRUE, ...)
 
-extract.gamlss(model, robust = FALSE, include.nobs = TRUE, 
-    include.nagelkerke = TRUE, include.gaic = TRUE, ...)
+\S4method{extract}{glmerMod}(model, method = c("naive", 
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
+    include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, ...)
 
-extract.gee(model, robust = TRUE, include.dispersion = TRUE, 
-    include.nobs = TRUE, ...)
-
-extract.glm(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, ...)
-
-extract.glmerMod(model, naive = FALSE, nsim = 1000, 
-    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
-    include.variance = TRUE, ...)
-
-extract.glmmadmb(model, include.variance = TRUE, 
+\S4method{extract}{glmmadmb}(model, include.variance = TRUE, 
     include.dispersion = TRUE, include.zero = TRUE, 
     include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, ...)
 
-extract.glmrob(model, include.nobs = TRUE, ...)
+\S4method{extract}{glmrob}(model, include.nobs = TRUE, ...)
 
-extract.gls(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, ...)
+\S4method{extract}{gls}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, ...)
 
-extract.gmm(model, include.obj.fcn = TRUE, 
+\S4method{extract}{gmm}(model, include.obj.fcn = TRUE, 
     include.overidentification = FALSE, include.nobs = TRUE, ...)
 
-extract.hurdle(model, beside = FALSE, include.count = TRUE, 
-    include.zero = TRUE, include.aic = TRUE, include.loglik = TRUE, 
-    include.nobs = TRUE, ...)
+\S4method{extract}{hurdle}(model, beside = FALSE, 
+    include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
-extract.ivreg(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, include.fstatistic = FALSE, ...)
+\S4method{extract}{ivreg}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, ...)
 
-extract.lm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, include.fstatistic = FALSE, ...)
+\S4method{extract}{lm}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, ...)
 
-extract.lme(model, include.aic = TRUE, include.bic = TRUE, 
+\S4method{extract}{lme}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = FALSE, ...)
+
+\S4method{extract}{lme4}(model, method = c("naive", 
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
+    include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = FALSE, ...)
+    include.groups = TRUE, include.variance = TRUE, ...)
 
-extract.lme4(model, naive = FALSE, nsim = 1000, 
-    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
-    include.variance = TRUE, ...)
+\S4method{extract}{lmerMod}(model, method = c("naive", 
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
+    include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, ...)
 
-extract.lmerMod(model, naive = FALSE, nsim = 1000, 
-    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
-    include.variance = TRUE, ...)
+\S4method{extract}{lmrob}(model, include.nobs = TRUE, ...)
 
-extract.lmrob(model, include.nobs = TRUE, ...)
+\S4method{extract}{lnam}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, ...)
 
-extract.lnam(model, include.rsquared = TRUE, include.adjrs = TRUE, 
+\S4method{extract}{lrm}(model, include.pseudors = TRUE, 
+    include.lr = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{maBina}(model, ...)
+
+\S4method{extract}{mer}(model, method = c("naive", 
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
+    include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, ...)
+
+\S4method{extract}{mnlogit}(model, include.aic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.intercept = TRUE, 
+    include.iterations = FALSE, ...)
+
+\S4method{extract}{multinom}(model, include.pvalues = TRUE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    ...)
+    include.deviance = TRUE, include.nobs = TRUE, ...)
 
-extract.lrm(model, include.pseudors = TRUE, include.lr = TRUE, 
-    include.nobs = TRUE, ...)
-
-extract.maBina(model, ...)
-
-extract.mer(model, naive = FALSE, nsim = 1000, 
-    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
-    include.variance = TRUE, ...)
-
-extract.mnlogit(model, include.aic = TRUE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
-    include.intercept = TRUE, include.iterations = FALSE, ...)
-
-extract.multinom(model, include.pvalues = TRUE, include.aic = TRUE, 
+\S4method{extract}{negbin}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-extract.negbin(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, ...)
+\S4method{extract}{nlme}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = FALSE, ...)
 
-extract.nlme(model, include.aic = TRUE, include.bic = TRUE, 
+\S4method{extract}{nlmerMod}(model, method = c("naive", 
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
+    include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = FALSE, ...)
+    include.groups = TRUE, include.variance = TRUE, ...)
 
-extract.nlmerMod(model, naive = FALSE, nsim = 1000, 
-    conf.level = 0.95, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
-    include.variance = TRUE, ...)
+\S4method{extract}{ols}(model, include.nobs = TRUE, 
+    include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.fstatistic = FALSE, include.lr = TRUE, ...)
 
-extract.ols(model, include.nobs = TRUE, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.fstatistic = FALSE, 
-    include.lr = TRUE, ...)
+\S4method{extract}{pgmm}(model, include.nobs = TRUE, 
+    include.sargan = TRUE, include.wald = TRUE, ...)
 
-extract.pgmm(model, include.nobs = TRUE, include.sargan = TRUE, 
-    include.wald = TRUE, ...)
+\S4method{extract}{phreg}(model, include.loglik = TRUE, 
+    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE, 
+    include.trisk = TRUE, ...)
 
-extract.phreg(model, include.loglik = TRUE, include.lr = TRUE, 
-    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
-    ...)
-
-extract.plm(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, ...)
-
-extract.pmg(model, include.nobs = TRUE, ...)
-
-extract.polr(model, include.thresholds = FALSE, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, ...)
-
-extract.rem.dyad(model, include.nvertices = TRUE, 
-    include.events = TRUE, include.aic = TRUE, include.aicc = TRUE, 
-    include.bic = TRUE, ...)
-
-extract.rlm(model, include.nobs = TRUE, ...)
-
-extract.rq(model, include.nobs = TRUE, include.percentile = TRUE, 
-    ...)
-
-extract.sarlm(model, include.nobs = TRUE, include.lambda = TRUE, 
-    include.aic = TRUE, include.loglik = TRUE, include.wald = TRUE, ...)
-
-extract.sclm(model, include.thresholds = TRUE, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, 
-    ...)
-
-extract.sienaFit(model, include.iterations = TRUE, ...)
-
-extract.simex(model, jackknife = TRUE, include.nobs = TRUE, ...)
-
-extract.stergm(model, beside = FALSE, include.formation = TRUE, 
-    include.dissolution = TRUE, include.nvertices = TRUE, 
-    include.aic = FALSE, include.bic = FALSE, 
-    include.loglik = FALSE, ...)
-
-extract.survreg(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, ...)
-
-extract.survreg.penal(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, ...)
-
-extract.svyglm(model, include.aic = FALSE, include.bic = FALSE, 
-    include.loglik = FALSE, include.deviance = TRUE, 
-    include.dispersion = TRUE, include.nobs = TRUE, ...)
-
-extract.systemfit(model, include.rsquared = TRUE, 
+\S4method{extract}{plm}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, ...)
 
-extract.texreg(model, ...)
+\S4method{extract}{pmg}(model, include.nobs = TRUE, ...)
 
-extract.tobit(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = FALSE, include.censnobs = TRUE, include.wald=TRUE, 
-    ...)
+\S4method{extract}{polr}(model, include.thresholds = FALSE, 
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)
 
-extract.weibreg(model, include.loglik = TRUE, include.lr = TRUE, 
-    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, 
-    ...)
+\S4method{extract}{rem.dyad}(model, include.nvertices = TRUE, 
+    include.events = TRUE, include.aic = TRUE, 
+    include.aicc = TRUE, include.bic = TRUE, ...)
 
-extract.zelig(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
-    include.rsquared = TRUE, include.adjrs = TRUE, include.fstatistic = TRUE, 
-    ...)
+\S4method{extract}{rlm}(model, include.nobs = TRUE, ...)
 
-extract.zeroinfl(model, beside = FALSE, include.count = TRUE, 
-    include.zero = TRUE, include.aic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{rq}(model, include.nobs = TRUE, 
+    include.percentile = TRUE, ...)
+
+\S4method{extract}{sarlm}(model, include.nobs = TRUE, 
+    include.lambda = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, include.wald = TRUE, ...)
+
+\S4method{extract}{sclm}(model, include.thresholds = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, ...)
-}
-\details{
-extract() is a generic function which extracts coefficients and GOF measures 
-from statistical objects. There are several extract functions for the specific 
-model types, which are called by the generic extract function if it encounters 
-a model known to be handled by the specific function. The output is used by 
-the \link{texreg} function.
 
-The various extract functions can also be used directly on a statistical model 
-to convert them into texreg objects.
+\S4method{extract}{sienaFit}(model, include.iterations = TRUE, 
+    ...)
+
+\S4method{extract}{simex}(model, jackknife = TRUE, 
+    include.nobs = TRUE, ...)
+
+\S4method{extract}{stergm}(model, beside = FALSE, 
+    include.formation = TRUE, include.dissolution = TRUE, 
+    include.nvertices = TRUE, include.aic = FALSE, 
+    include.bic = FALSE, include.loglik = FALSE, ...)
+
+\S4method{extract}{survreg}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{survreg.penal}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{svyglm}(model, include.aic = FALSE, 
+    include.bic = FALSE, include.loglik = FALSE, 
+    include.deviance = TRUE, include.dispersion = TRUE, 
+    include.nobs = TRUE, ...)
+
+\S4method{extract}{systemfit}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{texreg}(model, ...)
+
+\S4method{extract}{tobit}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = FALSE, 
+    include.censnobs = TRUE, include.wald=TRUE, ...)
+
+\S4method{extract}{weibreg}(model, include.loglik = TRUE, 
+    include.lr = TRUE, include.nobs = TRUE, 
+    include.events = TRUE, include.trisk = TRUE, ...)
+
+\S4method{extract}{zelig}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, 
+    include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.fstatistic = TRUE, ...)
+
+\S4method{extract}{zeroinfl}(model, beside = FALSE, 
+    include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
+}
+\section{Methods}{
+\describe{
+
+\item{\code{aftreg}}{
+An extract method for aftreg objects from the \pkg{eha} package.
+}
+
+\item{\code{Arima}}{
+An extract method for Arima objects from the \pkg{stats} package.
+}
+
+\item{\code{betareg}}{
+An extract method for betareg objects from the \pkg{betareg} package.
+}
+
+\item{\code{brglm}}{
+An extract method for brglm objects from the \pkg{brglm} package.
+}
+
+\item{\code{btergm}}{
+An extract method for btergm objects from the \pkg{xergm} package.
+}
+
+\item{\code{clm}}{
+An extract method for clm objects from the \pkg{ordinal} package.
+}
+
+\item{\code{clogit}}{
+An extract method for clogit objects from the \pkg{survival} package.
+}
+
+\item{\code{coeftest}}{
+An extract method for coeftest objects from the \pkg{lmtest} package.
+}
+
+\item{\code{coxph}}{
+An extract method for coxph objects from the \pkg{survival} package.
+}
+
+\item{\code{coxph.penal}}{
+An extract method for coxph.penal objects from the \pkg{survival} package.
+}
+
+\item{\code{dynlm}}{
+An extract method for dynlm objects from the \pkg{dynlm} package.
+}
+
+\item{\code{ergm}}{
+An extract method for ergm objects from the \pkg{ergm} package.
+}
+
+\item{\code{fGARCH}}{
+An extract method for fGARCH objects from the \pkg{fGarch} package.
+}
+
+\item{\code{gam}}{
+An extract method for gam objects from the \pkg{mgcv} package.
+}
+
+\item{\code{gamlss}}{
+An extract method for gamlss objects from the \pkg{gamlss} package.
+}
+
+\item{\code{gee}}{
+An extract method for gee objects from the \pkg{gee} package.
+}
+
+\item{\code{glm}}{
+An extract method for glm objects from the \pkg{stats} package.
+}
+
+\item{\code{glmerMod}}{
+An extract method for glmerMod objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{glmmadmb}}{
+An extract method for glmmadmb objects from the \pkg{glmmADMB} package.
+}
+
+\item{\code{glmrob}}{
+An extract method for glmrob objects from the \pkg{robustbase} package.
+}
+
+\item{\code{gls}}{
+An extract method for gls objects from the \pkg{nlme} package.
+}
+
+\item{\code{gmm}}{
+An extract method for gmm objects from the \pkg{gmm} package.
+}
+
+\item{\code{ivreg}}{
+An extract method for ivreg objects from the \pkg{AER} package.
+}
+
+\item{\code{hurdle}}{
+An extract method for hurdle objects from the \pkg{pscl} package.
+}
+
+\item{\code{lm}}{
+An extract method for lm objects from the \pkg{stats} package.
+}
+
+\item{\code{lme}}{
+An extract method for lme objects from the \pkg{nlme} package.
+}
+
+\item{\code{lme4}}{
+An extract method for lme4 objects from the \pkg{lme4} package.
+}
+
+\item{\code{lmerMod}}{
+An extract method for lmerMod objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{lmrob}}{
+An extract method for lmrob objects from the \pkg{robustbase} package.
+}
+
+\item{\code{lnam}}{
+An extract method for lnam objects from the \pkg{sna} package.
+}
+
+\item{\code{lrm}}{
+An extract method for lrm objects from the \pkg{Design} or \pkg{rms} package.
+}
+
+\item{\code{maBina}}{
+An extract method for maBina objects from the \pkg{erer} package.
+}
+
+\item{\code{mer}}{
+An extract method for mer objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{mnlogit}}{
+An extract method for mnlogit objects from the \pkg{mnlogit} package.
+}
+
+\item{\code{multinom}}{
+An extract method for multinom objects from the \pkg{nnet} package.
+}
+
+\item{\code{negbin}}{
+An extract method for negbin objects from the \pkg{MASS} package.
+}
+
+\item{\code{nlme}}{
+An extract method for nlme objects from the \pkg{nlme} package.
+}
+
+\item{\code{nlmerMod}}{
+An extract method for nlmerMod objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{ols}}{
+An extract method for ols objects from the \pkg{rms} package.
+}
+
+\item{\code{pgmm}}{
+An extract method for pgmm objects from the \pkg{plm} package.
+}
+
+\item{\code{phreg}}{
+An extract method for phreg objects from the \pkg{eha} package.
+}
+
+\item{\code{plm}}{
+An extract method for plm objects from the \pkg{plm} package.
+}
+
+\item{\code{pmg}}{
+An extract method for pmg objects from the \pkg{plm} package.
+}
+
+\item{\code{polr}}{
+An extract method for polr objects from the \pkg{MASS} package.
+}
+
+\item{\code{rem.dyad}}{
+An extract method for rem.dyad objects from the \pkg{relevent} package.
+}
+
+\item{\code{rlm}}{
+An extract method for rlm objects from the \pkg{MASS} package.
+}
+
+\item{\code{rq}}{
+An extract method for rq objects from the \pkg{quantreg} package.
+}
+
+\item{\code{sarlm}}{
+An extract method for sarlm objects from the \pkg{spdep} package.
+}
+
+\item{\code{sclm}}{
+An extract method for sclm objects from the \pkg{ordinal} package.
+}
+
+\item{\code{sienaFit}}{
+An extract method for sienaFit objects from the \pkg{RSiena} package.
+}
+
+\item{\code{simex}}{
+An extract method for simex objects from the \pkg{simex} package.
+}
+
+\item{\code{stergm}}{
+An extract method for stergm objects from the \pkg{tergm} package.
+}
+
+\item{\code{survreg}}{
+An extract method for survreg objects from the \pkg{survival} package.
+}
+
+\item{\code{survreg.penal}}{
+An extract method for survreg.penal objects from the \pkg{survival} package.
+}
+
+\item{\code{svyglm}}{
+An extract method for svyglm objects from the \pkg{survey} package.
+}
+
+\item{\code{systemfit}}{
+An extract method for systemfit objects from the \pkg{systemfit} package.
+}
+
+\item{\code{texreg}}{
+An extract method for texreg objects from the \pkg{texreg} package. The purpose is to allow for easy manipulation of the output. \code{texreg} objects can be created using the \link{createTexreg} function or using the \link{extract} function. After manipulating the object, it can be handed back to the \link{screenreg}, \link{texreg}, or \link{htmlreg} functions for creating a table.
+}
+
+\item{\code{tobit}}{
+An extract method for tobit objects from the \pkg{AER} package.
+}
+
+\item{\code{weibreg}}{
+An extract method for weibreg objects from the \pkg{eha} package.
+}
+
+\item{\code{zelig}}{
+An extract method for zelig objects from the \pkg{Zelig} package.
+}
+
+\item{\code{zeroinfl}}{
+An extract method for zeroinfl objects from the \pkg{pscl} package.
+}
+}
 }
 \arguments{
 \item{model}{ A statistical model object. }
 \item{beside}{ If available: should the model terms be arranged below each other or beside each other (default)? For example, in a stergm model, the formation and dissolution coefficients can be arranged in two columns of the table. }
-\item{conf.level}{Confidence level (\code{1 - alpha}) for computing confidence intervals. }
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
 \item{include.aicc}{ If available: should AICc be reported? This is a version of AIC with a correction for finite sample sizes. }
@@ -351,10 +670,11 @@ to convert them into texreg objects.
 \item{include.zero}{ If available: should the zero-inflation model of a zero-inflated regression or the zero hurdle model of a hurdle regression be included in the coefficients block (after the count model)? }
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
-\item{naive}{ If available: use naive p values and standard errors. }
-\item{nsim}{ In linear mixed effects models: the MCMC sample size from which confidence intervals are derived (for old versions of the \pkg{lme4} package), or the number of simulations on which bootstrapped confidence intervals should be based (for newer versions of the \pkg{lme4} package; only if the argument \code{method = "boot"} is provided, otherwise CIs are based on profile likelihood). Note: high values may take considerable computing time. }
+\item{level}{Confidence level (\code{1 - alpha}) for computing confidence intervals. }
+\item{method}{ The method used to compute confidence intervals or p values. In \pkg{lme4} models, the default value \code{"naive"} computes naive p values while the other methods compute confidence intervals using the \code{confint} function. }
+\item{nsim}{ In linear mixed effects models: the MCMC sample size or number of bootstrapping replications on the basis of which confidence intervals are computed (only if the \code{method} argument does not specify \code{"naive"}, which is the default behavior). Note: large values may take considerable computing time. }
 \item{robust}{ If available: report robust instead of naive standard errors. }
-\item{...}{ Custom parameters. }
+\item{...}{ Custom parameters which are handed over to subroutines. }
 }
 \references{
 Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 
@@ -362,8 +682,9 @@ LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
 \url{http://www.jstatsoft.org/v55/i08/}.
 }
 \seealso{
-\code{\link{texreg-package} \link{texreg} \link{extract-methods}}
+\code{\link{texreg-package} \link{texreg}}
 }
 \author{
 Philip Leifeld (\url{http://www.philipleifeld.de})
 }
+\keyword{methods}

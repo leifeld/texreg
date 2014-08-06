@@ -116,9 +116,9 @@ setMethod("extract", signature = className("betareg", "betareg"),
 
 
 # extension for btergm objects
-extract.btergm <- function(model, conf.level = 0.95, ...) {
+extract.btergm <- function(model, level = 0.95, ...) {
   
-  tab <- confint(model, level = conf.level)
+  tab <- confint(model, level = level)
   
   gof <- numeric()
   gof.names <- character()
@@ -1202,9 +1202,9 @@ setMethod("extract", signature = className("nlme", "nlme"),
 
 
 # extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
-extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, include.groups = TRUE, 
+extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"), 
+    level = 0.95, nsim = 1000, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...) {
   
   if (packageVersion("lme4") < 1.0) {
@@ -1230,12 +1230,6 @@ extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95,
     lik <- logLik(model)[1]
     gof <- c(gof, lik)
     gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance == TRUE) {
-    dev <- deviance(model)
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
@@ -1269,22 +1263,20 @@ extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95,
   }
   
   betas <- lme4::fixef(model, ...)
-  if ("confint.merMod" %in% methods("confint") && naive == FALSE) {
+  if ("confint.merMod" %in% methods("confint") && method[1] != "naive") {
     ci <- tryCatch({
-        ci <- confint(model, level = conf.level, nsim = nsim, ...)
+        ci <- confint(model, method = method[1], level = level, nsim = nsim, 
+        ...)
       },
       error = function(err) {
-        naive <- TRUE
+        method <- "naive"
         message(paste("Confidence intervals not available for", 
             "this model. Using naive p values instead."))
       }
     )
     if (is.null(ci)) {
-      naive <- TRUE
+      method <- "naive"
     } else {
-      message(paste0("Computing confidence intervals at a confidence ",
-          "level of ", conf.level, ". Use ", 
-          "argument \"method = 'boot'\" for bootstrapped CIs."))
       last <- nrow(ci)
       number <- length(betas)
       first <- last - number + 1
@@ -1296,15 +1288,14 @@ extract.lme4 <- function(model, naive = FALSE, nsim = 1000, conf.level = 0.95,
         ci.l <- ci[1]
         ci.u <- ci[2]
       }
-      naive <- FALSE
     }
-  } else {
-    naive <- TRUE
+  } else if (method[1] != "naive") {
+    method[1] <- "naive"
     message(paste("confint.merMod method not found. Using naive p values",
         "instead."))
   }
   
-  if (naive == TRUE) {
+  if (method[1] == "naive") {
     Vcov <- vcov(model, useScale = FALSE, ...)
     Vcov <- as.matrix(Vcov)
     se <- sqrt(diag(Vcov))
