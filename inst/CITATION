@@ -9,7 +9,7 @@ citEntry(entry = "Article",
   number       = "8",
   pages        = "1--24",
   url          = "http://www.jstatsoft.org/v55/i08/",
-
+  
   textVersion  =
   paste("Philip Leifeld (2013).",
         "texreg: Conversion of Statistical Model Output in R to LaTeX and HTML Tables.",

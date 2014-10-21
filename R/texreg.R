@@ -223,8 +223,9 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
     groups = NULL, bold = 0.00, center = TRUE, caption = "Statistical models", 
     caption.above = FALSE, label = "table:coefficients", booktabs = FALSE, 
-    dcolumn = FALSE, sideways = FALSE, use.packages = TRUE, table = TRUE, 
-    no.margin = TRUE, scriptsize = FALSE, float.pos = "", ...) {
+    dcolumn = FALSE, sideways = FALSE, longtable = FALSE, use.packages = TRUE, 
+    table = TRUE, no.margin = TRUE, fontsize = NULL, scalebox = NULL, 
+    float.pos = "", ...) {
   
   stars <- check.stars(stars)
   
@@ -238,6 +239,31 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     } else {
       warning(msg)
     }
+  }
+  
+  # check longtable vs. sideways
+  if (longtable == TRUE && sideways == TRUE) {
+    sideways <- FALSE
+    msg <- paste("The longtable package and sideways environment cannot be", 
+        "used at the same time. You may want to use the pdflscape package.", 
+        "Switching off sideways.")
+    warning(msg)
+  }
+  
+  # check longtable vs. float.pos
+  if (longtable == TRUE && !(float.pos %in% c("", "l", "c", "r"))) {
+    float.pos <- ""
+    msg <- paste("When the longtable environment is used, the float.pos", 
+        "argument can only take one of the \"l\", \"c\", \"r\", or \"\"", 
+        "(empty) values. Setting float.pos = \"\".")
+    warning(msg)
+  }
+  
+  # check longtable vs. scalebox
+  if (longtable == TRUE && !is.null(scalebox)) {
+    scalebox <- NULL
+    warning(paste("longtable and scalebox are not compatible. Setting", 
+    "scalebox = NULL."))
   }
   
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
@@ -304,48 +330,8 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   # combine the coefficient and gof matrices vertically
   output.matrix <- rbind(output.matrix, gof.matrix)
   
-  string <- ""
-  
-  # write table header
-  string <- paste0(string, "\n")
-  if (use.packages == TRUE) {
-    if (sideways == TRUE & table == TRUE) {
-      string <- paste0(string, "\\usepackage{rotating}\n")
-    }
-    if (booktabs == TRUE) {
-      string <- paste0(string, "\\usepackage{booktabs}\n")
-    }
-    if (dcolumn == TRUE) {
-      string <- paste0(string, "\\usepackage{dcolumn}\n")
-    }
-    if (dcolumn == TRUE || booktabs == TRUE || sideways == TRUE) {
-      string <- paste0(string, "\n")
-    }
-  }
-  if (table == TRUE) {
-    if (sideways == TRUE) {
-      t <- "sideways"
-    } else {
-      t <- ""
-    }
-    if ( float.pos == "") {
-      string <- paste0(string, "\\begin{", t, "table}\n")
-    } else {
-      string <- paste0(string, "\\begin{", t, "table}[", float.pos, "]\n")
-    }
-    if (caption.above == TRUE) {
-      string <- paste0(string, "\\caption{", caption, "}\n")
-    }
-    if (center == TRUE) {
-      string <- paste0(string, "\\begin{center}\n")
-    }
-    if (scriptsize == TRUE) {
-      string <- paste0(string, "\\scriptsize\n")
-    }
-  }
-  string <- paste0(string, "\\begin{tabular}{l ")
-  
-  #define columns of the table
+  # define columns of the table (define now, add later)
+  coldef <- ""
   if (no.margin == FALSE) {
     margin.arg <- ""
   } else {
@@ -362,51 +348,193 @@ texreg <- function(l, file = NULL, single.row = FALSE,
       separator <- "."
     }
     if (dcolumn == FALSE) {
-      string <- paste0(string, "c ")
+      coldef <- paste0(coldef, "c ")
     } else {
       if (single.row == TRUE) {
         dl <- compute.width(output.matrix[, i], left = TRUE, single.row = TRUE, 
             bracket = separator)
-        dr <- compute.width(output.matrix[, i], left = FALSE, single.row = TRUE,
-            bracket = separator)
+        dr <- compute.width(output.matrix[, i], left = FALSE, 
+            single.row = TRUE, bracket = separator)
       } else {
-        dl <- compute.width(output.matrix[, i], left = TRUE, single.row = FALSE,
-            bracket = separator)
+        dl <- compute.width(output.matrix[, i], left = TRUE, 
+            single.row = FALSE, bracket = separator)
         dr <- compute.width(output.matrix[, i], left = FALSE, 
             single.row = FALSE, bracket = separator)
       }
-      string <- paste0(string, "D{", separator, "}{", separator, "}{", 
+      coldef <- paste0(coldef, "D{", separator, "}{", separator, "}{", 
           dl, separator, dr, "}", margin.arg, " ")
     }
   }
   
+  string <- "\n"
+  
+  # write table header
+  if (use.packages == TRUE) {
+    if (sideways == TRUE & table == TRUE) {
+      string <- paste0(string, "\\usepackage{rotating}\n")
+    }
+    if (booktabs == TRUE) {
+      string <- paste0(string, "\\usepackage{booktabs}\n")
+    }
+    if (dcolumn == TRUE) {
+      string <- paste0(string, "\\usepackage{dcolumn}\n")
+    }
+    if (longtable == TRUE) {
+      string <- paste0(string, "\\usepackage{longtable}\n")
+    }
+    if (dcolumn == TRUE || booktabs == TRUE || sideways == TRUE || 
+        longtable == TRUE) {
+      string <- paste0(string, "\n")
+    }
+  }
+  
+  if (longtable == TRUE) {
+    if (center == TRUE) {
+      string <- paste0(string, "\\begin{center}\n")
+    }
+    if (!is.null(fontsize)) {
+      string <- paste0(string, "\\begin{", fontsize, "}\n")
+    }
+    if (float.pos == "") {
+      string <- paste0(string, "\\begin{longtable}{l ", coldef, "}\n")
+    } else {
+      string <- paste0(string, "\\begin{longtable}[", float.pos, "]\n")
+    }
+  } else {  # table or sidewaystable
+    if (table == TRUE) {
+      if (sideways == TRUE) {
+        t <- "sideways"
+      } else {
+        t <- ""
+      }
+      if (float.pos == "") {
+        string <- paste0(string, "\\begin{", t, "table}\n")
+      } else {
+        string <- paste0(string, "\\begin{", t, "table}[", float.pos, "]\n")
+      }
+      if (caption.above == TRUE) {
+        string <- paste0(string, "\\caption{", caption, "}\n")
+      }
+      if (center == TRUE) {
+        string <- paste0(string, "\\begin{center}\n")
+      }
+      if (!is.null(fontsize)) {
+        string <- paste0(string, "\\begin{", fontsize, "}\n")
+      }
+      if (!is.null(scalebox)) {
+        string <- paste0(string, "\\scalebox{", scalebox, "}{\n")
+      }
+    }
+    string <- paste0(string, "\\begin{tabular}{l ", coldef, "}\n")
+  }
+  
   # horizontal rule above the table
+  tablehead <- ""
   if (booktabs == TRUE) {
-    string <- paste0(string, "}\n", "\\toprule\n")
+    tablehead <- paste0(tablehead, "\\toprule\n")
   } else {
-    string <- paste0(string, "}\n", "\\hline\n")
+    tablehead <- paste0(tablehead, "\\hline\n")
   }
   
   # specify model names
   for (k in 1:lab.length) {
-    string <- paste0(string, " ")
+    tablehead <- paste0(tablehead, " ")
   }
 
   if (dcolumn == TRUE) {
     for (i in 1:length(models)) {
-      string <- paste0(string, " & \\multicolumn{1}{c}{", modnames[i], "}")
+      tablehead <- paste0(tablehead, " & \\multicolumn{1}{c}{", modnames[i], 
+          "}")
     }
   } else {
     for (i in 1:length(models)) {
-      string <- paste0(string, " & ", modnames[i])
+      tablehead <- paste0(tablehead, " & ", modnames[i])
     }
   }
   
-  # horizontal rule between coefficients and goodness-of-fit block
+  # horizontal rule between model names and coefficients (define now, add later)
   if (booktabs == TRUE) {
-    string <- paste0(string, " \\\\\n", "\\midrule\n")
+    tablehead <- paste0(tablehead, " \\\\\n", "\\midrule\n")
   } else {
-    string <- paste0(string, " \\\\\n", "\\hline\n")
+    tablehead <- paste0(tablehead, " \\\\\n", "\\hline\n")
+  }
+  if (longtable == FALSE) {
+    string <- paste0(string, tablehead)
+  }
+  
+  # stars note (define now, add later)
+  if (is.null(stars)) {
+    snote <- ""
+  } else if (any(ci == FALSE)) {
+    st <- sort(stars)
+    if (length(unique(st)) != length(st)) {
+      stop("Duplicate elements are not allowed in the stars argument.")
+    }
+    if (length(st) == 4) {
+      snote <- paste0("$^{***}p<", st[1], 
+        "$, $^{**}p<", st[2], 
+        "$, $^*p<", st[3], 
+        "$, $^{", symbol, "}p<", st[4], "$")
+    } else if (length(st) == 3) {
+      snote <- paste0("$^{***}p<", st[1], 
+        "$, $^{**}p<", st[2], 
+        "$, $^*p<", st[3], "$")
+    } else if (length(st) == 2) {
+      snote <- paste0("$^{**}p<", st[1], 
+        "$, $^*p<", st[2], "$")
+    } else if (length(st) == 1) {
+      snote <- paste0("$^*p<", st[1], "$")
+    } else {
+      snote <- ""
+    }
+    if (is.numeric(ci.test) && !is.na(ci.test) && nchar(snote) > 0 && any(ci)) {
+      snote <- paste(snote, "(or", ci.test, "outside the confidence interval).")
+    } else if (is.numeric(ci.test) && !is.na(ci.test) && any(ci)) {
+      snote <- paste("$^*$", ci.test,  
+          "outside the confidence interval")
+    }
+  } else if (is.numeric(ci.test) && !is.na(ci.test)) {
+    snote <- paste("$^*$", ci.test,  
+        "outside the confidence interval")
+  } else {
+    snote <- ""
+  }
+  if (is.null(custom.note)) {
+    note <- paste0("\\multicolumn{", length(models) + 1, 
+        "}{l}{\\scriptsize{", snote, "}}")
+  } else if (custom.note == "") {
+    note <- ""
+  } else {
+    note <- paste0("\\multicolumn{", length(models) + 1, 
+        "}{l}{\\scriptsize{", custom.note, "}}")
+    note <- gsub("%stars", snote, note, perl = TRUE)
+  }
+  if (longtable == TRUE) {  # longtable requires line break after note & caption
+    note <- paste0(note, "\\\\\n")
+  } else {
+    note <- paste0(note, "\n")
+  }
+  
+  # bottom rule (define now, add later)
+  if (booktabs == TRUE) {
+    bottomline <- "\\bottomrule\n"
+  } else {
+    bottomline <- "\\hline\n"
+  }
+  
+  # write table header (and footer, in the case of longtable)
+  if (longtable == TRUE) {
+    if (caption.above == TRUE) {
+      string <- paste0(string, "\\caption{", caption, "}\n", "\\label{", 
+          label, "}\\\\\n", tablehead, "\\endfirsthead\n", tablehead, 
+          "\\endhead\n", bottomline, "\\endfoot\n", bottomline, note, 
+          "\\endlastfoot\n")
+    } else {
+      string <- paste0(string, tablehead, "\\endfirsthead\n", tablehead, 
+          "\\endhead\n", bottomline, "\\endfoot\n", bottomline, note, 
+          "\\caption{", caption, "}\n", "\\label{", label, "}\n", 
+          "\\endlastfoot\n")
+    }
   }
   
   # fill with spaces
@@ -464,64 +592,26 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # write table footer
-  if (booktabs == TRUE) {
-    string <- paste0(string, "\\bottomrule\n")
-  } else {
-    string <- paste0(string, "\\hline\n")
+  if (longtable == FALSE) {
+    string <- paste0(string, bottomline)
+    string <- paste0(string, note, "\\end{tabular}\n")
   }
   
-  # stars note
-  if (is.null(stars)) {
-    snote <- ""
-  } else if (any(ci == FALSE)) {
-    st <- sort(stars)
-    if (length(unique(st)) != length(st)) {
-      stop("Duplicate elements are not allowed in the stars argument.")
+  # take care of center, scalebox and table environment
+  if (longtable == TRUE) {
+    string <- paste0(string, "\\end{longtable}\n")
+    if (!is.null(fontsize)) {
+      string <- paste0(string, "\\end{", fontsize, "}\n")
     }
-    if (length(st) == 4) {
-      snote <- paste0("$^{***}p<", st[1], 
-        "$, $^{**}p<", st[2], 
-        "$, $^*p<", st[3], 
-        "$, $^{", symbol, "}p<", st[4], "$")
-    } else if (length(st) == 3) {
-      snote <- paste0("$^{***}p<", st[1], 
-        "$, $^{**}p<", st[2], 
-        "$, $^*p<", st[3], "$")
-    } else if (length(st) == 2) {
-      snote <- paste0("$^{**}p<", st[1], 
-        "$, $^*p<", st[2], "$")
-    } else if (length(st) == 1) {
-      snote <- paste0("$^*p<", st[1], "$")
-    } else {
-      snote <- ""
+    if (center == TRUE) {
+      string <- paste0(string, "\\end{center}\n")
     }
-    if (is.numeric(ci.test) && !is.na(ci.test) && nchar(snote) > 0 && any(ci)) {
-      snote <- paste(snote, "(or", ci.test, "outside the confidence interval).")
-    } else if (is.numeric(ci.test) && !is.na(ci.test) && any(ci)) {
-      snote <- paste("$^*$", ci.test,  
-          "outside the confidence interval")
+  } else if (table == TRUE) {
+    if (!is.null(fontsize)) {
+      string <- paste0(string, "\\end{", fontsize, "}\n")
     }
-  } else if (is.numeric(ci.test) && !is.na(ci.test)) {
-    snote <- paste("$^*$", ci.test,  
-        "outside the confidence interval")
-  } else {
-    snote <- ""
-  }
-  if (is.null(custom.note)) {
-    note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{", snote, "}}\n")
-  } else if (custom.note == "") {
-    note <- ""
-  } else {
-    note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{", custom.note, "}}\n")
-    note <- gsub("%stars", snote, note, perl = TRUE)
-  }
-  string <- paste0(string, note, "\\end{tabular}\n")
-  
-  if (table == TRUE) {
-    if (scriptsize == TRUE) {
-      string <- paste0(string, "\\normalsize\n")
+    if (!is.null(scalebox)) {
+      string <- paste0(string, "}\n")
     }
     if (caption.above == FALSE) {
       string <- paste0(string, "\\caption{", caption, "}\n")

@@ -16,9 +16,9 @@ texreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
     groups = NULL, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, 
-    dcolumn = FALSE, sideways = FALSE, use.packages = TRUE, 
-    table = TRUE, no.margin = TRUE, scriptsize = FALSE, 
-    float.pos = "", ...)
+    dcolumn = FALSE, sideways = FALSE, longtable = FALSE, 
+    use.packages = TRUE, table = TRUE, no.margin = TRUE, 
+    fontsize = NULL, scalebox = NULL, float.pos = "", ...)
 
 htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
@@ -112,10 +112,12 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{booktabs}{[only in the \code{texreg} function] Use the \code{booktabs} LaTeX package to get thick horizontal rules in the output table (recommended).}
 \item{dcolumn}{[only in the \code{texreg} function] Use the \code{dcolumn} LaTeX package to get a nice alignment of the coefficients (recommended).}
 \item{sideways}{[only in the \code{texreg} function] If \code{sideways = TRUE} is set, the \code{table} floating environment is replaced by a \code{sidewaystable} float, and the \code{rotating} package is loaded in the preamble. The argument only has an effect if \code{table = TRUE} is also set.}
+\item{longtable}{ [only in the \code{texreg} function] If \code{longtable = TRUE} is set, the \code{longtable} environment from the \code{longtable} LaTeX package is used to set tables across multiple pages. Note that this argument is not compatible with the \code{sideways} and \code{scalebox} arguments. These arguments will be automatically switched off when \code{longtable = TRUE} is set. }
 \item{use.packages}{[only in the \code{texreg} function] If this argument is set to \code{TRUE} (= the default behavior), the required LaTeX packages are loaded in the beginning. If set to \code{FALSE}, the use package statements are omitted from the output.}
 \item{table}{[only in the \code{texreg} function] By default, texreg puts the actual \code{tabular} object in a \code{table} floating environment. To get only the \code{tabular} object without the whole table header, set \code{table = FALSE}.}
 \item{no.margin}{[only in the \code{texreg} function] In order to save space, inner margins of tables are switched off by default. To reactivate the default table spacing, set \code{no.margin = FALSE}. }
-\item{scriptsize}{[only in the \code{texreg} function] To save horizontal space on the page, the table can be set in script size instead of normal text size by setting \code{scriptsize = TRUE}. }
+\item{fontsize}{[only in the \code{texreg} function] The \code{fontsize} argument serves to change the font size used in the table. Valid values are \code{"tiny"}, \code{"scriptsize"}, \code{"footnotesize"}, \code{"small"}, \code{"normalsize"}, \code{"large"}, \code{"Large"}, \code{"LARGE"}, \code{"huge"}, and \code{"Huge"}. Note that the \code{scalebox} argument often achieves better results when the goal is to change the size of the table. }
+\item{scalebox}{[only in the \code{texreg} function] The \code{scalebox} argument serves to resize the table. For example, \code{scalebox = 1.0} is equivalent to the normal size, \code{scalebox = 0.5} decreases the size of the table by one half, and \code{scalebox = 2.0} doubles the space occupied by the table. Note that the \code{scalebox} argument does not work when the \code{longtable} argument is used. }
 \item{float.pos}{[only in the \code{texreg} function] This argument specifies where the table should be located on the page or in the document. By default, no floating position is specified, and LaTeX takes care of the position automatically. Possible values include \code{h} (here), \code{p} (page), \code{t} (top), \code{b} (bottom), any combination thereof, e.g. \code{tb}, or any of these values followed by an exclamation mark, e.g. \code{t!}, in order to enforce this position. The square brackets do not have to be specified.}
 
 \item{star.symbol}{[only in the \code{htmlreg} function] Alternative characters for the significance stars can be specified. This is useful if \pkg{knitr} and Markdown are used for HTML report generation. In Markdown, asterisks or stars are interpreted as special characters, so they have to be escaped. To make \code{htmlreg} compatible with Markdown, specify \code{star.symbol = "\\*"}. Note that some other modifications are recommended for usage with \pkg{knitr} in combination with Markdown or HTML (see the \code{inline.css}, \code{doctype}, \code{html.tag}, \code{head.tag}, and \code{body.tag} arguments).}

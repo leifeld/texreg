@@ -25,6 +25,8 @@
 \alias{extract,dynlm-method}
 \alias{extract.ergm}
 \alias{extract,ergm-method}
+\alias{extract.ergmm}
+\alias{extract,ergmm-method}
 \alias{extract.fGARCH}
 \alias{extract,fGARCH-method}
 \alias{extract.gam}
@@ -73,6 +75,8 @@
 \alias{extract,multinom-method}
 \alias{extract.negbin}
 \alias{extract,negbin-method}
+\alias{extract.netlogit}
+\alias{extract,netlogit-method}
 \alias{extract.nlme}
 \alias{extract,nlme-method}
 \alias{extract.nlmerMod}
@@ -179,6 +183,8 @@ extract(model, ...)
 \S4method{extract}{ergm}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, ...)
 
+\S4method{extract}{ergmm}(model, include.bic = TRUE, ...)
+
 \S4method{extract}{fGARCH}(model, include.nobs = TRUE, 
     include.aic = TRUE, include.loglik = TRUE, ...)
 
@@ -279,6 +285,10 @@ extract(model, ...)
 \S4method{extract}{negbin}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{netlogit}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.deviance = TRUE, 
+    include.nobs = TRUE, ...)
 
 \S4method{extract}{nlme}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -427,6 +437,10 @@ An extract method for dynlm objects from the \pkg{dynlm} package.
 An extract method for ergm objects from the \pkg{ergm} package.
 }
 
+\item{\code{ergmm}}{
+An extract method for ergmm objects from the \pkg{latentnet} package.
+}
+
 \item{\code{fGARCH}}{
 An extract method for fGARCH objects from the \pkg{fGarch} package.
 }
@@ -521,6 +535,10 @@ An extract method for multinom objects from the \pkg{nnet} package.
 
 \item{\code{negbin}}{
 An extract method for negbin objects from the \pkg{MASS} package.
+}
+
+\item{\code{netlogit}}{
+An extract method for netlogit objects from the \pkg{sna} package.
 }
 
 \item{\code{nlme}}{

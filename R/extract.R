@@ -513,6 +513,41 @@ setMethod("extract", signature = className("ergm", "ergm"),
     definition = extract.ergm)
 
 
+# extension for ergmm objects (latentnet package)
+extract.ergmm <- function(model, include.bic = TRUE, ...) {
+  s <- summary(model, ...)
+  
+  coefficient.names <- rownames(s$pmean$coef.table)
+  coefficients <- s$pmean$coef.table[, 1]
+  ci.low <- s$pmean$coef.table[, 2]
+  ci.up <- s$pmean$coef.table[, 3]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.bic == TRUE) {
+    gof <- c(gof, s$bic$overall, s$bic$Y, s$bic$Z)
+    gof.names <- c(gof.names, "BIC (Overall)", "BIC (Likelihood)", 
+        "BIC (Latent Positions)")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = coefficient.names, 
+      coef = coefficients, 
+      ci.low = ci.low, 
+      ci.up = ci.up, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("ergmm", "latentnet"), 
+    definition = extract.ergmm)
+
+
 # extension for fGARCH objects (fGarch package)
 extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE, 
     include.loglik = TRUE, ...) {
@@ -1679,6 +1714,60 @@ extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE,
 
 setMethod("extract", signature = className("multinom", "nnet"), 
     definition = extract.multinom)
+
+
+# extension for netlogit objects (sna package)
+extract.netlogit <- function(model, include.aic = TRUE, include.bic = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...) {
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    gof <- c(gof, model$aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    gof <- c(gof, model$bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    gof <- c(gof, model$deviance, model$null.deviance)
+    gof.names <- c(gof.names, "Deviance", "Null deviance")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, model$n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  cf <- model$coefficients
+  pv <- model$pgreqabs
+  nm <- c("(Intercept)", paste0("x", 1:(length(cf) - 1)))
+  if (is.null(model$dist)) {  # "classical" fit (= simple logit model)
+    cvm <- chol2inv(model$qr$qr)
+    se <- sqrt(diag(cvm))
+  } else {  # QAP, CUG etc.
+    se <- rep(NaN, length(cf))  # not perfect; results in empty brackets!
+  }
+  
+  tr <- createTexreg(
+      coef.names = nm, 
+      coef = cf, 
+      se = se, 
+      pvalues = pv, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("netlogit", "sna"), 
+    definition = extract.netlogit)
 
 
 # extension for ols objects (rms package)
