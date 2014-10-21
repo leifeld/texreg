@@ -1239,7 +1239,7 @@ setMethod("extract", signature = className("nlme", "nlme"),
 # extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
 extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"), 
     level = 0.95, nsim = 1000, include.aic = TRUE, include.bic = TRUE, 
-    include.dic = TRUE, include.deviance = TRUE, include.loglik = TRUE, 
+    include.dic = FALSE, include.deviance = FALSE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, include.variance = TRUE, ...) {
   
   if (packageVersion("lme4") < 1.0) {

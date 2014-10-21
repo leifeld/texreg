@@ -208,8 +208,8 @@ extract(model, ...)
 
 \S4method{extract}{glmerMod}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
-    include.deviance = TRUE, include.loglik = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
+    include.deviance = FALSE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
 
@@ -247,15 +247,15 @@ extract(model, ...)
 
 \S4method{extract}{lme4}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
-    include.deviance = TRUE, include.loglik = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
+    include.deviance = FALSE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
 
 \S4method{extract}{lmerMod}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
-    include.deviance = TRUE, include.loglik = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
+    include.deviance = FALSE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
 
@@ -272,8 +272,8 @@ extract(model, ...)
 
 \S4method{extract}{mer}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
-    include.deviance = TRUE, include.loglik = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
+    include.deviance = FALSE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
 
@@ -301,8 +301,8 @@ extract(model, ...)
 
 \S4method{extract}{nlmerMod}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
-    include.deviance = TRUE, include.loglik = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
+    include.deviance = FALSE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
     include.variance = TRUE, ...)
 
