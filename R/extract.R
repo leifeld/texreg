@@ -1239,8 +1239,8 @@ setMethod("extract", signature = className("nlme", "nlme"),
 # extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
 extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"), 
     level = 0.95, nsim = 1000, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, include.groups = TRUE, 
-    include.variance = TRUE, ...) {
+    include.dic = TRUE, include.deviance = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, include.variance = TRUE, ...) {
   
   if (packageVersion("lme4") < 1.0) {
     message("Please update to a newer 'lme4' version for full compatibility.")
@@ -1259,6 +1259,24 @@ extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
     bic <- BIC(model)
     gof <- c(gof, bic)
     gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.dic == TRUE) {  # code from the arm package, version 1.7-07
+    is_REML <- lme4::isREML(model)
+    llik <- logLik(model, REML = is_REML)
+    dev <- deviance(lme4::refitML(model))
+    n <-  lme4::getME(model, "devcomp")$dims["n"]
+    Dhat <- -2 * (llik)
+    pD <- dev - Dhat
+    DIC <- dev + pD[[1]]
+    gof <- c(gof, DIC)
+    gof.names <- c(gof.names, "DIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    dev <- deviance(lme4::refitML(model))
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.loglik == TRUE) {

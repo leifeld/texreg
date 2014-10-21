@@ -208,9 +208,10 @@ extract(model, ...)
 
 \S4method{extract}{glmerMod}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
+    include.deviance = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 \S4method{extract}{glmmadmb}(model, include.variance = TRUE, 
     include.dispersion = TRUE, include.zero = TRUE, 
@@ -246,15 +247,17 @@ extract(model, ...)
 
 \S4method{extract}{lme4}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
+    include.deviance = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 \S4method{extract}{lmerMod}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
+    include.deviance = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 \S4method{extract}{lmrob}(model, include.nobs = TRUE, ...)
 
@@ -269,9 +272,10 @@ extract(model, ...)
 
 \S4method{extract}{mer}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
+    include.deviance = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 \S4method{extract}{mnlogit}(model, include.aic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, 
@@ -297,9 +301,10 @@ extract(model, ...)
 
 \S4method{extract}{nlmerMod}(model, method = c("naive", 
     "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.variance = TRUE, ...)
+    include.aic = TRUE, include.bic = TRUE, include.dic = TRUE, 
+    include.deviance = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = TRUE, ...)
 
 \S4method{extract}{ols}(model, include.nobs = TRUE, 
     include.rsquared = TRUE, include.adjrs = TRUE, 
@@ -653,6 +658,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.count}{ If available: should the count model of a zero-inflated or hurdle regression be included in the coefficients block (before the zero-inflation or zero hurdle model)? }
 \item{include.dev.expl}{ If available: should the deviance explained be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }
+\item{include.dic}{ If available: should the deviance information criterion (DIC) be reported? }
 \item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
 \item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }

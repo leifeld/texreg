@@ -499,14 +499,32 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   } else {
     snote <- ""
   }
+  if (is.null(fontsize)) {
+    notesize <- "scriptsize"
+  } else if (fontsize == "tiny" || fontsize == "scriptsize" || 
+      fontsize == "footnotesize" || fontsize == "small") {
+    notesize <- "tiny"
+  } else if (fontsize == "normalsize") {
+    notesize <- "scriptsize"
+  } else if (fontsize == "large") {
+    notesize <- "footnotesize"
+  } else if (fontsize == "Large") {
+    notesize <- "small"
+  } else if (fontsize == "LARGE") {
+    notesize <- "normalsize"
+  } else if (fontsize == "huge") {
+    notesize <- "large"
+  } else if (fontsize == "Huge") {
+    notesize <- "Large"
+  }
   if (is.null(custom.note)) {
     note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{", snote, "}}")
+        "}{l}{\\", notesize, "{", snote, "}}")
   } else if (custom.note == "") {
     note <- ""
   } else {
     note <- paste0("\\multicolumn{", length(models) + 1, 
-        "}{l}{\\scriptsize{", custom.note, "}}")
+        "}{l}{\\", notesize, "{", custom.note, "}}")
     note <- gsub("%stars", snote, note, perl = TRUE)
   }
   if (longtable == TRUE) {  # longtable requires line break after note & caption
