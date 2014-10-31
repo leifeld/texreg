@@ -273,7 +273,7 @@ extract.coxph <- function(model, include.aic = TRUE, include.rsquared = TRUE,
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.zph == TRUE) {
-    zph <- cox.zph(model)$table
+    zph <- survival::cox.zph(model)$table
     zph <- zph[length(zph[, 1]), length(zph[1, ])]
     gof <- c(gof, zph)
     gof.names <- c(gof.names, "PH test")
@@ -348,7 +348,7 @@ extract.coxph.penal <- function(model, include.aic = TRUE,
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.zph == TRUE) {
-    zph <- cox.zph(model)$table
+    zph <- survival::cox.zph(model)$table
     zph <- zph[length(zph[, 1]), length(zph[1, ])]
     gof <- c(gof, zph)
     gof.names <- c(gof.names, "PH test")
@@ -893,7 +893,7 @@ extract.glmmadmb <- function(model, include.variance = TRUE,
   gof.names <- character()
   gof.decimal <- logical()
   if (include.variance == TRUE && !is.null(model$S)) {
-    vc <- VarCorr(model)
+    vc <- nlme::VarCorr(model)
     vari <- unlist(vc)
     for (i in 1:length(vari)) {
       gof <- c(gof, vari[i])
@@ -1197,7 +1197,7 @@ extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
       gof.decimal <- c(gof.decimal, TRUE)
     }
     
-    vc <- VarCorr(model)
+    vc <- nlme::VarCorr(model)
     if ("(Intercept)" %in% rownames(vc) && "StdDev" %in% colnames(vc)) {
       sig.RE <- as.numeric(vc["(Intercept)", "StdDev"])
       if (!is.null(sig.RE) && !is.na(sig.RE)) {

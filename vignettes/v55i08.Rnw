@@ -431,7 +431,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 59 supported model types (version 1.33).]{\label{tab:types} List of 59 supported model types (version 1.33).} \\
+\caption[List of 59 supported model types (version 1.34).]{\label{tab:types} List of 59 supported model types (version 1.34).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
@@ -446,6 +446,7 @@ Class			& Package			& Description \\
 `\code{coxph.penal}'	& \pkg{survival}		& Cox proportional hazard with penalty splines \\
 `\code{dynlm}'		& \pkg{dynlm}			& Time series regression \\
 `\code{ergm}'		& \pkg{ergm}			& Exponential random graph models \\
+`\code{ergmm}'		& \pkg{latentnet}		& Latent space and latent cluster models \\
 `\code{fGARCH}'		& \pkg{fGarch}			& GARCH time series models \\
 `\code{gam}'		& \pkg{mgcv}			& Generalized additive models \\
 `\code{gamlss}'		& \pkg{gamlss}			& GAM for location scale and shape \\
@@ -468,6 +469,7 @@ Class			& Package			& Description \\
 `\code{mnlogit}' 	& \pkg{mnlogit}			& Multinomial choice models \\
 `\code{multinom}'	& \pkg{nnet}			& Multinomial log-linear models \\
 `\code{negbin}'		& \pkg{MASS}			& Negative binomial generalized linear models \\
+`\code{netlogit}'	& \pkg{sna}			& Logistic regression for networks \\
 `\code{nlme}'		& \pkg{nlme}			& Nonlinear mixed-effects models \\
 `\code{ols}'		& \pkg{rms}			& Ordinary least squares linear models \\
 `\code{pgmm}'		& \pkg{plm}			& GMM estimation for panel data \\
@@ -520,16 +522,16 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 `\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
-\pkg{texreg} (version 1.33), in contrast, can deal with all of the
+\pkg{texreg} (version 1.34), in contrast, can deal with all of the
 above model types (that is, the union of all three packages, is 
 extensible, and offers additional built-in functions for the following 
 model classes: `\code{brglm}', `\code{btergm}',`\code{coxph.penal}', 
-`\code{fGARCH}', `\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', 
-`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{maBina}', 
-`\code{nlme}', `\code{rem.dyad}', `\code{rq}', `\code{sclm}', 
-`\code{stergm}', `\code{systemfit}', and `\code{texreg}' objects.
-Table~\ref{tab:types} gives an overview of currently implemented model 
-types.
+`\code{ergmm}', `\code{fGARCH}', `\code{gamlss}', `\code{glmmadmb}', 
+`\code{glmrob}', `\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', 
+`\code{maBina}', `\code{netlogit}', `\code{nlme}', `\code{rem.dyad}', 
+`\code{rq}', `\code{sclm}', `\code{stergm}', `\code{systemfit}', and 
+`\code{texreg}' objects. Table~\ref{tab:types} gives an overview of 
+currently implemented model types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
 Markdown, and \pkg{knitr} whereas the other packages
