@@ -622,7 +622,10 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
             se.prefix.current <- gsub("\\(", "[", se.prefix.current)
             se.suffix.current <- gsub("\\)", "]", se.suffix.current)
           }
-          
+          if (is.na(m[i, j + 1])) {
+            se.prefix.current <- ""
+            se.suffix.current <- ""
+          }
           if (ci[k - 1] == FALSE) {
             std <- paste(se.prefix.current, coeftostring(m[i, j + 1], 
                 leading.zero, digits = digits), se.suffix.current, sep = "")
@@ -700,7 +703,10 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
             se.prefix.current <- "["
             se.suffix.current <- "]"
           }
-          
+          if (is.na(m[i, j + 1])) {
+            se.prefix.current <- ""
+            se.suffix.current <- ""
+          }
           if (ci[k - 1] == FALSE) {
             p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
               star.suffix, symbol)
