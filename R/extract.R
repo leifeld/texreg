@@ -515,7 +515,7 @@ setMethod("extract", signature = className("ergm", "ergm"),
 
 # extension for ergmm objects (latentnet package)
 extract.ergmm <- function(model, include.bic = TRUE, ...) {
-  s <- summary(model, ...)
+  s <- summary(model)
   
   coefficient.names <- rownames(s$pmean$coef.table)
   coefficients <- s$pmean$coef.table[, 1]
