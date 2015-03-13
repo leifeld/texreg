@@ -31,7 +31,8 @@ htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
     groups = NULL, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     star.symbol = "*", inline.css = TRUE, doctype = TRUE, 
-    html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, ...)
+    html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, 
+    indentation = "", ...)
 
 screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
@@ -126,6 +127,7 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{html.tag}{[only in the \code{htmlreg} function] Should the table code (and possibly the <body> and <head> tags) be enclosed in an <html> tag? Suppressing this tag is recommended when \pkg{knitr} is used for dynamic HTML or Markdown report generation. Including this tag is recommended when the code is saved to a file, for example as an MS Word document.}
 \item{head.tag}{[only in the \code{htmlreg} function] Should the <head> tag (including CSS definitions and title/caption) be included in the HTML code? Suppressing this tag is recommended when \pkg{knitr} is used for dynamic HTML or Markdown report generation. Including this tag is recommended when the code is saved to a file, for example as an MS Word document.}
 \item{body.tag}{[only in the \code{htmlreg} function] Should the table code be enclosed in a <body> HTML tag? Suppressing this tag is recommended when \pkg{knitr} is used for dynamic HTML or Markdown report generation. Including this tag is recommended when the code is saved to a file, for example as an MS Word document.}
+\item{indentation}{[only in the \code{htmlreg} function] Characters used for indentation of the HTML code. By default, \code{indentation = ""} uses no indentation. Any number of spaces or characters can be used instead. For example, \code{indentation = "  "} uses two spaces of (additional) indentation for each subelement.}
 
 \item{column.spacing}{[only in the \code{screenreg} function] The amount of space between any two columns of a table. By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}.}
 \item{outer.rule}{[only in the \code{screenreg} function] The character which is used to draw the outer horizontal line above and below a table. If an empty character object is provided (i.e., \code{outer.rule = ""}), there will be no outer horizontal lines. Recommended values are \code{""}, \code{"="}, \code{"-"}, \code{"_"}, or \code{"#"}.}
