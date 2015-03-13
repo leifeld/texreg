@@ -670,7 +670,8 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
     groups = NULL, bold = 0.00, center = TRUE, caption = "Statistical models", 
     caption.above = FALSE, star.symbol = "*", inline.css = TRUE, 
-    doctype = TRUE, html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, ...) {
+    doctype = TRUE, html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, 
+    indentation = "", ...) {
   
   stars <- check.stars(stars)
   
@@ -767,22 +768,22 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # determine indentation for table
+  ind <- indentation
   if (html.tag == TRUE) {
-    h.ind <- "  "
+    h.ind <- indentation
   } else {
     h.ind <- ""
   }
   if (body.tag == TRUE) {
-    b.ind <- "  "
+    b.ind <- indentation
   } else {
     b.ind <- ""
   }
   if (head.tag == TRUE) {
-    d.ind <- "  "
+    d.ind <- indentation
   } else {
     d.ind <- ""
   }
-  ind <- "  "
   
   # horizontal table alignment
   if (center == FALSE) {
