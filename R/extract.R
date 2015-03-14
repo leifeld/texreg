@@ -1138,7 +1138,7 @@ setMethod("extract", signature = className("gmm", "gmm"),
 
 # extension for lm objects
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, include.fstatistic = FALSE, ...) {
+    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {
   s <- summary(model, ...)
   
   names <- rownames(s$coef)
@@ -1172,6 +1172,12 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     fstat <- s$fstatistic[[1]]
     gof <- c(gof, fstat)
     gof.names <- c(gof.names, "F statistic")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
+    rmse <- s$sigma[[1]]
+    gof <- c(gof, rmse)
+    gof.names <- c(gof.names, "RMSE")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   
@@ -1636,6 +1642,51 @@ setMethod("extract", signature = className("maBina", "erer"),
     definition = extract.maBina)
 
 
+# extension for mlogit objects (mlogit package)
+extract.mlogit <- function(model, include.aic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, ...) {
+  s <- summary(model, ...)
+  
+  coefs <- s$CoefTable[, 1]
+  rn <- rownames(s$CoefTable)
+  se <- s$CoefTable[, 2]
+  pval <- s$CoefTable[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    gof <- AIC(model)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    gof <- c(gof, logLik(model)[1])
+    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, nrow(s$residuals))
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = rn, 
+      coef = coefs, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("mlogit", "mlogit"), 
+    definition = extract.mlogit)
+
+
 # extension for mnlogit objects (mnlogit package)
 extract.mnlogit <- function(model, include.aic = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, include.intercept = TRUE, 
@@ -2005,20 +2056,27 @@ extract.pgmm <- function(model, include.nobs = TRUE, include.sargan = TRUE,
     wald.coef <- s$wald.coef$statistic[1]
     wald.pval <- s$wald.coef$p.value[1]
     wald.par <- s$wald.coef$parameter
-    td.coef <- s$wald.td$statistic[1]
-    td.pval <- s$wald.td$p.value[1]
-    td.par <- s$wald.td$parameter
-    gof <- c(gof, wald.coef, wald.par, wald.pval, td.coef, td.par, td.pval)
+    gof <- c(gof, wald.coef, wald.par, wald.pval)
     gof.names <- c(
         gof.names, 
         "Wald Test Coefficients: chisq", 
         "Wald Test Coefficients: df", 
-        "Wald Test Coefficients: p-value", 
-        "Wald Test Time Dummies: chisq", 
-        "Wald Test Time Dummies: df", 
-        "Wald Test Time Dummies: p-value"
+        "Wald Test Coefficients: p-value"
     )
-    gof.decimal <- c(gof.decimal, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE)
+    gof.decimal <- c(gof.decimal, TRUE, FALSE, TRUE)
+    if (!is.null(s$wald.td)) {
+      td.coef <- s$wald.td$statistic[1]
+      td.pval <- s$wald.td$p.value[1]
+      td.par <- s$wald.td$parameter
+      gof <- c(gof, td.coef, td.par, td.pval)
+      gof.names <- c(
+          gof.names, 
+          "Wald Test Time Dummies: chisq", 
+          "Wald Test Time Dummies: df", 
+          "Wald Test Time Dummies: p-value"
+      )
+      gof.decimal <- c(gof.decimal, TRUE, FALSE, TRUE)
+    }
   }
   
   tr <- createTexreg(

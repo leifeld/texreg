@@ -1,5 +1,5 @@
 Package: texreg
-Version: 1.34.3
+Version: 1.34.4
 Date: 2015-03-14
 Title: Conversion of R regression output to LaTeX or HTML tables.
 Author: Philip Leifeld
@@ -8,5 +8,5 @@ Description: texreg converts coefficients, standard errors, significance stars, 
 Suggests: nlme, survival, network, ergm, lme4 (>= 1.0), gamlss
 Depends: R (>= 2.15.0)
 Imports: methods
-Enhances: AER, betareg, brglm, dynlm, eha, erer, fGarch, gee, gmm, latentnet, lmtest, MASS, mgcv, mnlogit, MuMIn, nnet, ordinal, plm, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, stats, survey, systemfit, tergm, xergm, Zelig
+Enhances: AER, betareg, brglm, dynlm, eha, erer, fGarch, gee, gmm, latentnet, lmtest, MASS, mgcv, mlogit, mnlogit, MuMIn, nnet, ordinal, plm, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, stats, survey, systemfit, tergm, xergm, Zelig
 License: GPL-2 | GPL-3
