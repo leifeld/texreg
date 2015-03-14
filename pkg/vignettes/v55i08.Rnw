@@ -347,6 +347,7 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{html.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<html>} tag? \\
 \code{head.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<head>} tag? \\
 \code{body.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<body>} tag? \\
+\code{indentation}		& $\circ$	& $\bullet$	& $\circ$	& Indentation of subelements in the HTML code \\
 \code{column.spacing}		& $\circ$	& $\circ$	& $\bullet$	& Number of spaces between columns \\
 \code{outer.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the outer rule \\
 \code{inner.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the inner rule \\
@@ -431,11 +432,12 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 59 supported model types (version 1.34).]{\label{tab:types} List of 59 supported model types (version 1.34).} \\
+\caption[List of 62 supported model types (version 1.35).]{\label{tab:types} List of 62 supported model types (version 1.35).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
 `\code{Arima}'		& \pkg{stats}			& ARIMA time series models \\
+`\code{averaging}'	& \pkg{MuMIn}			& Model averaging objects \\
 `\code{betareg}'	& \pkg{betareg}			& Beta regression for rates and proportions \\
 `\code{brglm}'		& \pkg{brglm}			& Bias-reduced generalized linear models \\
 `\code{btergm}'		& \pkg{xergm}			& Temporal exponential random graph models \\
@@ -468,6 +470,7 @@ Class			& Package			& Description \\
 `\code{maBina}'		& \pkg{erer}			& Marginal effects for binary response models \\
 `\code{mnlogit}' 	& \pkg{mnlogit}			& Multinomial choice models \\
 `\code{multinom}'	& \pkg{nnet}			& Multinomial log-linear models \\
+`\code{model.selection}'& \pkg{MuMIn}			& Model selection objects \\
 `\code{negbin}'		& \pkg{MASS}			& Negative binomial generalized linear models \\
 `\code{netlogit}'	& \pkg{sna}			& Logistic regression for networks \\
 `\code{nlme}'		& \pkg{nlme}			& Nonlinear mixed-effects models \\
@@ -482,6 +485,7 @@ Class			& Package			& Description \\
 `\code{rlm}'		& \pkg{MASS}			& Robust fitting of linear models \\
 `\code{rq}'		& \pkg{quantreg}		& Quantile regression models \\
 `\code{sclm}'		& \pkg{ordinal}			& Cumulative link models \\
+`\code{selection}'	& \pkg{sampleSelection}		& Sample selection models \\
 `\code{sienaFit}'	& \pkg{RSiena}			& Stochastic actor-oriented models for networks \\
 `\code{simex}'		& \pkg{simex}			& SIMEX algorithm for measurement error models \\
 `\code{stergm}'		& \pkg{tergm}			& Temporal exponential random graph models \\
@@ -522,15 +526,16 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 `\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
-\pkg{texreg} (version 1.34), in contrast, can deal with all of the
+\pkg{texreg} (version 1.35), in contrast, can deal with all of the
 above model types (that is, the union of all three packages, is 
 extensible, and offers additional built-in functions for the following 
-model classes: `\code{brglm}', `\code{btergm}',`\code{coxph.penal}', 
-`\code{ergmm}', `\code{fGARCH}', `\code{gamlss}', `\code{glmmadmb}', 
-`\code{glmrob}', `\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', 
-`\code{maBina}', `\code{netlogit}', `\code{nlme}', `\code{rem.dyad}', 
-`\code{rq}', `\code{sclm}', `\code{stergm}', `\code{systemfit}', and 
-`\code{texreg}' objects. Table~\ref{tab:types} gives an overview of 
+model classes: `\code{averaging}', `\code{brglm}', `\code{btergm}', 
+`\code{coxph.penal}', `\code{ergmm}', `\code{fGARCH}', `\code{gamlss}', 
+`\code{glmmadmb}', `\code{glmrob}', `\code{gmm}', `\code{lme}', 
+`\code{lme4}', `\code{lnam}', `\code{maBina}', `\code{model.selection}', 
+`\code{netlogit}', `\code{nlme}', `\code{rem.dyad}', `\code{rq}', 
+`\code{sclm}', `\code{selection}', `\code{stergm}', `\code{systemfit}', 
+and `\code{texreg}' objects. Table~\ref{tab:types} gives an overview of 
 currently implemented model types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
