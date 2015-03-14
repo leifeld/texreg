@@ -71,6 +71,8 @@
 \alias{extract,maBina-method}
 \alias{extract.mer}
 \alias{extract,mer-method}
+\alias{extract.mlogit}
+\alias{extract,mlogit-method}
 \alias{extract.mnlogit}
 \alias{extract,mnlogit-method}
 \alias{extract.model.selection}
@@ -187,7 +189,7 @@ extract(model, ...)
 
 \S4method{extract}{dynlm}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, ...)
 
 \S4method{extract}{ergm}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, ...)
@@ -243,11 +245,11 @@ extract(model, ...)
 
 \S4method{extract}{ivreg}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, ...)
 
 \S4method{extract}{lm}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, ...)
 
 \S4method{extract}{lme}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -290,6 +292,9 @@ extract(model, ...)
     include.loglik = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, include.intercept = TRUE, 
     include.iterations = FALSE, ...)
+
+\S4method{extract}{mlogit}(model, include.aic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{model.selection}(model, include.loglik = TRUE, 
     include.aicc = TRUE, include.delta = TRUE, 
@@ -554,6 +559,10 @@ An extract method for maBina objects from the \pkg{erer} package.
 An extract method for mer objects from the (old) \pkg{lme4} package.
 }
 
+\item{\code{mlogit}}{
+An extract method for mlogit objects from the \pkg{mlogit} package.
+}
+
 \item{\code{mnlogit}}{
 An extract method for mnlogit objects from the \pkg{mnlogit} package.
 }
@@ -720,6 +729,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.precision}{ If available: should the precision estimates of a betareg fit (the phi coefficients) be reported as part of the coefficients block? }
 \item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
 \item{include.pvalues}{ If available: should the p values be reported (naive p values are not recommended for lme4 models, but see also the \code{mcmc.pvalues} argument)? }
+\item{include.rmse}{ If available: should the root-mean-square error (= residual standard deviation) be reported? }
 \item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.sargan}{ If available: should the Sargan test be reported? }
 \item{include.selection}{ If available: should the selection component of a sample selection model be reported? }
