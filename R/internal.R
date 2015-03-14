@@ -513,6 +513,9 @@ modelnames <- function(model.list, tr.objects, model.names) {
   mnames <- names(model.list)
   if (is.null(mnames)) {
     mnames <- character(length(model.list))
+    if (length(mnames) != length(tr.objects)) {
+      mnames <- character(length(tr.objects))
+    }
   }
   
   for (i in 1:length(tr.objects)) {
@@ -523,7 +526,7 @@ modelnames <- function(model.list, tr.objects, model.names) {
   }
   
   if (is.null(model.names)) {
-    model.names <- rep(NA, length(model.list))
+    model.names <- rep(NA, length(mnames))
   } else if (class(model.names) != "character") {
     stop("Model names must be specified as a vector of strings.")
   } else if (length(model.names) != length(tr.objects)) {
@@ -566,6 +569,9 @@ stars.string <- function(pval, stars, star.char, star.prefix, star.suffix,
   st <- sort(stars)
   if (length(unique(st)) != length(st)) {
     stop("Duplicate elements are not allowed in the stars argument.")
+  }
+  if (is.na(pval)) {
+    pval <- 1.0
   }
   if (length(st) > 4) {
     stop("A maximum of four values is allowed in the stars argument.")
@@ -653,7 +659,10 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           } else {
             dollar <- "$"
           }
-          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { #significant pvalue
+          if (is.na(m[i, j + 2])) {
+            m[i, j + 2] <- 1.0
+          }
+          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
             bold.pref <- bold.prefix
             bold.suff <- bold.suffix
           } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
@@ -690,10 +699,10 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
       while (j <= length(m)) {
         if (is.na(m[i, j]) || is.nan(m[i, j])) {
           output.matrix[(i * 2) - 1, k] <- ""  #upper coefficient row
-          output.matrix[(i * 2), k] <- ""  #lower std row
+          output.matrix[(i * 2), k] <- ""  #lower se row
         } else if (m[i, j] == -Inf) {
           output.matrix[(i * 2) - 1, k] <- neginfstring  #upper row
-          output.matrix[(i * 2), k] <- ""  #lower std row
+          output.matrix[(i * 2), k] <- ""  #lower se row
         } else {
           
           # in case of CIs, replace brackets by square brackets
@@ -724,7 +733,10 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           } else {
             dollar <- "$"
           }
-          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { #significant pvalue
+          if (is.na(m[i, j + 2])) {
+            m[i, j + 2] <- 1.0
+          }
+          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
             bold.pref <- bold.prefix
             bold.suff <- bold.suffix
           } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI

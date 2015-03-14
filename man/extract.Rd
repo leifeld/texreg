@@ -5,6 +5,8 @@
 \alias{extract,aftreg-method}
 \alias{extract.Arima}
 \alias{extract,Arima-method}
+\alias{extract.averaging}
+\alias{extract,averaging-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
 \alias{extract.brglm}
@@ -71,6 +73,8 @@
 \alias{extract,mer-method}
 \alias{extract.mnlogit}
 \alias{extract,mnlogit-method}
+\alias{extract.model.selection}
+\alias{extract,model.selection-method}
 \alias{extract.multinom}
 \alias{extract,multinom-method}
 \alias{extract.negbin}
@@ -103,6 +107,8 @@
 \alias{extract,sarlm-method}
 \alias{extract.sclm}
 \alias{extract,sclm-method}
+\alias{extract.selection}
+\alias{extract,selection-method}
 \alias{extract.sienaFit}
 \alias{extract,sienaFit-method}
 \alias{extract.simex}
@@ -144,6 +150,9 @@ extract(model, ...)
 
 \S4method{extract}{Arima}(model, include.pvalues = FALSE, 
     include.aic = TRUE, include.loglik = TRUE, ...)
+
+\S4method{extract}{averaging}(model, use.ci = FALSE, 
+    adjusted.se = FALSE, include.nobs = TRUE, ...)
 
 \S4method{extract}{betareg}(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, 
@@ -282,6 +291,10 @@ extract(model, ...)
     include.groups = TRUE, include.intercept = TRUE, 
     include.iterations = FALSE, ...)
 
+\S4method{extract}{model.selection}(model, include.loglik = TRUE, 
+    include.aicc = TRUE, include.delta = TRUE, 
+    include.weight = TRUE, include.nobs = TRUE, ...)
+
 \S4method{extract}{multinom}(model, include.pvalues = TRUE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
@@ -343,6 +356,13 @@ extract(model, ...)
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, ...)
 
+\S4method{extract}{selection}(model, prefix = TRUE, 
+    include.selection = TRUE, include.outcome = TRUE, 
+    include.errors = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.nobs = TRUE, ...)
+
 \S4method{extract}{sienaFit}(model, include.iterations = TRUE, 
     ...)
 
@@ -400,6 +420,10 @@ An extract method for aftreg objects from the \pkg{eha} package.
 
 \item{\code{Arima}}{
 An extract method for Arima objects from the \pkg{stats} package.
+}
+
+\item{\code{averaging}}{
+An extract method for averaging objects from the \pkg{MuMIn} package.
 }
 
 \item{\code{betareg}}{
@@ -534,6 +558,10 @@ An extract method for mer objects from the (old) \pkg{lme4} package.
 An extract method for mnlogit objects from the \pkg{mnlogit} package.
 }
 
+\item{\code{model.selection}}{
+An extract method for model.selection objects from the \pkg{MuMIn} package.
+}
+
 \item{\code{multinom}}{
 An extract method for multinom objects from the \pkg{nnet} package.
 }
@@ -598,6 +626,10 @@ An extract method for sarlm objects from the \pkg{spdep} package.
 An extract method for sclm objects from the \pkg{ordinal} package.
 }
 
+\item{\code{selection}}{
+An extract method for selection objects from the \pkg{sampleSelection} package.
+}
+
 \item{\code{sienaFit}}{
 An extract method for sienaFit objects from the \pkg{RSiena} package.
 }
@@ -649,6 +681,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 }
 \arguments{
 \item{model}{ A statistical model object. }
+\item{adjusted.se}{ If available: use adjusted rather than default standard errors? }
 \item{beside}{ If available: should the model terms be arranged below each other or beside each other (default)? For example, in a stergm model, the formation and dissolution coefficients can be arranged in two columns of the table. }
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
@@ -656,11 +689,13 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
 \item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
 \item{include.count}{ If available: should the count model of a zero-inflated or hurdle regression be included in the coefficients block (before the zero-inflation or zero hurdle model)? }
+\item{include.delta}{ If available: should the delta statistic be included? }
 \item{include.dev.expl}{ If available: should the deviance explained be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }
 \item{include.dic}{ If available: should the deviance information criterion (DIC) be reported? }
 \item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
 \item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }
+\item{include.errors}{ If available: should the error terms of a sample selection model be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }
 \item{include.formation}{ If available: should the coefficients for the formation phase in a STERGM be reported? }
 \item{include.fstatistic}{ If available: should the F statistic be reported? }
@@ -679,6 +714,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
 \item{include.obj.fcn}{ If available: should the value of the objective function (= criterion function) be reported (for \code{gmm} objects)? More precisely, this returns \code{E(g)var(g)^{-1}E(g)}. }
+\item{include.outcome}{ If available: should the outcome component of a sample selection model be reported? }
 \item{include.overidentification}{ If available: should the J-test for overidentification be reported (for \code{gmm} objects)? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }
 \item{include.precision}{ If available: should the precision estimates of a betareg fit (the phi coefficients) be reported as part of the coefficients block? }
@@ -686,18 +722,22 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.pvalues}{ If available: should the p values be reported (naive p values are not recommended for lme4 models, but see also the \code{mcmc.pvalues} argument)? }
 \item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.sargan}{ If available: should the Sargan test be reported? }
+\item{include.selection}{ If available: should the selection component of a sample selection model be reported? }
 \item{include.smooth}{ If available: should the smooth terms of a GAM be reported? If they are reported, the EDF value is reported as the coefficient, and DF is included in parentheses (not standard errors because a chi-square test is used for the smooth terms). }
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
 \item{include.trisk}{ If available: should the total time at risk be reported (in event-history models)? }
 \item{include.variance}{ If available: should group variances be reported? }
 \item{include.wald}{ If available: should the Wald statistic be included? }
+\item{include.weight}{ If available: should the weight be included? }
 \item{include.zero}{ If available: should the zero-inflation model of a zero-inflated regression or the zero hurdle model of a hurdle regression be included in the coefficients block (after the count model)? }
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
 \item{level}{Confidence level (\code{1 - alpha}) for computing confidence intervals. }
 \item{method}{ The method used to compute confidence intervals or p values. In \pkg{lme4} models, the default value \code{"naive"} computes naive p values while the other methods compute confidence intervals using the \code{confint} function. }
 \item{nsim}{ In linear mixed effects models: the MCMC sample size or number of bootstrapping replications on the basis of which confidence intervals are computed (only if the \code{method} argument does not specify \code{"naive"}, which is the default behavior). Note: large values may take considerable computing time. }
+\item{prefix}{ Include prefix before the label of the coefficient in order to identify the current model component. }
 \item{robust}{ If available: report robust instead of naive standard errors. }
+\item{use.ci}{ Use confidence intervals rather than standard errors. }
 \item{...}{ Custom parameters which are handed over to subroutines. }
 }
 \references{

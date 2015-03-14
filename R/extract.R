@@ -60,6 +60,61 @@ setMethod("extract", signature = className("Arima", "stats"),
     definition = extract.Arima)
 
 
+# extension for averaging objects (MuMIn package)
+extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE, 
+    include.nobs = TRUE, ...) {
+  ct <- model$coefTable
+  rn <- rownames(ct)
+  coefs <- ct[, 1]
+  if (adjusted.se == FALSE) {
+    se <- ct[, 2]
+  } else {
+    se <- ct[, 3]
+  }
+  ci.l <- ct[, 4]
+  ci.u <- ct[, 5]
+  
+  zval <- coefs / se
+  pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- attr(model, "nobs")
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  if (use.ci == FALSE) {
+    tr <- createTexreg(
+        coef.names = rn, 
+        coef = coefs, 
+        se = se, 
+        pvalues = pval, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+  } else {
+    tr <- createTexreg(
+        coef.names = rn, 
+        coef = coefs, 
+        ci.low = ci.l, 
+        ci.up = ci.u, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+  }
+  return(tr)
+}
+
+setMethod("extract", signature = className("averaging", "MuMIn"), 
+    definition = extract.averaging)
+
+
 # extension for betareg objects (betareg package)
 extract.betareg <- function(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, include.nobs = TRUE, ...) {
@@ -1512,7 +1567,6 @@ extract.lrm <- function(model, include.pseudors = TRUE, include.lr = TRUE,
   p <- pnorm(abs(model$coef / sqrt(diag(model$var))), 
       lower.tail = FALSE) * 2
   
-  
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
@@ -1654,6 +1708,75 @@ setMethod("extract", signature = className("mnlogit", "mnlogit"),
     definition = extract.mnlogit)
 
 
+# extension for model.selection objects (MuMIn package)
+extract.model.selection <- function(model, include.loglik = TRUE, 
+    include.aicc = TRUE, include.delta = TRUE, include.weight = TRUE, 
+    include.nobs = TRUE, ...) {
+  
+  coeftables <- attr(model, "coefTable")
+  ll <- model$logLik
+  aicc <- model$AICc
+  w <- model$weight
+  delta <- model$delta
+  n <- attr(model, "nobs")
+  
+  trlist <- list()
+  for (i in 1:length(coeftables)) {
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.loglik == TRUE) {
+      gof <- c(gof, ll[i])
+      gof.names <- c(gof.names, "Log Likelihood")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.aicc == TRUE) {
+      gof <- c(gof, aicc[i])
+      gof.names <- c(gof.names, "AICc")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.delta == TRUE) {
+      gof <- c(gof, delta[i])
+      gof.names <- c(gof.names, "Delta")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.weight == TRUE) {
+      gof <- c(gof, w[i])
+      gof.names <- c(gof.names, "Weight")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+      gof <- c(gof, n)
+      gof.names <- c(gof.names, "Num.\\ obs.")
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    rn <- rownames(coeftables[[i]])
+    coefs <- coeftables[[i]][, 1]
+    se <- coeftables[[i]][, 2]
+    zval <- coefs / se
+    pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+    
+    tr <- createTexreg(
+        coef.names = rn, 
+        coef = coefs, 
+        se = se, 
+        pvalues = pval, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+    
+    trlist[[i]] <- tr
+  }
+  
+  return(trlist)
+}
+
+setMethod("extract", signature = className("model.selection", "MuMIn"), 
+    definition = extract.model.selection)
+
+
 # extension for multinom objects (nnet package)
 extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, 
@@ -1710,7 +1833,7 @@ extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE,
     if (include.nobs == TRUE) {
       n <- length(s$fitted.values)
       gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.names <- c(gof.names, "Num.\\ obs.")
       gof.decimal <- c(gof.decimal, FALSE)
     }
     
@@ -2296,6 +2419,96 @@ extract.sarlm <- function(model, include.nobs = TRUE, include.lambda = TRUE,
 
 setMethod("extract", signature = className("sarlm", "spdep"), 
     definition = extract.sarlm)
+
+
+# extension for selection objects (sampleSelection package)
+extract.selection <- function(model, prefix = TRUE, include.selection = TRUE, 
+    include.outcome = TRUE, include.errors = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, ...) {
+  
+  # extract coefficients etc.
+  s <- summary(model, ...)
+  coefs <- coef(model)
+  coef.tab <- coef(s)
+  rn <- names(coefs)
+  se <- coef.tab[, 2]
+  p <- coef.tab[, 4]
+  
+  # add prefixes to labels of selection and outcome components
+  indices.selection <- s$param$index$betaS
+  indices.outcome <- s$param$index$betaO
+  indices.errorterms <- s$param$index$errTerms
+  if (prefix == TRUE) {
+    rn[indices.selection] <- paste("S:", rn[indices.selection])
+    rn[indices.outcome] <- paste("O:", rn[indices.outcome])
+  }
+  
+  # retain only those components that are set up in the arguments
+  include <- numeric()
+  if (include.selection == TRUE) {
+    include <- c(include, indices.selection)
+  }
+  if (include.outcome == TRUE) {
+    include <- c(include, indices.outcome)
+  }
+  if (include.errors == TRUE) {
+    include <- c(include, indices.errorterms)
+  }
+  coefs <- coefs[include]
+  rn <- rn[include]
+  se <- se[include]
+  p <- p[include]
+  
+  # GOF block
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE && "loglik" %in% names(s)) {
+    gof <- c(gof, AIC(model))
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE && "loglik" %in% names(s)) {
+    gof <- c(gof, BIC(model))
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE && "loglik" %in% names(s)) {
+    gof <- c(gof, logLik(model)[1])
+    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.rsquared == TRUE && "rSquared" %in% names(s)) {
+    gof <- c(gof, s$rSquared$R2)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.adjrs == TRUE && "rSquared" %in% names(s)) {
+    gof <- c(gof, s$rSquared$R2adj)
+    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, s$param$nObs, s$param$N0, s$param$N1)
+    gof.names <- c(gof.names, "Num.\ obs.", "Censored", "Observed")
+    gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE)
+  }
+  
+  # create and return texreg object
+  tr <- createTexreg(
+    coef.names = rn, 
+    coef = coefs, 
+    se = se, 
+    pvalues = p, 
+    gof.names = gof.names, 
+    gof = gof, 
+    gof.decimal = gof.decimal
+  )
+}
+
+setMethod("extract", signature = className("selection", "sampleSelection"), 
+    definition = extract.selection)
 
 
 # extension for sienaFit objects (RSiena package)
