@@ -195,6 +195,57 @@ setMethod("extract", signature = className("btergm", "btergm"),
     definition = extract.btergm)
 
 
+# extension for censReg objects (censReg package)
+extract.censReg <- function(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...) {
+  s <- summary(model, ...)
+  
+  coefs <- s$estimate[, 1]
+  rn <- rownames(s$estimate)
+  se <- s$estimate[, 2]
+  pval <- s$estimate[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    gof <- c(gof, AIC(model)[1])
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    gof <- c(gof, BIC(model)[1])
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    gof <- c(gof, logLik(model)[1])
+    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, s$nObs)
+    gof.names <- c(gof.names, "Num.\ obs.", "Left-censored", "Uncensored", 
+        "Right-censored")
+    gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = rn, 
+      coef = coefs, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("censReg", "censReg"), 
+    definition = extract.censReg)
+
+
 # extension for clm objects
 extract.clm <- function(model, include.thresholds = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, ...) {

@@ -13,6 +13,8 @@
 \alias{extract,brglm-method}
 \alias{extract.btergm}
 \alias{extract,btergm-method}
+\alias{extract.censReg}
+\alias{extract,censReg-method}
 \alias{extract.clm}
 \alias{extract,clm-method}
 \alias{extract.clogit}
@@ -165,6 +167,10 @@ extract(model, ...)
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{btergm}(model, level = 0.95, ...)
+
+\S4method{extract}{censReg}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, ...)
 
 \S4method{extract}{clm}(model, include.thresholds = TRUE, 
     include.aic = TRUE, include.bic=TRUE, include.loglik = TRUE, 
@@ -441,6 +447,10 @@ An extract method for brglm objects from the \pkg{brglm} package.
 
 \item{\code{btergm}}{
 An extract method for btergm objects from the \pkg{xergm} package.
+}
+
+\item{\code{censReg}}{
+An extract method for censReg objects from the \pkg{censReg} package.
 }
 
 \item{\code{clm}}{
