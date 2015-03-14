@@ -128,6 +128,23 @@ get.gof <- function(models) {
 override <- function(models, override.coef, override.se, override.pval, 
     override.ci.low, override.ci.up) {
   
+  if (class(override.se) == "list" || length(override.se) > 1 || 
+      override.se[1] != 0) {
+    if (length(override.pval) == 1 && class(override.pval) != "list" && 
+        override.pval[1] == 0) {
+      warning(paste("Standard errors were provided using 'override.se',", 
+          "but p-values were not replaced!"))
+    }
+  }
+  if (class(override.pval) == "list" || length(override.pval) > 1 || 
+      override.pval[1] != 0) {
+    if (length(override.se) == 1 && class(override.se) != "list" && 
+        override.se[1] == 0) {
+      warning(paste("P-values were provided using 'override.pval',", 
+          "but standard errors were not replaced!"))
+    }
+  }
+  
   for (i in 1:length(models)) {
     
     # coefficients

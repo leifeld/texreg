@@ -32,7 +32,7 @@ htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
     caption = "Statistical models", caption.above = FALSE, 
     star.symbol = "*", inline.css = TRUE, doctype = TRUE, 
     html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, 
-    indentation = "", ...)
+    indentation = "", vertical.align.px = 0, ...)
 
 screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
@@ -128,6 +128,7 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{head.tag}{[only in the \code{htmlreg} function] Should the <head> tag (including CSS definitions and title/caption) be included in the HTML code? Suppressing this tag is recommended when \pkg{knitr} is used for dynamic HTML or Markdown report generation. Including this tag is recommended when the code is saved to a file, for example as an MS Word document.}
 \item{body.tag}{[only in the \code{htmlreg} function] Should the table code be enclosed in a <body> HTML tag? Suppressing this tag is recommended when \pkg{knitr} is used for dynamic HTML or Markdown report generation. Including this tag is recommended when the code is saved to a file, for example as an MS Word document.}
 \item{indentation}{[only in the \code{htmlreg} function] Characters used for indentation of the HTML code. By default, \code{indentation = ""} uses no indentation. Any number of spaces or characters can be used instead. For example, \code{indentation = "  "} uses two spaces of (additional) indentation for each subelement.}
+\item{vertical.align.px}{[only in the \code{htmlreg} function] Vertical alignment of significance stars. Browsers differ in their ways of displaying superscripted significance stars; in some browsers the stars are elevated by default, and in other browsers the stars are aligned vertically with the text, without any actual superscripting. This argument controls by how many additional pixels the stars are elevated. The default setting of 0 uses the defaults of the browser. In RStudio's internal browser, this looks OK, but in Firefox, this looks too low. A value of 4 looks OK in Firefox, for example, but is above the line in RStudio's internal browser. }
 
 \item{column.spacing}{[only in the \code{screenreg} function] The amount of space between any two columns of a table. By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}.}
 \item{outer.rule}{[only in the \code{screenreg} function] The character which is used to draw the outer horizontal line above and below a table. If an empty character object is provided (i.e., \code{outer.rule = ""}), there will be no outer horizontal lines. Recommended values are \code{""}, \code{"="}, \code{"-"}, \code{"_"}, or \code{"#"}.}

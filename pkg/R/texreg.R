@@ -671,7 +671,7 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
     groups = NULL, bold = 0.00, center = TRUE, caption = "Statistical models", 
     caption.above = FALSE, star.symbol = "*", inline.css = TRUE, 
     doctype = TRUE, html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, 
-    indentation = "", ...) {
+    indentation = "", vertical.align.px = 0, ...) {
   
   stars <- check.stars(stars)
   
@@ -688,7 +688,7 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
         "border-bottom: 2px solid black;\"")
     css.td <- " style=\"padding-right: 12px; border: none;\""
     css.caption <- ""
-    css.sup <- " style=\"vertical-align: 4px;\""
+    css.sup <- paste0(" style=\"vertical-align: ", vertical.align.px, "px;\"")
   } else {
     css.table <- ""
     css.th <- ""
@@ -839,7 +839,7 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
         h.ind, d.ind, ind, ind, "border: none;\n", 
         h.ind, d.ind, ind, "}\n", 
         h.ind, d.ind, ind, "sup {\n", 
-        h.ind, d.ind, ind, ind, "vertical-align: 4px;\n", 
+        h.ind, d.ind, ind, ind, "vertical-align: ", vertical.align.px, "px;\n", 
         h.ind, d.ind, ind, "}\n", 
         h.ind, d.ind, "</style>\n"
     )
