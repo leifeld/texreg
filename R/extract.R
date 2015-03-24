@@ -1933,7 +1933,7 @@ extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE,
       gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.nobs == TRUE) {
-      n <- length(s$fitted.values)
+      n <- nrow(s$fitted.values)
       gof <- c(gof, n)
       gof.names <- c(gof.names, "Num.\\ obs.")
       gof.decimal <- c(gof.decimal, FALSE)
