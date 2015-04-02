@@ -3367,9 +3367,45 @@ extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE,
         gof.decimal = gof.decimal
     )
     return(tr)
+  } else if ("tobit" %in% class(model)) {
+    coefficient.names <- rownames(s$table)
+    coefficients <- s$table[, 1]
+    standard.errors <- s$table[, 2]
+    significance <- s$table[, 5]
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        aic <- AIC(model)
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+        bic <- BIC(model)
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        lik <- logLik(model)[1]
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        n <- nrow(model$data)
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    tr <- createTexreg(coef.names = coefficient.names, coef = coefficients, 
+        se = standard.errors, pvalues = significance, gof.names = gof.names, 
+        gof = gof, gof.decimal = gof.decimal)
+    return(tr)
   } else {
     stop(paste("Only the following Zelig models are currently supported:", 
-        "logit, ls, mlogit, ologit, probit, relogit."))
+        "logit, ls, mlogit, ologit, probit, relogit, tobit."))
   }
 }
 
