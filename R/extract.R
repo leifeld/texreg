@@ -1745,8 +1745,8 @@ extract.mnlogit <- function(model, include.aic = TRUE, include.loglik = TRUE,
   
   s <- summary(model, ...)
   
-  names <- names(s$coef)
   coT <- s$CoefTable
+  coefnames <- rownames(coT)
   co <- coT[, 1]
   se <- coT[, 2]
   pval <- coT[, 4]
@@ -1795,7 +1795,7 @@ extract.mnlogit <- function(model, include.aic = TRUE, include.loglik = TRUE,
   }
   
   tr <- createTexreg(
-      coef.names = names, 
+      coef.names = coefnames, 
       coef = co, 
       se = se, 
       pvalues = pval, 
