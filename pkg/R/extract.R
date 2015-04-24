@@ -1741,15 +1741,11 @@ setMethod("extract", signature = className("mlogit", "mlogit"),
 # extension for mnlogit objects (mnlogit package)
 extract.mnlogit <- function(model, include.aic = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, include.intercept = TRUE, 
-    include.iterations = FALSE, ...) {
+    include.iterations = FALSE, beside = FALSE, ...) {
   
   s <- summary(model, ...)
-  
   coT <- s$CoefTable
   coefnames <- rownames(coT)
-  co <- coT[, 1]
-  se <- coT[, 2]
-  pval <- coT[, 4]
   
   gof <- numeric()
   gof.names <- character()
@@ -1794,16 +1790,47 @@ extract.mnlogit <- function(model, include.aic = TRUE, include.loglik = TRUE,
     gof.decimal <- c(gof.decimal, c(FALSE, TRUE, TRUE))
   }
   
-  tr <- createTexreg(
-      coef.names = coefnames, 
-      coef = co, 
-      se = se, 
-      pvalues = pval, 
-      gof.names = gof.names, 
-      gof = gof, 
-      gof.decimal = gof.decimal
-  )
-  return(tr)
+  if (beside == FALSE) {
+    co <- coT[, 1]
+    se <- coT[, 2]
+    pval <- coT[, 4]
+    
+    tr <- createTexreg(
+        coef.names = coefnames, 
+        coef = co, 
+        se = se, 
+        pvalues = pval, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+  } else {
+    models <- attributes(fit$freq)$names[-1]
+    trlist <- list()
+    for (i in 1:length(models)) {
+      rows <- which(grepl(paste0(models[i], "$"), coefnames))
+      coeftable <- coT[rows, ]
+      cn <- coefnames[rows]
+      cn <- gsub(paste0(":", models[i], "$"), "", cn)
+      co <- coeftable[, 1]
+      se <- coeftable[, 2]
+      pval <- coeftable[, 4]
+      
+      tr <- createTexreg(
+          coef.names = cn, 
+          coef = co, 
+          se = se, 
+          pvalues = pval, 
+          gof.names = gof.names, 
+          gof = gof, 
+          gof.decimal = gof.decimal, 
+          model.name = models[i]
+      )
+      trlist[[i]] <- tr
+    }
+    return(trlist)
+  }
 }
 
 setMethod("extract", signature = className("mnlogit", "mnlogit"), 
