@@ -1806,7 +1806,7 @@ extract.mnlogit <- function(model, include.aic = TRUE, include.loglik = TRUE,
     )
     return(tr)
   } else {
-    models <- attributes(fit$freq)$names[-1]
+    models <- attributes(model$freq)$names[-1]
     trlist <- list()
     for (i in 1:length(models)) {
       rows <- which(grepl(paste0(models[i], "$"), coefnames))
