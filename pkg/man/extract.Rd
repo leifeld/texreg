@@ -297,7 +297,7 @@ extract(model, ...)
 \S4method{extract}{mnlogit}(model, include.aic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, include.intercept = TRUE, 
-    include.iterations = FALSE, ...)
+    include.iterations = FALSE, beside = FALSE, ...)
 
 \S4method{extract}{mlogit}(model, include.aic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
@@ -701,7 +701,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \arguments{
 \item{model}{ A statistical model object. }
 \item{adjusted.se}{ If available: use adjusted rather than default standard errors? }
-\item{beside}{ If available: should the model terms be arranged below each other or beside each other (default)? For example, in a stergm model, the formation and dissolution coefficients can be arranged in two columns of the table. }
+\item{beside}{ If available: should the model terms be arranged below each other or beside each other? For example, in a stergm model, the formation and dissolution coefficients can be arranged in two columns of the table. }
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
 \item{include.aicc}{ If available: should AICc be reported? This is a version of AIC with a correction for finite sample sizes. }
