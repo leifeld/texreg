@@ -432,12 +432,13 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 64 supported model types (version 1.35).]{\label{tab:types} List of 64 supported model types (version 1.35).} \\
+\caption[List of 65 supported model types (version 1.36).]{\label{tab:types} List of 65 supported model types (version 1.36).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
 `\code{Arima}'		& \pkg{stats}			& ARIMA time series models \\
 `\code{averaging}'	& \pkg{MuMIn}			& Model averaging objects \\
+`\code{bam}'		& \pkg{mgcv}			& Generalized additive models \\
 `\code{betareg}'	& \pkg{betareg}			& Beta regression for rates and proportions \\
 `\code{brglm}'		& \pkg{brglm}			& Bias-reduced generalized linear models \\
 `\code{btergm}'		& \pkg{xergm}			& Temporal exponential random graph models \\
@@ -528,13 +529,13 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 `\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
-\pkg{texreg} (version 1.35), in contrast, can deal with all of the
+\pkg{texreg} (version 1.36), in contrast, can deal with all of the
 above model types (that is, the union of all three packages, is 
 extensible, and offers additional built-in functions for the following 
-model classes: `\code{averaging}', `\code{brglm}', `\code{btergm}', 
-`\code{censReg}', `\code{coxph.penal}', `\code{ergmm}', `\code{fGARCH}', 
-`\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', `\code{gmm}', 
-`\code{lme}', `\code{lme4}', `\code{lnam}', `\code{maBina}', 
+model classes: `\code{averaging}', `\code{bam}', `\code{brglm}', 
+`\code{btergm}', `\code{censReg}', `\code{coxph.penal}', `\code{ergmm}', 
+`\code{fGARCH}', `\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', 
+`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{maBina}', 
 `\code{mlogit}', `\code{mnlogit}', `\code{model.selection}', 
 `\code{netlogit}', `\code{nlme}', `\code{rem.dyad}', `\code{rq}', 
 `\code{sclm}', `\code{selection}', `\code{stergm}', `\code{systemfit}', 
