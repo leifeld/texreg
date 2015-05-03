@@ -7,6 +7,8 @@
 \alias{extract,Arima-method}
 \alias{extract.averaging}
 \alias{extract,averaging-method}
+\alias{extract.bam}
+\alias{extract,bam-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
 \alias{extract.brglm}
@@ -158,6 +160,13 @@ extract(model, ...)
 \S4method{extract}{averaging}(model, use.ci = FALSE, 
     adjusted.se = FALSE, include.nobs = TRUE, ...)
 
+\S4method{extract}{bam}(model, include.smooth = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.dev.expl = TRUE, include.dispersion = TRUE, 
+    include.rsquared = TRUE, include.gcv = TRUE, 
+    include.nobs = TRUE, include.nsmooth = TRUE, ...)
+
 \S4method{extract}{betareg}(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, ...)
@@ -308,7 +317,8 @@ extract(model, ...)
 
 \S4method{extract}{multinom}(model, include.pvalues = TRUE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, ...)
+    include.deviance = TRUE, include.nobs = TRUE, 
+    levels = model$lev, beside = TRUE, ...)
 
 \S4method{extract}{negbin}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -435,6 +445,10 @@ An extract method for Arima objects from the \pkg{stats} package.
 
 \item{\code{averaging}}{
 An extract method for averaging objects from the \pkg{MuMIn} package.
+}
+
+\item{\code{bam}}{
+An extract method for bam objects from the \pkg{mgcv} package.
 }
 
 \item{\code{betareg}}{
@@ -753,6 +767,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.zph}{ If available: should the Cox proportional hazards assumption be tested (resulting in a p value indicating whether the proportional hazards assumption of the model is violated)? }
 \item{jackknife}{ If available: use Jackknife variance instead of Asymptotic variance. }
 \item{level}{Confidence level (\code{1 - alpha}) for computing confidence intervals. }
+\item{levels}{ The names of the levels of a multinomial model that should be included in the table. Should be provided as a vector of character strings. }
 \item{method}{ The method used to compute confidence intervals or p values. In \pkg{lme4} models, the default value \code{"naive"} computes naive p values while the other methods compute confidence intervals using the \code{confint} function. }
 \item{nsim}{ In linear mixed effects models: the MCMC sample size or number of bootstrapping replications on the basis of which confidence intervals are computed (only if the \code{method} argument does not specify \code{"naive"}, which is the default behavior). Note: large values may take considerable computing time. }
 \item{prefix}{ Include prefix before the label of the coefficient in order to identify the current model component. }

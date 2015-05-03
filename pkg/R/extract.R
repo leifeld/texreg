@@ -700,7 +700,7 @@ setMethod("extract", signature = className("fGARCH", "fGarch"),
     definition = extract.fGARCH)
 
 
-# extension for gam objects (mgcv package)
+# extension for gam and bam objects (mgcv package)
 extract.gam <- function(model, include.smooth = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, 
     include.dev.expl = TRUE, include.dispersion = TRUE, include.rsquared = TRUE,
@@ -797,6 +797,10 @@ extract.gam <- function(model, include.smooth = TRUE, include.aic = TRUE,
 
 setMethod("extract", signature = className("gam", "mgcv"), 
     definition = extract.gam)
+
+extract.bam <- extract.gam
+setMethod("extract", signature = className("bam", "mgcv"), 
+    definition = extract.bam)
 
 
 # extension for gamlss objects (gamlss package)
@@ -1909,11 +1913,11 @@ setMethod("extract", signature = className("model.selection", "MuMIn"),
 # extension for multinom objects (nnet package)
 extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, 
-    include.nobs = TRUE, ...) {
+    include.nobs = TRUE, levels = model$lev, beside = TRUE, ...) {
   
   s <- summary(model, ...)
   
-  names <- model$coefnames
+  coefnames <- model$coefnames
   co <- s$coefficients
   se <- s$standard.errors
   
@@ -1922,64 +1926,93 @@ extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE,
     se <- t(as.matrix(se))
   }
   
-  trlist <- list()
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log\\ Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nrow(s$fitted.values)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
   
-  for (i in 1:nrow(co)) {
-    if (include.pvalues == TRUE) {
-      zval <- co[i, ] / se[i, ]
-      pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+  if (beside == TRUE) {
+    trlist <- list()
+    for (i in which(rownames(co) %in% levels)) {
+      if (include.pvalues == TRUE) {
+        zval <- co[i, ] / se[i, ]
+        pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+      } else {
+        pval <- numeric(0)
+      }
+      
+      tr <- createTexreg(
+          coef.names = coefnames, 
+          coef = co[i, ], 
+          se = se[i, ], 
+          pvalues = pval, 
+          gof.names = gof.names, 
+          gof = gof, 
+          gof.decimal = gof.decimal, 
+          model.name = rownames(co)[i]
+      )
+      
+      trlist <- c(trlist, tr)
+    }
+    if (length(trlist) == 1) {
+      return(trlist[[1]])
     } else {
-      pval <- numeric(0)
+      return(trlist)
     }
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.aic == TRUE) {
-      aic <- AIC(model)
-      gof <- c(gof, aic)
-      gof.names <- c(gof.names, "AIC")
-      gof.decimal <- c(gof.decimal, TRUE)
+  } else {
+    pval <- numeric()
+    stderr <- numeric()
+    coefs <- numeric()
+    nm <- character()
+    for (i in which(rownames(co) %in% levels)) {
+      nm <- c(nm, paste0(rownames(co)[i], ": ", coefnames))
+      coefs <- c(coefs, co[i, ])
+      stderr <- c(stderr, se[i, ])
+      if (include.pvalues == TRUE) {
+        zval <- co[i, ] / se[i, ]
+        pval <- c(pval, 2 * pnorm(abs(zval), lower.tail = FALSE))
+      }
     }
-    if (include.bic == TRUE) {
-      bic <- BIC(model)
-      gof <- c(gof, bic)
-      gof.names <- c(gof.names, "BIC")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.loglik == TRUE) {
-      lik <- logLik(model)[1]
-      gof <- c(gof, lik)
-      gof.names <- c(gof.names, "Log\ Likelihood")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.deviance == TRUE) {
-      dev <- deviance(model)
-      gof <- c(gof, dev)
-      gof.names <- c(gof.names, "Deviance")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-      n <- nrow(s$fitted.values)
-      gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\\ obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
     tr <- createTexreg(
-        coef.names = names, 
-        coef = co[i, ], 
-        se = se[i, ], 
+        coef.names = nm, 
+        coef = coefs, 
+        se = stderr, 
         pvalues = pval, 
         gof.names = gof.names, 
         gof = gof, 
         gof.decimal = gof.decimal
     )
-    
-    trlist <- c(trlist, tr)
+    return(tr)
   }
-  
-  return(trlist)
 }
 
 setMethod("extract", signature = className("multinom", "nnet"), 
