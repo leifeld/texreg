@@ -328,6 +328,8 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
 \code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
 \code{groups}			& $\bullet$	& $\bullet$	& $\bullet$	& Partition rows of the table into groups with labels \\
+\code{custom.columns}   & $\bullet$	& $\bullet$	& $\bullet$	& Add custom text columns to the table \\
+\code{custom.col.pos}   & $\bullet$	& $\bullet$	& $\bullet$	& Define where custom columns should be placed \\
 \code{bold}			& $\bullet$	& $\bullet$	& $\circ$	& $p$~value below which coefficients are bolded \\
 \code{center}			& $\bullet$	& $\bullet$	& $\circ$	& Horizontal alignment on the page \\
 \code{caption}			& $\bullet$	& $\bullet$	& $\circ$	& Set the caption of the table \\
@@ -1296,8 +1298,8 @@ Questions can be posted to a public forum at \url{http://r-forge.r-project.org/p
 
 \section*{Acknowledgments}
 The author would like to thank Oleg Badunenko, Tom Carsey, S.\,Q. Chang,
-Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber,
-Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Markus Riester,
+Michael Chirico, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, 
+Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Markus Riester,
 Francesco Sarracino, Giorgio Spedicato, Matthieu Stigler, Sebastian Ugbaje, 
 Neil Shephard, G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie 
 for their valuable input and ideas.

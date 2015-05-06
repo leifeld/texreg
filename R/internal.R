@@ -1098,6 +1098,158 @@ grouping <- function(output.matrix, groups, indentation = "    ",
   return(output.matrix)
 }
 
+# add custom columns to output matrix
+customcolumns <- function(output.matrix, custom.columns, custom.col.pos, 
+    single.row = FALSE, numcoef, groups, modelnames = TRUE) {
+  
+  # check validity of arguments
+  if (is.null(custom.columns)) {
+    return(output.matrix)
+  }
+  if (!class(custom.columns) == "list") {
+    if (length(custom.columns) != numcoef) {
+      stop(paste("Custom column does not match table dimensions.", numcoef, 
+          "elements expected."))
+    }
+    custom.columns <- list(custom.columns)
+  }
+  if (is.null(custom.col.pos)) {
+    custom.col.pos <- rep(2, length(custom.columns))
+  }
+  if (!is.numeric(custom.col.pos)) {
+    stop("Custom column positions must be provided as a numeric vector.")
+  }
+  if (length(custom.col.pos) != length(custom.columns)) {
+    stop(paste("Length of 'custom.col.pos' does not match length of", 
+        "'custom.columns'."))
+  }
+  if (any(custom.col.pos > ncol(output.matrix) + 1)) {
+    stop(paste("The table has only", ncol(output.matrix), "columns. The",
+        "'custom.col.pos' argument does not match these dimensions."))
+  }
+  if (0 %in% custom.col.pos) {
+    stop(paste("0 is not a valid argument in 'custom.col.pos'.", 
+        "The column indices start with 1."))
+  }
+  for (i in 1:length(custom.columns)) {
+    l <- length(custom.columns[[i]])
+    if (l != numcoef && !is.null(groups) && l == (numcoef + length(groups))) {
+      numcoef <- numcoef + length(groups)
+    }
+  }
+  
+  # prepare vector with column indices for custom columns
+  custom.indices <- logical()
+  for (i in 1:ncol(output.matrix)) {
+    if (i %in% custom.col.pos) {
+      custom.indices <- c(custom.indices, rep(TRUE, 
+          length(which(custom.col.pos == i))), FALSE)
+    } else {
+      custom.indices <- c(custom.indices, FALSE)
+    }
+  }
+  if ((ncol(output.matrix) + 1) %in% custom.col.pos) {
+    custom.indices <- c(custom.indices, TRUE)
+  }
+  
+  if (modelnames == TRUE) {
+    offset <- 1
+  } else {
+    offset <- 0
+  }
+  
+  # combine output matrix with custom columns
+  output.count <- 0
+  custom.count <- 0
+  temp <- matrix(character(), nrow = nrow(output.matrix), 
+      ncol = 0)
+  for (i in 1:length(custom.indices)) {
+    if (custom.indices[i] == FALSE) {
+      output.count <- output.count + 1
+      temp <- cbind(temp, cbind(output.matrix[, output.count]))
+    } else {
+      custom.count <- custom.count + 1
+      newcol <- matrix("", nrow = nrow(temp), ncol = 1)
+      newcol[1, 1] <- names(custom.columns)[custom.count]
+      for (j in 1:numcoef) {
+        if (single.row == TRUE) {
+          newcol[j + offset, 1] <- as.character(
+              custom.columns[[custom.count]][j])
+        } else {
+          newcol[(2 * j) - (1 - offset), 1] <- as.character(
+              custom.columns[[custom.count]][j])
+        }
+      }
+      temp <- cbind(temp, newcol)
+    }
+  }
+  return(temp)
+}
+
+# determine column names or column types if custom columns are present
+customcolumnnames <- function(modelnames, custom.columns, custom.col.pos, 
+    types = FALSE) {
+  
+  # adjust arguments
+  modelnames <- c("", modelnames)
+  if (is.null(custom.columns)) {
+    if (types == FALSE) {
+      return(modelnames)
+    } else {
+      return(c("coefnames", rep("coef", length(modelnames) - 1)))
+    }
+  }
+  if (!class(custom.columns) == "list") {
+    custom.columns <- list(custom.columns)
+  }
+  if (is.null(custom.col.pos) && !is.null(custom.columns)) {
+    custom.col.pos <- rep(2, length(custom.columns))
+  }
+  
+  # create indices for name injection
+  custom.types <- character()
+  for (i in 1:length(modelnames)) {
+    if (i %in% custom.col.pos) {
+      if (i == 1 && types == TRUE) {
+        value <- "coefnames"
+      } else {
+        value <- "coef"
+      }
+      custom.types <- c(custom.types, rep("customcol", 
+          length(which(custom.col.pos == i))), value)
+    } else {
+      if (i == 1) {
+        custom.types <- c(custom.types, "coefnames")
+      } else {
+        custom.types <- c(custom.types, "coef")
+      }
+    }
+  }
+  if ((length(modelnames) + 1) %in% custom.col.pos) {
+    custom.types <- c(custom.types, "customcol")
+  }
+  
+  # do the adjustment
+  output.count <- 0
+  custom.count <- 0
+  temp <- character()
+  for (i in 1:length(custom.types)) {
+    if (custom.types[i] %in% c("coef", "coefnames")) {
+      output.count <- output.count + 1
+      temp <- c(temp, modelnames[output.count])
+    } else {
+      custom.count <- custom.count + 1
+      temp <- c(temp, names(custom.columns)[custom.count])
+    }
+  }
+  
+  if (types == TRUE) {
+    return(custom.types)
+  } else {
+    return(temp)
+  }
+}
+
 # print method for texreg table strings
 print.texregTable <- function(x, ...) {
   cat(x, ...)
