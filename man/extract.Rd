@@ -69,6 +69,8 @@
 \alias{extract,lmrob-method}
 \alias{extract.lnam}
 \alias{extract,lnam-method}
+\alias{extract.lqmm}
+\alias{extract,lqmm-method}
 \alias{extract.lrm}
 \alias{extract,lrm-method}
 \alias{extract.maBina}
@@ -290,6 +292,11 @@ extract(model, ...)
 \S4method{extract}{lnam}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, ...)
+
+\S4method{extract}{lqmm}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.tau = FALSE, use.ci = FALSE, beside = TRUE, ...)
 
 \S4method{extract}{lrm}(model, include.pseudors = TRUE, 
     include.lr = TRUE, include.nobs = TRUE, ...)
@@ -571,6 +578,10 @@ An extract method for lmrob objects from the \pkg{robustbase} package.
 An extract method for lnam objects from the \pkg{sna} package.
 }
 
+\item{\code{lqmm}}{
+An extract method for lqmm objects from the \pkg{lqmm} package.
+}
+
 \item{\code{lrm}}{
 An extract method for lrm objects from the \pkg{Design} or \pkg{rms} package.
 }
@@ -758,6 +769,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.sargan}{ If available: should the Sargan test be reported? }
 \item{include.selection}{ If available: should the selection component of a sample selection model be reported? }
 \item{include.smooth}{ If available: should the smooth terms of a GAM be reported? If they are reported, the EDF value is reported as the coefficient, and DF is included in parentheses (not standard errors because a chi-square test is used for the smooth terms). }
+\item{include.tau}{ If available: include tau in linear quantile mixed models? }
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
 \item{include.trisk}{ If available: should the total time at risk be reported (in event-history models)? }
 \item{include.variance}{ If available: should group variances be reported? }

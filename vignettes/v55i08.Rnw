@@ -434,7 +434,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 65 supported model types (version 1.36).]{\label{tab:types} List of 65 supported model types (version 1.36).} \\
+\caption[List of 66 supported model types (version 1.36).]{\label{tab:types} List of 66 supported model types (version 1.36).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
@@ -470,6 +470,7 @@ Class			& Package			& Description \\
 `\code{lme4}'		& \pkg{lme4} ($\geq$ 1.0)	& Linear mixed-effects models \\
 `\code{lmrob}'  	& \pkg{robustbase}		& MM-type estimators for linear models \\
 `\code{lnam}'		& \pkg{sna}			& Linear network autocorrelation models \\
+`\code{lqmm}'		& \pkg{lqmm}			& Linear quantile mixed models \\
 `\code{lrm}'		& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
 `\code{maBina}'		& \pkg{erer}			& Marginal effects for binary response models \\
 `\code{mlogit}' 	& \pkg{mlogit}			& Multinomial logit models \\
@@ -537,8 +538,8 @@ extensible, and offers additional built-in functions for the following
 model classes: `\code{averaging}', `\code{bam}', `\code{brglm}', 
 `\code{btergm}', `\code{censReg}', `\code{coxph.penal}', `\code{ergmm}', 
 `\code{fGARCH}', `\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', 
-`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{maBina}', 
-`\code{mlogit}', `\code{mnlogit}', `\code{model.selection}', 
+`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{lqmm}', 
+`\code{maBina}', `\code{mlogit}', `\code{mnlogit}', `\code{model.selection}', 
 `\code{netlogit}', `\code{nlme}', `\code{rem.dyad}', `\code{rq}', 
 `\code{sclm}', `\code{selection}', `\code{stergm}', `\code{systemfit}', 
 and `\code{texreg}' objects. Table~\ref{tab:types} gives an overview of 

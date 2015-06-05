@@ -1617,6 +1617,171 @@ setMethod("extract", signature = className("lnam", "sna"),
     definition = extract.lnam)
 
 
+# extension for lqmm objects (lqmm package)
+extract.lqmm <- function(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, include.groups = TRUE, 
+    include.tau = FALSE, use.ci = FALSE, beside = TRUE, ...) {
+  
+  s <- summary(model, ...)
+  
+  tau <- model$tau
+  if (length(tau) == 1 && class(s$tTable) != "list") {
+    tab <- list(s$tTable)  # if only one tau value, wrap in list
+  } else {
+    tab <- s$tTable  # multiple tau values: already wrapped in list
+  }
+  
+  if (beside == TRUE) {
+    trlist <- list()
+    for (i in 1:length(tau)) {
+      coefficient.names <- rownames(tab[[i]])
+      coefficients <- tab[[i]][, 1]
+      standard.errors <- tab[[i]][, 2]
+      significance <- tab[[i]][, 5]
+      ci.l <- tab[[i]][, 3]
+      ci.u <- tab[[i]][, 4]
+      
+      gof <- numeric()
+      gof.names <- character()
+      gof.decimal <- logical()
+      if (include.aic == TRUE) {
+        gof <- c(gof, AIC(model)[i])
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      if (include.bic == TRUE) {
+        gof <- c(gof, BIC(model)[i])
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      if (include.loglik == TRUE) {
+        gof <- c(gof, logLik(model)[i])
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      if (include.nobs == TRUE) {
+        n <- nobs(model)
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+      }
+      if (include.groups == TRUE) {
+        gof <- c(gof, model$ngroups)
+        gof.names <- c(gof.names, "Num.\ groups")
+        gof.decimal <- c(gof.decimal, FALSE)
+      }
+      if (include.tau == TRUE) {
+        gof <- c(gof, tau[i])
+        gof.names <- c(gof.names, "tau")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      
+      if (use.ci == FALSE) {
+        tr <- createTexreg(
+            coef.names = coefficient.names, 
+            coef = coefficients, 
+            se = standard.errors, 
+            pvalues = significance, 
+            gof.names = gof.names, 
+            gof = gof, 
+            gof.decimal = gof.decimal, 
+            model.name = as.character(tau[i])
+        )
+      } else {
+        tr <- createTexreg(
+            coef.names = coefficient.names, 
+            coef = coefficients, 
+            pvalues = significance, 
+            ci.low = ci.l, 
+            ci.up = ci.u, 
+            gof.names = gof.names, 
+            gof = gof, 
+            gof.decimal = gof.decimal, 
+            model.name = as.character(tau[i])
+        )
+      }
+      trlist[[i]] <- tr
+    }
+    return(trlist)
+  } else {
+    coefficient.names <- character()
+    coefficients <- numeric()
+    standard.errors <- numeric()
+    significance <- numeric()
+    ci.l <- numeric()
+    ci.u <- numeric()
+    
+    for (i in 1:length(tau)) {
+      coefficient.names <- c(coefficient.names, paste0(rownames(tab[[i]]), 
+          " (", tau[i], ")"))
+      coefficients <- c(coefficients, tab[[i]][, 1])
+      standard.errors <- c(standard.errors, tab[[i]][, 2])
+      significance <- c(significance, tab[[i]][, 5])
+      ci.l <- c(ci.l, tab[[i]][, 3])
+      ci.u <- c(ci.u, tab[[i]][, 4])
+    }
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+      gof <- c(gof, AIC(model))
+      gof.names <- c(gof.names, paste0("AIC (", tau, ")"))
+      gof.decimal <- c(gof.decimal, rep(TRUE, length(tau)))
+    }
+    if (include.bic == TRUE) {
+      gof <- c(gof, BIC(model))
+      gof.names <- c(gof.names, paste0("BIC (", tau, ")"))
+      gof.decimal <- c(gof.decimal, rep(TRUE, length(tau)))
+    }
+    if (include.loglik == TRUE) {
+      gof <- c(gof, logLik(model))
+      gof.names <- c(gof.names, paste0("Log Likelihood (", tau, ")"))
+      gof.decimal <- c(gof.decimal, rep(TRUE, length(tau)))
+    }
+    if (include.nobs == TRUE) {
+      n <- nobs(model)
+      gof <- c(gof, n)
+      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.groups == TRUE) {
+      gof <- c(gof, model$ngroups)
+      gof.names <- c(gof.names, "Num.\ groups")
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    if (use.ci == FALSE) {
+      tr <- createTexreg(
+          coef.names = coefficient.names, 
+          coef = coefficients, 
+          se = standard.errors, 
+          pvalues = significance, 
+          gof.names = gof.names, 
+          gof = gof, 
+          gof.decimal = gof.decimal
+      )
+    } else {
+      tr <- createTexreg(
+          coef.names = coefficient.names, 
+          coef = coefficients, 
+          pvalues = significance, 
+          ci.low = ci.l, 
+          ci.up = ci.u, 
+          gof.names = gof.names, 
+          gof = gof, 
+          gof.decimal = gof.decimal
+      )
+    }
+    return(tr)
+  }
+}
+
+setMethod("extract", signature = className("lqmm", "lqmm"), 
+    definition = extract.lqmm)
+
+
+
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model, include.pseudors = TRUE, include.lr = TRUE, 
     include.nobs = TRUE, ...) {
