@@ -1465,7 +1465,12 @@ extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
   }
   
   if (method[1] == "naive") {
-    Vcov <- vcov(model, useScale = FALSE, ...)
+    Vcov <- tryCatch({
+      Vcov <- vcov(model, useScale = FALSE, ...)
+    }, error = function(err) {  # Matrix package is sometimes used internally...
+      stop(paste("Please load the Matrix package or update to the latest", 
+          "development version of lme4 and run this command again."))
+    })
     Vcov <- as.matrix(Vcov)
     se <- sqrt(diag(Vcov))
     zval <- betas / se
