@@ -2696,8 +2696,9 @@ setMethod("extract", signature = className("rq", "quantreg"),
 
 
 # extension for sarlm objects (spdep package)
-extract.sarlm <- function(model, include.nobs = TRUE, include.lambda = TRUE, 
-    include.aic = TRUE, include.loglik = TRUE, include.wald = TRUE, ...) {
+extract.sarlm <- function(model, include.nobs = TRUE, include.aic = TRUE, 
+    include.loglik = TRUE, include.wald = TRUE, include.lambda = TRUE, 
+    include.rho = TRUE, ...) {
   s <- summary(model, ...)
   
   names <- rownames(s$Coef)
@@ -2715,13 +2716,6 @@ extract.sarlm <- function(model, include.nobs = TRUE, include.lambda = TRUE,
     gof <- c(gof, n, param)
     gof.names <- c(gof.names, "Num.\ obs.", "Parameters")
     gof.decimal <- c(gof.decimal, FALSE, FALSE)
-  }
-  if (include.lambda == TRUE) {
-    lambda <- s$lambda
-    LRpval <- s$LR1$p.value[1]
-    gof <- c(gof, lambda, LRpval)
-    gof.names <- c(gof.names, "Lambda: statistic", "Lambda: p-value")
-    gof.decimal <- c(gof.decimal, TRUE, TRUE)
   }
   if (include.aic == TRUE) {
     aic <- AIC(model)
@@ -2741,6 +2735,20 @@ extract.sarlm <- function(model, include.nobs = TRUE, include.lambda = TRUE,
     waldp <- s$Wald1$p.value
     gof <- c(gof, waldstat, waldp)
     gof.names <- c(gof.names, "Wald test: statistic", "Wald test: p-value")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.lambda == TRUE && !is.null(s$lambda)) {
+    lambda <- s$lambda
+    LRpval <- s$LR1$p.value[1]
+    gof <- c(gof, lambda, LRpval)
+    gof.names <- c(gof.names, "Lambda: statistic", "Lambda: p-value")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.rho == TRUE && !is.null(s$rho)) {
+    rho <- s$rho
+    LRpval <- s$LR1$p.value[1]
+    gof <- c(gof, rho, LRpval)
+    gof.names <- c(gof.names, "Rho: statistic", "Rho: p-value")
     gof.decimal <- c(gof.decimal, TRUE, TRUE)
   }
   

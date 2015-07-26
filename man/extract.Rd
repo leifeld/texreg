@@ -377,8 +377,9 @@ extract(model, ...)
     include.percentile = TRUE, ...)
 
 \S4method{extract}{sarlm}(model, include.nobs = TRUE, 
-    include.lambda = TRUE, include.aic = TRUE, 
-    include.loglik = TRUE, include.wald = TRUE, ...)
+    include.aic = TRUE, include.loglik = TRUE, 
+    include.wald = TRUE, include.lambda = TRUE, 
+    include.rho = TRUE, ...)
 
 \S4method{extract}{sclm}(model, include.thresholds = TRUE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
@@ -764,6 +765,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.precision}{ If available: should the precision estimates of a betareg fit (the phi coefficients) be reported as part of the coefficients block? }
 \item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
 \item{include.pvalues}{ If available: should the p values be reported (naive p values are not recommended for lme4 models, but see also the \code{mcmc.pvalues} argument)? }
+\item{include.rho}{ If available: should the lambda statistic and p-value be reported? }
 \item{include.rmse}{ If available: should the root-mean-square error (= residual standard deviation) be reported? }
 \item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.sargan}{ If available: should the Sargan test be reported? }
