@@ -63,49 +63,43 @@ setMethod("extract", signature = className("Arima", "stats"),
 # extension for averaging objects (MuMIn package)
 extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE, 
     include.nobs = TRUE, ...) {
-  ct <- model$coefTable
-  rn <- rownames(ct)
-  coefs <- ct[, 1]
-  if (adjusted.se == FALSE) {
-    se <- ct[, 2]
-  } else {
-    se <- ct[, 3]
-  }
-  ci.l <- ct[, 4]
-  ci.u <- ct[, 5]
   
-  zval <- coefs / se
-  pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
+  # MuMIn >= 1.15.0 : c('coefmat.subset', 'coefmat.full')
+  # MuMIn < 1.15.0 : c('coefmat', 'coefmat.full')
+  ct <- summary(model)$coefmat.full
+  coefs <- ct[, 1L]
+  se <- ct[, if(adjusted.se) 3L else 2L]
   
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
   if (include.nobs == TRUE) {
-    n <- attr(model, "nobs")
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
+    gof <- as.numeric(attr(model, "nobs"))
+    gof.names <- "Num.\\ obs."
+    gof.decimal <- FALSE
+  } else {
+    gof <- numeric(0L)
+    gof.names <- character(0L)
+    gof.decimal <- logical(0L)
   }
   
-  if (use.ci == FALSE) {
+  if (use.ci == TRUE) {
+    ci <- confint(model, full = TRUE)
     tr <- createTexreg(
-        coef.names = rn, 
-        coef = coefs, 
-        se = se, 
-        pvalues = pval, 
-        gof.names = gof.names, 
-        gof = gof, 
-        gof.decimal = gof.decimal
+      coef.names = names(coefs), 
+      coef = coefs, 
+      ci.low = ci[, 1L], 
+      ci.up = ci[, 2L], 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
     )
   } else {
     tr <- createTexreg(
-        coef.names = rn, 
-        coef = coefs, 
-        ci.low = ci.l, 
-        ci.up = ci.u, 
-        gof.names = gof.names, 
-        gof = gof, 
-        gof.decimal = gof.decimal
+      coef.names = names(coefs), 
+      coef = coefs, 
+      se = se, 
+      pvalues = ct[, 5L], 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
     )
   }
   return(tr)
@@ -2129,6 +2123,54 @@ extract.model.selection <- function(model, include.loglik = TRUE,
   
   return(trlist)
 }
+
+# version suggested by package author (throws a warning message):
+
+# extract.model.selection <- function(model, include.loglik = TRUE, 
+#     include.aicc = TRUE, include.delta = TRUE, include.weight = TRUE, 
+#     include.nobs = TRUE, ...) {
+#   
+#   includecols <- c(loglik = include.loglik, ic = include.aicc,
+#     delta = include.delta, weight = include.weight)
+#   include <- c(includecols, nobs = include.nobs)
+#   decimal <- c(TRUE, TRUE, TRUE, TRUE, FALSE)[include]
+#   colidx <- ncol(model) - c(loglik = 3L, ic = 2L, delta = 1L, weight = 0L)
+#   z <- as.matrix(model[, colidx[includecols], drop = FALSE])
+#   if (include.nobs) z <- cbind(z, nobs = attr(model, "nobs"))
+#   mode(z) <- "numeric"
+#   gofnames <- as.character(c(loglik = "Log Likelihood", 
+#       ic = colnames(model)[colidx["ic"]], 
+#       delta = "Delta", weight = "Weight", 
+#       nobs = "Num.\\ obs.")[include])
+#   
+#   coeftables <- coefTable(model)
+#   
+#   ## use t-test if dfs available, otherwise z-test:
+#   pval <- function(ct) {
+#     zval <- abs(ct[, 1L] / ct[, 2L])
+#     2 * if (!any(is.na(ct[, 3L]))) {
+#       pt(zval, df = ct[, 3L], lower.tail = FALSE)
+#     } else {
+#       pnorm(zval, lower.tail = FALSE)
+#     }
+#   }
+#   
+#   n <- nrow(z)
+#   rval <- vector(length = n, mode = "list")
+#   for (i in 1L:n) {
+#     ct <- coeftables[[i]]
+#     rval[[i]] <- createTexreg(
+#       coef.names = rownames(ct), 
+#       coef = ct[, 1L], 
+#       se = ct[, 2L], 
+#       pvalues = pval(ct), 
+#       gof.names = gofnames, 
+#       gof = z[i, ], 
+#       gof.decimal = decimal
+#     )
+#   }
+#   rval
+# }
 
 setMethod("extract", signature = className("model.selection", "MuMIn"), 
     definition = extract.model.selection)
