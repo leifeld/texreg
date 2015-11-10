@@ -654,6 +654,60 @@ setMethod("extract", signature = className("ergmm", "latentnet"),
     definition = extract.ergmm)
 
 
+# extension for felm objects (lfe package)
+extract.felm <- function(model, include.nobs = TRUE, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.fstatistic = FALSE, ...) {
+  
+  s <- summary(model)
+  nam <- rownames(s$coefficients)
+  co <- s$coefficients[, 1]
+  se <- s$coefficients[, 2]
+  pval <- s$coefficients[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    gof <- c(gof, s$N)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.rsquared == TRUE) {
+    gof <- c(gof, s$r2, s$P.r.squared)
+    gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.adjrs == TRUE) {
+    gof <- c(gof, s$r2adj, s$P.adj.r.squared)
+    gof.names <- c(gof.names, "Adj.\ R$^2$ (full model)", 
+        "Adj.\ R$^2$ (proj model)")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.fstatistic == TRUE) {
+    gof <- c(gof, s$F.fstat[1], s$F.fstat[4], 
+        s$P.fstat[length(s$P.fstat) - 1], s$P.fstat[1])
+    gof.names <- c(gof.names, "F statistic (full model)", 
+        "F (full model): p-value", "F statistic (proj model)", 
+        "F (proj model): p-value")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = nam, 
+      coef = co, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("felm", "lfe"), 
+    definition = extract.felm)
+
+
 # extension for fGARCH objects (fGarch package)
 extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE, 
     include.loglik = TRUE, ...) {
