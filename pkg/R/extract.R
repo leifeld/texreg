@@ -2064,113 +2064,47 @@ extract.model.selection <- function(model, include.loglik = TRUE,
     include.aicc = TRUE, include.delta = TRUE, include.weight = TRUE, 
     include.nobs = TRUE, ...) {
   
-  coeftables <- attr(model, "coefTable")
-  ll <- model$logLik
-  aicc <- model$AICc
-  w <- model$weight
-  delta <- model$delta
-  n <- attr(model, "nobs")
+  includecols <- c(loglik = include.loglik, ic = include.aicc,
+      delta = include.delta, weight = include.weight)
+  include <- c(includecols, nobs = include.nobs)
+  decimal <- c(TRUE, TRUE, TRUE, TRUE, FALSE)[include]
+  colidx <- ncol(model) - c(loglik = 3L, ic = 2L, delta = 1L, weight = 0L)
+  z <- as.matrix(`[.data.frame`(model, TRUE, colidx[includecols], drop = FALSE))
+  if (include.nobs) z <- cbind(z, nobs = attr(model, "nobs"))
+  mode(z) <- "numeric"
+  gofnames <- as.character(c(loglik = "Log Likelihood", 
+      ic = colnames(model)[colidx["ic"]], 
+      delta = "Delta", weight = "Weight", 
+      nobs = "Num.\\ obs.")[include])
   
-  trlist <- list()
-  for (i in 1:length(coeftables)) {
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.loglik == TRUE) {
-      gof <- c(gof, ll[i])
-      gof.names <- c(gof.names, "Log Likelihood")
-      gof.decimal <- c(gof.decimal, TRUE)
+  coeftables <- coefTable(model)
+  
+  ## use t-test if dfs available, otherwise z-test:
+  pval <- function(ct) {
+    zval <- abs(ct[, 1L] / ct[, 2L])
+    2 * if (!any(is.na(ct[, 3L]))) {
+      pt(zval, df = ct[, 3L], lower.tail = FALSE)
+    } else {
+      pnorm(zval, lower.tail = FALSE)
     }
-    if (include.aicc == TRUE) {
-      gof <- c(gof, aicc[i])
-      gof.names <- c(gof.names, "AICc")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.delta == TRUE) {
-      gof <- c(gof, delta[i])
-      gof.names <- c(gof.names, "Delta")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.weight == TRUE) {
-      gof <- c(gof, w[i])
-      gof.names <- c(gof.names, "Weight")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-      gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\\ obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
-    rn <- rownames(coeftables[[i]])
-    coefs <- coeftables[[i]][, 1]
-    se <- coeftables[[i]][, 2]
-    zval <- coefs / se
-    pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
-    
-    tr <- createTexreg(
-        coef.names = rn, 
-        coef = coefs, 
-        se = se, 
-        pvalues = pval, 
-        gof.names = gof.names, 
-        gof = gof, 
-        gof.decimal = gof.decimal
-    )
-    
-    trlist[[i]] <- tr
   }
   
-  return(trlist)
+  n <- nrow(z)
+  rval <- vector(length = n, mode = "list")
+  for (i in 1L:n) {
+    ct <- coeftables[[i]]
+    rval[[i]] <- createTexreg(
+      coef.names = rownames(ct), 
+      coef = ct[, 1L], 
+      se = ct[, 2L], 
+      pvalues = pval(ct), 
+      gof.names = gofnames, 
+      gof = z[i, ], 
+      gof.decimal = decimal
+    )
+  }
+  rval
 }
-
-# version suggested by package author (throws a warning message):
-
-# extract.model.selection <- function(model, include.loglik = TRUE, 
-#     include.aicc = TRUE, include.delta = TRUE, include.weight = TRUE, 
-#     include.nobs = TRUE, ...) {
-#   
-#   includecols <- c(loglik = include.loglik, ic = include.aicc,
-#     delta = include.delta, weight = include.weight)
-#   include <- c(includecols, nobs = include.nobs)
-#   decimal <- c(TRUE, TRUE, TRUE, TRUE, FALSE)[include]
-#   colidx <- ncol(model) - c(loglik = 3L, ic = 2L, delta = 1L, weight = 0L)
-#   z <- as.matrix(model[, colidx[includecols], drop = FALSE])
-#   if (include.nobs) z <- cbind(z, nobs = attr(model, "nobs"))
-#   mode(z) <- "numeric"
-#   gofnames <- as.character(c(loglik = "Log Likelihood", 
-#       ic = colnames(model)[colidx["ic"]], 
-#       delta = "Delta", weight = "Weight", 
-#       nobs = "Num.\\ obs.")[include])
-#   
-#   coeftables <- coefTable(model)
-#   
-#   ## use t-test if dfs available, otherwise z-test:
-#   pval <- function(ct) {
-#     zval <- abs(ct[, 1L] / ct[, 2L])
-#     2 * if (!any(is.na(ct[, 3L]))) {
-#       pt(zval, df = ct[, 3L], lower.tail = FALSE)
-#     } else {
-#       pnorm(zval, lower.tail = FALSE)
-#     }
-#   }
-#   
-#   n <- nrow(z)
-#   rval <- vector(length = n, mode = "list")
-#   for (i in 1L:n) {
-#     ct <- coeftables[[i]]
-#     rval[[i]] <- createTexreg(
-#       coef.names = rownames(ct), 
-#       coef = ct[, 1L], 
-#       se = ct[, 2L], 
-#       pvalues = pval(ct), 
-#       gof.names = gofnames, 
-#       gof = z[i, ], 
-#       gof.decimal = decimal
-#     )
-#   }
-#   rval
-# }
 
 setMethod("extract", signature = className("model.selection", "MuMIn"), 
     definition = extract.model.selection)
