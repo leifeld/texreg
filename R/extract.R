@@ -165,13 +165,18 @@ setMethod("extract", signature = className("betareg", "betareg"),
 
 
 # extension for btergm objects
-extract.btergm <- function(model, level = 0.95, ...) {
+extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
   
   tab <- confint(model, level = level)
   
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    gof <- c(gof, model@nobs)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
   
   tr <- createTexreg(
       coef.names = rownames(tab), 
@@ -2110,6 +2115,56 @@ setMethod("extract", signature = className("model.selection", "MuMIn"),
     definition = extract.model.selection)
 
 
+# extension for mtergm objects (btergm package)
+extract.mtergm <- function(model, include.nobs = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, ...) {
+  
+  coefficient.names <- names(model@coef)
+  coefficients <- model@coef
+  standard.errors <- model@se
+  significance <- model@pval
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    gof <- c(gof, model@nobs)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.aic == TRUE && !is.null(model@aic) && !is.nan(model@aic)) {
+    gof <- c(gof, model@aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE && !is.null(model@bic) && !is.nan(model@bic)) {
+    gof <- c(gof, model@bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE && !is.null(model@loglik) && 
+      !is.nan(model@loglik)) {
+    gof <- c(gof, model@loglik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = coefficient.names, 
+      coef = coefficients, 
+      se = standard.errors, 
+      pvalues = significance, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("mtergm", "btergm"), 
+    definition = extract.mtergm)
+
+
 # extension for multinom objects (nnet package)
 extract.multinom <- function(model, include.pvalues = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE, 
@@ -2814,7 +2869,11 @@ extract.selection <- function(model, prefix = TRUE, include.selection = TRUE,
   
   # add prefixes to labels of selection and outcome components
   indices.selection <- s$param$index$betaS
-  indices.outcome <- s$param$index$betaO
+  if (model$tobitType == 5) {
+	  indices.outcome <- s$param$index$outcome
+  } else if(model$tobitType == 2) {
+		indices.outcome <- s$param$index$betaO
+  }
   indices.errorterms <- s$param$index$errTerms
   if (prefix == TRUE) {
     rn[indices.selection] <- paste("S:", rn[indices.selection])
@@ -2867,7 +2926,11 @@ extract.selection <- function(model, prefix = TRUE, include.selection = TRUE,
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
-    gof <- c(gof, s$param$nObs, s$param$N0, s$param$N1)
+    if(model$tobitType == 5) {
+	    gof <- c(gof, s$param$nObs, s$param$N1, s$param$N2)
+	  } else if(model$tobitType == 2) {
+	    gof <- c(gof, s$param$nObs, s$param$N0, s$param$N1)
+	  }
     gof.names <- c(gof.names, "Num.\ obs.", "Censored", "Observed")
     gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE)
   }
