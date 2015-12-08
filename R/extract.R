@@ -60,6 +60,64 @@ setMethod("extract", signature = className("Arima", "stats"),
     definition = extract.Arima)
 
 
+# extension for ARIMA objects (forecast package)
+extract.ARIMA <- function (model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.aicc = TRUE, include.bic = TRUE, include.loglik = TRUE, ...) {
+  mask <- model$mask
+  nam <- names(model$coef)
+  co <- model$coef
+  sdev <- sqrt(diag(model$var.coef))
+  if (include.pvalues == TRUE) {
+    t.rat <- rep(NA, length(mask))
+    t.rat[mask] <- co[mask] / sdev
+    pt <- 2 * pnorm(-abs(t.rat))
+    setmp <- rep(NA, length(mask))
+    setmp[mask] <- sdev
+  } else {
+    pt <- numeric()
+    setmp <- sdev
+  }
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.aicc == TRUE) {
+    gof <- c(gof, model$aicc)
+    gof.names <- c(gof.names, "AICc")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    gof <- c(gof, model$bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- model$loglik
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  tr <- createTexreg(
+      coef.names = nam, 
+      coef = co, 
+      se = setmp, 
+      pvalues = pt, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("ARIMA", "forecast"), 
+    definition = extract.ARIMA)
+
+
 # extension for averaging objects (MuMIn package)
 extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE, 
     include.nobs = TRUE, ...) {
@@ -618,6 +676,66 @@ setMethod("extract", signature = className("ergm", "ergm"),
     definition = extract.ergm)
 
 
+# extension for ets objects (forecast package)
+extract.ets <- function (model, include.pvalues = FALSE, include.aic = TRUE, 
+    include.aicc = TRUE, include.bic = TRUE, include.loglik = TRUE, ...) {
+  mask <- model$mask
+  nam <- names(model$par)
+  co <- model$par
+  sdev <- rep(-Inf,length(co))
+  name <- model$method
+  if (include.pvalues == TRUE) {
+    t.rat <- rep(NA, length(mask))
+    t.rat[mask] <- co[mask] / sdev
+    pt <- 2 * pnorm(-abs(t.rat))
+    setmp <- rep(NA, length(mask))
+    setmp[mask] <- sdev
+  } else {
+    pt <- numeric()
+    setmp <- sdev
+  }
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.aicc == TRUE) {
+    gof <- c(gof, model$aicc)
+    gof.names <- c(gof.names, "AICc")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    gof <- c(gof, model$bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- model$loglik
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  tr <- createTexreg(
+      coef.names = nam, 
+      coef = co, 
+      se = setmp, 
+      pvalues = pt, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal,
+      model.name = name
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("ets", "forecast"), 
+    definition = extract.ets)
+
+
 # extension for ergmm objects (latentnet package)
 extract.ergmm <- function(model, include.bic = TRUE, ...) {
   s <- summary(model)
@@ -751,6 +869,16 @@ extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE,
 
 setMethod("extract", signature = className("fGARCH", "fGarch"), 
     definition = extract.fGARCH)
+
+
+# extension for forecast objects (forecast package)
+extract.forecast <- function (model, ...) {
+  model <- model$model
+  return(extract(model))
+}
+
+setMethod("extract", signature = className("forecast", "forecast"), 
+    definition = extract.forecast)
 
 
 # extension for gam and bam objects (mgcv package)
@@ -2082,7 +2210,7 @@ extract.model.selection <- function(model, include.loglik = TRUE,
       delta = "Delta", weight = "Weight", 
       nobs = "Num.\\ obs.")[include])
   
-  coeftables <- coefTable(model)
+  coeftables <- MuMIn::coefTable(model)
   
   ## use t-test if dfs available, otherwise z-test:
   pval <- function(ct) {
