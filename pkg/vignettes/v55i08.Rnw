@@ -11,7 +11,7 @@
 
 \graphicspath{{Figures/}}
 
-\author{Philip Leifeld\\University of Konstanz}
+\author{Philip Leifeld\\Eawag \& University of Bern}
 \Plainauthor{Philip Leifeld} 
 
 \title{\pkg{texreg}: Conversion of Statistical Model Output in \proglang{R} to {\LaTeX} and HTML Tables}
@@ -46,11 +46,11 @@
 
 \Address{
   Philip Leifeld\\
-  University of Konstanz\\
-  Box 216\\
-  78457 Konstanz, Germany\\
-  E-mail: \email{philip.leifeld@uni-konstanz.de}\\
-  URL: \url{http://www.philipleifeld.de}
+  Eawag\\
+  {\"U}berlandstr. 133\\
+  8600 D{\"u}bendorf, Switzerland\\
+  E-mail: \email{philip.leifeld@eawag.ch}\\
+  URL: \url{http://www.philipleifeld.com}
 }
 
 
@@ -434,11 +434,12 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 66 supported model types (version 1.36).]{\label{tab:types} List of 66 supported model types (version 1.36).} \\
+\caption[List of 71 supported model types (version 1.36).]{\label{tab:types} List of 71 supported model types (version 1.36).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
 `\code{Arima}'		& \pkg{stats}			& ARIMA time series models \\
+`\code{ARIMA}'		& \pkg{forecast}		& ARIMA time series models \\
 `\code{averaging}'	& \pkg{MuMIn}			& Model averaging objects \\
 `\code{bam}'		& \pkg{mgcv}			& Generalized additive models \\
 `\code{betareg}'	& \pkg{betareg}			& Beta regression for rates and proportions \\
@@ -453,7 +454,10 @@ Class			& Package			& Description \\
 `\code{dynlm}'		& \pkg{dynlm}			& Time series regression \\
 `\code{ergm}'		& \pkg{ergm}			& Exponential random graph models \\
 `\code{ergmm}'		& \pkg{latentnet}		& Latent space and latent cluster models \\
+`\code{ets}'		& \pkg{forecast}		& Exponential smoothing state space models \\
+`\code{felm}'		& \pkg{lfe}			& Linear models with multiple group fixed effects \\
 `\code{fGARCH}'		& \pkg{fGarch}			& GARCH time series models \\
+`\code{forecast}'	& \pkg{forecast}		& Time series forecasting \\
 `\code{gam}'		& \pkg{mgcv}			& Generalized additive models \\
 `\code{gamlss}'		& \pkg{gamlss}			& GAM for location scale and shape \\
 `\code{gee}'		& \pkg{gee}			& Generalized estimating equation \\
@@ -477,6 +481,7 @@ Class			& Package			& Description \\
 `\code{mnlogit}' 	& \pkg{mnlogit}			& Multinomial choice models \\
 `\code{multinom}'	& \pkg{nnet}			& Multinomial log-linear models \\
 `\code{model.selection}'& \pkg{MuMIn}			& Model selection objects \\
+`\code{mtergm}'		& \pkg{btergm}			& MCMC-based TERGM \\
 `\code{negbin}'		& \pkg{MASS}			& Negative binomial generalized linear models \\
 `\code{netlogit}'	& \pkg{sna}			& Logistic regression for networks \\
 `\code{nlme}'		& \pkg{nlme}			& Nonlinear mixed-effects models \\
@@ -535,15 +540,17 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 \pkg{texreg} (version 1.36), in contrast, can deal with all of the
 above model types (that is, the union of all three packages, is 
 extensible, and offers additional built-in functions for the following 
-model classes: `\code{averaging}', `\code{bam}', `\code{brglm}', 
-`\code{btergm}', `\code{censReg}', `\code{coxph.penal}', `\code{ergmm}', 
-`\code{fGARCH}', `\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', 
+model classes: `\code{ARIMA}', `\code{averaging}', `\code{bam}', 
+`\code{brglm}', `\code{btergm}', `\code{censReg}', `\code{coxph.penal}', 
+`\code{ergmm}', `\code{ets}', `\code{fGARCH}', `\code{forecast}', 
+`\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', `\code{felm}', 
 `\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{lqmm}', 
-`\code{maBina}', `\code{mlogit}', `\code{mnlogit}', `\code{model.selection}', 
-`\code{netlogit}', `\code{nlme}', `\code{rem.dyad}', `\code{rq}', 
-`\code{sclm}', `\code{selection}', `\code{stergm}', `\code{systemfit}', 
-and `\code{texreg}' objects. Table~\ref{tab:types} gives an overview of 
-currently implemented model types.
+`\code{maBina}', `\code{mlogit}', `\code{mnlogit}', `\code{mtergm}', 
+`\code{model.selection}', `\code{netlogit}', `\code{nlme}', 
+`\code{rem.dyad}', `\code{rq}', `\code{sclm}', `\code{selection}', 
+`\code{stergm}', `\code{systemfit}', and `\code{texreg}' objects. 
+Table~\ref{tab:types} gives an overview of currently implemented model 
+types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
 Markdown, and \pkg{knitr} whereas the other packages
@@ -1298,12 +1305,7 @@ If all else fails, more help can be obtained from the homepage of the \pkg{texre
 Questions can be posted to a public forum at \url{http://r-forge.r-project.org/projects/texreg/}.
 
 \section*{Acknowledgments}
-The author would like to thank Oleg Badunenko, Tom Carsey, S.\,Q. Chang,
-Michael Chirico, Skyler Cranmer, Sebastian Daza, Christopher Gandrud, 
-Lena Koerber, Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Markus Riester,
-Francesco Sarracino, Giorgio Spedicato, Matthieu Stigler, Sebastian Ugbaje, 
-Neil Shephard, G{\'a}bor Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie 
-for their valuable input and ideas.
+The author would like to thank the numerous people who contributed ideas and code snippets to this project.
 
 \bibliography{v55i08}
 

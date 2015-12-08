@@ -33,11 +33,6 @@ setClass(Class = "texreg",
             length(object@coef))) {
           stop("CIs must have a length of zero or the same length as coef.")
         }
-        if (length(object@se) == 0 && (length(object@ci.low) == 0 || 
-            length(object@ci.up) == 0)) {
-          stop(paste("Either standard errors or confidence intervals",
-              "must be present."))
-        }
         if (length(object@gof.names) != length(object@gof)) {
             stop("gof.names and gof must have the same length!")
         }

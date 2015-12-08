@@ -5,6 +5,8 @@
 \alias{extract,aftreg-method}
 \alias{extract.Arima}
 \alias{extract,Arima-method}
+\alias{extract.ARIMA}
+\alias{extract,ARIMA-method}
 \alias{extract.averaging}
 \alias{extract,averaging-method}
 \alias{extract.bam}
@@ -33,8 +35,14 @@
 \alias{extract,ergm-method}
 \alias{extract.ergmm}
 \alias{extract,ergmm-method}
+\alias{extract.ets}
+\alias{extract,ets-method}
+\alias{extract.felm}
+\alias{extract,felm-method}
 \alias{extract.fGARCH}
 \alias{extract,fGARCH-method}
+\alias{extract.forecast}
+\alias{extract,forecast-method}
 \alias{extract.gam}
 \alias{extract,gam-method}
 \alias{extract.gamlss}
@@ -83,6 +91,8 @@
 \alias{extract,mnlogit-method}
 \alias{extract.model.selection}
 \alias{extract,model.selection-method}
+\alias{extract.mtergm}
+\alias{extract,mtergm-method}
 \alias{extract.multinom}
 \alias{extract,multinom-method}
 \alias{extract.negbin}
@@ -159,6 +169,10 @@ extract(model, ...)
 \S4method{extract}{Arima}(model, include.pvalues = FALSE, 
     include.aic = TRUE, include.loglik = TRUE, ...)
 
+\S4method{extract}{ARIMA}(model, include.pvalues = FALSE, 
+    include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, ...)
+
 \S4method{extract}{averaging}(model, use.ci = FALSE, 
     adjusted.se = FALSE, include.nobs = TRUE, ...)
 
@@ -177,7 +191,8 @@ extract(model, ...)
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{btergm}(model, level = 0.95, ...)
+\S4method{extract}{btergm}(model, level = 0.95, 
+    include.nobs = TRUE, ...)
 
 \S4method{extract}{censReg}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -213,8 +228,18 @@ extract(model, ...)
 
 \S4method{extract}{ergmm}(model, include.bic = TRUE, ...)
 
+\S4method{extract}{ets}(model, include.pvalues = FALSE, 
+    include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, ...)
+
+\S4method{extract}{felm}(model, include.nobs = TRUE, 
+    include.rsquared = TRUE, include.adjrs = TRUE, 
+    include.fstatistic = FALSE, ...)
+
 \S4method{extract}{fGARCH}(model, include.nobs = TRUE, 
     include.aic = TRUE, include.loglik = TRUE, ...)
+
+\S4method{extract}{forecast}(model, ...)
 
 \S4method{extract}{gam}(model, include.smooth = TRUE, 
     include.aic = TRUE, include.bic = TRUE, 
@@ -322,6 +347,10 @@ extract(model, ...)
     include.aicc = TRUE, include.delta = TRUE, 
     include.weight = TRUE, include.nobs = TRUE, ...)
 
+\S4method{extract}{mtergm}(model, include.nobs = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
+    ...)
+    
 \S4method{extract}{multinom}(model, include.pvalues = TRUE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, 
@@ -451,6 +480,10 @@ An extract method for aftreg objects from the \pkg{eha} package.
 An extract method for Arima objects from the \pkg{stats} package.
 }
 
+\item{\code{ARIMA}}{
+An extract method for ARIMA objects from the \pkg{forecast} package.
+}
+
 \item{\code{averaging}}{
 An extract method for averaging objects from the \pkg{MuMIn} package.
 }
@@ -507,8 +540,20 @@ An extract method for ergm objects from the \pkg{ergm} package.
 An extract method for ergmm objects from the \pkg{latentnet} package.
 }
 
+\item{\code{ets}}{
+An extract method for ets objects from the \pkg{forecast} package.
+}
+
+\item{\code{felm}}{
+An extract method for felm objects from the \pkg{lfe} package.
+}
+
 \item{\code{fGARCH}}{
 An extract method for fGARCH objects from the \pkg{fGarch} package.
+}
+
+\item{\code{forecast}}{
+An extract method for forecast objects from the \pkg{forecast} package.
 }
 
 \item{\code{gam}}{
@@ -605,6 +650,10 @@ An extract method for mnlogit objects from the \pkg{mnlogit} package.
 
 \item{\code{model.selection}}{
 An extract method for model.selection objects from the \pkg{MuMIn} package.
+}
+
+\item{\code{mtergm}}{
+An extract method for mtergm objects from the \pkg{btergm} package.
 }
 
 \item{\code{multinom}}{
