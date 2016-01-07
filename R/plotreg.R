@@ -4,10 +4,10 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
     upper.inner = NULL, lower.outer = NULL, upper.outer = NULL, 
     signif.outer = TRUE, xlab = "Coefficients and confidence intervals", 
     main = "Coefficient plot", xlim = NULL, cex = 2.5, lwd.zerobar = 4, 
-    lwd.vbars = 1, lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
-    signif.medium = "#f7523a", signif.dark = "#bd0017", 
-    insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
-    insignif.dark = "#1c5ba6", ...) {
+    lwd.vbars = 1, lwd.inner = 7, lwd.outer = 5, ylab.cex = 1.0, 
+    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
+    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
+    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", ...) {
   
   # check consistency of arguments
   if (length(table(c(length(estimates), length(lower.outer), 
@@ -72,16 +72,17 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
   plot(0, 0, xlim = c(mn, mx), ylim = c(1, length(labels)), xlab = xlab, 
       main = main, ylab = "", axes = FALSE, type = "n", ...)
   axis(side = 2, at = 1:num, labels = FALSE, las = 2, 
-      tck = 0, lty = 0)
+      tck = 0, lty = 0, ...)
   if (any(signif)) {
     mtext(side = 2, text = labels[which(signif)], at = num + 1 - which(signif), 
-        col = signif.dark, las = 2)
+        col = signif.dark, las = 2, cex = ylab.cex, ...)
   }
   if (any(!signif)) {
-    mtext(side = 2, text = labels[which(!signif)], at = num + 1 - which(!signif), 
-        col = insignif.dark, las = 2)
+    mtext(side = 2, text = labels[which(!signif)], 
+        at = num + 1 - which(!signif), col = insignif.dark, las = 2, 
+        cex = ylab.cex, ...)
   }
-  axis(side = 1, las = 0, lty = 0)
+  axis(side = 1, las = 0, lty = 0, ...)
   
   # add vertical gray lines
   zeros <- rep(0, length(steps))
@@ -139,9 +140,10 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     ci.level = 0.95, use.se = FALSE, mfrow = TRUE, xlim = NULL, 
     cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, lwd.inner = 7, 
-    lwd.outer = 5, signif.light = "#fbc9b9", signif.medium = "#f7523a", 
-    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
-    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", ...) {
+    lwd.outer = 5, ylab.cex = 1.0, signif.light = "#fbc9b9", 
+    signif.medium = "#f7523a", signif.dark = "#bd0017", 
+    insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
+    insignif.dark = "#1c5ba6", ...) {
   
   if (!is.null(omit.coef) && !is.na(omit.coef) && !is.character(omit.coef)) {
     stop("omit.coef must be a character string!")
@@ -372,6 +374,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         lwd.vbars = lwd.vbars, 
         lwd.inner = lwd.inner, 
         lwd.outer = lwd.outer, 
+        ylab.cex = ylab.cex, 
         signif.light = signif.light,
         signif.medium = signif.medium, 
         signif.dark = signif.dark, 
