@@ -12,7 +12,7 @@ plotreg(l, file = NULL, custom.model.names = NULL,
     omit.coef = NULL, reorder.coef = NULL, ci.level = 0.95, 
     use.se = FALSE, mfrow = TRUE, xlim = NULL, cex = 2.5, 
     lwd.zerobar = 4, lwd.vbars = 1, lwd.inner = 7, 
-    lwd.outer = 5, signif.light = "#fbc9b9", 
+    lwd.outer = 5, ylab.cex = 1.0, signif.light = "#fbc9b9", 
     signif.medium = "#f7523a", signif.dark = "#bd0017", 
     insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
     insignif.dark = "#1c5ba6", ...)
@@ -23,10 +23,11 @@ coefplot(labels, estimates, lower.inner = NULL,
     xlab = "Coefficients and confidence intervals", 
     main = "Coefficient plot", xlim = NULL, 
     cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, 
-    lwd.inner = 7, lwd.outer = 5, signif.light = "#fbc9b9", 
-    signif.medium = "#f7523a", signif.dark = "#bd0017", 
-    insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
-    insignif.dark = "#1c5ba6", ...)
+    lwd.inner = 7, lwd.outer = 5, ylab.cex = 1.0, 
+    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
+    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
+    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6", 
+    ...)
 }
 \details{
 The \code{coefplot} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals). It accepts raw data (the lower and upper bounds of inner and outer confidence intervals as well as the point estimates and their names) as input data. Significant coefficients and intervals can be plotted in a different color.
@@ -67,6 +68,7 @@ The \code{plotreg} function is a wrapper for the \code{coefplot} function and wo
 \item{cex}{Size of the point representing the estimate.}
 \item{lwd.inner}{Line width of the inner confidence interval.}
 \item{lwd.outer}{Line width of the outer confidence interval.}
+\item{ylab.cex}{Size of the coefficient labels. The size of the x axis labels can be adjusted by using argument \code{cex.axis = 1.0}.}
 \item{signif.light}{Color of outer confidence intervals for significant model terms.}
 \item{signif.medium}{Color of inner confidence intervals for significant model terms.}
 \item{signif.dark}{Color of point estimates and labels for significant model terms.}
