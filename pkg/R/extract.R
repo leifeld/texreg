@@ -225,7 +225,7 @@ setMethod("extract", signature = className("betareg", "betareg"),
 # extension for btergm objects
 extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
   
-  tab <- confint(model, level = level)
+  tab <- btergm::confint(model, level = level)
   
   gof <- numeric()
   gof.names <- character()
@@ -245,6 +245,7 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
       gof = gof, 
       gof.decimal = gof.decimal
   )
+  
   return(tr)
 }
 
