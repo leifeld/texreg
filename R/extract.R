@@ -1598,19 +1598,31 @@ extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
   }
   if (include.variance == TRUE) {
-    vc <- lme4::VarCorr(model)
-    varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
-        attr(vc, "sc")^2)                     # residual variance
-    varnames <- names(varcomps)
-    varnames[length(varnames)] <- "Residual"
-    varnames <- paste("Variance:", varnames)
-    if (is.na(attr(vc, "sc"))) {
-      varnames <- varnames[-length(varnames)]
-      varcomps <- varcomps[-length(varcomps)]
+    vc <- as.data.frame(lme4::VarCorr(model))
+    for (i in 1:nrow(vc)) {
+      if (is.na(vc[i, 2]) && is.na(vc[i, 3])) {
+        gof.names <- c(gof.names, "Var: Residual")
+      } else if (is.na(vc[i, 3])) {
+        gof.names <- c(gof.names, paste("Var:", vc[i, 1], vc[i, 2]))
+      } else {
+        gof.names <- c(gof.names, paste("Cov:", vc[i, 1], vc[i, 2], vc[i, 3]))
+      }
+      gof <- c(gof, vc[i, 4])
+      gof.decimal <- c(gof.decimal, TRUE)
     }
-    gof <- c(gof, varcomps)
-    gof.names <- c(gof.names, varnames)
-    gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
+#    vc <- lme4::VarCorr(model)
+#    varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
+#        attr(vc, "sc")^2)                     # residual variance
+#    varnames <- names(varcomps)
+#    varnames[length(varnames)] <- "Residual"
+#    varnames <- paste("Variance:", varnames)
+#    if (is.na(attr(vc, "sc"))) {
+#      varnames <- varnames[-length(varnames)]
+#      varcomps <- varcomps[-length(varcomps)]
+#    }
+#    gof <- c(gof, varcomps)
+#    gof.names <- c(gof.names, varnames)
+#    gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
   }
   
   betas <- lme4::fixef(model, ...)
