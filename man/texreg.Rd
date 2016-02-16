@@ -150,7 +150,7 @@ LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
 \code{\link{texreg-package} \link{extract} \link{extract-methods} \link{plotreg}}
 }
 \author{
-Philip Leifeld (\url{http://www.philipleifeld.de})
+Philip Leifeld (\url{http://www.philipleifeld.com})
 }
 \examples{
 #Linear mixed-effects models

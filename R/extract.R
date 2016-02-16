@@ -1533,6 +1533,10 @@ extract.nlme <- extract.lme
 setMethod("extract", signature = className("nlme", "nlme"), 
     definition = extract.nlme)
 
+extract.glmmPQL <- extract.lme
+setMethod("extract", signature = className("glmmPQL", "MASS"), 
+    definition = extract.glmmPQL)
+
 
 # extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
 extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"), 

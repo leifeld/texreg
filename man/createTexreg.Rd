@@ -37,7 +37,7 @@ LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
 \code{\link{texreg-package} \link{texreg}}
 }
 \author{
-Philip Leifeld (\url{http://www.philipleifeld.de})
+Philip Leifeld (\url{http://www.philipleifeld.com})
 }
 \examples{
 library(nlme)  #load library for fitting linear mixed effects models

@@ -55,6 +55,8 @@
 \alias{extract,glmerMod-method}
 \alias{extract.glmmadmb}
 \alias{extract,glmmadmb-method}
+\alias{extract.glmmPQL}
+\alias{extract,glmmPQL-method}
 \alias{extract.glmrob}
 \alias{extract,glmrob-method}
 \alias{extract.gls}
@@ -271,6 +273,11 @@ extract(model, ...)
     include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, 
     include.groups = TRUE, ...)
+
+\S4method{extract}{glmmPQL}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, 
+    include.variance = FALSE, ...)
 
 \S4method{extract}{glmrob}(model, include.nobs = TRUE, ...)
 
@@ -580,6 +587,10 @@ An extract method for glmerMod objects from the (old) \pkg{lme4} package.
 An extract method for glmmadmb objects from the \pkg{glmmADMB} package.
 }
 
+\item{\code{glmmPQL}}{
+An extract method for glmmPQL objects from the \pkg{MASS} package.
+}
+
 \item{\code{glmrob}}{
 An extract method for glmrob objects from the \pkg{robustbase} package.
 }
@@ -847,6 +858,6 @@ LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
 \code{\link{texreg-package} \link{texreg}}
 }
 \author{
-Philip Leifeld (\url{http://www.philipleifeld.de})
+Philip Leifeld (\url{http://www.philipleifeld.com})
 }
 \keyword{methods}

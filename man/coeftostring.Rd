@@ -19,7 +19,7 @@ the texreg function.
 \code{\link{texreg-package} \link{texreg}}
 }
 \author{
-Philip Leifeld (\url{http://www.philipleifeld.de})
+Philip Leifeld (\url{http://www.philipleifeld.com})
 }
 \examples{
 coeftostring(-0.345, lead.zero = FALSE)  # this should give "-.34"
