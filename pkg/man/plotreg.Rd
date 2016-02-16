@@ -82,7 +82,7 @@ The \code{plotreg} function is a wrapper for the \code{coefplot} function and wo
 \code{\link{texreg-package} \link{extract} \link{extract-methods} \link{texreg}}
 }
 \author{
-Philip Leifeld (\url{http://www.philipleifeld.de})
+Philip Leifeld (\url{http://www.philipleifeld.com})
 }
 \examples{
 #example from the 'lm' help file:

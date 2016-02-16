@@ -17,5 +17,5 @@ This function prints a texregTable object, which results from a screenreg, texre
 \code{\link{texreg-package} \link{texreg}}
 }
 \author{
-Philip Leifeld (\url{http://www.philipleifeld.de})
+Philip Leifeld (\url{http://www.philipleifeld.com})
 }

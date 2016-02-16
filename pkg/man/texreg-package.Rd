@@ -26,7 +26,7 @@ To display citation information, execute \code{citation("texreg")}.
 \code{\link{texreg} \link{plotreg}}
 }
 \author{
-Philip Leifeld (\url{http://www.philipleifeld.de})
+Philip Leifeld (\url{http://www.philipleifeld.com})
 }
 \keyword{print}
 \keyword{misc}
