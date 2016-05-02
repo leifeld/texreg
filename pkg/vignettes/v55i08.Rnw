@@ -461,6 +461,7 @@ Class			& Package			& Description \\
 `\code{gam}'		& \pkg{mgcv}			& Generalized additive models \\
 `\code{gamlss}'		& \pkg{gamlss}			& GAM for location scale and shape \\
 `\code{gee}'		& \pkg{gee}			& Generalized estimating equation \\
+`\code{geeglm}'		& \pkg{geepack}			& Generalized estimating equation \\
 `\code{glm}'		& \pkg{stats}			& Generalized linear models \\
 `\code{[gl|l|nl]merMod}'& \pkg{lme4} ($<$ 1.0) 		& Generalized linear mixed models \\
 `\code{glmmadmb}'	& \pkg{glmmADMB}		& Generalized linear mixed models and extensions \\
@@ -508,6 +509,7 @@ Class			& Package			& Description \\
 `\code{tobit}'		& \pkg{AER}			& Tobit regression models for censored data \\
 `\code{weibreg}'	& \pkg{eha}			& Weibull regression \\
 `\code{zelig}'		& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
+`\code{Zelig}'		& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
 `\code{zeroinfl}'	& \pkg{pscl}			& Zero-inflated regression models \\
 \bottomrule\\
 \end{longtable}

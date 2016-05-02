@@ -731,7 +731,7 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   models <- override(models, override.coef, override.se, override.pvalues, 
-      override.ci.low = 0, override.ci.up = 0)
+      override.ci.low, override.ci.up)
   models <- tex.replace(models, type = "html", style = css.sup)  # TeX --> HTML
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  # extract names of GOFs
