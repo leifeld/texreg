@@ -1100,6 +1100,54 @@ setMethod("extract", signature = className("gee", "gee"),
     definition = extract.gee)
 
 
+# extension for geeglm objects (geepack package)
+extract.geeglm <- function(model, include.scale = TRUE, 
+    include.correlation = TRUE, include.nobs = TRUE, ...) {
+  s <- summary(model)
+  names <- rownames(s$coef)
+  co <- s$coef[, 1]
+  se <- s$coef[, 2]
+  pval <- s$coef[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  
+  if (include.scale == TRUE) {
+    gof = c(gof, s$geese$scale$estimate, s$geese$scale$san.se)
+    gof.names = c(gof.names, "Scale parameter: gamma", "Scale parameter: SE")
+    gof.decimal = c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.correlation == TRUE) {
+    gof = c(gof, s$geese$correlation$estimate, s$geese$correlation$san.se)
+    gof.names = c(gof.names, "Correlation parameter: alpha", 
+        "Correlation parameter: SE")
+    gof.decimal = c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nrow(model.frame(model))
+    nclust <- length(s$geese$clusz)
+    gof = c(gof, n, nclust)
+    gof.names = c(gof.names, "Num.\ obs.", "Num.\ clust.")
+    gof.decimal = c(gof.decimal, FALSE, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = names, 
+      coef = co, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("geeglm", "geepack"), 
+    definition = extract.geeglm)
+
+
 # extension for glm objects
 extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, ...) {
@@ -3711,7 +3759,7 @@ setMethod("extract", signature = className("aftreg", "eha"),
     definition = extract.aftreg)
 
 
-# extension for zelig objects (Zelig package)
+# extension for zelig objects (Zelig package < 5.0)
 extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
     include.rsquared = TRUE, include.adjrs = TRUE, include.fstatistic = TRUE, 
@@ -3887,6 +3935,32 @@ extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE,
 
 setMethod("extract", signature = className("zelig", "Zelig"), 
     definition = extract.zelig)
+
+
+# extension for Zelig objects (Zelig package >= 5.0)
+extract.Zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
+    include.censnobs = TRUE, include.wald = TRUE, ...) {
+  if ("Zelig-relogit" %in% class(model)) {
+    g <- model$zelig.out$z.out[[1]]
+    class(g) <- "glm"
+    e <- extract(g, include.aic = include.aic, include.bic = include.bic, 
+        include.loglik = include.loglik, include.deviance = include.deviance, 
+        include.nobs = include.nobs, ...)
+  } else if ("Zelig-tobit" %in% class(model)) {
+    e <- extract(model$zelig.out$z.out[[1]], include.aic = include.aic, 
+        include.bic = include.bic, include.loglik = include.loglik, 
+        include.deviance = include.deviance, include.nobs = include.nobs, 
+        include.censnobs = include.censnobs, include.wald = include.wald, ...)
+  } else {
+    stop(paste("Only the following Zelig models are currently supported:", 
+        "Zelig-relogit, Zelig-tobit."))
+  }
+  return(e)
+}
+
+setMethod("extract", signature = className("Zelig", "Zelig"), 
+    definition = extract.Zelig)
 
 
 # extension for zeroinfl objects (pscl package)

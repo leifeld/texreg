@@ -49,6 +49,8 @@
 \alias{extract,gamlss-method}
 \alias{extract.gee}
 \alias{extract,gee-method}
+\alias{extract.geeglm}
+\alias{extract,geeglm-method}
 \alias{extract.glm}
 \alias{extract,glm-method}
 \alias{extract.glmerMod}
@@ -151,6 +153,8 @@
 \alias{extract,weibreg-method}
 \alias{extract.zelig}
 \alias{extract,zelig-method}
+\alias{extract.Zelig}
+\alias{extract,Zelig-method}
 \alias{extract.zeroinfl}
 \alias{extract,zeroinfl-method}
 \docType{methods}
@@ -256,6 +260,9 @@ extract(model, ...)
 
 \S4method{extract}{gee}(model, robust = TRUE, 
     include.dispersion = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{geeglm}(model, include.scale = TRUE, 
+    include.correlation = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{glm}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -472,6 +479,11 @@ extract(model, ...)
     include.rsquared = TRUE, include.adjrs = TRUE, 
     include.fstatistic = TRUE, ...)
 
+\S4method{extract}{Zelig}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, 
+    include.censnobs = TRUE, include.wald = TRUE, ...)
+
 \S4method{extract}{zeroinfl}(model, beside = FALSE, 
     include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...)
@@ -573,6 +585,10 @@ An extract method for gamlss objects from the \pkg{gamlss} package.
 
 \item{\code{gee}}{
 An extract method for gee objects from the \pkg{gee} package.
+}
+
+\item{\code{geeglm}}{
+An extract method for geeglm objects from the \pkg{geepack} package.
 }
 
 \item{\code{glm}}{
@@ -779,6 +795,10 @@ An extract method for weibreg objects from the \pkg{eha} package.
 An extract method for zelig objects from the \pkg{Zelig} package.
 }
 
+\item{\code{Zelig}}{
+An extract method for Zelig objects from the \pkg{Zelig} package.
+}
+
 \item{\code{zeroinfl}}{
 An extract method for zeroinfl objects from the \pkg{pscl} package.
 }
@@ -793,6 +813,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.aicc}{ If available: should AICc be reported? This is a version of AIC with a correction for finite sample sizes. }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
 \item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
+\item{include.correlation}{ If available: should the correlation parameter alpha and its standard error be reported (for geeglm models)? }
 \item{include.count}{ If available: should the count model of a zero-inflated or hurdle regression be included in the coefficients block (before the zero-inflation or zero hurdle model)? }
 \item{include.delta}{ If available: should the delta statistic be included? }
 \item{include.dev.expl}{ If available: should the deviance explained be reported? }
@@ -829,6 +850,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.rmse}{ If available: should the root-mean-square error (= residual standard deviation) be reported? }
 \item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.sargan}{ If available: should the Sargan test be reported? }
+\item{include.scale}{ If available: should the scale parameter gamma and its standard error be reported (for geeglm models)? }
 \item{include.selection}{ If available: should the selection component of a sample selection model be reported? }
 \item{include.smooth}{ If available: should the smooth terms of a GAM be reported? If they are reported, the EDF value is reported as the coefficient, and DF is included in parentheses (not standard errors because a chi-square test is used for the smooth terms). }
 \item{include.tau}{ If available: include tau in linear quantile mixed models? }
