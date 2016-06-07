@@ -1,0 +1,1318 @@
+%\VignetteIndexEntry{texreg: Conversion of Statistical Model Output in R to LaTeX and HTML tables}
+%\VignetteDepends{}
+%\VignetteKeyword{typesetting, reporting, table, coefficients, regression, R, LaTeX, MS Word, HTML, Markdown}
+%\VignettePackage{texreg}
+
+\documentclass[nojss]{jss}
+\usepackage{booktabs,dcolumn,rotating,thumbpdf,longtable}
+
+\usepackage{tikz}
+\usetikzlibrary{trees}
+
+\graphicspath{{Figures/}}
+
+\author{Philip Leifeld \\ University of Glasgow}
+\Plainauthor{Philip Leifeld} 
+
+\title{\pkg{texreg}: Conversion of Statistical Model Output in \proglang{R} to {\LaTeX} and HTML Tables}
+\Plaintitle{texreg: Conversion of Statistical Model Output in R to LaTeX and HTML Tables} 
+\Shorttitle{\pkg{texreg}: Conversion of \proglang{R} Model Output to {\LaTeX} and HTML}
+
+\Abstract{ A recurrent task in applied statistics is the (mostly
+  manual) preparation of model output for inclusion in
+  {\LaTeX}, Microsoft Word, or HTML
+  documents -- usually with more than one model presented in a single
+  table along with several goodness-of-fit statistics.  However,
+  statistical models in \proglang{R} have diverse object structures
+  and summary methods, which makes this process cumbersome.  This
+  article first develops a set of guidelines for converting
+  statistical model output to {\LaTeX} and HTML
+  tables, then assesses to what extent existing packages meet these
+  requirements, and finally presents the \pkg{texreg} package as a
+  solution that meets all of the criteria set out in the beginning.
+  After providing various usage examples, a blueprint for writing
+  custom model extensions is proposed.
+} 
+
+\Keywords{reporting, table, coefficients, regression, \proglang{R}, {\LaTeX}, Microsoft Word, HTML, Markdown} 
+\Plainkeywords{reporting, table, coefficients, regression, R, LaTeX, Microsoft Word, HTML, Markdown} 
+
+\Volume{55}
+\Issue{8}
+\Month{November}
+\Year{2013}
+\Submitdate{2012-10-16}
+\Acceptdate{2013-04-04}
+
+\Address{
+  Philip Leifeld\\
+  University of Glasgow\\
+  School of Social and Political Sciences\\
+  Adam Smith Building\\
+  40 Bute Gardens\\
+  Glasgow, G12\,8RT\\
+  Scotland, United Kingdom\\
+  E-mail: \email{philip.leifeld@glasgow.ac.uk}\\
+  URL: \url{http://www.philipleifeld.com}
+}
+
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+This \proglang{R} package vignette is based on an article in the Journal of Statistical Software \citep{leifeld2013texreg:}.
+
+\section[Typesetting R model output in LaTeX and HTML]{Typesetting \proglang{R} model output in {\LaTeX} and HTML}
+
+The primary purpose of the statistical programming language
+\proglang{R} \citep{rcoreteam2012r} is the analysis of data with
+statistical models.  One of the strengths of \proglang{R} is that
+users can implement their own statistical models.  While this
+flexibility leads to an increased availability of even exotic models
+and shorter cycles between model development and implementation, there
+are also downsides of this flexibility.  In particular, there is no
+unified data structure of statistical models and no unified way of
+representing model output, which makes it hard to re-use coefficients
+and goodness-of-fit (GOF) statistics in other software packages, especially
+for the purpose of publishing results.
+
+Several generic functions were developed to provide unified accessor
+methods for coefficients (the \code{coef()} function), GOF statistics
+(for example, \code{AIC()}, \code{BIC()}, \code{logLik()}, or
+\code{deviance()}), a custom text representation of the fitted model
+(\code{summary()}), and other relevant pieces of information (e.g.,
+\code{nobs()} and \code{formula()}).  Details are provided in
+Chapter~11 of \citet{venables2012introduction}.  Nonetheless, many
+popular packages have only partially implemented methods for these
+generics, and in some cases they do not even provide accessor
+functions at all for their coefficients or GOF statistics.  Even
+worse, the model summary methods are usually structured in
+idiosyncratic ways and do not lend themselves to easy parsing of
+coefficients and GOF statistics.
+
+Modern scientific journals, on the other hand, often require nicely
+formatted and standardized model output, usually in the form of
+coefficient tables for one or more models.  In the majority of
+applications, these tables show more than one model aligned next to
+each other with partially overlapping coefficient names, standard
+errors in parentheses, and superscripted stars indicating the
+significance of model terms.  At the bottom of the table, summary
+statistics like the number of observations are reported, and
+GOF measures like AIC or R$^2$ are shown.  Due to the
+idiosyncratic way model output is currently represented in various
+classes in \proglang{R}, designing these kinds of tables for a paper
+submission requires a substantial amount of time and patience,
+especially if more than one model is involved and if there are many
+model terms.  Copying and pasting coefficients and standard errors one
+at a time often becomes the default way of handling this task.
+
+An important tool for typesetting academic papers in many academic
+fields is {\LaTeX} \citep{lamport1986latex}.  In fact,
+\proglang{R} and {\LaTeX} are closely linked by the
+\code{Sweave()} command in the \pkg{utils} package
+\citep{rcoreteam2012r}, which allows the integration of \proglang{R}
+commands in {\LaTeX} documents and their execution and
+evaluation at runtime \citep{leisch2002sweave}.  In spite of this,
+common approaches for linking \proglang{R} model output and tables in
+{\LaTeX} include
+(1) copying and pasting individual values after every change of the
+  model, 
+(2) custom user-written functions which convert a specific model
+  into a matrix, 
+(3) the use of sophisticated table-management packages (see next
+  section), and 
+(4) the inclusion of single models in the form of the model summary
+  instead of nicely aligned coefficient tables as a second best
+  solution.
+
+Popular alternatives for document preparation include
+\proglang{Microsoft Word} and the dynamic report generation
+\proglang{R} package \pkg{knitr} \citep{knitr1, knitr2, xie2012knitr}.
+Both \pkg{knitr} and Microsoft Word accept HTML input, and
+\pkg{knitr} additionally supports Markdown, a simplified
+HTML-like markup language.  These platforms face similar
+complications as {\LaTeX} and \code{Sweave()} regarding the preparation
+of regression tables for multiple statistical models.
+
+The ideal way to prepare \proglang{R} model output for
+{\LaTeX} and HTML tables would be a generic
+function which would directly output {\LaTeX} or
+HTML tables and for which custom methods for any model type
+could be written as extensions.  While several attempts already exist
+(see Section~\ref{comparison}), all of them have limitations.  This
+article introduces the \pkg{texreg} package \citep{Leifeld:2014}, which
+closes this gap and provides a unified framework for typesetting
+{\LaTeX} and HTML tables for various statistical
+models in \proglang{R}. Package \pkg{texreg} is available from 
+the Comprehensive \proglang{R} Archive Network (CRAN) at
+\url{http://CRAN.R-project.org/package=texreg}.
+
+The remainder of this article is structured as follows:
+Section~\ref{requirements} sets out a number of requirements which
+must be met.  In the light of these requirements,
+Section~\ref{comparison} compares \pkg{texreg} to other \proglang{R}
+packages and functions which were designed for similar purposes.
+Section~\ref{description} describes the way how \pkg{texreg} works and
+how its functions and classes are related.  After providing several
+examples and illustrating the options of the \code{texreg()},
+\code{htmlreg()}, and \code{screenreg()} functions
+(Section~\ref{examples}), Section~\ref{extensions} describes how new
+extensions can be implemented.  
+
+
+\section{Requirements} \label{requirements} 
+
+The design of the \pkg{texreg} package tries to accomplish six goals:
+it should be capable of dealing with several models in a single table;
+it should be easily extensible by package writers and users; it should
+provide options for using the available space in an optimal way; it
+should take advantage of advanced layout capabilities in
+{\LaTeX} and HTML; it should take care of journal-
+or model-specific habits or best practices; and it should find an
+optimal balance of customizability and usability.  These requirements
+are elaborated in the following paragraphs.
+
+\subsection{Managing multiple models}
+Quite often, almost-identical models are printed in order to show how
+an additional model term alters the other coefficients and standard
+errors.  There are, however, also cases where different model types
+are applied to the same data.  This implies that the package must not
+only be able to merge the names of coefficients to guarantee
+comparability of coefficient columns; it must also be able to deal
+with different model classes and accommodate different kinds of
+GOF statistics in the same table.
+
+Moreover, it must be possible to rename the model terms and
+GOF statistics.  Custom coefficient names not only make
+the output more easily comprehensibe by the readers; renaming model
+terms is also mandatory for unifying terms between several models.
+For example, two models based upon two different datasets may have
+different variable names for the same kind of theoretical construct.
+This would result in two separate but complementary rows in the
+coefficient table.  It should be possible to rename coefficients and
+then conflate any two or more complementary rows with identical
+labels.
+
+Finally, it should be possible to assign custom names for the
+different models, instead of the default ``Model 1'', ``Model 2'',
+etc.  While it may be easy to rename them manually in many
+applications, particularly \code{Sweave()} and \code{knitr()} require
+that no manual manipulation is necessary.
+
+\subsection[Using generics to make texreg easily extensible]{Using generics to make \pkg{texreg} easily extensible}
+Different model classes have different ways how their coefficients and
+GOF statistics can be accessed.  Hardcoding these
+extraction rules into the functions of the \pkg{texreg} package would
+inhibit customizability.  The best way to make \pkg{texreg} extensible
+is to have a generic \code{extract()} function which can be invoked on
+any kind of model, just like \code{plot()} or \code{print()} generics
+in \proglang{R}.  Any user---especially model class authors---would
+then be able to add custom methods to the \code{extract()} function in
+order to make \pkg{texreg} learn how to cope with new models.  For
+example, an \code{extract()} method for `\code{lm}' objects can be
+written to deal with linear models, or an \code{extract()} method for
+`\code{ergm}' objects can be written to make the generic
+\code{extract()} function understand exponential random graph models.
+All the user has to do is write a custom extract function for a
+specific model type and then register it as a method for the generic
+\code{extract()} function.  Section~\ref{extensions} provides details
+on how this can be accomplished.
+
+\subsection{Use available space efficiently} \label{space} If a table
+has many model terms and if standard errors are printed in parentheses
+below the coefficients, the table may become too large for a single
+page.  For this reason, it should be possible to print standard errors
+right beside the coefficients instead of aligning them vertically.  In
+\pkg{texreg}, this is achieved with the \code{single.row} argument.
+
+If tables grow too large, other measures might prove useful: removing
+table margins, setting the table in script size, or setting custom
+float positions (for {\LaTeX} tables).  Very wide tables should be
+rotated by 90 degrees using the \code{sidewaystable} environment in
+the {\LaTeX} package \pkg{rotating} \citep{rahtz2008rotating} in order
+to use the available space in an optimal way.  The user should also be
+able to set the table caption and label, decide whether the table
+should be in a float environment (for {\LaTeX} tables), align the table
+horizontally on the page, and set the position of the caption.  The
+\pkg{texreg} package provides arguments to control all of these
+aspects.
+
+\subsection{Beautiful and clean table layout} \label{tablayout} For
+{\LaTeX} tables, the {\LaTeX} package \pkg{dcolumn} 
+\citep{carlisle2001dcolumn} provides facilities for aligning numbers
+in table cells nicely, for example at their decimal separators.  The
+\pkg{booktabs} package \citep{fear2005booktabs} can draw top, mid and
+bottom rules for tables and produces a cleaner layout than the default
+horizontal lines.  Both packages are supported by \pkg{texreg} and can
+be switched on or off depending on the availability of the packages in
+the {\LaTeX} distribution.
+
+For HTML tables, cascading style sheets (CSS) should be used to adjust
+the layout, and the user should be able to decide whether CSS markup
+should be included in the file header or inline.
+
+\subsection{Journal- or model-specific requirements} \label{specific}
+Academic journals may have different requirements regarding the number
+of digits to be printed, the inclusion of superscripted stars
+indicating significance, or the removal of leading zeroes.  Similarly,
+there are best practices in different academic communities or for
+specific model types.  For example, it is common practice to attach
+three stars to coefficients with $p$~values $\leq 0.001$ and small
+centered dots to coefficients with $p$~values between $0.05$ and $0.1$
+in exponential random graph models, while less fine-grained
+significance levels are adopted in many other communities (for
+example, three stars for $p \leq 0.01$, or only one star or bold
+formatting for one single significance level).  In yet other
+communities, journals or models, $p$~values or significance stars are
+not required or even deemed inappropriate \citep[see the \pkg{lme4}
+package by][]{bates2013lme4:}.
+
+\subsection{Customizability and usability} \label{customizability}
+Different users have different applications in mind.
+For this reason, a solution should be as flexible as possible and offer
+customization via arguments.  For example, inclusion of an HTML table
+in a \pkg{knitr} Markdown document requires that only the table is
+printed without any header or document type information, and that
+significance stars are escaped using backslashes.
+
+In other situations, it may be important to 
+(1) omit certain coefficients (like random or fixed effects or
+  thresholds), 
+(2) reorder the coefficients in the model (e.g., because some models
+  put interaction effects at the end of the list of coefficients), or 
+(3) replace coefficients, standard errors, or $p$~values by custom
+  vectors, for example when heteroskedasticity-consistent (``robust'')
+  standard errors are used \citep{zeileis2004econometric}.
+
+\pagebreak
+
+\LTcapwidth=\textwidth
+\begin{center}
+\begin{longtable}{l l l l l}
+\toprule
+Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \rotatebox{90}{\code{screenreg}}	& Short description \\
+\midrule
+\endfirsthead
+
+\multicolumn{5}{r}%
+{{\tablename\ \thetable{} -- continued from previous page}} \\
+\toprule
+Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \rotatebox{90}{\code{screenreg}}	& Short description \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{5}{r}{{Continued on next page}} \\ 
+\bottomrule
+\endfoot
+
+\caption[Arguments of the texreg(), htmlreg() and screenreg() functions.]{\label{tab:arguments} Arguments of the \code{texreg()}, \code{htmlreg()} and \code{screenreg()} functions.} \\
+\endlastfoot
+
+\code{l}			& $\bullet$	& $\bullet$	& $\bullet$	& Model or list of models \\
+\code{file}			& $\bullet$	& $\bullet$	& $\bullet$	& Divert output to a file \\
+\code{single.row}		& $\bullet$	& $\bullet$	& $\bullet$	& Print coefs and standard errors in the same row? \\
+\code{stars}			& $\bullet$	& $\bullet$	& $\bullet$	& Threshold levels for significance stars \\
+\code{custom.model.names}	& $\bullet$	& $\bullet$	& $\bullet$	& Set the names of the models \\
+\code{custom.coef.names}	& $\bullet$	& $\bullet$	& $\bullet$	& Replace the names of the model terms \\
+\code{custom.gof.names}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace the names of the GOF statistics \\
+\code{custom.note}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace the default significance legend \\
+\code{digits}			& $\bullet$	& $\bullet$	& $\bullet$	& Number of decimal places \\
+\code{leading.zero}		& $\bullet$	& $\bullet$	& $\bullet$	& Print leading zeroes? \\
+\code{symbol}			& $\bullet$	& $\bullet$	& $\bullet$	& Dot symbol denoting a fourth significance level \\
+\code{override.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace coefficients by custom vectors \\
+\code{override.se}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace standard errors by custom vectors \\
+\code{override.pval}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace $p$~values by custom vectors \\
+\code{override.ci.low}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace lower confidence intervals \\
+\code{override.ci.up}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace upper confidence intervals \\
+\code{omit.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Remove rows using a regular expression \\
+\code{reorder.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the model terms \\
+\code{reorder.gof}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the GOF statistics \\
+\code{ci.force}			& $\bullet$	& $\bullet$	& $\bullet$	& Convert standard errors to confidence intervals \\
+\code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
+\code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
+\code{groups}			& $\bullet$	& $\bullet$	& $\bullet$	& Partition rows of the table into groups with labels \\
+\code{custom.columns}   & $\bullet$	& $\bullet$	& $\bullet$	& Add custom text columns to the table \\
+\code{custom.col.pos}   & $\bullet$	& $\bullet$	& $\bullet$	& Define where custom columns should be placed \\
+\code{bold}			& $\bullet$	& $\bullet$	& $\circ$	& $p$~value below which coefficients are bolded \\
+\code{center}			& $\bullet$	& $\bullet$	& $\circ$	& Horizontal alignment on the page \\
+\code{caption}			& $\bullet$	& $\bullet$	& $\circ$	& Set the caption of the table \\
+\code{caption.above}		& $\bullet$	& $\bullet$	& $\circ$	& Should the caption be placed above the table? \\
+\code{label}			& $\bullet$	& $\circ$	& $\circ$	& Set the label of the table \\
+\code{booktabs}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{booktabs} package \citep{fear2005booktabs}? \\
+\code{dcolumn}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{dcolumn} package \citep{carlisle2001dcolumn}? \\
+\code{sideways}			& $\bullet$	& $\circ$	& $\circ$	& Use \code{sidewaystable} \citep{rahtz2008rotating} \\
+\code{use.packages}		& $\bullet$	& $\circ$	& $\circ$	& Print the \verb+\usepackage{}+ declarations? \\
+\code{table}			& $\bullet$	& $\circ$	& $\circ$	& Wrap \code{tabular} in a table environment? \\
+\code{no.margin}		& $\bullet$	& $\circ$	& $\circ$	& Remove margins between columns to save space \\
+\code{scriptsize}		& $\bullet$	& $\circ$	& $\circ$	& Use smaller font size to save space \\
+\code{float.pos}		& $\bullet$	& $\circ$	& $\circ$	& Specify floating position of the table \\
+\code{star.symbol}		& $\circ$	& $\bullet$	& $\circ$	& Change the significance symbol \\
+\code{inline.css}		& $\circ$	& $\bullet$	& $\circ$	& Use CSS in the text rather than the header \\
+\code{doctype}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{DOCTYPE} declaration? \\
+\code{html.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<html>} tag? \\
+\code{head.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<head>} tag? \\
+\code{body.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<body>} tag? \\
+\code{indentation}		& $\circ$	& $\bullet$	& $\circ$	& Indentation of subelements in the HTML code \\
+\code{column.spacing}		& $\circ$	& $\circ$	& $\bullet$	& Number of spaces between columns \\
+\code{outer.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the outer rule \\
+\code{inner.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the inner rule \\
+\code{...}			& $\bullet$	& $\bullet$	& $\bullet$	& Additional arguments for the extract functions \\
+\bottomrule\\
+\end{longtable}
+\end{center}
+
+\vspace*{-1.0cm}
+
+On the other hand, users should not be required to learn the meaning
+of all arguments before they can typeset their first table.  The
+default arguments should serve the needs of occasional users.
+Moreover, adjusting tables based on a complex set of arguments should
+be facilitated by printing tables to the \proglang{R} console before
+actually generating the {\LaTeX} or HTML output.
+If this screen representation of the table is nicely formatted and
+aligned using spaces and rules, it can also serve as an occasional
+replacement for the generic \code{summary()} method for easy model
+comparison as part of the statistical modeling workflow.
+
+The \pkg{texreg} package tries to balance these needs for
+customizability and usability by providing many arguments for layout
+customization (see Table~\ref{tab:arguments} for a list of arguments),
+using sensible default values for occasional users, and providing a
+function for on-screen display of tables for easy model comparison and
+layout adjustment.
+
+
+\section{Comparison with other packages} \label{comparison} 
+
+Beside \pkg{texreg}, several other packages were designed to convert
+\proglang{R} model output to {\LaTeX} or HTML
+tables.
+
+The \pkg{xtable} package \citep{dahl2012xtable} is able to typeset
+various matrices and data frames from \proglang{R} as
+{\LaTeX} or HTML tables.  It is very flexible and
+has its strengths particularly when it comes to tables of summary
+statistics.  However, it was not specifically designed for statistical
+model output.  Similarly, the \code{mat2tex()} command from the
+\pkg{sfsmisc} package \citep{maechler2012sfsmisc} can export matrices
+to {\LaTeX}, and the \code{tex.table()} function in the
+\pkg{cwhmisc} package \citep{hoffmann2012cwhmisc} is able to export
+data frames as {\LaTeX} tables.
+
+For several years, the \code{outreg()} function in the \pkg{rockchalk}
+package \citep{johnson2012rockchalk} has been available for exporting
+multiple regression models to {\LaTeX} .  However, the
+function remains fairly basic and does not provide a great deal of
+layout options, generics, and custom model types (in fact, only
+`\code{lm}' and `\code{glm}' objects).
+
+The \pkg{apsrtable} package \citep{malecki2012apsrtable}, the
+\code{mtable()} function from the \pkg{memisc} package
+\citep{elff2012memisc}, and the \pkg{stargazer} package
+\citep{hlavac2013stargazer} are more advanced and can also merge
+multiple models in a single table.  \pkg{apsrtable} and \pkg{memisc}
+feature custom functions for the extraction of coefficient and
+GOF information, and they are based on generics.  In this
+regard, both packages are somewhat similar to the \pkg{texreg}
+package.  \pkg{texreg}, however, offers more straightforward ways of
+custom model implementation.  This important feature is notably absent
+from \pkg{stargazer}.
+
+\begin{center}
+\begin{longtable}{l l l}
+\toprule
+Class			& Package			& Description \\
+\midrule
+\endfirsthead
+
+\multicolumn{3}{r}%
+{{\tablename\ \thetable{} -- continued from previous page}} \\
+\toprule
+Class			& Package			& Description \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{3}{r}{{Continued on next page}} \\ 
+\bottomrule
+\endfoot
+
+\caption[List of 71 supported model types (version 1.36).]{\label{tab:types} List of 71 supported model types (version 1.36).} \\
+\endlastfoot
+
+`\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
+`\code{Arima}'		& \pkg{stats}			& ARIMA time series models \\
+`\code{ARIMA}'		& \pkg{forecast}		& ARIMA time series models \\
+`\code{averaging}'	& \pkg{MuMIn}			& Model averaging objects \\
+`\code{bam}'		& \pkg{mgcv}			& Generalized additive models \\
+`\code{betareg}'	& \pkg{betareg}			& Beta regression for rates and proportions \\
+`\code{brglm}'		& \pkg{brglm}			& Bias-reduced generalized linear models \\
+`\code{btergm}'		& \pkg{xergm}			& Temporal exponential random graph models \\
+`\code{censReg}'	& \pkg{censReg}			& Censored regression (tobit) models \\
+`\code{clm}'		& \pkg{ordinal}			& Cumulative link models \\
+`\code{clogit}'		& \pkg{survival}		& Conditional logistic regression \\
+`\code{coeftest}'	& \pkg{lmtest}			& Wald tests of estimated coefficients \\
+`\code{coxph}'		& \pkg{survival}		& Cox proportional hazard models \\
+`\code{coxph.penal}'	& \pkg{survival}		& Cox proportional hazard with penalty splines \\
+`\code{dynlm}'		& \pkg{dynlm}			& Time series regression \\
+`\code{ergm}'		& \pkg{ergm}			& Exponential random graph models \\
+`\code{ergmm}'		& \pkg{latentnet}		& Latent space and latent cluster models \\
+`\code{ets}'		& \pkg{forecast}		& Exponential smoothing state space models \\
+`\code{felm}'		& \pkg{lfe}			& Linear models with multiple group fixed effects \\
+`\code{fGARCH}'		& \pkg{fGarch}			& GARCH time series models \\
+`\code{forecast}'	& \pkg{forecast}		& Time series forecasting \\
+`\code{gam}'		& \pkg{mgcv}			& Generalized additive models \\
+`\code{gamlss}'		& \pkg{gamlss}			& GAM for location scale and shape \\
+`\code{gee}'		& \pkg{gee}			& Generalized estimating equation \\
+`\code{geeglm}'		& \pkg{geepack}			& Generalized estimating equation \\
+`\code{glm}'		& \pkg{stats}			& Generalized linear models \\
+`\code{[gl|l|nl]merMod}'& \pkg{lme4} ($<$ 1.0) 		& Generalized linear mixed models \\
+`\code{glmmadmb}'	& \pkg{glmmADMB}		& Generalized linear mixed models and extensions \\
+`\code{glmrob}  	& \pkg{robustbase}		& Robust fitting of generalized linear models \\
+`\code{gls}'		& \pkg{nlme}			& Generalized least squares \\
+`\code{gmm}'		& \pkg{gmm}			& Generalized method of moments estimation \\
+`\code{ivreg}'		& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
+`\code{hurdle}'		& \pkg{pscl}			& Hurdle regression models for count data \\
+`\code{lm}'		& \pkg{stats}			& Ordinary least squares \\
+`\code{lme}'		& \pkg{nlme}			& Linear mixed-effects models \\
+`\code{lme4}'		& \pkg{lme4} ($\geq$ 1.0)	& Linear mixed-effects models \\
+`\code{lmrob}'  	& \pkg{robustbase}		& MM-type estimators for linear models \\
+`\code{lnam}'		& \pkg{sna}			& Linear network autocorrelation models \\
+`\code{lqmm}'		& \pkg{lqmm}			& Linear quantile mixed models \\
+`\code{lrm}'		& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
+`\code{maBina}'		& \pkg{erer}			& Marginal effects for binary response models \\
+`\code{mlogit}' 	& \pkg{mlogit}			& Multinomial logit models \\
+`\code{mnlogit}' 	& \pkg{mnlogit}			& Multinomial choice models \\
+`\code{multinom}'	& \pkg{nnet}			& Multinomial log-linear models \\
+`\code{model.selection}'& \pkg{MuMIn}			& Model selection objects \\
+`\code{mtergm}'		& \pkg{btergm}			& MCMC-based TERGM \\
+`\code{negbin}'		& \pkg{MASS}			& Negative binomial generalized linear models \\
+`\code{netlogit}'	& \pkg{sna}			& Logistic regression for networks \\
+`\code{nlme}'		& \pkg{nlme}			& Nonlinear mixed-effects models \\
+`\code{ols}'		& \pkg{rms}			& Ordinary least squares linear models \\
+`\code{pgmm}'		& \pkg{plm}			& GMM estimation for panel data \\
+`\code{phreg}'		& \pkg{eha}			& Parametric proportional hazards regression \\
+`\code{plm}'		& \pkg{plm}			& Linear models for panel data \\
+`\code{pmg}'		& \pkg{plm}			& Linear panel models with heterogeneous coefficients \\
+`\code{polr}'		& \pkg{MASS}			& Ordered logistic or probit regression \\
+`\code{Relogit}'	& \pkg{Zelig}			& Rare events logistic regression \\
+`\code{rem.dyad}'	& \pkg{relevent}		& Relational event models for dyadic data \\
+`\code{rlm}'		& \pkg{MASS}			& Robust fitting of linear models \\
+`\code{rq}'		& \pkg{quantreg}		& Quantile regression models \\
+`\code{sclm}'		& \pkg{ordinal}			& Cumulative link models \\
+`\code{selection}'	& \pkg{sampleSelection}		& Sample selection models \\
+`\code{sienaFit}'	& \pkg{RSiena}			& Stochastic actor-oriented models for networks \\
+`\code{simex}'		& \pkg{simex}			& SIMEX algorithm for measurement error models \\
+`\code{stergm}'		& \pkg{tergm}			& Temporal exponential random graph models \\
+`\code{survreg}'	& \pkg{survival}		& Parametric survival regression models \\
+`\code{survreg.penal}'	& \pkg{survival}		& Frailty survival models \\
+`\code{svyglm}' 	& \pkg{survey}			& Survey-weighted generalized linear models \\
+`\code{systemfit}'	& \pkg{systemfit}		& Linear structural equations \\
+`\code{texreg}'		& \pkg{texreg}			& For easy manipulation of \pkg{texreg} tables \\
+`\code{tobit}'		& \pkg{AER}			& Tobit regression models for censored data \\
+`\code{weibreg}'	& \pkg{eha}			& Weibull regression \\
+`\code{zelig}'		& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
+`\code{Zelig}'		& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
+`\code{zeroinfl}'	& \pkg{pscl}			& Zero-inflated regression models \\
+\bottomrule\\
+\end{longtable}
+\end{center}
+
+\vspace*{-1.2cm}
+
+The \pkg{apsrtable} package (version 0.8-8) has custom functions for
+`\code{coxph}', `\code{gee}', `\code{glm}', `\code{lm}', `\code{lrm}',
+`\code{negbxin},' `\code{svyglm}' and `\code{tobit}' objects, but it
+does not feature any multilevel models or network models.
+The \pkg{memisc} package (version 0.95-38) features `\code{aftreg}',
+`\code{betareg}', `\code{clm}', `\code{dynlm}', `\code{glm}',
+`\code{hurdle}', `\code{ivreg}', `\code{lm}', `\code{lmer}',
+`\code{mer}', `\code{multinom}', `\code{phreg}', `\code{polr}',
+`\code{tobit}', `\code{simex}', `\code{survreg}', `\code{weibreg}',
+and `\code{zeroinfl}' models but cannot handle any network models and
+recent versions of \pkg{lme4} multilevel models \citep{bates2013lme4:}.
+
+The \pkg{stargazer} package (version 3.0.1) has built-in functions for
+`\code{betareg}', `\code{clm}', `\code{clogit}', `\code{coxph}',
+`\code{ergm}', `\code{gam}', `\code{gee}', `\code{glm}',
+`\code{glmerMod}, `\code{gls}', `\code{hurdle}', `\code{ivreg}',
+`\code{lm}', `\code{lmerMod}, `\code{lmrob}', `\code{multinom}',
+`\code{nlmerMod}', `\code{plm}, `\code{pmg}', `\code{polr}',
+`\code{rlm}', `\code{survreg}', `\code{svyglm}, `\code{tobit}', and
+`\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
+\citep{owen2013zelig:}, but it does not support custom user extensions.
+
+\pkg{texreg} (version 1.36), in contrast, can deal with all of the
+above model types (that is, the union of all three packages, is 
+extensible, and offers additional built-in functions for the following 
+model classes: `\code{ARIMA}', `\code{averaging}', `\code{bam}', 
+`\code{brglm}', `\code{btergm}', `\code{censReg}', `\code{coxph.penal}', 
+`\code{ergmm}', `\code{ets}', `\code{fGARCH}', `\code{forecast}', 
+`\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', `\code{felm}', 
+`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{lqmm}', 
+`\code{maBina}', `\code{mlogit}', `\code{mnlogit}', `\code{mtergm}', 
+`\code{model.selection}', `\code{netlogit}', `\code{nlme}', 
+`\code{rem.dyad}', `\code{rq}', `\code{sclm}', `\code{selection}', 
+`\code{stergm}', `\code{systemfit}', and `\code{texreg}' objects. 
+Table~\ref{tab:types} gives an overview of currently implemented model 
+types.
+
+\pkg{texreg} supports Microsoft Word, HTML,
+Markdown, and \pkg{knitr} whereas the other packages
+(except for \pkg{xtable}) are restricted to {\LaTeX} output.
+\pkg{apsrtable} has an option for \code{Sweave} integration, which
+does not require any argument in \pkg{texreg}.  In the \pkg{memisc}
+package and in \pkg{texreg}, the \pkg{booktabs} and \pkg{dcolumn}
+{\LaTeX} packages for table layout (see
+Section~\ref{tablayout}) can be used, which is not available in
+\pkg{apsrtable} (and only \pkg{dcolumn} is supported in
+\pkg{stargazer}).
+
+While \pkg{apsrtable} and \pkg{texreg} allow for custom
+GOF measures, \pkg{memisc} and \pkg{stargazer} only
+feature a set of hardcoded statistics.  Apart from this, all packages
+presented here are significantly less flexible than \pkg{texreg}
+regarding the utilization of space (Section~\ref{space}), layout
+options (Section~\ref{tablayout}), outlet- or model-specific
+requirements (Section~\ref{specific}), and customizability
+(Section~\ref{customizability}).
+
+\section[Under the hood: How texreg works]{Under the hood: How
+  \pkg{texreg} works} \label{description} The \pkg{texreg} package
+consists of three main functions:
+
+\begin{enumerate}
+\item \code{texreg()} for {\LaTeX} output;
+\item \code{htmlreg()} for HTML,
+  Markdown-compatible and Microsoft Word-compatible
+  output;
+\item \code{screenreg()} for text output to the \proglang{R} console.
+\end{enumerate}
+There are various internal helper functions, which are called from
+each of these main functions for purposes of pre- and postprocessing.
+Moreover, there is a class definition for `\code{texreg}' objects, and a
+generic \code{extract()} function along with its methods for various
+statistical models.  Figure~\ref{fig:flow} illustrates the procedure
+following a call of one of the main functions.  Details about each
+step are provided below.
+
+\begin{figure}[t!]
+  \begin{tikzpicture}[
+      texreg/.style={rectangle, minimum height=15mm, very thick, draw=black!50, top color=white, bottom color=black!20, right}, 
+      arrow/.style={->, line width=3, draw=black!40}
+  ]
+    \node (extract)	[texreg, text width=1.4cm]	at (0,0)	{extract `\code{texreg}' objects};
+    \node (pre)		[texreg, text width=1.8cm]	at (2.4,0)	{preprocess `\code{texreg}' objects};
+    \node (match)	[texreg, text width=2.4cm]	at (5.2,0)	{merge models and aggre\-gate matrices};
+    \node (post)	[texreg, text width=1.5cm]	at (8.6,0)	{post\-pro\-cess matrices};
+    \node (aggregate)	[texreg, text width=1.7cm]	at (11.15,0)	{aggregate and conflate table};
+    \node (typeset)	[texreg, text width=1.2cm]	at (13.85,0)	{typeset final table};
+    \draw [arrow] (extract) -- (pre);
+    \draw [arrow] (pre) -- (match);
+    \draw [arrow] (match) -- (post);
+    \draw [arrow] (post) -- (aggregate);
+    \draw [arrow] (aggregate) -- (typeset);
+  \end{tikzpicture}
+  \caption{Simplified flow diagram of a \code{texreg()}, \code{htmlreg()}, or \code{screenreg()} call.}
+  \label{fig:flow}
+\end{figure}
+
+\subsection[The generic extract() function and its methods]{The
+  generic \code{extract()} function and its methods} \label{extract}
+First, the user hands over a model object or a list of models to the
+\code{texreg()}, \code{htmlreg()} or \code{screenreg()} function.
+This main function calls the generic \code{extract()} function in
+order to retrieve all the relevant pieces of information from the
+models.  The \code{extract()} function knows how to cope with various
+model types (see Table~\ref{tab:types}) because it merely calls the
+appropriate \code{extract()} method designed for the specific model
+type.  For example, if the model is of class `\code{lm}',
+\code{extract()} calls the \code{extract()} method for `\code{lm}'
+objects, etc.  Custom \code{extract()} methods can be easily added (see
+Section~\ref{extensions}).
+
+An \code{extract()} method aggregates various required pieces of
+information, like the coefficients, their names, standard errors, $p$
+values, and several GOF measures.  Which measures are used depends on
+the specific \code{extract()} method.  It is also possible to let the
+user decide: beside the \code{model} argument, each extract method is
+allowed to have more arguments.  For example, the \code{extract()}
+method for `\code{lme4}' objects, which are \pkg{lme4} multilevel
+models \citep{bates2013lme4:}, has Boolean options like
+\code{include.variance}, which turns on the inclusion of random effect
+variances in the GOF block, and numeric arguments like \code{conf.level},
+which sets the confidence level for computation of profile or
+bootstrapped confidence intervals.  When the main function
+is called in the first place, the user can include these custom
+arguments to finetune the behavior of the \code{extract()} methods.
+
+Once the relevant data have been extracted from a model object, the
+\code{extract()} method creates a `\code{texreg}' object by calling the
+\code{createTexreg()} function and handing over the extracted data.
+The `\code{texreg}' object or the list of `\code{texreg}' objects is
+finally returned to the main function.
+
+\subsection[`texreg' objects: An S4 class]{`\code{texreg}' objects: An
+  \proglang{S}4 class}
+There is an \proglang{S}4 class definition for `\code{texreg}' objects.  Such an
+object contains four vectors for the coefficients---the coefficient
+values (\code{numeric}), their names (\code{character}), standard
+errors (\code{numeric}), and $p$~values (\code{numeric})---, and three
+vectors for the GOF statistics: the GOF values
+(\code{numeric}), their names (\code{character}), and dummy variables
+indicating whether it makes sense for the GOF value to have several
+decimal places (\code{logical}); for example, one would not want the
+number of observations to have any decimal places.
+
+As some types of statistical models report confidence intervals rather
+than standard errors and $p$~values, the `\code{texreg}' class definition
+can alternatively store lower and upper bounds of confidence intervals
+instead of standard errors and $p$~values.  Which slots of the class
+are used depends on the \code{extract()} method for the specific model.
+The \pkg{texreg} package checks whether standard errors are present in
+the `\code{texreg}' object and use either standard errors or confidence
+intervals depending on availability.
+
+The class contains validation rules which make sure that the four
+coefficient vectors all have the same length and that the three GOF
+vectors also all have the same length.  There are several exceptions to
+this rule: the $p$~values, the confidence intervals, and the
+decimal-place vector are optional and may also have a length of zero.
+
+The `\code{texreg}' class definition was written to facilitate the
+handling of the relevant pieces of information.  Handing over lists of
+`\code{texreg}' objects between functions is more user-friendly than
+handing over lists of nested lists of vectors.  `\code{texreg}' objects
+are created by the \code{extract()} methods and handed over to the
+\code{texreg} function (see Section~\ref{extract}).
+
+\subsection[Preprocessing the `texreg' objects]{Preprocessing the `\code{texreg}' objects}
+Once all `\code{texreg}' objects have been returned to the
+\code{texreg()}, \code{htmlreg()} or \code{screenreg()} function, they
+have to be preprocessed.  This entails two steps: first, coefficients,
+standard errors or $p$~values must be replaced by user-defined
+\code{numeric} vectors (for example if robust standard errors have
+been manually computed).  The arguments \code{override.coef},
+\code{override.se}, \code{override.pvalues}, \code{override.ci.low}, 
+and \code{override.ci.up} serve to replace the coefficients, standard 
+errors, $p$~values, and confidence intervals, respectively.  Second,
+{\LaTeX} -specific markup codes are replaced by their
+HTML or plain-text equivalents if \code{htmlreg()} or
+\code{screenreg()} are called instead of \code{texreg()}.
+
+\subsection{Matching the model terms}
+After preprocessing the `\code{texreg}' objects, their contents are
+arranged in three separate matrices: the \emph{coefficient block
+  matrix} consists of three columns for each model (coefficient,
+standard error, and $p$~value); the \emph{GOF block matrix} consists
+of one column for each model and one row for each GOF
+statistic and contains the GOF values; and the \emph{decimal matrix}
+has the same dimensions as the GOF block matrix and indicates for each
+GOF value whether it should have decimal places (e.g., R$^2$, AIC,
+etc.) or whether it is an integer (e.g., number of observations,
+number of groups, etc.).  All of these matrices are created by
+matching the names of the coefficients or GOF names of the different
+models to avoid redundancy.  The three matrices are kept separate
+during the postprocessing stage and are then combined in a single
+table.
+
+\subsection{Postprocessing and rearranging of the matrices}
+During the postprocessing stage, the coefficient and GOF names are
+replaced by user-defined names (using the \code{custom.coef.names} and
+\code{custom.gof.names} arguments), coefficient rows are removed by
+applying regular expressions to the row names (using the
+\code{omit.coef} argument), and coefficients/standard errors and GOF
+statistics are reordered according to the user's wishes (following the
+\code{reorder.coef} and \code{reorder.gof} arguments).
+
+Renaming the coefficients or GOF names may lead to duplicate entries.
+These duplicate rows must be conflated.  For example, there may be one
+row with the name ``duration'' (with the \code{duration} variable only
+existing in the first model) and another row with the name ``time''
+(with the \code{time} variable only existing in the second model).
+After renaming both rows to either of the two names, the two rows must
+be conflated such that there is only one row left with the
+\code{duration} coefficient in the first cell and the \code{time}
+coefficient in the second cell.
+
+Rearranging the matrix also entails checking for rows with duplicate
+names which are in fact \emph{not} complementary and rearranging them
+only by presenting the fullest rows first.  Furthermore, there may be
+more than two duplicate rows with the same name and other complex
+configurations which are handled by \pkg{texreg}.  Finally, rearranged
+rows are reordered to ensure that models appear as compact as possible
+in the table.
+
+\subsection{Aggregating the table and conflating columns}
+Before the data are aggregated in the final table, all coefficients,
+standard errors and GOF values must be formatted according to the
+specifications of the user: they have to be rounded (following the
+\code{digits} argument), leading zeroes must be removed if desired by
+the user (as set by the \code{leading.zero} argument), and the
+\code{numeric} values are converted into \code{character} strings.
+
+The $p$~value column of the coefficient block matrix is then used to
+add significance stars or bold formatting depending on the
+\code{stars}, \code{symbol}, \code{star.symbol}, and \code{bold}
+arguments.  In the final table, the standard error and $p$~value
+columns are removed, and the standard errors are either inserted
+between the coefficient and the stars or in separate rows below the
+coefficients (depending on the \code{single.row} argument).
+
+\subsection{Typesetting the final table}
+The final table is eventually translated into {\LaTeX} or
+HTML code and either printed to the \proglang{R} console or
+diverted to a file (depending on the \code{file} argument).  All three
+functions, \code{texreg()}, \code{htmlreg()} and \code{screenreg()},
+have their own custom arguments for the layout of the table.  These
+specific options are listed and explained at the bottom of
+Table~\ref{tab:arguments}.
+
+\section{Examples} \label{examples} 
+
+This section gives some practical examples.  All data and model
+formulae were taken from the help files of the respective models and
+their packages for the sake of replicability.
+
+<<echo=false>>=
+options(prompt="R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+@
+
+\subsection[The screenreg() function]{The \code{screenreg()} function}
+
+First, consider a simple linear model as created by the \code{lm()}
+function:
+<<>>=
+ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
+trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
+group <- gl(2, 10, 20, labels = c("Ctl", "Trt"))
+weight <- c(ctl, trt)
+m1 <- lm(weight ~ group)
+m2 <- lm(weight ~ group - 1)
+@
+The coefficients, standard errors, $p$~values etc.\ of model~2 can be
+displayed as follows:
+<<>>=
+summary(m2)
+@
+Next, load the \pkg{texreg} package.  The output of the two models can
+be converted into a plain text table using the following command.  The
+text output is shown below the \proglang{R} code.
+<<eval=false>>=
+library("texreg")
+screenreg(list(m1, m2))
+@
+
+\begin{minipage}{10cm}
+<<echo=false>>=
+library("texreg")
+screenreg(list(m1, m2))
+@
+\end{minipage}\\
+
+An arbitrary number of models can be handed over to the
+\code{texreg()}, \code{htmlreg()} or\linebreak \code{screenreg()} function by
+enclosing them in a \code{list}.  If only one model is converted, the
+\code{list} wrapper is not needed.
+
+\subsection[texreg(), table environments, and layout
+packages]{\code{texreg()}, table environments, and layout packages}
+
+The same table can be typeset in {\LaTeX} by exchanging
+\code{screenreg()} for \code{texreg()}.  In the following example, several
+additional arguments are demonstrated.  The {\LaTeX} output
+code is shown below the \proglang{R} code that generates the table.
+The resulting table is shown in Table~\ref{tab:3}.
+<<results=tex>>=
+texreg(list(m1, m2), dcolumn = TRUE, booktabs = TRUE,
+    use.packages = FALSE, label = "tab:3", caption = "Two linear models.",
+    float.pos = "hb!")
+@
+The caption, label, and float position of the table are set
+explicitly.  The \pkg{dcolumn} package is used to align coefficients
+at their decimal separators, and the \pkg{booktabs} package is
+employed to create professional horizontal rules.  These arguments can
+be omitted if the two packages are not available (in this case, top,
+mid and bottom rules are replaced by conventional horizontal rules,
+and numeric values are horizontally aligned at the center of the
+column).  The \verb+\usepackage{}+ declarations for the two packages
+are suppressed because the code has to be processed by
+\code{Sweave()}.
+
+In order to omit the \verb+\begin{table}+ and \verb+\end{table}+ as
+well as the \verb+\begin{center}+ and \verb+\end{center}+ code, the
+\code{table} and \code{center} arguments can be used.  If \code{table
+  = FALSE} and \code{center = FALSE} are set, only the \code{tabular}
+environment is printed, not the \code{table} and \code{center}
+environments.  In effect, the resulting table would be printed in-line
+in the text.  Another reason for skipping the table environment could
+be to finetune the environment manually.
+
+Alternatively, the argument \code{sideways = TRUE} can be used to
+rotate the table by 90 degrees using the \code{sidewaystable}
+environment in the \pkg{rotating} package \citep{rahtz2008rotating}
+instead of the default \code{table} environment.
+
+\subsection{Custom names, omission of terms, and customization of coefficients}
+
+Another example demonstrates how the {\LaTeX} code can be
+saved in an object The result is shown in Table~\ref{tab:4}.
+<<results=tex>>=
+mytable <- texreg(list(m1, m2), label = "tab:4", 
+    caption = "Bolded coefficients, custom notes, three digits.", 
+    float.pos = "h", bold = 0.05, stars = 0,  custom.note = 
+    "Coefficients with $p < 0.05$ in \\textbf{bold}.", 
+    digits = 3, leading.zero = FALSE, omit.coef = "Inter")
+@
+<<results=tex, echo=false>>=
+texreg(list(m1, m2), label = "tab:4", 
+    caption = "Bolded coefficients, custom notes, three digits.", 
+    float.pos = "h", bold = 0.05, stars = 0,  custom.note = 
+    "Coefficients with $p < 0.05$ in \\textbf{bold}.", 
+    digits = 3, leading.zero = FALSE, omit.coef = "Inter")
+@
+
+The table can be printed to the \proglang{R} console later by calling 
+the name of the object (in this case \code{mytable}).
+
+The example presented above introduced several additional arguments:
+\code{bold = 0.05} formats all coefficients with $p$~values $< 0.05$
+in bold; \code{stars = 0} means that only coefficients with $p$~values
+$< 0$ are decorated with a star, which effectively suppresses all
+significance stars in the table because negative $p$~values are not
+possible.  Note that bold formatting cannot be used in combination
+with the \code{dcolumn} argument, so decimal mark alignment is
+switched off in Table~\ref{tab:4}.  The \code{booktabs} argument was
+also left out to show the difference between conventional horizontal
+lines in Table~\ref{tab:4} and \code{booktabs} rules in
+Table~\ref{tab:3}.  The \code{custom.note = "Coefficients with $p <
+  0.05$ in \textbf{bold}."} argument changes the significance note
+below the table.  The \code{digits = 3} argument sets three decimal
+places, \code{leading.zero = FALSE} suppresses leading zeroes before
+the decimal separator, and \code{omit.coef = "Inter"} causes all rows
+containing the regular expression ``Inter'' to be skipped from the
+output (here: the ``(Intercept)'' term).  Note that more complex
+regular expressions are possible; for example, \code{omit.coef =
+  "(Trt)|(Ctl)"} would remove all rows matching either ``Trt'' or
+``Ctl''.
+
+\subsection[Multiple model types, single.row, and custom
+names]{Multiple model types, \code{single.row}, and custom names}
+
+Another example shows how \pkg{texreg} can deal with multiple
+\emph{kinds} of models in the same table.  The following code shows
+how ordinary least squares (OLS) and generalized least squares (GLS)
+models are matched in a single output table.  The output is shown in
+Table~\ref{tab:5}.
+<<results=tex>>=
+library("nlme")
+m3 <- gls(follicles ~ sin(2 * pi * Time) + cos(2 * pi * Time), Ovary,
+    correlation = corAR1(form = ~ 1 | Mare))
+
+texreg(
+    list(m1, m3),
+    custom.coef.names = c(
+        "Intercept", 
+        "Control", 
+        "$\\sin(2 \\cdot \\pi \\cdot \\mbox{time})$", 
+        "$\\cos(2 \\cdot \\pi \\cdot \\mbox{time})$"
+    ), 
+    custom.model.names = c("OLS model", "GLS model"), 
+    reorder.coef = c(1, 3, 4, 2),
+    caption = "Multiple model types, custom names, and single row.", 
+    label = "tab:5", 
+    stars = c(0.01, 0.001), 
+    dcolumn = TRUE, 
+    booktabs = TRUE, 
+    use.packages = FALSE,
+    single.row = TRUE,
+    include.adjrs = FALSE,
+    include.bic = FALSE
+)
+@
+
+Several interesting things can be noted.  First, the
+\code{custom.coef.names} argument was used to relabel the coefficient
+rows.  If there were repetitions of coefficient names in the\linebreak
+\code{custom.coef.names} vector, \pkg{texreg} would try to conflate
+rows with identical names.  In the case shown here, the two models are
+only matched on the intercept and the number of observations because
+all other rows have unique names.
+
+Second, the custom names include {\LaTeX} code.  Within the
+code, in-line math code is allowed.  {\LaTeX} commands have
+to be marked by an additional backslash as an escape character, e.g.,
+\verb+\\pi+ instead of \verb+\pi+.  Text within math blocks can be
+included in \verb+\mbox{}+ commands.
+
+Third, custom names were also provided for the models.  Using the
+\code{custom.model.names} argument, the default ``Model 1'', ``Model
+2'' etc.\ are replaced by ``OLS model'' and ``GLS model'' in this
+case.
+
+Fourth, the order of the coefficients was changed using the
+\code{reorder.coef} argument.  The ``Control'' term was moved to the
+last position in the table.
+
+Fifth, two significance levels (and, accordingly, a maximum of two
+stars) are used in the table.  The \code{stars} argument takes at most
+four values, and when four values are specified, the lowest
+significance level (usually $0.05 \leq p < 0.1$) is denoted by the
+character specified in the \code{symbol} argument (by default a
+centered dot).
+
+Sixth, the \code{single.row} argument causes the table to consume less
+vertical and more horizontal space because the standard errors are
+inserted right after the coefficients.
+
+And seventh, the \code{include.adjrs} and \code{include.bic} arguments
+suppress the inclusion of the adjusted R$^2$ and BIC GOF
+statistics.  These are model-specific arguments, which are defined in
+the \code{extract()} methods for `\code{lm}' and `\code{gls}'.  More
+information about model-specific arguments can be found on the help
+page of the generic \code{extract()} function.
+
+\subsection{An example with robust standard errors}
+
+A common task in econometrics is to report robust---i.e.,
+(Eicker-)Huber-White-corrected, or heteroskedasticity-consistent---standard
+errors using the \pkg{sandwich}
+\citep{zeileis2004econometric,zeileis2006object} and \pkg{lmtest}
+\citep{zeileis2002diagnostic} packages.  The following code shows how
+this can be accomplished in combination with the \pkg{texreg} package.
+The resulting table is not reported here.
+<<eval=false>>=
+library("sandwich")
+library("lmtest")
+hc <- vcovHC(m2)
+ct <- coeftest(m2, vcov = hc)
+se <- ct[, 2]
+pval <- ct[, 4]
+texreg(m2, override.se = se, override.pvalues = pval)
+@
+The standard errors and $p$~values are first extracted from the
+\code{hc} matrix and then handed over to the \code{texreg()} function
+using the \code{override.se} and \code{override.pvalues} arguments.
+
+\subsection[htmlreg(), Microsoft Word, knitr, and Markdown]{\code{htmlreg()},
+  Microsoft Word, \pkg{knitr}, and Markdown}
+
+The following examples show how the \code{htmlreg()} function can be
+used.  The output code for these examples is not reported here.
+
+The output of any \code{texreg()}, \code{htmlreg()} or
+\code{screenreg()} call can be written directly to a file by adding
+the \code{file} argument.  This is especially handy because
+HTML files can be read by Microsoft Word if a
+``.doc'' file extension is added.
+
+If the table is exported to a file, it is advisable to include the
+full header information of the HTML file to make sure that
+Microsoft Word or other programs can parse the file.  An example:
+<<results=hide>>=
+htmlreg(list(m1, m2, m3), file = "mytable.doc", inline.css = FALSE, 
+    doctype = TRUE, html.tag = TRUE, head.tag = TRUE, body.tag = TRUE)
+@
+The \code{doctype} argument adds the document type declaration to the
+first line of the HTML document.  The \code{inline.css =
+  FALSE} argument causes the function to write cascading style sheets
+(the table formatting code) into the \code{<head>} tag rather than
+into the table code.  The \code{head.tag} argument actually adds such
+a \code{<head>} tag to the document.  Similarly, the \code{body.tag}
+argument wraps the table in a \code{<body>} tag, and the
+\code{html.tag} argument encloses both---the \code{<head>} and the
+\code{<body>} tag---in an \code{<html>} tag.  In other words, these
+arguments create a whole HTML document rather than merely
+the table code.  The resulting file can be read by Microsoft Word
+because the HTML file has a ``.doc'' extension.
+
+The \texttt{htmlreg()} function also works well with the \pkg{knitr}
+package for dynamic report generation \citep{xie2012knitr}.  The
+default arguments are compatible with \pkg{knitr} and
+HTML.  In addition to HTML, \pkg{knitr} is also
+compatible with Markdown, a simplified markup language.
+\pkg{texreg} can work with Markdown as well, but an
+additional argument should be provided to make it work:
+<<results=hide>>=
+htmlreg(list(m1, m2, m3), star.symbol = "\\*", center = TRUE, 
+    doctype = FALSE)
+@
+The \verb+star.symbol = "\\*"+ argument makes sure that
+Markdown does not interpret the significance stars as
+special Markdown syntax.  The additional (and optional)
+\code{center = TRUE} argument centers the table horizontally on the
+page.
+
+\subsection{Confidence intervals instead of standard errors}
+Most model types implemented in \pkg{texreg} report standard errors
+and $p$~values.  However, some model types report confidence intervals
+by default.  The \pkg{xergm} package \citep{leifeld2014xergm:} and
+the \pkg{lme4} package \citep{bates2013lme4:} are two examples.  If
+confidence intervals are preferred to standard errors but they are not
+available by default, the \code{ci.force} argument allows conversion
+of standard errors to confidence intervals.  The \code{ci.force.level}
+argument determines at which confidence level the interval should be
+computed.
+
+A star is added to estimates where the confidence interval does not
+contain the value given by \code{ci.test} (to remove significance stars,
+\code{ci.test = NULL} can be set).  When the \code{bold} argument is
+used in conjunction with confidence intervals, \code{bold} values
+greater than $0$ cause \pkg{texreg} to print estimates in bold where
+the \code{ci.test} value is outside the confidence interval, regardless
+of the actual value of the \code{bold} argument (see Table~\ref{table:coefficients}):
+<<results=tex>>=
+texreg(list(m1, m1, m2), ci.force = c(FALSE, TRUE, TRUE), ci.test = 0,
+    ci.force.level = 0.95, bold = 0.05, float.pos = "tb",
+    caption = "Enforcing confidence intervals.",
+    booktabs = TRUE, use.packages = FALSE, single.row = TRUE)
+@
+
+\subsection{Coefficient plots}
+Finally, it is possible to display the results of statistical models using a coefficient plot \citep[a forest plot applied to the estimates and confidence intervals or standard errors of a regression model; for another implementation, see][]{lander2013coefplot;}.
+Using the \code{plotreg} function, one or multiple statistical model objects can be plotted.
+Most of the arguments of the \code{screenreg}, \code{texreg}, and \code{htmlreg} functions are also supported by the \code{plotreg} function.
+Where confidence intervals are not natively available, the \code{plotreg} function converts standard errors into confidence intervals.
+Alternatively, the \code{use.se} argument can be used to plot error bars with one or two standard errors from the point estimate.
+The diagram produced by the following code is shown in Figure~\ref{fig:plotreg}:
+<<results=hide,label=figure,fig=TRUE,include=FALSE, height=5, width=8>>=
+plotreg(m1, custom.coef.names = c("Intercept", "Group Trt"))
+@
+\begin{figure}[ht!]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{texreg-figure}
+  \end{center}
+  \caption{Result of the \code{plotreg} function. Significant estimates are colored in red.}
+  \label{fig:plotreg}
+\end{figure}
+
+\section{Writing extensions for new models} \label{extensions} 
+The previous examples have demonstrated how the \pkg{texreg} package
+can be used to convert statistical model output into plain-text,
+{\LaTeX}, HTML, and Markdown tables.
+Yet, this only works with model types known to \pkg{texreg}.
+Accordingly, this section shows how methods for new model types can be
+devised and registered.
+
+\begin{table}[tb]
+\centering
+  \begin{tabular}{l p{12.3cm}}
+   \toprule
+   Arguments		& Description \\
+   \midrule
+   \code{coef.names}	& The names of the independent variables or coefficients. \\
+   \code{coef}		& The actual coefficients. These values must be in the same order as the \code{coef.names}. \\
+   \code{se}		& (\emph{optional}) The standard errors, which will later be put in parentheses. These values must be in the same order as the \code{coef.names}. \\
+   \code{pvalues}	& (\emph{optional}) The $p$~values. They are used to add significance stars. These values must be in the same order as the \code{coef.names}. \\
+   \code{ci.low}	& (\emph{optional}) Lower bounds of the confidence intervals.  An alternative to the \code{se} slot. \\
+   \code{ci.up}		& (\emph{optional}) Upper bounds of the confidence intervals.  An alternative to the \code{se} slot. \\
+   \code{gof.names}	& The names of some GOF statistics to be added to the table. For example, the \code{extract()} method for `\code{lm}' objects extracts R$^2$, Adj.\ R$^2$ and Num.\ obs. \\
+   \code{gof}		& A vector of GOF statistics to be added to the table. These values must be in the same order as the \code{gof.names}. \\
+   \code{gof.decimal}	& (\emph{optional}) A vector of logical (Boolean) values indicating for every GOF value whether the value should have decimal places in the output table. This is useful to avoid decimal places for the number of observations and similar count variables. \\
+   \bottomrule
+  \end{tabular}
+ \caption{Arguments of the \code{createTexreg()} function.}
+ \label{tab:vectors}
+\end{table}
+
+\subsection{Simple extensions}
+A custom extract function can be easily implemented.  For any model
+type, there exists a function which extracts the relevant information
+from a model.  For example, the \code{extract()} method for `\code{lm}'
+objects provides coefficients and GOF statistics for
+`\code{lm}' objects, the \code{extract()} method for `\code{ergm}' objects
+provides this information for `\code{ergm}' objects, etc.
+
+To get an overview of the model type one is interested in, it is
+recommended to fit a model and examine the resulting object using the
+\code{str(model)} command, the \code{summary(model)} command, the
+\code{summary(model)\$coef} command, and related approaches.
+
+Any new extract function should retrieve the data shown in Table~\ref{tab:vectors} from a statistical model.
+Note that \code{pvalues} and \code{gof.decimal} are optional and can
+be omitted.  Either the \code{se} slot or the \code{ci.low} and
+\code{ci.up} slots must contain values.
+
+Once these data have been located and extracted, a `\code{texreg}'
+object can be created and returned to the \code{texreg()} function.
+The following code provides a simple example for `\code{lm}' objects:
+
+<<results=hide, eval=FALSE>>=
+extract.lm <- function(model) {
+  s <- summary(model)
+  names <- rownames(s$coef)
+  co <- s$coef[, 1]
+  se <- s$coef[, 2]
+  pval <- s$coef[, 4]
+  
+  rs <- s$r.squared
+  adj <- s$adj.r.squared
+  n <- nobs(model)
+  
+  gof <- c(rs, adj, n)
+  gof.names <- c("R$^2$", "Adj.\\ R$^2$", "Num.\\ obs.")
+  
+  tr <- createTexreg(
+      coef.names = names, 
+      coef = co, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof
+  )
+  return(tr)
+}
+@
+
+First, the names of the model terms, the coefficient values, the
+standard errors, and the $p$~values are extracted from the model or
+its summary (they can be computed if not available).
+
+Second, various summary statistics and GOF measures are
+extracted from the model object (in this case: R$^2$, Adj.\ R$^2$ and
+Num.\ obs.) and saved in a \code{numeric} vector.
+
+Third, the names of these statistics should be defined in a
+\code{character} vector.  All vectors so far should have the same
+length.
+
+Fourth, a new `\code{texreg}' object should be created, with the
+information extracted before included as arguments.
+
+Fifth, the `\code{texreg}' object must be returned.  This is necessary
+for the \code{texreg()} function to continue processing the model.
+
+After writing a custom function, the function has to be registered as
+a method for the generic \code{extract()} function.  In the above
+example, this can be achieved with the following code:
+<<results=hide, eval=FALSE>>=
+setMethod("extract", signature = className("lm", "stats"), 
+    definition = extract.lm)
+@
+Assume, for instance, that an extension for `\code{clogit}' objects
+called \code{extract.clogit()} is written.  The \code{clogit()}
+function (and the corresponding class definition) can be found in the
+\pkg{survival} package \citep{survival-book, therneau2012package}.  Then the code
+above should be changed as follows:
+<<results=hide, eval=FALSE>>=
+setMethod("extract", signature = className("clogit", "survival"), 
+    definition = extract.clogit)
+@
+After executing the definition of the function and the adjusted
+\code{setMethod()} command, \pkg{texreg} can be used with
+`\code{clogit}' models.
+
+\subsection{A complete example}
+The following code shows the complete \code{extract.lm()} function as
+included in the \pkg{texreg} package.
+<<results=hide, eval=FALSE>>=
+extract.lm <- function(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, ...) {
+  
+  s <- summary(model, ...)
+  names <- rownames(s$coef)
+  co <- s$coef[, 1]
+  se <- s$coef[, 2]
+  pval <- s$coef[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.rsquared == TRUE) {
+    rs <- s$r.squared
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.adjrs == TRUE) {
+    adj <- s$adj.r.squared
+    gof <- c(gof, adj)
+    gof.names <- c(gof.names, "Adj.\\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = names, 
+      coef = co, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("lm", "stats"), 
+    definition = extract.lm)
+@
+In addition to the simple example code shown above, this function has
+several arguments, which can be used to include or exclude various GOF
+or summary statistics.  Additional arguments can also be used in other
+contexts.  For example, the user can decide whether random effect
+variances should be included in \pkg{texreg} tables of `\code{mer}'
+objects \citep[from the \pkg{lme4} package, see][]{bates2013lme4:} by
+setting the \code{include.variance} argument.  Similarly, the output
+of `\code{stergm}' models \citep{Hunter:2008, handcock2012fit} or
+`\code{hurdle}' or `\code{zeroinfl}' models
+\citep{zeileis2008regression} can be typeset in two columns using the
+\code{beside} argument.
+
+New extract functions and methods can be easily used locally.  Once
+they work well, submission of new extract functions to the online
+forum of \pkg{texreg} is encouraged.
+
+Existing functions can also be manipulated and overwritten locally in
+order to change the GOF statistics block.
+
+\section{Installation and help} \label{help}
+
+It should be possible to install \pkg{texreg} using a simple command:
+<<results=hide, eval=FALSE>>=
+install.packages("texreg")
+@
+\pkg{texreg} is hosted on the R-Forge repository, which means that the most recent version can be installed with this command (often more recent than the CRAN version in the previous command):
+<<results=hide, eval=FALSE>>=
+install.packages("texreg", repos = "http://R-Forge.R-project.org")
+@
+The package can be updated to the most recent version by typing:
+<<results=hide, eval=FALSE>>=
+update.packages("texreg", repos = "http://R-Forge.R-project.org")
+@
+
+Alternatively, the source files and binaries can be downloaded from the \pkg{texreg} homepage (\url{http://r-forge.r-project.org/projects/texreg/}) and installed manually by entering something like
+\begin{Code}
+> R CMD INSTALL texreg_1.xx.tar.gz
+\end{Code}
+(replace \code{xx} by the current version number) on the terminal (not the \proglang{R} terminal, but the command line of the operating system).
+
+After loading the package, its help page can be displayed as follows:
+<<results=hide, eval=FALSE>>=
+help(package = "texreg")
+@
+More specific help on the \code{texreg()} command can be obtained by entering the following command once the package has been loaded:
+<<results=hide, eval=FALSE>>=
+help("texreg")
+@
+To get an overview of currently implemented extract functions and methods, one of these two commands can be used.
+<<results=hide, eval=FALSE>>=
+help("extract")
+help("extract-methods")
+@
+
+If all else fails, more help can be obtained from the homepage of the \pkg{texreg} package.
+Questions can be posted to a public forum at \url{http://r-forge.r-project.org/projects/texreg/}.
+
+\section*{Acknowledgments}
+The author would like to thank the numerous people who contributed ideas and code snippets to this project.
+
+\bibliography{texreg}
+
+\end{document}

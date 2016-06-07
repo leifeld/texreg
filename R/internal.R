@@ -9,7 +9,7 @@
   packageStartupMessage(
       'Version:  ', desc$Version, '\n', 
       'Date:     ', desc$Date, '\n',
-      'Author:   ', 'Philip Leifeld (Eawag & University of Bern)', '\n\n', 
+      'Author:   ', 'Philip Leifeld (University of Glasgow)', '\n\n', 
       'Please cite the JSS article in your publications ', 
       '-- see citation("texreg").'
   )
@@ -1148,8 +1148,10 @@ customcolumns <- function(output.matrix, custom.columns, custom.col.pos,
       custom.indices <- c(custom.indices, FALSE)
     }
   }
-  if ((ncol(output.matrix) + 1) %in% custom.col.pos) {
-    custom.indices <- c(custom.indices, TRUE)
+  for (i in 1:length(custom.col.pos)) {
+    if ((ncol(output.matrix) + 1) == custom.col.pos[i]) {
+      custom.indices <- c(custom.indices, TRUE)
+    }
   }
   
   if (modelnames == TRUE) {
