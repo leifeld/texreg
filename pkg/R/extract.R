@@ -1316,7 +1316,7 @@ setMethod("extract", signature = className("glmmadmb", "glmmADMB"),
     definition = extract.glmmadmb)
 
 
-# extension for gls objects
+# extension for gls objects (nlme package)
 extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.nobs = TRUE, ...) {
   s <- summary(model, ...)
@@ -1371,7 +1371,60 @@ setMethod("extract", signature = className("gls", "nlme"),
     definition = extract.gls)
 
 
-# extension for gmm objects
+# extension for gel objects (gmm package)
+extract.gel <- function (model, include.obj.fcn = TRUE, 
+    include.overidentification = FALSE, include.nobs = TRUE, 
+    overIdentTest = c("LR", "LM", "J "), ...) {
+  
+  overIdentTest <- match.arg(overIdentTest)
+  s <- summary(model, ...)
+  coefs <- s$coefficients
+  names <- rownames(coefs)
+  coef <- coefs[, 1]
+  se <- coefs[, 2]
+  pval <- coefs[, 4]
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.obj.fcn == TRUE) {
+    obj.fcn <- model$objective * 10^5
+    gof <- c(gof, obj.fcn)
+    gof.names <- c(gof.names, "Criterion function")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.overidentification == TRUE) {
+    w <- which(strtrim(rownames(s$stest$test), 2) == overIdentTest)
+    jtest <- s$stest$test[w, ]
+    gof <- c(gof, jtest)
+    ntest <- rownames(s$stest$test)[w]
+    gof.names <- c(gof.names, c(ntest, paste0(ntest, " p-value")))
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- NROW(model$gt)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+  tr <- createTexreg(
+      coef.names = names, 
+      coef = coef, 
+      se = se,
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("gel", "gmm"), 
+    definition = extract.gel)
+
+
+# extension for gmm objects (gmm package)
 extract.gmm <- function(model, include.obj.fcn = TRUE, 
     include.overidentification = FALSE, include.nobs = TRUE, ...) {
   
@@ -1383,12 +1436,12 @@ extract.gmm <- function(model, include.obj.fcn = TRUE,
   se <- coefs[, 2]
   pval <- coefs[, 4]
   
-  n <- model$n #number of observations
+  n <- model$n  # number of observations
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
   if (include.obj.fcn == TRUE) {
-    obj.fcn <- model$objective * 10^5 #the value of the objective function
+    obj.fcn <- model$objective * 10^5  # the value of the objective function
     gof <- c(gof, obj.fcn)
     gof.names <- c(gof.names, "Criterion function")
     gof.decimal <- c(gof.decimal, TRUE)
@@ -1406,13 +1459,13 @@ extract.gmm <- function(model, include.obj.fcn = TRUE,
   }
   
   tr <- createTexreg(
-    coef.names = names, 
-    coef = coef, 
-    se = se, 
-    pvalues = pval, 
-    gof.names = gof.names, 
-    gof = gof, 
-    gof.decimal = gof.decimal
+      coef.names = names, 
+      coef = coef, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
   )
   return(tr)
 }
@@ -3548,33 +3601,32 @@ setMethod("extract", signature = className("svyglm", "survey"),
 
 # extension for systemfit objects
 extract.systemfit <- function(model, include.rsquared = TRUE, 
-    include.adjrs=TRUE, include.nobs = TRUE, ...) {
+    include.adjrs = TRUE, include.nobs = TRUE, ...) {
   equationList <- list()
   for(eq in model$eq){  # go through estimated equations
-    sum <- summary(eq, ...)  # extract model summary
-    names <- rownames(coef(sum))
-    co <- coef(sum)[, 1]
-    se <- coef(sum)[, 2]
-    pval <- coef(sum)[, 4]
-    
-    rs <- sum$r.squared  # extract r-squared
-    adj <- sum$adj.r.squared  # extract adjusted r-squared
-    n <- nobs(model)  # extract number of observations
+    s <- summary(eq, ...)  # extract model summary
+    names <- rownames(coef(s))
+    co <- coef(s)[, 1]
+    se <- coef(s)[, 2]
+    pval <- coef(s)[, 4]
     
     gof <- numeric()
     gof.names <- character()
     gof.decimal <- logical()
     if (include.rsquared == TRUE) {
+      rs <- s$r.squared  # extract r-squared
       gof <- c(gof, rs)
       gof.names <- c(gof.names, "R$^2$")
       gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.adjrs == TRUE) {
+      adj <- s$adj.r.squared  # extract adjusted r-squared
       gof <- c(gof, adj)
       gof.names <- c(gof.names, "Adj.\ R$^2$")
       gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.nobs == TRUE) {
+      n <- length(s$residuals)  # extract number of observations
       gof <- c(gof, n)
       gof.names <- c(gof.names, "Num.\ obs.")
       gof.decimal <- c(gof.decimal, FALSE)
@@ -3587,7 +3639,8 @@ extract.systemfit <- function(model, include.rsquared = TRUE,
       pvalues = pval, 
       gof.names = gof.names, 
       gof = gof, 
-      gof.decimal = gof.decimal
+      gof.decimal = gof.decimal,
+      model.name = paste("Equation", s$eqnNo)
     )
     equationList[[eq$eqnNo]] <- tr
   }

@@ -51,6 +51,8 @@
 \alias{extract,gee-method}
 \alias{extract.geeglm}
 \alias{extract,geeglm-method}
+\alias{extract.gel}
+\alias{extract,gel-method}
 \alias{extract.glm}
 \alias{extract,glm-method}
 \alias{extract.glmerMod}
@@ -263,6 +265,10 @@ extract(model, ...)
 
 \S4method{extract}{geeglm}(model, include.scale = TRUE, 
     include.correlation = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{gel}(model, include.obj.fcn = TRUE, 
+    include.overidentification = FALSE, include.nobs = TRUE, 
+    overIdentTest = c("LR", "LM", "J "), ...)
 
 \S4method{extract}{glm}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -591,6 +597,10 @@ An extract method for gee objects from the \pkg{gee} package.
 An extract method for geeglm objects from the \pkg{geepack} package.
 }
 
+\item{\code{gel}}{
+An extract method for gel objects from the \pkg{gmm} package.
+}
+
 \item{\code{glm}}{
 An extract method for glm objects from the \pkg{stats} package.
 }
@@ -839,9 +849,9 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.nobs}{ If available: should the number of observations be reported? }
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
-\item{include.obj.fcn}{ If available: should the value of the objective function (= criterion function) be reported (for \code{gmm} objects)? More precisely, this returns \code{E(g)var(g)^{-1}E(g)}. }
+\item{include.obj.fcn}{ If available: should the value of the objective function (= criterion function) be reported (for \code{gel} and \code{gmm} objects)? More precisely, this returns \code{E(g)var(g)^{-1}E(g)}. }
 \item{include.outcome}{ If available: should the outcome component of a sample selection model be reported? }
-\item{include.overidentification}{ If available: should the J-test for overidentification be reported (for \code{gmm} objects)? }
+\item{include.overidentification}{ If available: should the J-test for overidentification be reported (for \code{gel} and \code{gmm} objects)? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }
 \item{include.precision}{ If available: should the precision estimates of a betareg fit (the phi coefficients) be reported as part of the coefficients block? }
 \item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
@@ -866,6 +876,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{levels}{ The names of the levels of a multinomial model that should be included in the table. Should be provided as a vector of character strings. }
 \item{method}{ The method used to compute confidence intervals or p values. In \pkg{lme4} models, the default value \code{"naive"} computes naive p values while the other methods compute confidence intervals using the \code{confint} function. }
 \item{nsim}{ In linear mixed effects models: the MCMC sample size or number of bootstrapping replications on the basis of which confidence intervals are computed (only if the \code{method} argument does not specify \code{"naive"}, which is the default behavior). Note: large values may take considerable computing time. }
+\item{overIdentTest}{ If available: which test statistics should be included in an overidentification test (for \code{gel} and \code{gmm} objects)? }
 \item{prefix}{ Include prefix before the label of the coefficient in order to identify the current model component. }
 \item{robust}{ If available: report robust instead of naive standard errors. }
 \item{use.ci}{ Use confidence intervals rather than standard errors. }

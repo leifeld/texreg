@@ -438,7 +438,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 71 supported model types (version 1.36).]{\label{tab:types} List of 71 supported model types (version 1.36).} \\
+\caption[List of 72 supported model types (version 1.37).]{\label{tab:types} List of 72 supported model types (version 1.37).} \\
 \endlastfoot
 
 `\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
@@ -466,6 +466,7 @@ Class			& Package			& Description \\
 `\code{gamlss}'		& \pkg{gamlss}			& GAM for location scale and shape \\
 `\code{gee}'		& \pkg{gee}			& Generalized estimating equation \\
 `\code{geeglm}'		& \pkg{geepack}			& Generalized estimating equation \\
+`\code{gel}'		& \pkg{gmm}			& Generalized empirical likelihood estimation \\
 `\code{glm}'		& \pkg{stats}			& Generalized linear models \\
 `\code{[gl|l|nl]merMod}'& \pkg{lme4} ($<$ 1.0) 		& Generalized linear mixed models \\
 `\code{glmmadmb}'	& \pkg{glmmADMB}		& Generalized linear mixed models and extensions \\
@@ -543,7 +544,7 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 `\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
-\pkg{texreg} (version 1.36), in contrast, can deal with all of the
+\pkg{texreg} (version 1.37), in contrast, can deal with all of the
 above model types (that is, the union of all three packages, is 
 extensible, and offers additional built-in functions for the following 
 model classes: `\code{ARIMA}', `\code{averaging}', `\code{bam}', 
