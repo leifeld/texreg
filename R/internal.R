@@ -332,8 +332,6 @@ replaceSymbols <- function(m) {
       rn[i] <- gsub("_", "\\\\_", rn[i])
       rn[i] <- gsub("<", "\\$<\\$", rn[i])
       rn[i] <- gsub(">", "\\$>\\$", rn[i])
-      rn[i] <- gsub("\\{", "\\\\{", rn[i])
-      rn[i] <- gsub("\\}", "\\\\}", rn[i])
       rn[i] <- gsub("%", "\\\\%", rn[i])
     }
   }
