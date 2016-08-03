@@ -611,10 +611,11 @@ stars.string <- function(pval, stars, star.char, star.prefix, star.suffix,
 
 
 # return the output matrix with coefficients, SEs and significance stars
-outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits, 
-    se.prefix, se.suffix, star.prefix, star.suffix, star.char = "*", 
-    stars, dcolumn = TRUE, symbol, bold, bold.prefix, bold.suffix, 
-    ci = rep(FALSE, length(m) / 3), semicolon = "; ", ci.test = 0) {
+outputmatrix <- function(m, single.row, neginfstring, posinfstring, 
+    leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
+    star.char = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
+    bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
+    ci.test = 0) {
   
   # write coefficient rows
   if (single.row == TRUE) {
@@ -634,6 +635,8 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
           output.matrix[i, k] <- ""
         } else if (m[i, j] == -Inf) {
           output.matrix[i, k] <- neginfstring
+        } else if (m[i, j] == Inf) {
+          output.matrix[i, k] <- posinfstring
         } else {
           
           # in case of CIs, replace brackets by square brackets
@@ -718,6 +721,9 @@ outputmatrix <- function(m, single.row, neginfstring, leading.zero, digits,
         } else if (m[i, j] == -Inf) {
           output.matrix[(i * 2) - 1, k] <- neginfstring  #upper row
           output.matrix[(i * 2), k] <- ""  #lower se row
+        } else if (m[i, j] == Inf) {
+          output.matrix[(i * 2) - 1, k] <- posinfstring  #upper row
+          output.matrix[(i * 2), k] <- ""  #lower se row
         } else {
           
           # in case of CIs, replace brackets by square brackets
@@ -797,7 +803,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
   for (i in 1:length(x)) {
     first.dot <- dots[[i]][1]
     paren <- attributes(parentheses)$match.length[i]
-    if (x[i] == "-Inf") {
+    if (x[i] %in% c("-Inf", "Inf")) {
       first.dot <- nchar(x[i]) - digits
     } else if (first.dot == -1) {
       temp <- nchar(x[i]) + 1
@@ -816,7 +822,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
     
     #fill with spaces at the beginning
     first.dot <- dots[[i]][1]
-    if (x[i] == "-Inf") {
+    if (x[i] %in% c("-Inf", "Inf")) {
       first.dot <- nchar(x[i]) - digits
     } else if (first.dot == -1) {
       first.dot <- nchar(x[i]) + 1

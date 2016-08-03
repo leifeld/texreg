@@ -54,10 +54,10 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
     }
   }
   output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
-      leading.zero, digits, se.prefix = " (", se.suffix = ")", 
-      star.prefix = " ", star.suffix = "", star.char = "*", stars, 
-      dcolumn = TRUE, symbol = symbol, bold = 0, bold.prefix = "", 
-      bold.suffix = "", ci = ci, ci.test = ci.test)
+      posinfstring = "Inf", leading.zero, digits, 
+      se.prefix = " (", se.suffix = ")", star.prefix = " ", star.suffix = "", 
+      star.char = "*", stars, dcolumn = TRUE, symbol = symbol, bold = 0, 
+      bold.prefix = "", bold.suffix = "", ci = ci, ci.test = ci.test)
   
   # grouping
   output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
@@ -320,7 +320,8 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     }
   }
   output.matrix <- outputmatrix(m, single.row, 
-      neginfstring = "\\multicolumn{1}{c}{$-$Inf}", leading.zero, digits, 
+      neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
+      posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
       se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
       star.suffix = "}", star.char = "*", stars, dcolumn = dcolumn, 
       symbol, bold, bold.prefix = "\\mathbf{", bold.suffix = "}", ci = ci, 
@@ -767,10 +768,11 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
     }
   }
   output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
-      leading.zero, digits, se.prefix = " (", se.suffix = ")", 
-      star.char = star.symbol, star.prefix = paste0("<sup", css.sup, ">"), 
-      star.suffix = "</sup>", stars, dcolumn = TRUE, symbol, bold = bold, 
-      bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, ci.test = ci.test)
+      posinfstring = "-Inf", leading.zero, digits, 
+      se.prefix = " (", se.suffix = ")", star.char = star.symbol, 
+      star.prefix = paste0("<sup", css.sup, ">"), star.suffix = "</sup>", 
+      stars, dcolumn = TRUE, symbol, bold = bold, bold.prefix = "<b>", 
+      bold.suffix = "</b>", ci = ci, ci.test = ci.test)
   
   # grouping
   output.matrix <- grouping(output.matrix, groups, 
