@@ -768,7 +768,7 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
     }
   }
   output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
-      posinfstring = "-Inf", leading.zero, digits, 
+      posinfstring = "Inf", leading.zero, digits, 
       se.prefix = " (", se.suffix = ")", star.char = star.symbol, 
       star.prefix = paste0("<sup", css.sup, ">"), star.suffix = "</sup>", 
       stars, dcolumn = TRUE, symbol, bold = bold, bold.prefix = "<b>", 
