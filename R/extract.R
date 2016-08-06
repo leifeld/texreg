@@ -3601,50 +3601,119 @@ setMethod("extract", signature = className("svyglm", "survey"),
 
 # extension for systemfit objects
 extract.systemfit <- function(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, ...) {
-  equationList <- list()
-  for(eq in model$eq){  # go through estimated equations
-    s <- summary(eq, ...)  # extract model summary
-    names <- rownames(coef(s))
-    co <- coef(s)[, 1]
-    se <- coef(s)[, 2]
-    pval <- coef(s)[, 4]
+    include.adjrs = TRUE, include.nobs = TRUE, beside = FALSE, 
+    include.suffix = FALSE, ...) {
+  if (beside == TRUE) {
+    equationList <- list()
+    for(eq in model$eq) {  # go through estimated equations
+      s <- summary(eq, ...)  # extract model summary
+      names <- rownames(coef(s))
+      co <- coef(s)[, 1]
+      se <- coef(s)[, 2]
+      pval <- coef(s)[, 4]
+      
+      gof <- numeric()
+      gof.names <- character()
+      gof.decimal <- logical()
+      if (include.rsquared == TRUE) {
+        rs <- s$r.squared  # extract r-squared
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      if (include.adjrs == TRUE) {
+        adj <- s$adj.r.squared  # extract adjusted r-squared
+        gof <- c(gof, adj)
+        gof.names <- c(gof.names, "Adj.\ R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      if (include.nobs == TRUE) {
+        n <- length(s$residuals)  # extract number of observations
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+      }
+      
+      tr <- createTexreg(
+        coef.names = names, 
+        coef = co, 
+        se = se, 
+        pvalues = pval, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal,
+        model.name = s$eqnLabel
+      )
+      equationList[[eq$eqnNo]] <- tr
+    }
+    return(equationList)  #returns a list of table.content lists
+  } else {
+    nm <- character()
+    co <- se <- pval <- numeric()
+    for(eq in model$eq) {  # go through estimated equations
+      s <- summary(eq, ...)  # extract model summary
+      nm <- c(nm, sapply(rownames(coef(s)), function(x) {
+        if (include.suffix == FALSE) {
+          paste0(eq$eqnLabel, ": ", x)
+        } else {
+          paste0(x, " (", eq$eqnLabel, ")")
+        }
+      }))
+      co <- c(co, coef(s)[, 1])
+      se <- c(se, coef(s)[, 2])
+      pval <- c(pval, coef(s)[, 4])
+    }
     
     gof <- numeric()
     gof.names <- character()
     gof.decimal <- logical()
-    if (include.rsquared == TRUE) {
-      rs <- s$r.squared  # extract r-squared
-      gof <- c(gof, rs)
-      gof.names <- c(gof.names, "R$^2$")
-      gof.decimal <- c(gof.decimal, TRUE)
+    for(eq in model$eq) {
+      s <- summary(eq, ...)
+      if (include.rsquared == TRUE) {
+        rs <- s$r.squared  # extract r-squared
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, ifelse(include.suffix == TRUE, 
+            paste0("R$^2$ (", eq$eqnLabel, ")"), 
+            paste0(eq$eqnLabel, ": R$^2$")))
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
     }
-    if (include.adjrs == TRUE) {
-      adj <- s$adj.r.squared  # extract adjusted r-squared
-      gof <- c(gof, adj)
-      gof.names <- c(gof.names, "Adj.\ R$^2$")
-      gof.decimal <- c(gof.decimal, TRUE)
+    
+    for(eq in model$eq) {
+      s <- summary(eq, ...)
+      if (include.adjrs == TRUE) {
+        adj <- s$adj.r.squared  # extract adjusted r-squared
+        gof <- c(gof, adj)
+        gof.names <- c(gof.names, ifelse(include.suffix == TRUE, 
+            paste0("Adj.\ R$^2$ (", eq$eqnLabel, ")"), 
+            paste0(eq$eqnLabel, ": Adj.\ R$^2$")))
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
     }
-    if (include.nobs == TRUE) {
-      n <- length(s$residuals)  # extract number of observations
-      gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\ obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
+    
+    for(eq in model$eq) {
+      s <- summary(eq, ...)
+      if (include.nobs == TRUE) {
+        n <- length(s$residuals)  # extract number of observations
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, ifelse(include.suffix == TRUE, 
+            paste0("Num.\ obs. (", eq$eqnLabel, ")"), 
+            paste0(eq$eqnLabel, ": Num.\ obs.")))
+        gof.decimal <- c(gof.decimal, FALSE)
+      }
     }
     
     tr <- createTexreg(
-      coef.names = names, 
+      coef.names = nm, 
       coef = co, 
       se = se, 
       pvalues = pval, 
       gof.names = gof.names, 
       gof = gof, 
-      gof.decimal = gof.decimal,
-      model.name = paste("Equation", s$eqnNo)
+      gof.decimal = gof.decimal
     )
-    equationList[[eq$eqnNo]] <- tr
+    return(tr)
   }
-  return(equationList)  #returns a list of table.content lists
 }
 
 setMethod("extract", signature = className("systemfit", "systemfit"), 

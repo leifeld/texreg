@@ -466,7 +466,8 @@ extract(model, ...)
     include.nobs = TRUE, ...)
 
 \S4method{extract}{systemfit}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, ...)
+    include.adjrs = TRUE, include.nobs = TRUE, beside = FALSE, 
+    include.suffix = FALSE, ...)
 
 \S4method{extract}{texreg}(model, ...)
 
@@ -863,6 +864,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.scale}{ If available: should the scale parameter gamma and its standard error be reported (for geeglm models)? }
 \item{include.selection}{ If available: should the selection component of a sample selection model be reported? }
 \item{include.smooth}{ If available: should the smooth terms of a GAM be reported? If they are reported, the EDF value is reported as the coefficient, and DF is included in parentheses (not standard errors because a chi-square test is used for the smooth terms). }
+\item{include.suffix}{ If available: include the name of the current model in parentheses after each model term (instead of before the model term). }
 \item{include.tau}{ If available: include tau in linear quantile mixed models? }
 \item{include.thresholds}{ If available: should the threshold parameters (that is, the intercepts for the class boundaries) be reported in ordinal models? }
 \item{include.trisk}{ If available: should the total time at risk be reported (in event-history models)? }
