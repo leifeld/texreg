@@ -3691,16 +3691,10 @@ extract.systemfit <- function(model, include.rsquared = TRUE,
       }
     }
     
-    for(eq in model$eq) {
-      s <- summary(eq, ...)
-      if (include.nobs == TRUE) {
-        n <- length(s$residuals)  # extract number of observations
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, ifelse(include.suffix == TRUE, 
-            paste0("Num.\ obs. (", eq$eqnLabel, ")"), 
-            paste0(eq$eqnLabel, ": Num.\ obs.")))
-        gof.decimal <- c(gof.decimal, FALSE)
-      }
+    if (include.nobs == TRUE) {  # number of observations
+      gof <- c(gof, nobs(model))
+      gof.names <- c(gof.names, "Num.\ obs.\ (total)")
+      gof.decimal <- c(gof.decimal, FALSE)
     }
     
     tr <- createTexreg(
