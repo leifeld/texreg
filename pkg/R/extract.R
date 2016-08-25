@@ -1474,6 +1474,89 @@ setMethod("extract", signature = className("gmm", "gmm"),
     definition = extract.gmm)
 
 
+# extension for H2OBinomialModel objects (h2o package)
+extract.H2OBinomialModel <- function(model, standardized = FALSE, 
+      include.mse = TRUE, include.rsquared = TRUE, include.logloss = TRUE, 
+      include.meanerror = TRUE, include.auc = TRUE, include.gini = TRUE, 
+      include.deviance = TRUE, include.aic = TRUE, ...) {
+  
+  # extract coefficient table from model:
+  coefnames <- model@model$coefficients_table$names
+  if (standardized == TRUE) {
+    coefs <- model@model$coefficients_table$standardized_coefficients
+  } else {
+    coefs <- model@model$coefficients_table$coefficients
+  }
+  
+  # create empty GOF vectors and subsequently add GOF statistics from model:
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.mse == TRUE) {
+    mse <- model@model$training_metrics@metrics$MSE
+    gof <- c(gof, mse)
+    gof.names <- c(gof.names, "MSE")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.rsquared == TRUE) {
+    r2 <- model@model$training_metrics@metrics$r2
+    gof <- c(gof, r2)
+    gof.names <- c(gof.names, "R^2")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.logloss == TRUE) {
+    logloss <- model@model$training_metrics@metrics$logloss
+    gof <- c(gof, logloss)
+    gof.names <- c(gof.names, "LogLoss")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.meanerror == TRUE) {
+    mpce <- model@model$training_metrics@metrics$mean_per_class_error
+    gof <- c(gof, mpce)
+    gof.names <- c(gof.names, "Mean Per-Class Error")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.auc == TRUE) {
+    auc <- model@model$training_metrics@metrics$AUC
+    gof <- c(gof, auc)
+    gof.names <- c(gof.names, "AUC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.gini == TRUE) {
+    gini <- model@model$training_metrics@metrics$Gini
+    gof <- c(gof, gini)
+    gof.names <- c(gof.names, "Gini")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    nulldev <- model@model$training_metrics@metrics$null_deviance
+    resdev <- model@model$training_metrics@metrics$residual_deviance
+    gof <- c(gof, nulldev, resdev)
+    gof.names <- c(gof.names, "Null Deviance", "Residual Deviance")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (include.aic == TRUE) {
+    aic <- model@model$training_metrics@metrics$AIC
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  
+  # create texreg object:
+  tr <- createTexreg(
+    coef.names = coefnames, 
+    coef = coefs, 
+    gof.names = gof.names, 
+    gof = gof, 
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("H2OBinomialModel", "h2o"), 
+    definition = extract.H2OBinomialModel)
+
+
 # extension for lm objects
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE, 
     include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {

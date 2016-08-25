@@ -47,7 +47,7 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
   # create output table with significance stars etc.
   ci <- logical()
   for (i in 1:length(models)) {
-    if (length(models[[i]]@se) == 0) {
+    if (length(models[[i]]@se) == 0 && length(models[[i]]@ci.up) > 0) {
       ci[i] <- TRUE
     } else {
       ci[i] <- FALSE

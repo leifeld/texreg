@@ -379,13 +379,17 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
     pv <- models[[i]]@pvalues
     cil <- models[[i]]@ci.low
     ciu <- models[[i]]@ci.up
-    if (length(se) == 0) {
+    if (length(se) == 0 && length(ciu) > 0) {
       coef <- cbind(cf, cil, ciu)
     } else {
-      if (length(pv) > 0) {
+      if (length(se) > 0 && length(pv) > 0) {
         coef <- cbind(cf, se, pv)
-      } else { #p-values not provided -> use p-values of 0.99
+      } else if (length(se) > 0 && length(pv) == 0) {
+        #p-values not provided -> use p-values of 0.99
         coef <- cbind(cf, se, rep(0.99, length(cf)))
+      } else {
+        # not even SEs provided
+        coef <- cbind(cf, rep(NA, length(cf)), rep(0.99, length(cf)))
       }
     }
     rownames(coef) <- models[[i]]@coef.names
@@ -785,6 +789,17 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         k <- k + 1
         j <- j + 3
       }
+    }
+    
+    # check if SEs are all missing and delete even rows if necessary
+    se.missing <- numeric()
+    for (i in seq(2, nrow(output.matrix), 2)) {
+      if (all(sapply(output.matrix[i, ], function(x) x == ""))) {
+        se.missing <- c(se.missing, i)
+      }
+    }
+    if (length(se.missing) == nrow(output.matrix) / 2) {
+      output.matrix <- output.matrix[-se.missing, ]
     }
   }
   
