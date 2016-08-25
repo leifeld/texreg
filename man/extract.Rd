@@ -67,6 +67,8 @@
 \alias{extract,gls-method}
 \alias{extract.gmm}
 \alias{extract,gmm-method}
+\alias{extract.H2OBinomialModel}
+\alias{extract,H2OBinomialModel-method}
 \alias{extract.hurdle}
 \alias{extract,hurdle-method}
 \alias{extract.ivreg}
@@ -300,6 +302,12 @@ extract(model, ...)
 
 \S4method{extract}{gmm}(model, include.obj.fcn = TRUE, 
     include.overidentification = FALSE, include.nobs = TRUE, ...)
+
+\S4method{extract}{H2OBinomialModel}(model, standardized = FALSE, 
+      include.mse = TRUE, include.rsquared = TRUE, 
+      include.logloss = TRUE, include.meanerror = TRUE, 
+      include.auc = TRUE, include.gini = TRUE, 
+      include.deviance = TRUE, include.aic = TRUE, ...)
 
 \S4method{extract}{hurdle}(model, beside = FALSE, 
     include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
@@ -630,12 +638,16 @@ An extract method for gls objects from the \pkg{nlme} package.
 An extract method for gmm objects from the \pkg{gmm} package.
 }
 
-\item{\code{ivreg}}{
-An extract method for ivreg objects from the \pkg{AER} package.
+\item{\code{H2OBinomialModel}}{
+An extract method for H2OBinomialModel objects from the \pkg{h2o} package.
 }
 
 \item{\code{hurdle}}{
 An extract method for hurdle objects from the \pkg{pscl} package.
+}
+
+\item{\code{ivreg}}{
+An extract method for ivreg objects from the \pkg{AER} package.
 }
 
 \item{\code{lm}}{
@@ -822,6 +834,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.adjrs}{If available: should the adjusted R-squared be reported? }
 \item{include.aic}{ If available: should Akaike's information criterion (AIC) be reported? }
 \item{include.aicc}{ If available: should AICc be reported? This is a version of AIC with a correction for finite sample sizes. }
+\item{include.auc}{ If available: should the area under the curve (AUC) be reported? }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
 \item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
 \item{include.correlation}{ If available: should the correlation parameter alpha and its standard error be reported (for geeglm models)? }
@@ -837,15 +850,19 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.formation}{ If available: should the coefficients for the formation phase in a STERGM be reported? }
 \item{include.fstatistic}{ If available: should the F statistic be reported? }
 \item{include.gaic}{ If available: should the Generalized Akaike's information criterion (GAIC) be reported? }
+\item{include.gini}{ If available: should the Gini coefficient be reported? }
 \item{include.gcv}{ If available: should the GCV score be reported (in GAMs)? }
 \item{include.groups}{ If available: should the number of groups in a mixed-effects model (or \code{k} alternatives in a multinomial choice model) be reported? }
 \item{include.intercept}{ If available: should the intercept be included in the GOF block? }
 \item{include.iterations}{ If available: should the number of iterations be included? }
 \item{include.lambda}{ If available: should the lambda statistic and p-value be reported? }
 \item{include.loglik}{ If available: should the log-likelihood be reported? }
+\item{include.logloss}{If available: should the log loss be reported? }
 \item{include.lr}{ If available: should the likelihood ratio test be reported? }
 \item{include.maxrs}{If available: should the maximum possible R-squared be reported? }
+\item{include.meanerror}{If available: should the mean per-class error be reported? }
 \item{include.missings}{ If available: should the number of missing observations be reported (in survival models)? }
+\item{include.mse}{If available: should the mean square error be reported? }
 \item{include.nagelkerke}{ If available: should Nagelkerke's R-squared be reported? }
 \item{include.nobs}{ If available: should the number of observations be reported? }
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
@@ -881,6 +898,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{overIdentTest}{ If available: which test statistics should be included in an overidentification test (for \code{gel} and \code{gmm} objects)? }
 \item{prefix}{ Include prefix before the label of the coefficient in order to identify the current model component. }
 \item{robust}{ If available: report robust instead of naive standard errors. }
+\item{standardized}{ If available: report standardized coefficients instead of raw coefficients? }
 \item{use.ci}{ Use confidence intervals rather than standard errors. }
 \item{...}{ Custom parameters which are handed over to subroutines. }
 }
