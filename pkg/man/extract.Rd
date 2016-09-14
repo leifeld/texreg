@@ -434,9 +434,8 @@ extract(model, ...)
     include.percentile = TRUE, ...)
 
 \S4method{extract}{sarlm}(model, include.nobs = TRUE, 
-    include.aic = TRUE, include.loglik = TRUE, 
-    include.lambda = TRUE, include.lr = TRUE, 
-    include.rho = TRUE, include.wald = TRUE, ...)
+    include.loglik = TRUE, include.aic = TRUE, include.lr = TRUE, 
+    include.wald = TRUE, ...)
 
 \S4method{extract}{sclm}(model, include.thresholds = TRUE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
