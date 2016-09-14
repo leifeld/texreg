@@ -312,6 +312,10 @@ tex.replace <- function(models, type = "html", style = "") {
     models[[i]]@gof.names <- gsub("\\\\ ", " ", models[[i]]@gof.names)
     models[[i]]@gof.names <- gsub("\\ ", " ", models[[i]]@gof.names)
     
+    # extract.sarlm coefficient name replacement
+    models[[i]]@coef.names <- gsub("\\$\\\\rho\\$", "rho", models[[i]]@coef.names)
+    models[[i]]@coef.names <- gsub("\\$\\\\lambda\\$", "lambda", models[[i]]@coef.names)
+    
     # extract.gamlss coefficient name replacement
     models[[i]]@coef.names <- gsub("\\$\\\\mu\\$", "mu", models[[i]]@coef.names)
     models[[i]]@coef.names <- gsub("\\$\\\\nu\\$", "nu", models[[i]]@coef.names)

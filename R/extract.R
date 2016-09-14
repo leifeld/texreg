@@ -3110,15 +3110,51 @@ setMethod("extract", signature = className("rq", "quantreg"),
 
 
 # extension for sarlm objects (spdep package)
-extract.sarlm <- function(model, include.nobs = TRUE, include.aic = TRUE, 
-    include.loglik = TRUE, include.lambda = TRUE, include.lr = TRUE, 
-    include.rho = TRUE, include.wald = TRUE, ...) {
+extract.sarlm <- function(model, include.nobs = TRUE, include.loglik = TRUE,
+    include.aic = TRUE, include.lr = TRUE, include.wald = TRUE, ...) {
   s <- summary(model, ...)
   
   names <- rownames(s$Coef)
   cf <- s$Coef[, 1]
   se <- s$Coef[, 2]
   p <- s$Coef[, ncol(s$Coef)]
+
+  if (model$type != "error") {  # include coefficient for autocorrelation term
+    rho <- model$rho
+    cf <- c(cf, rho)
+    names <- c(names, "$\\rho$")
+    if (!is.null(model$rho.se)) {
+      if (!is.null(model$adj.se)) {
+        rho.se <- sqrt((model$rho.se^2) * model$adj.se)   
+      } else {
+        rho.se <- model$rho.se
+      }
+      rho.pval <- 2 * (1 - pnorm(abs(rho / rho.se)))
+      se <- c(se, rho.se)
+      p <- c(p, rho.pval)
+    } else {
+      se <- c(se, NA)
+      p <- c(p, NA)
+    }
+  }
+  
+  if (!is.null(model$lambda)) {
+    cf <-c(cf, model$lambda)
+    names <- c(names, "$\\lambda$")  
+    if (!is.null(model$lambda.se)) {
+      if (!is.null(model$adj.se)) {
+        lambda.se <- sqrt((model$lambda.se^2) * model$adj.se)   
+      } else {
+        lambda.se <- model$lambda.se
+      }
+      lambda.pval <- 2 * (1 - pnorm(abs(model$lambda / lambda.se)))
+      se <- c(se, lambda.se)
+      p <- c(p, lambda.pval)
+    } else {
+      se <- c(se, NA)
+      p <- c(p, NA)
+    }
+  }
   
   gof <- numeric()
   gof.names <- character()
@@ -3131,6 +3167,12 @@ extract.sarlm <- function(model, include.nobs = TRUE, include.aic = TRUE,
     gof.names <- c(gof.names, "Num.\ obs.", "Parameters")
     gof.decimal <- c(gof.decimal, FALSE, FALSE)
   }
+  if (include.loglik == TRUE) {
+    ll <- s$LL
+    gof <- c(gof, ll)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
   if (include.aic == TRUE) {
     aic <- AIC(model)
     aiclm <- s$AIC_lm.model
@@ -3138,55 +3180,10 @@ extract.sarlm <- function(model, include.nobs = TRUE, include.aic = TRUE,
     gof.names <- c(gof.names, "AIC (Linear model)", "AIC (Spatial model)")
     gof.decimal <- c(gof.decimal, TRUE, TRUE)
   }
-  if (include.loglik == TRUE) {
-    ll <- s$LL
-    gof <- c(gof, ll)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.lambda == TRUE && !is.null(model$lambda)) {
-    gof <- c(gof, model$lambda)
-    gof.names <- c(gof.names, "Lambda: statistic")
-    gof.decimal <- c(gof.decimal, TRUE)
-    if (!is.null(model$lambda.se)) {
-      if (!is.null(model$adj.se)) {
-        lambda.se <- sqrt((model$lambda.se^2) * model$adj.se)   
-      } else {
-        lambda.se <- model$lambda.se
-      }
-      lambda.pval <- 2 * (1 - pnorm(abs(model$lambda / lambda.se)))
-      gof <- c(gof, lambda.pval)
-      gof.names <- c(gof.names, "Lambda: p-value")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-  }
   if (include.lr == TRUE && !is.null(s$LR1)) {
     gof <- c(gof, s$LR1$statistic[[1]], s$LR1$p.value[[1]])
     gof.names <- c(gof.names, "LR test: statistic", "LR test: p-value")
     gof.decimal <- c(gof.decimal, TRUE, TRUE)
-  }
-  if (include.rho == TRUE) {
-    if (model$type == "error") {
-      # rho does not exist
-    } else {
-      rho <- model$rho
-      if (!is.null(model$rho.se)) {
-        if (!is.null(model$adj.se)) {
-          rho.se <- sqrt((model$rho.se^2) * model$adj.se)   
-        } else {
-          rho.se <- model$rho.se
-        }
-        rho.pval <- 2 * (1 - pnorm(abs(rho / rho.se)))
-        gof <- c(gof, rho, rho.pval)
-        gof.names <- c(gof.names, "Rho: statistic", "Rho: p-value")
-        gof.decimal <- c(gof.decimal, TRUE, TRUE)
-      } else {
-        # no SEs available; only use estimate
-        gof <- c(gof, rho)
-        gof.names <- c(gof.names, "Rho")
-        gof.decimal <- c(gof.decimal, TRUE)
-      }
-    }
   }
   if (include.wald == TRUE && !is.null(model$Wald1)) {
     waldstat <- model$Wald1$statistic
