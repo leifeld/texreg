@@ -21,6 +21,8 @@
 \alias{extract,censReg-method}
 \alias{extract.clm}
 \alias{extract,clm-method}
+\alias{extract.clmm}
+\alias{extract,clmm-method}
 \alias{extract.clogit}
 \alias{extract,clogit-method}
 \alias{extract.coeftest}
@@ -211,6 +213,11 @@ extract(model, ...)
 \S4method{extract}{clm}(model, include.thresholds = TRUE, 
     include.aic = TRUE, include.bic=TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, ...)
+
+\S4method{extract}{clmm}(model, include.thresholds = TRUE,
+    include.loglik = TRUE, include.aic = TRUE,  
+    include.bic = TRUE, include.nobs = TRUE, 
+    include.groups = TRUE, include.variance = TRUE, ...)
 
 \S4method{extract}{clogit}(model, include.aic = TRUE, 
     include.rsquared = TRUE, include.maxrs = TRUE, 
@@ -545,6 +552,10 @@ An extract method for censReg objects from the \pkg{censReg} package.
 An extract method for clm objects from the \pkg{ordinal} package.
 }
 
+\item{\code{clmm}}{
+An extract method for clmm objects from the \pkg{ordinal} package.
+}
+
 \item{\code{clogit}}{
 An extract method for clogit objects from the \pkg{survival} package.
 }
@@ -854,7 +865,6 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.groups}{ If available: should the number of groups in a mixed-effects model (or \code{k} alternatives in a multinomial choice model) be reported? }
 \item{include.intercept}{ If available: should the intercept be included in the GOF block? }
 \item{include.iterations}{ If available: should the number of iterations be included? }
-\item{include.lambda}{ If available: should the lambda statistic and p-value be reported? }
 \item{include.loglik}{ If available: should the log-likelihood be reported? }
 \item{include.logloss}{If available: should the log loss be reported? }
 \item{include.lr}{ If available: should the likelihood ratio test be reported? }
@@ -873,7 +883,6 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.precision}{ If available: should the precision estimates of a betareg fit (the phi coefficients) be reported as part of the coefficients block? }
 \item{include.pseudors}{ If available: should the pseudo R-squared be reported? }
 \item{include.pvalues}{ If available: should the p values be reported (naive p values are not recommended for lme4 models, but see also the \code{mcmc.pvalues} argument)? }
-\item{include.rho}{ If available: should the lambda statistic and p-value be reported? }
 \item{include.rmse}{ If available: should the root-mean-square error (= residual standard deviation) be reported? }
 \item{include.rsquared}{ If available: should R-squared be reported? }
 \item{include.sargan}{ If available: should the Sargan test be reported? }
