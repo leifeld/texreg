@@ -438,7 +438,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 73 supported model types (version 1.37).]{\label{tab:types} List of 73 supported model types (version 1.37).} \\
+\caption[List of 75 supported model types (version 1.37).]{\label{tab:types} List of 75 supported model types (version 1.37).} \\
 \endlastfoot
 
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
@@ -451,6 +451,7 @@ Class			& Package			& Description \\
 `\code{btergm}'			& \pkg{xergm}			& Temporal exponential random graph models \\
 `\code{censReg}'		& \pkg{censReg}			& Censored regression (tobit) models \\
 `\code{clm}'			& \pkg{ordinal}			& Cumulative link models \\
+`\code{clmm}'			& \pkg{ordinal}			& Cumulative link mixed models \\
 `\code{clogit}'			& \pkg{survival}		& Conditional logistic regression \\
 `\code{coeftest}'		& \pkg{lmtest}			& Wald tests of estimated coefficients \\
 `\code{coxph}'			& \pkg{survival}		& Cox proportional hazard models \\
@@ -502,6 +503,7 @@ Class			& Package			& Description \\
 `\code{rem.dyad}'		& \pkg{relevent}		& Relational event models for dyadic data \\
 `\code{rlm}'			& \pkg{MASS}			& Robust fitting of linear models \\
 `\code{rq}'			& \pkg{quantreg}		& Quantile regression models \\
+`\code{sarlm}'			& \pkg{spdep}			& Linear spatial autocorrelation and error models \\
 `\code{sclm}'			& \pkg{ordinal}			& Cumulative link models \\
 `\code{selection}'		& \pkg{sampleSelection}		& Sample selection models \\
 `\code{sienaFit}'		& \pkg{RSiena}			& Stochastic actor-oriented models for networks \\

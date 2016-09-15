@@ -304,7 +304,7 @@ setMethod("extract", signature = className("censReg", "censReg"),
     definition = extract.censReg)
 
 
-# extension for clm objects
+# extension for clm objects (ordinal package)
 extract.clm <- function(model, include.thresholds = TRUE, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, include.nobs = TRUE, ...) {
   s <- summary(model, ...)
@@ -378,6 +378,100 @@ setMethod("extract", signature = className("clm", "ordinal"),
 extract.sclm <- extract.clm
 setMethod("extract", signature = className("sclm", "ordinal"), 
     definition = extract.clm)
+
+
+# extension for clmm objects (ordinal package)
+extract.clmm <- function(model, include.thresholds = TRUE,
+    include.loglik = TRUE, include.aic = TRUE,  include.bic = TRUE,
+    include.nobs = TRUE, include.groups = TRUE, include.variance = TRUE, ...) {
+  s <- summary(model, ...)
+  
+  tab <- s$coefficients
+  thresh <- tab[rownames(tab) %in% names(s$alpha), ]
+  threshold.names <- rownames(thresh)
+  threshold.coef <- thresh[, 1]
+  threshold.se <- thresh[, 2]
+  threshold.pval <- thresh[, 4]
+  beta <- tab[rownames(tab) %in% names(s$beta), ]
+  beta.names <- rownames(beta)
+  beta.coef <- beta[, 1]
+  beta.se <- beta[, 2]
+  beta.pval <- beta[, 4]
+  
+  if (include.thresholds == TRUE) {
+    cfnames <- c(beta.names, threshold.names)
+    coef <- c(beta.coef, threshold.coef)
+    se <- c(beta.se, threshold.se)
+    pval <- c(beta.pval, threshold.pval)
+  } else {
+    cfnames <- beta.names
+    coef <- beta.coef
+    se <- beta.se
+    pval <- beta.pval
+  }
+  
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.groups == TRUE) {
+    grp <- s$dims$nlev.gf
+    grp.names <- paste0("Groups (", names(grp), ")")
+    gof <- c(gof, grp)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
+  }
+  if (include.variance == TRUE) {
+    var.names <- character()
+    var.values <- numeric()
+    for (i in 1:length(s$ST)) {
+      variances <- diag(s$ST[[i]] %*% t(s$ST[[i]]))
+      var.names <- c(var.names, paste0("Variance: ", names(s$ST)[[i]], ": ",
+          names(variances)))
+      var.values <- c(var.values, variances)
+    }
+    gof <- c(gof, var.values)
+    gof.names <- c(gof.names, var.names)
+    gof.decimal <- c(gof.decimal, rep(TRUE, length(var.values)))
+  }
+  
+  tr <- createTexreg(
+      coef.names = cfnames, 
+      coef = coef, 
+      se = se, 
+      pvalues = pval, 
+      gof.names = gof.names, 
+      gof = gof, 
+      gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("clmm", "ordinal"), 
+    definition = extract.clmm)
 
 
 # extension for coxph objects (survival package)
