@@ -391,6 +391,8 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
       } else if (length(se) > 0 && length(pv) == 0) {
         #p-values not provided -> use p-values of 0.99
         coef <- cbind(cf, se, rep(0.99, length(cf)))
+      } else if (length(se) == 0 && length(pv) > 0) {
+        coef <- cbind(cf, rep(NA, length(cf)), pv)
       } else {
         # not even SEs provided
         coef <- cbind(cf, rep(NA, length(cf)), rep(0.99, length(cf)))
