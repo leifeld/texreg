@@ -68,11 +68,15 @@ setMethod(f = "show", signature = "texreg", definition = function(object) {
   if (length(object@se) == 0 && length(object@ci.up) > 0) {
     coefBlock <- cbind(object@coef, object@ci.low, object@ci.up)
     colnames(coefBlock) <- c("coef.", "lower CI", "upper CI")
-  } else if (length(object@se) == 0) {
+  } else if (length(object@se) == 0 && length(object@pvalues) == 0) {
     cat(paste("\nNo standard errors and p-values were defined for this", 
-        "texreg object.\n"))
+          "texreg object.\n"))
     coefBlock <- cbind(object@coef)
     colnames(coefBlock) <- "coef."
+  } else if (length(object@se) == 0) {
+    cat(paste("\nNo standard errors were defined for this texreg object.\n"))
+    coefBlock <- cbind(object@coef, object@pvalues)
+    colnames(coefBlock) <- c("coef.", "p")
   } else if (length(object@pvalues) > 0) {
     cat("\n")
     coefBlock <- cbind(object@coef, object@se, object@pvalues)
@@ -91,13 +95,17 @@ setMethod(f = "show", signature = "texreg", definition = function(object) {
   print(coefBlock)
   cat("\n")
   if (length(dec) == 0) {
-    gofBlock <- matrix(object@gof, ncol=1)
+    gofBlock <- matrix(object@gof, ncol = 1)
     colnames(gofBlock) <- "GOF"
   } else {
     gofBlock <- data.frame(object@gof,object@gof.decimal)
     colnames(gofBlock) <- c("GOF", "dec. places")
   }
   rownames(gofBlock) <- object@gof.names
-  print(gofBlock)
-  cat("\n")
+  if (nrow(gofBlock) > 0) {
+    print(gofBlock)
+    cat("\n")
+  } else {
+    cat("No GOF block defined.\n")
+  }
 })
