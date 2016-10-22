@@ -299,6 +299,8 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
       note <- "Bars denote CIs."
       message(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
           " (outer) confidence intervals (computed from standard errors)."))
+    } else if (length(models[[i]]@se) == 0 && length(models[[i]]@pvalues) > 0) {
+      stop("Model has p-values but no SEs. SEs or CIs are required for plotting.")
     } else {
       co <- models[[i]]@coef
       co.names <- models[[i]]@coef.names
