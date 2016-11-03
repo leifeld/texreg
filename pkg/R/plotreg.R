@@ -66,7 +66,7 @@ coefplot <- function(labels, estimates, lower.inner = NULL,
   
   # create plot; compute left margin; add labels to left margin
   inches.to.lines <- (par("mar") / par("mai"))[1]
-  lab.width <- max(strwidth(labels, units = "inches") * inches.to.lines)
+  lab.width <- max(strwidth(labels, units = "inches") * inches.to.lines * ylab.cex)
   
   par(mar = c(5, 1 + lab.width, 4, 2) + 0.1)
   plot(0, 0, xlim = c(mn, mx), ylim = c(1, length(labels)), xlab = xlab, 
