@@ -1,0 +1,18 @@
+language: r
+
+r:
+  - devel
+  - release
+
+sudo: false
+
+cache: packages
+
+r_check_args: --as-cran
+
+notifications:
+  email:
+    recipients:
+      - philip.leifeld@glasgow.ac.uk
+    on_success: change
+    on_failure: change
