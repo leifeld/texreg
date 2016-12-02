@@ -17,9 +17,10 @@ texreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
     custom.col.pos = NULL, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, 
-    dcolumn = FALSE, sideways = FALSE, longtable = FALSE, 
-    use.packages = TRUE, table = TRUE, no.margin = FALSE, 
-    fontsize = NULL, scalebox = NULL, float.pos = "", ...)
+    dcolumn = FALSE, lyx = FALSE, sideways = FALSE, 
+    longtable = FALSE, use.packages = TRUE, table = TRUE, 
+    no.margin = FALSE, fontsize = NULL, scalebox = NULL,
+    float.pos = "", ...)
 
 htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
@@ -117,6 +118,7 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{label}{[only in the \code{texreg} function] Set the label of the \code{table} environment.}
 \item{booktabs}{[only in the \code{texreg} function] Use the \code{booktabs} LaTeX package to get thick horizontal rules in the output table (recommended).}
 \item{dcolumn}{[only in the \code{texreg} function] Use the \code{dcolumn} LaTeX package to get a nice alignment of the coefficients (recommended).}
+\item{lyx}{[only in the \code{texreg} function] \code{logical}; if \code{TRUE}, each newline in the output is doubled, which facilitates transferring the output into the LyX document processor. }
 \item{sideways}{[only in the \code{texreg} function] If \code{sideways = TRUE} is set, the \code{table} floating environment is replaced by a \code{sidewaystable} float, and the \code{rotating} package is loaded in the preamble. The argument only has an effect if \code{table = TRUE} is also set.}
 \item{longtable}{ [only in the \code{texreg} function] If \code{longtable = TRUE} is set, the \code{longtable} environment from the \code{longtable} LaTeX package is used to set tables across multiple pages. Note that this argument is not compatible with the \code{sideways} and \code{scalebox} arguments. These arguments will be automatically switched off when \code{longtable = TRUE} is set. }
 \item{use.packages}{[only in the \code{texreg} function] If this argument is set to \code{TRUE} (= the default behavior), the required LaTeX packages are loaded in the beginning. If set to \code{FALSE}, the use package statements are omitted from the output.}
