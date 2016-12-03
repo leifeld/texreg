@@ -230,7 +230,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, bold = 0.00, 
     center = TRUE, caption = "Statistical models", caption.above = FALSE, 
-    label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, 
+    label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, lyx = FALSE,
     sideways = FALSE, longtable = FALSE, use.packages = TRUE, table = TRUE, 
     no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", ...) {
   
@@ -397,24 +397,25 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   string <- "\n"
+  linesep = if (lyx) "\n\n" else "\n"
   
   # write table header
   if (use.packages == TRUE) {
     if (sideways == TRUE & table == TRUE) {
-      string <- paste0(string, "\\usepackage{rotating}\n")
+      string <- paste0(string, "\\usepackage{rotating}", linesep)
     }
     if (booktabs == TRUE) {
-      string <- paste0(string, "\\usepackage{booktabs}\n")
+      string <- paste0(string, "\\usepackage{booktabs}", linesep)
     }
     if (dcolumn == TRUE) {
-      string <- paste0(string, "\\usepackage{dcolumn}\n")
+      string <- paste0(string, "\\usepackage{dcolumn}", linesep)
     }
     if (longtable == TRUE) {
-      string <- paste0(string, "\\usepackage{longtable}\n")
+      string <- paste0(string, "\\usepackage{longtable}", linesep)
     }
     if (dcolumn == TRUE || booktabs == TRUE || sideways == TRUE || 
         longtable == TRUE) {
-      string <- paste0(string, "\n")
+      string <- paste0(string, linesep)
     }
   }
   
@@ -423,12 +424,12 @@ texreg <- function(l, file = NULL, single.row = FALSE,
       string <- paste0(string, "\\begin{center}\n")
     }
     if (!is.null(fontsize)) {
-      string <- paste0(string, "\\begin{", fontsize, "}\n")
+      string <- paste0(string, "\\begin{", fontsize, "}", linesep)
     }
     if (float.pos == "") {
-      string <- paste0(string, "\\begin{longtable}{", coldef, "}\n")
+      string <- paste0(string, "\\begin{longtable}{", coldef, "}", linesep)
     } else {
-      string <- paste0(string, "\\begin{longtable}[", float.pos, "]\n")
+      string <- paste0(string, "\\begin{longtable}[", float.pos, "]", linesep)
     }
   } else {  # table or sidewaystable
     if (table == TRUE) {
@@ -438,32 +439,32 @@ texreg <- function(l, file = NULL, single.row = FALSE,
         t <- ""
       }
       if (float.pos == "") {
-        string <- paste0(string, "\\begin{", t, "table}\n")
+        string <- paste0(string, "\\begin{", t, "table}", linesep)
       } else {
-        string <- paste0(string, "\\begin{", t, "table}[", float.pos, "]\n")
+        string <- paste0(string, "\\begin{", t, "table}[", float.pos, "]", linesep)
       }
       if (caption.above == TRUE) {
-        string <- paste0(string, "\\caption{", caption, "}\n")
+        string <- paste0(string, "\\caption{", caption, "}", linesep)
       }
       if (center == TRUE) {
-        string <- paste0(string, "\\begin{center}\n")
+        string <- paste0(string, "\\begin{center}", linesep)
       }
       if (!is.null(fontsize)) {
-        string <- paste0(string, "\\begin{", fontsize, "}\n")
+        string <- paste0(string, "\\begin{", fontsize, "}", linesep)
       }
       if (!is.null(scalebox)) {
         string <- paste0(string, "\\scalebox{", scalebox, "}{\n")
       }
     }
-    string <- paste0(string, "\\begin{tabular}{", coldef, "}\n")
+    string <- paste0(string, "\\begin{tabular}{", coldef, "}", linesep)
   }
   
   # horizontal rule above the table
   tablehead <- ""
   if (booktabs == TRUE) {
-    tablehead <- paste0(tablehead, "\\toprule\n")
+    tablehead <- paste0(tablehead, "\\toprule", linesep)
   } else {
-    tablehead <- paste0(tablehead, "\\hline\n")
+    tablehead <- paste0(tablehead, "\\hline", linesep)
   }
   
   # specify model names
@@ -485,9 +486,9 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   
   # horizontal rule between model names and coefficients (define now, add later)
   if (booktabs == TRUE) {
-    tablehead <- paste0(tablehead, " \\\\\n", "\\midrule\n")
+    tablehead <- paste0(tablehead, " \\\\", linesep, "\\midrule", linesep)
   } else {
-    tablehead <- paste0(tablehead, " \\\\\n", "\\hline\n")
+    tablehead <- paste0(tablehead, " \\\\", linesep, "\\hline", linesep)
   }
   if (longtable == FALSE) {
     string <- paste0(string, tablehead)
@@ -559,30 +560,30 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     note <- gsub("%stars", snote, note, perl = TRUE)
   }
   if (longtable == TRUE) {  # longtable requires line break after note & caption
-    note <- paste0(note, "\\\\\n")
+    note <- paste0(note, "\\\\", linesep)
   } else {
-    note <- paste0(note, "\n")
+    note <- paste0(note, linesep)
   }
   
   # bottom rule (define now, add later)
   if (booktabs == TRUE) {
-    bottomline <- "\\bottomrule\n"
+    bottomline <- paste0("\\bottomrule", linesep)
   } else {
-    bottomline <- "\\hline\n"
+    bottomline <- paste0("\\hline", linesep)
   }
   
   # write table header (and footer, in the case of longtable)
   if (longtable == TRUE) {
     if (caption.above == TRUE) {
-      string <- paste0(string, "\\caption{", caption, "}\n", "\\label{", 
-          label, "}\\\\\n", tablehead, "\\endfirsthead\n", tablehead, 
-          "\\endhead\n", bottomline, "\\endfoot\n", bottomline, note, 
-          "\\endlastfoot\n")
+      string <- paste0(string, "\\caption{", caption, "}", linesep, "\\label{", 
+          label, "}\\\\", linesep, tablehead, "\\endfirsthead", linesep, tablehead, 
+          "\\endhead", linesep, bottomline, "\\endfoot", linesep, bottomline, note, 
+          "\\endlastfoot", linesep)
     } else {
-      string <- paste0(string, tablehead, "\\endfirsthead\n", tablehead, 
-          "\\endhead\n", bottomline, "\\endfoot\n", bottomline, note, 
-          "\\caption{", caption, "}\n", "\\label{", label, "}\n", 
-          "\\endlastfoot\n")
+      string <- paste0(string, tablehead, "\\endfirsthead", linesep, tablehead, 
+          "\\endhead", linesep, bottomline, "\\endfoot", linesep, bottomline, note, 
+          "\\caption{", caption, "}", linesep, "\\label{", label, "}", linesep, 
+          "\\endlastfoot", linesep)
     }
   }
   
@@ -611,7 +612,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     for (j in 1:length(output.matrix[1, ])) {
       string <- paste0(string, output.matrix[i, j])
       if (j == length(output.matrix[1, ])) {
-        string <- paste0(string, " \\\\\n")
+        string <- paste0(string, " \\\\", linesep)
       } else {
         string <- paste0(string, " & ")
       }
@@ -621,9 +622,9 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   if (length(gof.names) > 0) {
     # lower mid rule
     if (booktabs == TRUE) {
-      string <- paste0(string, "\\midrule\n")
+      string <- paste0(string, "\\midrule", linesep)
     } else {
-      string <- paste0(string, "\\hline\n")
+      string <- paste0(string, "\\hline", linesep)
     }
     
     # write GOF block
@@ -632,7 +633,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
       for (j in 1:length(output.matrix[1, ])) {
         string <- paste0(string, output.matrix[i, j])
         if (j == length(output.matrix[1, ])) {
-          string <- paste0(string, " \\\\\n")
+          string <- paste0(string, " \\\\", linesep)
         } else {
           string <- paste0(string, " & ")
         }
@@ -643,38 +644,38 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   # write table footer
   if (longtable == FALSE) {
     string <- paste0(string, bottomline)
-    string <- paste0(string, note, "\\end{tabular}\n")
+    string <- paste0(string, note, "\\end{tabular}", linesep)
   }
   
   # take care of center, scalebox and table environment
   if (longtable == TRUE) {
-    string <- paste0(string, "\\end{longtable}\n")
+    string <- paste0(string, "\\end{longtable}", linesep)
     if (!is.null(fontsize)) {
-      string <- paste0(string, "\\end{", fontsize, "}\n")
+      string <- paste0(string, "\\end{", fontsize, "}", linesep)
     }
     if (center == TRUE) {
-      string <- paste0(string, "\\end{center}\n")
+      string <- paste0(string, "\\end{center}", linesep)
     }
   } else if (table == TRUE) {
     if (!is.null(fontsize)) {
-      string <- paste0(string, "\\end{", fontsize, "}\n")
+      string <- paste0(string, "\\end{", fontsize, "}", linesep)
     }
     if (!is.null(scalebox)) {
-      string <- paste0(string, "}\n")
+      string <- paste0(string, "}", linesep)
     }
     if (caption.above == FALSE) {
-      string <- paste0(string, "\\caption{", caption, "}\n")
+      string <- paste0(string, "\\caption{", caption, "}", linesep)
     }
-    string <- paste0(string, "\\label{", label, "}\n")
+    string <- paste0(string, "\\label{", label, "}", linesep)
     if (center == TRUE) {
-      string <- paste0(string, "\\end{center}\n")
+      string <- paste0(string, "\\end{center}", linesep)
     }
     if (sideways == TRUE) {
       t <- "sideways"
     } else {
       t <- ""
     }
-    string <- paste0(string, "\\end{", t, "table}\n")
+    string <- paste0(string, "\\end{", t, "table}", linesep)
   }
   
   if (is.null(file) || is.na(file)) {
