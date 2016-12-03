@@ -2889,14 +2889,14 @@ extract.plm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     include.nobs = TRUE, ...) {
   s <- summary(model, ...)
   
-  coefficient.names <- rownames(s$coef)
-  coefficients <- s$coef[, 1]
-  standard.errors <- s$coef[, 2]
-  significance <- s$coef[, 4]
+  coefficient.names <- rownames(coef(s))
+  coefficients <- coef(s)[, 1]
+  standard.errors <- coef(s)[, 2]
+  significance <- coef(s)[, 4]
   
   rs <- s$r.squared[1]
   adj <- s$r.squared[2]
-  n <- length(s$resid)
+  n <- length(model$residuals)
   
   gof <- numeric()
   gof.names <- character()
