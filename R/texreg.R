@@ -397,7 +397,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   string <- "\n"
-  linesep = if (lyx) "\n\n" else "\n"
+  linesep <- if (lyx) "\n\n" else "\n"
   
   # write table header
   if (use.packages == TRUE) {
