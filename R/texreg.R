@@ -289,11 +289,11 @@ texreg <- function(l, file = NULL, single.row = FALSE,
       digits, returnobject = "decimal.matrix")
   
   m <- customnames(m, custom.coef.names)  #rename coefficients
-  m <- replaceSymbols(m)
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
   m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
-  
+  m <- replaceSymbols(m)
+   
   modnames <- modelnames(l, models, custom.model.names)  # model names
   
   # reorder GOF and coef matrix
