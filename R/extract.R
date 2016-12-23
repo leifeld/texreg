@@ -205,7 +205,7 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
   )
   return(tr)
 }
-# Enact extract function
+
 setMethod("extract", signature = className("betamfx", "mfx"), 
     definition = extract.betamfx)
 
@@ -248,7 +248,7 @@ extract.betaor <- function(model, include.pseudors = TRUE,
   )
   return(tr)
 }
-# Enact extract function
+
 setMethod("extract", signature = className("betaor", "mfx"), 
     definition = extract.betaor)
 
