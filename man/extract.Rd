@@ -11,6 +11,10 @@
 \alias{extract,averaging-method}
 \alias{extract.bam}
 \alias{extract,bam-method}
+\alias{extract.betamfx}
+\alias{extract,betamfx-method}
+\alias{extract.betaor}
+\alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
 \alias{extract.brglm}
@@ -87,6 +91,10 @@
 \alias{extract,lmrob-method}
 \alias{extract.lnam}
 \alias{extract,lnam-method}
+\alias{extract.logitmfx}
+\alias{extract,logitmfx-method}
+\alias{extract.logitor}
+\alias{extract,logitor-method}
 \alias{extract.lqmm}
 \alias{extract,lqmm-method}
 \alias{extract.lrm}
@@ -107,6 +115,10 @@
 \alias{extract,multinom-method}
 \alias{extract.negbin}
 \alias{extract,negbin-method}
+\alias{extract.negbinirr}
+\alias{extract,negbinirr-method}
+\alias{extract.negbinmfx}
+\alias{extract,negbinmfx-method}
 \alias{extract.netlogit}
 \alias{extract,netlogit-method}
 \alias{extract.nlme}
@@ -123,8 +135,14 @@
 \alias{extract,plm-method}
 \alias{extract.pmg}
 \alias{extract,pmg-method}
+\alias{extract.poissonirr}
+\alias{extract,poissonirr-method}
+\alias{extract.poissonmfx}
+\alias{extract,poissonmfx-method}
 \alias{extract.polr}
 \alias{extract,polr-method}
+\alias{extract.probitmfx}
+\alias{extract,probitmfx-method}
 \alias{extract.rem.dyad}
 \alias{extract,rem.dyad-method}
 \alias{extract.rlm}
@@ -194,6 +212,12 @@ extract(model, ...)
     include.dev.expl = TRUE, include.dispersion = TRUE, 
     include.rsquared = TRUE, include.gcv = TRUE, 
     include.nobs = TRUE, include.nsmooth = TRUE, ...)
+
+\S4method{extract}{betamfx}(model, include.pseudors = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{betaor}(model, include.pseudors = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{betareg}(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, 
@@ -353,6 +377,14 @@ extract(model, ...)
     include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, ...)
 
+\S4method{extract}{logitmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
+\S4method{extract}{logitor}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
 \S4method{extract}{lqmm}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
@@ -395,6 +427,14 @@ extract(model, ...)
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
+\S4method{extract}{negbinirr}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
+\S4method{extract}{negbinmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
 \S4method{extract}{netlogit}(model, include.aic = TRUE, 
     include.bic = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
@@ -427,9 +467,21 @@ extract(model, ...)
 
 \S4method{extract}{pmg}(model, include.nobs = TRUE, ...)
 
+\S4method{extract}{poissonirr}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
+\S4method{extract}{poissonmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
 \S4method{extract}{polr}(model, include.thresholds = FALSE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{probitmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
 
 \S4method{extract}{rem.dyad}(model, include.nvertices = TRUE, 
     include.events = TRUE, include.aic = TRUE, 
@@ -530,6 +582,14 @@ An extract method for averaging objects from the \pkg{MuMIn} package.
 
 \item{\code{bam}}{
 An extract method for bam objects from the \pkg{mgcv} package.
+}
+
+\item{\code{betamfx}}{
+An extract method for betamfx objects from the \pkg{mfx} package.
+}
+
+\item{\code{betaor}}{
+An extract method for betaor objects from the \pkg{mfx} package.
 }
 
 \item{\code{betareg}}{
@@ -684,6 +744,14 @@ An extract method for lmrob objects from the \pkg{robustbase} package.
 An extract method for lnam objects from the \pkg{sna} package.
 }
 
+\item{\code{logitmfx}}{
+An extract method for logitmfx objects from the \pkg{mfx} package.
+}
+
+\item{\code{logitor}}{
+An extract method for logitor objects from the \pkg{mfx} package.
+}
+
 \item{\code{lqmm}}{
 An extract method for lqmm objects from the \pkg{lqmm} package.
 }
@@ -724,6 +792,14 @@ An extract method for multinom objects from the \pkg{nnet} package.
 An extract method for negbin objects from the \pkg{MASS} package.
 }
 
+\item{\code{negbinirr}}{
+An extract method for negbinirr objects from the \pkg{mfx} package.
+}
+
+\item{\code{negbinmfx}}{
+An extract method for negbinmfx objects from the \pkg{mfx} package.
+}
+
 \item{\code{netlogit}}{
 An extract method for netlogit objects from the \pkg{sna} package.
 }
@@ -756,8 +832,20 @@ An extract method for plm objects from the \pkg{plm} package.
 An extract method for pmg objects from the \pkg{plm} package.
 }
 
+\item{\code{poissonirr}}{
+An extract method for poissonirr objects from the \pkg{mfx} package.
+}
+
+\item{\code{poissonmfx}}{
+An extract method for poissonmfx objects from the \pkg{mfx} package.
+}
+
 \item{\code{polr}}{
 An extract method for polr objects from the \pkg{MASS} package.
+}
+
+\item{\code{probitmfx}}{
+An extract method for probitmfx objects from the \pkg{mfx} package.
 }
 
 \item{\code{rem.dyad}}{

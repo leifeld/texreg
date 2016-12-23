@@ -1,6 +1,6 @@
 # The texreg package was written by Philip Leifeld.
-# Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
-# for bug reports, help or feature requests.
+# Please use the issue tracker at http://github.com/leifeld/texreg
+# for bug reports, help, or feature requests.
 
 
 # screenreg function
