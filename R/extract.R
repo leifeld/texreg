@@ -473,12 +473,12 @@ extract.clmm <- function(model, include.thresholds = TRUE,
   s <- summary(model, ...)
   
   tab <- s$coefficients
-  thresh <- tab[rownames(tab) %in% names(s$alpha), ]
+  thresh <- tab[rownames(tab) %in% names(s$alpha), , drop = FALSE]
   threshold.names <- rownames(thresh)
   threshold.coef <- thresh[, 1]
   threshold.se <- thresh[, 2]
   threshold.pval <- thresh[, 4]
-  beta <- tab[rownames(tab) %in% names(s$beta), ]
+  beta <- tab[rownames(tab) %in% names(s$beta), , drop = FALSE]
   beta.names <- rownames(beta)
   beta.coef <- beta[, 1]
   beta.se <- beta[, 2]
