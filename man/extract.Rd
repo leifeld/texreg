@@ -173,8 +173,12 @@
 \alias{extract,texreg-method}
 \alias{extract.tobit}
 \alias{extract,tobit-method}
+\alias{extract.vglm}
+\alias{extract,vglm-method}
 \alias{extract.weibreg}
 \alias{extract,weibreg-method}
+\alias{extract.wls}
+\alias{extract,wls-method}
 \alias{extract.zelig}
 \alias{extract,zelig-method}
 \alias{extract.Zelig}
@@ -542,9 +546,14 @@ extract(model, ...)
     include.deviance = TRUE, include.nobs = FALSE, 
     include.censnobs = TRUE, include.wald=TRUE, ...)
 
+\S4method{extract}{vglm}(model, include.loglik = TRUE, 
+    include.df = TRUE, include.nobs = TRUE, ...)
+
 \S4method{extract}{weibreg}(model, include.loglik = TRUE, 
     include.lr = TRUE, include.nobs = TRUE, 
     include.events = TRUE, include.trisk = TRUE, ...)
+
+\S4method{extract}{wls}(model, include.nobs = TRUE, ...)
 
 \S4method{extract}{zelig}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -908,8 +917,16 @@ An extract method for texreg objects from the \pkg{texreg} package. The purpose 
 An extract method for tobit objects from the \pkg{AER} package.
 }
 
+\item{\code{vglm}}{
+An extract method for vglm objects from the \pkg{VGAM} package.
+}
+
 \item{\code{weibreg}}{
 An extract method for weibreg objects from the \pkg{eha} package.
+}
+
+\item{\code{wls}}{
+An extract method for wls objects from the \pkg{metaSEM} package.
 }
 
 \item{\code{zelig}}{
@@ -940,6 +957,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.delta}{ If available: should the delta statistic be included? }
 \item{include.dev.expl}{ If available: should the deviance explained be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }
+\item{include.df}{ If available: should the degrees of freedom be reported? }
 \item{include.dic}{ If available: should the deviance information criterion (DIC) be reported? }
 \item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
 \item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }

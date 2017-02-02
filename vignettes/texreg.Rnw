@@ -525,7 +525,9 @@ Class			& Package			& Description \\
 `\code{systemfit}'		& \pkg{systemfit}		& Linear structural equations \\
 `\code{texreg}'			& \pkg{texreg}			& For easy manipulation of \pkg{texreg} tables \\
 `\code{tobit}'			& \pkg{AER}			& Tobit regression models for censored data \\
+`\code{vglm}'			& \pkg{VGAM}			& Vector generalized linear models \\
 `\code{weibreg}'		& \pkg{eha}			& Weibull regression \\
+`\code{wls}'			& \pkg{metaSEM}			& Weighted least squares models \\
 `\code{zelig}'			& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
 `\code{Zelig}'			& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
 `\code{zeroinfl}'		& \pkg{pscl}			& Zero-inflated regression models \\
@@ -570,9 +572,9 @@ model classes: `\code{ARIMA}', `\code{averaging}', `\code{bam}',
 `\code{model.selection}', `\code{negbinirr}', `\code{negbinmfx}', 
 `\code{netlogit}', `\code{nlme}', `\code{poissonirr}', `\code{poissonmfx}', 
 `\code{probitmfx}', `\code{rem.dyad}', `\code{rq}', `\code{sclm}', 
-`\code{selection}', `\code{stergm}', `\code{systemfit}', and `\code{texreg}' 
-objects. Table~\ref{tab:types} gives an overview of currently implemented model 
-types.
+`\code{selection}', `\code{stergm}', `\code{systemfit}', `\code{texreg}', 
+`\code{vglm}', and `\code{wls}' objects. Table~\ref{tab:types} gives 
+an overview of currently implemented model types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
 Markdown, and \pkg{knitr} whereas the other packages

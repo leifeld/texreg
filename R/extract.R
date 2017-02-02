@@ -4354,6 +4354,53 @@ setMethod("extract", signature = className("tobit", "AER"),
     definition = extract.tobit)
 
 
+# extension for vglm objects (VGAM package)
+# please report errors to Christoph Riedl at Northeastern University; 
+# e-mail: c.riedl@neu.edu
+extract.vglm <- function(model, include.loglik = TRUE, include.df = TRUE, 
+    include.nobs = TRUE, ...) {
+  
+  s <- summary(model)
+	names <- rownames(coef(s))
+	co <- s@coef3[, 1]
+	se <- s@coef3[, 2]
+	pval <- s@coef3[, 4]
+	
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.loglik == TRUE) {
+    gof <- c(gof, logLik.vlm(model))
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.df == TRUE) {
+    gof <- c(gof, df <- s@df[2])
+    gof.names <- c(gof.names, "DF")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, length(residuals(s)))
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  
+	tr <- createTexreg(
+		coef.names = names,
+		coef = co,
+		se = se,
+		pvalues = pval,
+		gof.names = gof.names,
+		gof = gof,
+		gof.decimal = gof.decimal
+	)
+	return(tr)
+}
+
+setMethod("extract", signature = className("vglm", "VGAM"), 
+    definition = extract.vglm)
+
+
 # extension for weibreg objects (eha package)
 extract.weibreg <- function(model, include.loglik = TRUE, include.lr = TRUE, 
     include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, ...) {
@@ -4419,6 +4466,67 @@ setMethod("extract", signature = className("phreg", "eha"),
 extract.aftreg <- extract.weibreg
 setMethod("extract", signature = className("aftreg", "eha"), 
     definition = extract.aftreg)
+
+
+# extension for wls objects (metaSEM package)
+# please report errors to Christoph Riedl at Northeastern University; 
+# e-mail: c.riedl@neu.edu
+extract.wls <- function(model, include.nobs = TRUE, ...) {
+  
+	coefnames <- rownames(summary(model)$coef)
+	coefs <- summary(model)$coef[, 1]
+	se <- as.numeric(summary(model)$coef[, 2])
+	pval <- summary(model)$coef[, 6]
+  
+  # Compute average variance extracted
+	# Based on: http://openmx.psyc.virginia.edu/thread/3988
+	# Could also check description of reliability() from {semTools}
+	mat <- model$mx.fit$impliedS1$result
+	if (is.null(mat)) {
+	  ave <- NULL
+	} else {
+  	ave <- mean(mat[nrow(mat), -ncol(mat)])
+	}
+  
+	chi      <- summary(model)$stat["Chi-square of independence model", 1]
+	dfs       <- summary(model)$stat["DF of independence model", 1]
+	# chi.pval <- summary(model)$stat["p value of target model", 1]
+	# if(pval < .0001) pval <- "< .0001"
+	rmsea    <- summary(model)$stat["RMSEA", 1]
+	rmseall  <- summary(model)$stat["RMSEA lower 95% CI", 1]
+	rmseaul  <- summary(model)$stat["RMSEA upper 95% CI", 1]
+	cfi      <- summary(model)$stat["CFI", 1]
+	
+	gof <- c(chi, dfs, rmsea, rmseall, rmseaul, cfi)
+	gof.names <- c("Chi-square of independence model", 
+	    "DF of independence model", "RMSEA", "RMSEA lower 95 percent CI", 
+	    "RMSEA upper 95 percent CI", "CFI")
+  gof.decimal <- c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
+  if (!is.null(ave)) {
+    gof <- c(gof, ave)
+    gof.names <- c(gof.names, "Average variance extracted")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, summary(model)$stat["Sample size", 1])
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+	
+	tr <- createTexreg(
+		coef.names = coefnames,
+		coef = coefs,
+		se = se,
+		pvalues = pval,
+		gof.names = gof.names,
+		gof = gof,
+		gof.decimal = gof.decimal
+	)
+	return(tr)
+}
+
+setMethod("extract", signature = className("wls", "metaSEM"), 
+    definition = extract.wls)
 
 
 # extension for zelig objects (Zelig package < 5.0)
