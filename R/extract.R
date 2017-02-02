@@ -4023,26 +4023,30 @@ extract.survreg <- function(model, include.aic = TRUE, include.bic = TRUE,
   }
   if (include.bic == TRUE) {
     bic <- BIC(model)
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
+    if (!is.null(bic) && !is.na(bic)) {
+      gof <- c(gof, bic)
+      gof.names <- c(gof.names, "BIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
   }
   if (include.loglik == TRUE) {
     lik <- logLik(model)[1]
     gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.deviance == TRUE) {
     dev <- deviance(model)
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
-    gof.decimal <- c(gof.decimal, TRUE)
+    if (!is.null(dev)) {
+      gof <- c(gof, dev)
+      gof.names <- c(gof.names, "Deviance")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
   }
   if (include.nobs == TRUE) {
-    n <- nobs(model)
+    n <- nrow(model$y)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num.\\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   
