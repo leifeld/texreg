@@ -4010,7 +4010,7 @@ extract.survreg <- function(model, include.aic = TRUE, include.bic = TRUE,
   names <- rownames(s$table)
   co <- s$table[, 1]
   se <- s$table[, 2]
-  pval <- s$table[, 4]
+  pval <- s$table[, ncol(s$table)]
   
   gof <- numeric()
   gof.names <- character()
