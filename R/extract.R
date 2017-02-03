@@ -4044,7 +4044,7 @@ extract.survreg <- function(model, include.aic = TRUE, include.bic = TRUE,
     }
   }
   if (include.nobs == TRUE) {
-    n <- nrow(model$y)
+    n <- length(model$linear.predictors)
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
