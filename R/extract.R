@@ -4715,20 +4715,32 @@ setMethod("extract", signature = className("zelig", "Zelig"),
 extract.Zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
     include.censnobs = TRUE, include.wald = TRUE, ...) {
-  if ("Zelig-relogit" %in% class(model)) {
+  supported = c("Zelig-relogit", "Zelig-tobit", "Zelig-poisson",
+                "Zelig-negbin", "Zelig-logit", "Zelig-ls")
+  if ("Zelig-relogit" %in% class(model)) { # remove when users all upgrade to Zelig 5.0-16
     g <- model$zelig.out$z.out[[1]]
     class(g) <- "glm"
     e <- extract(g, include.aic = include.aic, include.bic = include.bic, 
         include.loglik = include.loglik, include.deviance = include.deviance, 
         include.nobs = include.nobs, ...)
-  } else if ("Zelig-tobit" %in% class(model)) {
+  } else if ("Zelig-tobit" %in% class(model)) { # remove when users all upgrade to Zelig 5.0-16
     e <- extract(model$zelig.out$z.out[[1]], include.aic = include.aic, 
         include.bic = include.bic, include.loglik = include.loglik, 
         include.deviance = include.deviance, include.nobs = include.nobs, 
         include.censnobs = include.censnobs, include.wald = include.wald, ...)
+  }	else if (class(model) %in% supported) {
+		if(!exists('from_zelig_model', where='package:Zelig', mode='function')){
+			stop("To extract information from a model of this class, you must install Zelig >=5.0-16")
+		}
+		mod_original <- Zelig::from_zelig_model(model)
+		e <- extract(mod_original, include.aic = include.aic, 
+		include.bic = include.bic, include.loglik = include.loglik, 
+		include.deviance = include.deviance, include.nobs = include.nobs, 
+		include.censnobs = include.censnobs, include.wald = include.wald, 
+		...)
   } else {
     stop(paste("Only the following Zelig models are currently supported:", 
-        "Zelig-relogit, Zelig-tobit."))
+        "Zelig-relogit, Zelig-tobit, Zelig-poisson, Zelig-negbin, Zelig-logit, Zelig-ls."))
   }
   return(e)
 }
