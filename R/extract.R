@@ -4712,29 +4712,21 @@ setMethod("extract", signature = className("zelig", "Zelig"),
 
 
 # extension for Zelig objects (Zelig package >= 5.0)
-extract.Zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
-    include.censnobs = TRUE, include.wald = TRUE, ...) {
-  supported = c("Zelig-relogit", "Zelig-tobit", "Zelig-poisson",
-                "Zelig-negbin", "Zelig-logit", "Zelig-ls", "Zelig-probit")
+extract.Zelig <- function(model, ...) {
   if ("Zelig-relogit" %in% class(model)) { # remove when users all upgrade to Zelig 5.0-16
     mod_original <- model$zelig.out$z.out[[1]]
     class(mod_original) <- "glm"
   } else if ("Zelig-tobit" %in% class(model)) { # remove when users all upgrade to Zelig 5.0-16
     mod_original <- model$zelig.out$z.out[[1]]
-  }	else if (class(model) %in% supported) {
-	if(!exists('from_zelig_model', where='package:Zelig', mode='function')){
-		stop("To extract information from a model of this class, you must install Zelig >=5.0-16")
+  }	else {
+	if(!exists('from_zelig_model', where = 'package:Zelig', mode = 'function')){
+		stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
 	}
-	mod_original <- Zelig::from_zelig_model(model)
-  } else {
-    stop(paste("Only the following Zelig models are currently supported:", 
-        "Zelig-relogit, Zelig-tobit, Zelig-poisson, Zelig-negbin, Zelig-logit, Zelig-ls."))
-  }
-  e <- extract(mod_original, include.aic = include.aic, 
-      include.bic = include.bic, include.loglik = include.loglik, 
-      include.deviance = include.deviance, include.nobs = include.nobs, 
-      include.censnobs = include.censnobs, include.wald = include.wald, ...)
+	mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
+    if(class(mod_original) == 'try-error'){
+		stop(paste0("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", class(model)[1], "."))
+    }
+  e <- extract(mod_original, ...)
   return(e)
 }
 
