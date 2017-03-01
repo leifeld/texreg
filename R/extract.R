@@ -4726,6 +4726,7 @@ extract.Zelig <- function(model, ...) {
     if(class(mod_original) == 'try-error'){
 		stop(paste0("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", class(model)[1], "."))
     }
+  }
   e <- extract(mod_original, ...)
   return(e)
 }
