@@ -4723,7 +4723,7 @@ extract.Zelig <- function(model, ...) {
       stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
     }
     mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
-    if (class(mod_original) == 'try-error') {
+    if (class(mod_original)[1] == 'try-error') {
       stop("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", class(model)[1], ".")
     }   
   }
