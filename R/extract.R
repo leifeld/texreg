@@ -4719,13 +4719,13 @@ extract.Zelig <- function(model, ...) {
   } else if ("Zelig-tobit" %in% class(model)) { # remove when users all upgrade to Zelig 5.0-16
     mod_original <- model$zelig.out$z.out[[1]]
   }	else {
-	if(!exists('from_zelig_model', where = 'package:Zelig', mode = 'function')){
-		stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
-	}
-	mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
-    if(class(mod_original) == 'try-error'){
-		stop(paste0("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", class(model)[1], "."))
+    if (!exists('from_zelig_model', where = 'package:Zelig', mode = 'function')) {
+      stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
     }
+    mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
+    if (class(mod_original) == 'try-error') {
+      stop("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", class(model)[1], ".")
+    }   
   }
   e <- extract(mod_original, ...)
   return(e)
