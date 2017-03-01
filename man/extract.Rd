@@ -561,10 +561,7 @@ extract(model, ...)
     include.rsquared = TRUE, include.adjrs = TRUE, 
     include.fstatistic = TRUE, ...)
 
-\S4method{extract}{Zelig}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.censnobs = TRUE, include.wald = TRUE, ...)
+\S4method{extract}{Zelig}(model, ...)
 
 \S4method{extract}{zeroinfl}(model, beside = FALSE, 
     include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
@@ -935,6 +932,8 @@ An extract method for zelig objects from the \pkg{Zelig} package.
 
 \item{\code{Zelig}}{
 An extract method for Zelig objects from the \pkg{Zelig} package.
+
+When fitting models, \pkg{Zelig} often wraps additional information around a model object produced by a different \code{R} library. It is often possible to recover that model object using the \code{from_zelig_model} function from \pkg{Zelig} (>= 5.0-16). If that underlying model is supported by \code{texreg}, tables will be produced as usual, automatically. To identify the relevant model-specific arguments (e.g., \code{include.adjrs = TRUE}), identify the class of the underlying model (\code{class(Zelig::from_zelig_model(model))}), and check the appropriate \code{extract.*} function in \code{texreg}.
 }
 
 \item{\code{zeroinfl}}{
