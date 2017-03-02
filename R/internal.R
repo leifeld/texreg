@@ -553,8 +553,7 @@ custommap <- function(m, custom.coef.map) {
 
   # if only one variable name is supplied, R converts matrix to vector
   if (class(out) == 'numeric') { # convert back to matrix
-    out = t(matrix(out))
-    colnames(out) <- colnames(m)
+    out <- matrix(out, nrow = 1, dimnames = list(NULL, colnames(m)))
   } 
 
   # rename
