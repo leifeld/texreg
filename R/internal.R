@@ -549,12 +549,7 @@ custommap <- function(m, custom.coef.map) {
   # subset of coefficients to keep
   origin <- names(custom.coef.map)[names(custom.coef.map) %in% row.names(m)]
   destination <- unlist(custom.coef.map[origin])
-  out <- m[origin, ]
-
-  # if only one variable name is supplied, R converts matrix to vector
-  if (class(out) == 'numeric') { # convert back to matrix
-    out <- matrix(out, nrow = 1, dimnames = list(NULL, colnames(m)))
-  } 
+  out <- m[origin, , drop = FALSE] # otherwise R converts to numeric if a single coefficient is passed
 
   # rename
   row.names(out) <- destination

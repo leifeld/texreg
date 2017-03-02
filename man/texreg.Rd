@@ -92,7 +92,7 @@ Sometimes it happens that the same variable has a different name in different mo
 Where the argument contains an \code{NA} value, the original name of the coefficient is kept. For example, \code{custom.coef.names = c(NA, "age", NA)} will only replace the second coef name and leave the first and third name as they are in the original model.}
 \item{custom.coef.map}{The \code{custom.coef.map} argument can be used to select, omit, rename, and reorder coefficients.
     
-Users must supply a named list of this form: \code{list('x'='First variable', 'y'=NA, 'z'='Third variable')}. With that particular example of \code{custom.coef.map}, 
+Users must supply a named list of this form: \code{list('x' = 'First variable', 'y' = NA, 'z' = 'Third variable')}. With that particular example of \code{custom.coef.map}, 
 
 1. coefficients will presented in order: x, y, z.
 
