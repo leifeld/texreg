@@ -12,7 +12,8 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    column.spacing = 2, outer.rule = "=", inner.rule = "-", ...) {
+    custom.coef.map = NULL, column.spacing = 2, outer.rule = "=", 
+    inner.rule = "-", ...) {
   
   stars <- check.stars(stars)
   
@@ -32,10 +33,14 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
   decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
       digits, returnobject = "decimal.matrix")
   
-  m <- customnames(m, custom.coef.names)  #rename coefficients
+  if (!is.null(custom.coef.map)) {
+    m <- custommap(m, custom.coef.map)
+  } else {
+    m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
+    m <- customnames(m, custom.coef.names)  #rename coefficients
+  }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
-  m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
   
   modnames <- modelnames(l, models, custom.model.names)  # model names
   
@@ -228,8 +233,9 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, bold = 0.00, 
-    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
+    custom.coef.map = NULL, groups = NULL, custom.columns = NULL, 
+    custom.col.pos = NULL, bold = 0.00, center = TRUE, 
+    caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, lyx = FALSE,
     sideways = FALSE, longtable = FALSE, use.packages = TRUE, table = TRUE, 
     no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", ...) {
@@ -287,11 +293,15 @@ texreg <- function(l, file = NULL, single.row = FALSE,
       returnobject = "m")
   decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
       digits, returnobject = "decimal.matrix")
-  
-  m <- customnames(m, custom.coef.names)  #rename coefficients
+
+  if (!is.null(custom.coef.map)) {
+    m <- custommap(m, custom.coef.map)
+  } else {
+    m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
+    m <- customnames(m, custom.coef.names)  #rename coefficients
+  }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
-  m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
   m <- replaceSymbols(m)
    
   modnames <- modelnames(l, models, custom.model.names)  # model names
@@ -700,8 +710,9 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
     override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, bold = 0.00, 
-    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
+    groups = NULL, custom.coef.map = NULL, custom.columns = NULL, 
+    custom.col.pos = NULL, bold = 0.00, center = TRUE, 
+    caption = "Statistical models", caption.above = FALSE, 
     star.symbol = "*", inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
     head.tag = FALSE, body.tag = FALSE, indentation = "", 
     vertical.align.px = 0, ...) {
@@ -746,11 +757,15 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
       returnobject = "m")
   decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
       digits, returnobject = "decimal.matrix")
-  
-  m <- customnames(m, custom.coef.names)  # rename coefficients
+
+  if (!is.null(custom.coef.map)) {
+    m <- custommap(m, custom.coef.map)
+  } else {
+    m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
+    m <- customnames(m, custom.coef.names)  #rename coefficients
+  }
   m <- rearrangeMatrix(m)  # resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
-  m <- omitcoef(m, omit.coef)  # remove coefficient rows matching regex
   
   modnames <- modelnames(l, models, custom.model.names)  # model names
   

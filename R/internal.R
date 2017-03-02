@@ -527,6 +527,14 @@ omitcoef <- function(m, omit.coef) {
   return(m)
 }
 
+# function to select, omit, reorder, and rename coefficients
+custommap <- function(m, custom.coef.map) {
+    variables <- names(custom.coef.map)
+    variables <- variables[variables %in% row.names(m)]
+    out <- m[variables, ]
+    row.names(out) <- custom.coef.map[variables]
+    return(out)
+}
 
 # decide if default or custom model names should be used and return them
 modelnames <- function(model.list, tr.objects, model.names) {
