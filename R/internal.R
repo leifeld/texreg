@@ -527,13 +527,41 @@ omitcoef <- function(m, omit.coef) {
   return(m)
 }
 
+
 # function to select, omit, reorder, and rename coefficients
 custommap <- function(m, custom.coef.map) {
-    variables <- names(custom.coef.map)
-    variables <- variables[variables %in% row.names(m)]
-    out <- m[variables, ]
-    row.names(out) <- custom.coef.map[variables]
-    return(out)
+
+  # sanity checks
+  if (class(custom.coef.map) != 'list') {
+    stop('custom.coef.map must be a named list.') 
+  }
+  if (is.null(names(custom.coef.map))) {
+    stop('custom.coef.map must be a named list.') 
+  }
+  if (!any(names(custom.coef.map) %in% row.names(m))) {
+    stop('None of the coefficient names supplied in custom.coef.map appear to be in your models.')
+  }
+
+  # when user supplies NA as destination, replace with origin
+  idx <- is.na(custom.coef.map)
+  custom.coef.map[idx] <- names(custom.coef.map)[idx]
+
+  # subset of coefficients to keep
+  origin <- names(custom.coef.map)[names(custom.coef.map) %in% row.names(m)]
+  destination <- unlist(custom.coef.map[origin])
+  out <- m[origin, ]
+
+  # if only one variable name is supplied, R converts matrix to vector
+  if (class(out) == 'numeric') { # convert back to matrix
+    out = t(matrix(out))
+    colnames(out) <- colnames(m)
+  } 
+
+  # rename
+  row.names(out) <- destination
+
+  # output
+  return(out)
 }
 
 # decide if default or custom model names should be used and return them

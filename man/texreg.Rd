@@ -7,10 +7,10 @@
 \usage{
 texreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, 
-    symbol = "\\\\cdot", override.coef = 0, override.se = 0, 
-    override.pvalues = 0, override.ci.low = 0, 
+    custom.coef.names = NULL, custom.coef.map = NULL, 
+    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
+    leading.zero = TRUE, symbol = "\\\\cdot", override.coef = 0, 
+    override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
     ci.test = 0, groups = NULL, custom.columns = NULL, 
@@ -24,10 +24,10 @@ texreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
 
 htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, 
-    symbol = "&middot;", override.coef = 0, override.se = 0, 
-    override.pvalues = 0, override.ci.low = 0, 
+    custom.coef.names = NULL, custom.coef.map = NULL, 
+    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
+    leading.zero = TRUE, symbol = "&middot;", override.coef = 0, 
+    override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
     ci.test = 0, groups = NULL, custom.columns = NULL, 
@@ -39,10 +39,10 @@ htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
 
 screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, 
-    symbol = ".", override.coef = 0, override.se = 0, 
-    override.pvalues = 0, override.ci.low = 0, 
+    custom.coef.names = NULL, custom.coef.map = NULL,
+    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
+    leading.zero = TRUE, symbol = ".", override.coef = 0, 
+    override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
     ci.test = 0, groups = NULL, custom.columns = NULL, 
@@ -90,6 +90,15 @@ identical.
 Sometimes it happens that the same variable has a different name in different models. In this case, the user can use this function to assign identical names. If possible, the rows will then be merged into a single row unless both rows contain values in the same column.
 
 Where the argument contains an \code{NA} value, the original name of the coefficient is kept. For example, \code{custom.coef.names = c(NA, "age", NA)} will only replace the second coef name and leave the first and third name as they are in the original model.}
+\item{custom.coef.map}{The \code{custom.coef.map} argument can be used to select, omit, rename, and reorder coefficients.
+    
+Users must supply a named list of this form: \code{list('x'='First variable', 'y'=NA, 'z'='Third variable')}. With that particular example of \code{custom.coef.map}, 
+
+1. coefficients will presented in order: x, y, z.
+
+2. variable x will appear as "First variable", variable y will appear as "y", and variable "z" will appear as "Third variable".
+
+3. all variables not named "x", "y", or "z" will be omitted from the table.}
 \item{custom.gof.names}{A character vector which is used to replace the names of the goodness-of-fit statistics at the bottom of the table. The vector must have the same length as the number of GOF statistics in the final table. The argument works like the \code{custom.coef.names} argument, but for the GOF values. \code{NA} values can be included where the original GOF name should be kept.}
 \item{custom.note}{With this argument, a replacement text for the significance note below the table can be provided. If an empty character object is provided (\code{custom.note = ""}), the note will be omitted completely. If some character string is provided (e.g., \code{custom.note = "My note"}), the significance legend is replaced by \code{My note}. The original significance legend can be included by inserting the \code{\%stars} wildcard. For example, a custom note can be added right after the significance legend by providing \code{custom.note = "\%stars. My note"}.}
 \item{digits}{Set the number of decimal places for coefficients, standard errors and goodness-of-fit statistics. Do not use negative values! The argument works like the \code{digits} argument in the \code{round} function of the \pkg{base} package.}
