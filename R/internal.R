@@ -1311,3 +1311,9 @@ customcolumnnames <- function(modelnames, custom.columns, custom.col.pos,
 print.texregTable <- function(x, ...) {
   cat(x, ...)
 }
+
+# print method for htmlreg
+knit_print.htmlreg <-  function(x, ...) {
+  knitr::asis_output(x)
+}
+
