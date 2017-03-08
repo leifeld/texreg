@@ -1307,7 +1307,29 @@ customcolumnnames <- function(modelnames, custom.columns, custom.col.pos,
   }
 }
 
-# print method for texreg table strings
+# # print method for texreg table strings
 print.texregTable <- function(x, ...) {
-  cat(x, ...)
+  
+  # check whether we have an html table
+  if( "htmlreg" %in% class(x)) {
+    htmlFile <- tempfile(fileext = ".html")
+    write(x, file = htmlFile)
+    # check for RStudio
+    viewer <- getOption("viewer")
+    if (!is.null(viewer)) {
+      # use viewer if available
+      viewer(htmlFile)
+    } else {
+      # else open in browser
+      utils::browseURL(htmlFile)
+    }
+  }
+  else {cat(x, ...)}
 }
+
+
+# print method for htmlreg in knitr documents
+knit_print.htmlreg <-  function(x, ...) {
+  asis_output(x)
+}
+

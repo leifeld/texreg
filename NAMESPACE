@@ -6,6 +6,7 @@ importFrom("graphics", "axis", "mtext", "par", "plot", "points", "segments",
 importFrom("stats", "AIC", "BIC", "coef", "confint", "deviance", "extractAIC", 
     "logLik", "model.frame", "nobs", "pchisq", "pnorm", "pt", "qnorm", 
     "residuals", "summary.lm", "vcov")
+importFrom("knitr", "knit_print", "asis_output")
 import("methods")
 export("texreg")
 export("htmlreg")
@@ -16,6 +17,7 @@ export("coeftostring")
 export("createTexreg")
 exportMethods("extract")
 S3method("print", "texregTable")
+S3method("knit_print", "htmlreg")
 export("extract.aftreg")
 export("extract.Arima")
 export("extract.averaging")

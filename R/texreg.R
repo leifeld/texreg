@@ -1043,7 +1043,7 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   if (is.null(file) || is.na(file)) {
-    class(string) <- c("character", "texregTable")
+    class(string) <- c("character", "texregTable", "htmlreg")
     return(string)
   } else if (!is.character(file)) {
     stop("The 'file' argument must be a character string.")
