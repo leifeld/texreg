@@ -4757,7 +4757,7 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
                 class(model)[1], ".")
         }
     }
-    out <- extract(mod_original, ...)
+    out <- extract(mod_original, include.nobs = include.nobs, ...)
   }
   return(out)
 }
