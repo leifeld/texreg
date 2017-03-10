@@ -502,7 +502,7 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
       stop("custom.coef.names must be a vector of strings.")
     }
     if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
-      if (is.null(omit.coef)) {
+      if (nrow(m) == sum(idx)) {
         stop("custom.coef.names must be a string vector of length ", nrow(m), '.')
       } else {
         stop("custom.coef.names must be a string vector of length ", sum(idx), ' or ', nrow(m), '.')
