@@ -4714,10 +4714,10 @@ setMethod("extract", signature = className("zelig", "Zelig"),
 # extension for Zelig objects (Zelig package >= 5.0)
 extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) {
   if (model$mi) { 
-	if (!exists("combine_coef_se", where = "package:Zelig", 
-		mode = "function")) {
-		stop("texreg relies on Zelig's combine_coef_se function to extract model information. Install Zelig >= 5.0-17 to see if texreg can format your model.")
-	}
+    if (!exists("combine_coef_se", where = "package:Zelig", 
+        mode = "function")) {
+      stop("texreg relies on Zelig's combine_coef_se function to extract model information. Install Zelig >= 5.0-17 to see if texreg can format your model.")
+    }
     combined <- Zelig::combine_coef_se(model, messages=FALSE)
     gof <- c(nrow(model$data), model$originaldata$m)
     gof <- gof.names <- gof.decimal <- NULL
@@ -4740,22 +4740,22 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
                         gof.decimal = gof.decimal)
   } else {
     if ("Zelig-relogit" %in% class(model)) { # remove when users update to Zelig 5.0-16
-        mod_original <- model$zelig.out$z.out[[1]]
-        class(mod_original) <- "glm"
+      mod_original <- model$zelig.out$z.out[[1]]
+      class(mod_original) <- "glm"
     }
     else if ("Zelig-tobit" %in% class(model)) { # remove when users update to Zelig 5.0-16
-        mod_original <- model$zelig.out$z.out[[1]]
+      mod_original <- model$zelig.out$z.out[[1]]
     }
     else {
-        if (!exists("from_zelig_model", where = "package:Zelig", 
-            mode = "function")) {
-            stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
-        }
-        mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
-        if (class(mod_original)[1] == "try-error") {
-            stop("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", 
-                class(model)[1], ".")
-        }
+      if (!exists("from_zelig_model", where = "package:Zelig", 
+          mode = "function")) {
+        stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
+      }
+      mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
+      if (class(mod_original)[1] == "try-error") {
+        stop("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", 
+               class(model)[1], ".")
+      }
     }
     out <- extract(mod_original, include.nobs = include.nobs, ...)
   }
