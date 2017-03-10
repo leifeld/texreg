@@ -482,6 +482,7 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
 }
 
 
+# function to apply the omit.coef and custom.coef.names operations
 omit_rename <- function(m, omit.coef, custom.coef.names) {
   # omit
   if (!is.null(omit.coef)) {
