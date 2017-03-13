@@ -515,7 +515,7 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
       custom.coef.names <- custom.coef.names[idx]
     } 
   } else {
-    custom.coef.names = row.names(m)[idx]
+    custom.coef.names <- row.names(m)[idx]
   }
 
   # output
