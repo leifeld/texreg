@@ -561,7 +561,8 @@ extract(model, ...)
     include.rsquared = TRUE, include.adjrs = TRUE, 
     include.fstatistic = TRUE, ...)
 
-\S4method{extract}{Zelig}(model, ...)
+\S4method{extract}{Zelig}(model, include.nobs = TRUE, 
+                          include.nimp = TRUE, ...)
 
 \S4method{extract}{zeroinfl}(model, beside = FALSE, 
     include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
@@ -934,6 +935,8 @@ An extract method for zelig objects from the \pkg{Zelig} package.
 An extract method for Zelig objects from the \pkg{Zelig} package.
 
 When fitting models, \pkg{Zelig} often wraps additional information around a model object produced by a different \code{R} library. It is often possible to recover that model object using the \code{from_zelig_model} function from \pkg{Zelig} (>= 5.0-16). If that underlying model is supported by \code{texreg}, tables will be produced as usual, automatically. To identify the relevant model-specific arguments (e.g., \code{include.adjrs = TRUE}), identify the class of the underlying model (\code{class(Zelig::from_zelig_model(model))}), and check the appropriate \code{extract.*} function in \code{texreg}.
+
+When working with models estimated by \pkg{Zelig} using data processed by multiple imputation, \pkg{texreg} will automatically combine coefficients and standard errors using Rubin's rules, as encoded in \pkg{Zelig}'s (>= 5.0-16) \code{combine_coef_se} function.
 }
 
 \item{\code{zeroinfl}}{
@@ -978,6 +981,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.missings}{ If available: should the number of missing observations be reported (in survival models)? }
 \item{include.mse}{If available: should the mean square error be reported? }
 \item{include.nagelkerke}{ If available: should Nagelkerke's R-squared be reported? }
+\item{include.nimp}{ If available: should the number of multiple imputations be reported (in Zelig models with imputed data)?}
 \item{include.nobs}{ If available: should the number of observations be reported? }
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }

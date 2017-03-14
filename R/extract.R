@@ -4712,23 +4712,53 @@ setMethod("extract", signature = className("zelig", "Zelig"),
 
 
 # extension for Zelig objects (Zelig package >= 5.0)
-extract.Zelig <- function(model, ...) {
-  if ("Zelig-relogit" %in% class(model)) { # remove when users all upgrade to Zelig 5.0-16
-    mod_original <- model$zelig.out$z.out[[1]]
-    class(mod_original) <- "glm"
-  } else if ("Zelig-tobit" %in% class(model)) { # remove when users all upgrade to Zelig 5.0-16
-    mod_original <- model$zelig.out$z.out[[1]]
-  }	else {
-    if (!exists('from_zelig_model', where = 'package:Zelig', mode = 'function')) {
-      stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
+extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) {
+  if (model$mi) { 
+    if (!exists("combine_coef_se", where = "package:Zelig", 
+        mode = "function")) {
+      stop("texreg relies on Zelig's combine_coef_se function to extract model information. Install Zelig >= 5.0-17 to see if texreg can format your model.")
     }
-    mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
-    if (class(mod_original)[1] == 'try-error') {
-      stop("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", class(model)[1], ".")
-    }   
+    combined <- Zelig::combine_coef_se(model, messages = FALSE)
+    gof <- c(nrow(model$data), model$originaldata$m)
+    gof <- gof.names <- gof.decimal <- NULL
+    if (include.nobs) {
+      gof <- c(gof, nrow(model$data))
+      gof.names <- c(gof.names, 'Num. obs.')
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.nimp) {
+      gof <- c(gof, model$originaldata$m)
+      gof.names <- c(gof.names, 'Num. imp.')
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    out <- createTexreg(coef.names = row.names(combined),
+                        coef = combined[, 'Estimate'],
+                        se = combined[, 'Std.Error'],
+                        pvalues = combined[, 'Pr(>|z|)'],
+                        gof.names = gof.names,
+                        gof = gof,
+                        gof.decimal = gof.decimal)
+  } else {
+    if ("Zelig-relogit" %in% class(model)) { # remove when users update to Zelig 5.0-16
+      mod_original <- model$zelig.out$z.out[[1]]
+      class(mod_original) <- "glm"
+    }
+    else if ("Zelig-tobit" %in% class(model)) { # remove when users update to Zelig 5.0-16
+      mod_original <- model$zelig.out$z.out[[1]]
+    } else {
+      if (!exists("from_zelig_model", where = "package:Zelig", 
+          mode = "function")) {
+        stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
+      }
+      mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
+      if (class(mod_original)[1] == "try-error") {
+        stop("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ", 
+               class(model)[1], ".")
+      }
+    }
+    out <- extract(mod_original, include.nobs = include.nobs, ...)
   }
-  e <- extract(mod_original, ...)
-  return(e)
+  return(out)
 }
 
 setMethod("extract", signature = className("Zelig", "Zelig"), 
