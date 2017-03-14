@@ -4718,7 +4718,7 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
         mode = "function")) {
       stop("texreg relies on Zelig's combine_coef_se function to extract model information. Install Zelig >= 5.0-17 to see if texreg can format your model.")
     }
-    combined <- Zelig::combine_coef_se(model, messages=FALSE)
+    combined <- Zelig::combine_coef_se(model, messages = FALSE)
     gof <- c(nrow(model$data), model$originaldata$m)
     gof <- gof.names <- gof.decimal <- NULL
     if (include.nobs) {
@@ -4728,7 +4728,7 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
     }
     if (include.nimp) {
       gof <- c(gof, model$originaldata$m)
-      gof.names <- c(gof.names, 'Num. imp')
+      gof.names <- c(gof.names, 'Num. imp.')
       gof.decimal <- c(gof.decimal, FALSE)
     }
     out <- createTexreg(coef.names = names(combined[[1]]),
@@ -4745,8 +4745,7 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
     }
     else if ("Zelig-tobit" %in% class(model)) { # remove when users update to Zelig 5.0-16
       mod_original <- model$zelig.out$z.out[[1]]
-    }
-    else {
+    } else {
       if (!exists("from_zelig_model", where = "package:Zelig", 
           mode = "function")) {
         stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")

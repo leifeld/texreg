@@ -936,7 +936,7 @@ An extract method for Zelig objects from the \pkg{Zelig} package.
 
 When fitting models, \pkg{Zelig} often wraps additional information around a model object produced by a different \code{R} library. It is often possible to recover that model object using the \code{from_zelig_model} function from \pkg{Zelig} (>= 5.0-16). If that underlying model is supported by \code{texreg}, tables will be produced as usual, automatically. To identify the relevant model-specific arguments (e.g., \code{include.adjrs = TRUE}), identify the class of the underlying model (\code{class(Zelig::from_zelig_model(model))}), and check the appropriate \code{extract.*} function in \code{texreg}.
 
-When working with models estimated by \pkg{Zelig} using data processed by multiple imputation, \pkg{texreg} will automatically combine coefficients and standard errors using Rubin's rules, as encoded in the \pkg{Zelig}'s (>= 5.0-16) \code{combine_coef_se} function.
+When working with models estimated by \pkg{Zelig} using data processed by multiple imputation, \pkg{texreg} will automatically combine coefficients and standard errors using Rubin's rules, as encoded in \pkg{Zelig}'s (>= 5.0-16) \code{combine_coef_se} function.
 }
 
 \item{\code{zeroinfl}}{
