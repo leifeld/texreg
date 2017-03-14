@@ -4731,10 +4731,10 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
       gof.names <- c(gof.names, 'Num. imp.')
       gof.decimal <- c(gof.decimal, FALSE)
     }
-    out <- createTexreg(coef.names = names(combined[[1]]),
-                        coef = combined$coef,
-                        se = combined$se,
-                        pvalues = combined$p,
+    out <- createTexreg(coef.names = row.names(combined),
+                        coef = combined[, 'Estimate'],
+                        se = combined[, 'Std.Error'],
+                        pvalues = combined[, 'Pr(>|z|)'],
                         gof.names = gof.names,
                         gof = gof,
                         gof.decimal = gof.decimal)
