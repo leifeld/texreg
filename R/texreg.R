@@ -36,8 +36,7 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
   if (!is.null(custom.coef.map)) {
     m <- custommap(m, custom.coef.map)
   } else {
-    m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
-    m <- customnames(m, custom.coef.names)  #rename coefficients
+    m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
   }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
@@ -297,8 +296,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   if (!is.null(custom.coef.map)) {
     m <- custommap(m, custom.coef.map)
   } else {
-    m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
-    m <- customnames(m, custom.coef.names)  #rename coefficients
+    m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
   }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
@@ -761,8 +759,7 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
   if (!is.null(custom.coef.map)) {
     m <- custommap(m, custom.coef.map)
   } else {
-    m <- omitcoef(m, omit.coef)  #remove coefficient rows matching regex
-    m <- customnames(m, custom.coef.names)  #rename coefficients
+    m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
   }
   m <- rearrangeMatrix(m)  # resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
