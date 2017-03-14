@@ -2,7 +2,7 @@
 \alias{extract}
 \alias{extract-methods}
 \alias{extract.default}
-\alias{extract.default-method}
+\alias{extract,default-method}
 \alias{extract.aftreg}
 \alias{extract,aftreg-method}
 \alias{extract.Arima}
