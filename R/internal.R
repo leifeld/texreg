@@ -1336,6 +1336,6 @@ broom_gof <- function(x) {
   gof_dict <- gof_dict[names(gof_dict) %in% out$gof.names]
   idx <- match(names(gof_dict), out$gof.names)
   out$gof.names[idx] <- gof_dict[idx]
-  out <- na.omit(out)
+  out <- stats::na.omit(out)
   return(out)
 }

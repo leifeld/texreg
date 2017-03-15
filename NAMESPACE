@@ -5,7 +5,7 @@ importFrom("graphics", "axis", "mtext", "par", "plot", "points", "segments",
     "strwidth")
 importFrom("stats", "AIC", "BIC", "coef", "confint", "deviance", "extractAIC", 
     "logLik", "model.frame", "nobs", "pchisq", "pnorm", "pt", "qnorm", 
-    "residuals", "summary.lm", "vcov")
+    "residuals", "summary.lm", "vcov", "na.omit")
 import("methods")
 export("texreg")
 export("htmlreg")
