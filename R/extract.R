@@ -12,22 +12,20 @@ extract.default <- function(model, ...) {
   if (!'broom' %in% row.names(installed.packages())) {
     stop("texreg does not directly support models of class ",
          class(model), 
-         ", but it can sometimes use the ``broom`` library to extract model information. Call texreg again after installing the broom library to see if this is possible.")
+         ", but it can sometimes use the ``broom`` package to extract model information. Call texreg again after installing the ``broom`` package to see if this is possible.")
   }
-  estimates <- try(broom::tidy(model), silent = TRUE)
-  gof <- try(broom::glance(model), silent = TRUE)
-  if ((class(estimates) == 'try-error') || 
-      (class(gof) == 'try-error') ||
-      !all(c('term', 'estimate', 'std.error', 'p.value') %in% colnames(estimates))) { # tidy sometimes produces "non-standard" results
+  coefficients <- try(broom_coefficients(model), silent = TRUE)
+  gof <- try(broom_gof(model), silent = TRUE)
+  if ((class(coefficients) == 'try-error') || (class(gof) == 'try-error')) {
     stop('Neither texreg nor broom supports models of class ', class(model), '.')
   }
-  tr <- createTexreg(coef.names = estimates$term, 
-                     coef = estimates$estimate, 
-                     se = estimates$std.error, 
-                     pvalues = estimates$p.value, 
-                     gof.names = colnames(gof), 
-                     gof = as.numeric(gof[1, ]), 
-                     gof.decimal = rep(TRUE, ncol(gof)) 
+  tr <- createTexreg(coef.names = coefficients$term, 
+                     coef = coefficients$estimate, 
+                     se = coefficients$std.error, 
+                     pvalues = coefficients$p.value, 
+                     gof.names = gof$gof.names,
+                     gof = gof$gof,
+                     gof.decimal = gof$gof.decimal
   )
   return(tr)
 }
