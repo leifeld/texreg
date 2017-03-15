@@ -1344,7 +1344,11 @@ broom_gof <- function(x) {
   gof_dict <- gof_dict[names(gof_dict) %in% out$gof.names]
   idx <- match(names(gof_dict), out$gof.names)
   out$gof.names[idx] <- gof_dict
-  # output
+  if (any(is.na(out$gof))) {
+    warning('texreg used the broom package to extract the following GOF measures, but could not cast them to numeric type: ',
+            out$gof.names[is.na(out$gof)])
+  }
   out <- stats::na.omit(out)
+  # output
   return(out)
 }
