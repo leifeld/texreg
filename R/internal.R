@@ -1318,24 +1318,31 @@ broom_coefficients <- function(x) {
 
 # extract gof using the broom package
 broom_gof <- function(x) {
-  gof_dict <- c('logLik' = 'Log Likelihood',
-                'sigma' = 'Sigma',
-                'deviance' = 'Deviance',
-                'r.squared' = 'R$^2$',
-                'adj.r.squared' = 'Adj.\ R$^2$',
-                'df' = 'DF',
-                'df.residual' = 'DF Resid.',
-                'p.value' = 'P Value',
-                'statistic' = 'Statistic'
-                )
+  # extract
   out <- broom::glance(x)[1, ]
   out <- data.frame('gof.names' = colnames(out),
                     'gof' = as.numeric(out),
                     'gof.decimal' = TRUE,
                     stringsAsFactors = FALSE)
+  # rename
+  gof_dict <- c(
+                'adj.r.squared' = 'Adj.\ R$^2$',
+                'deviance' = 'Deviance',
+                'df' = 'DF',
+                'df.residual' = 'DF Resid.',
+                'finTol' = 'Tolerance',
+                'isConv' = 'Convergence',
+                'logLik' = 'Log Likelihood',
+                'null.deviance' = 'Deviance (Null)',
+                'p.value' = 'P Value',
+                'r.squared' = 'R$^2$',
+                'sigma' = 'Sigma',
+                'statistic' = 'Statistic'
+                )
   gof_dict <- gof_dict[names(gof_dict) %in% out$gof.names]
   idx <- match(names(gof_dict), out$gof.names)
-  out$gof.names[idx] <- gof_dict[idx]
+  out$gof.names[idx] <- gof_dict
+  # output
   out <- stats::na.omit(out)
   return(out)
 }
