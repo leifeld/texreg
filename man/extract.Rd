@@ -1,8 +1,8 @@
 \name{extract}
 \alias{extract}
 \alias{extract-methods}
-\alias{extract.default}
-\alias{extract,default-method}
+\alias{extract.broom}
+\alias{extract,broom-method}
 \alias{extract.aftreg}
 \alias{extract,aftreg-method}
 \alias{extract.Arima}
@@ -198,7 +198,7 @@ Extract coefficients and GOF measures from a statistical object.
 \usage{
 extract(model, ...)
 
-\S4method{extract}{default}(model, ...)
+\S4method{extract}{broom}(model, ...)
 
 \S4method{extract}{aftreg}(model, include.loglik = TRUE, 
     include.lr = TRUE, include.nobs = TRUE, include.events = TRUE, 
@@ -574,7 +574,7 @@ extract(model, ...)
 \section{Methods}{
 \describe{
 
-\item{\code{default}}{
+\item{\code{broom}}{
 A default extract method. Prompts users to install the \pkg{broom} package if \pkg{texreg} cannot directly extract information from models of the supplied class. 
 }
 

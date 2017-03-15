@@ -8,7 +8,7 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
     package = "texreg")
 
 # default extract method prompts users to install the broom package
-extract.default <- function(model, ...) {
+extract.broom <- function(model, ...) {
   if (!'broom' %in% row.names(installed.packages())) {
     stop("texreg does not directly support models of class ",
          class(model), 
@@ -30,8 +30,8 @@ extract.default <- function(model, ...) {
   return(tr)
 }
 
-setMethod("extract", definition = extract.default)
-
+setMethod("extract", signature = className("ANY"), 
+          definition = extract.broom)
 
 # extension for Arima objects (stats package)
 extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE, 
