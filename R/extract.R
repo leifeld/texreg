@@ -7,6 +7,31 @@
 setGeneric("extract", function(model, ...) standardGeneric("extract"), 
     package = "texreg")
 
+# default extract method prompts users to install the broom package
+extract.broom <- function(model, ...) {
+  if (!'broom' %in% row.names(installed.packages())) {
+    stop("texreg does not directly support models of class ",
+         class(model), 
+         ", but it can sometimes use the ``broom`` package to extract model information. Call texreg again after installing the ``broom`` package to see if this is possible.")
+  }
+  coefficients <- try(broom_coefficients(model), silent = TRUE)
+  gof <- try(broom_gof(model), silent = TRUE)
+  if ((class(coefficients) == 'try-error') || (class(gof) == 'try-error')) {
+    stop('Neither texreg nor broom supports models of class ', class(model), '.')
+  }
+  tr <- createTexreg(coef.names = coefficients$term, 
+                     coef = coefficients$estimate, 
+                     se = coefficients$std.error, 
+                     pvalues = coefficients$p.value, 
+                     gof.names = gof$gof.names,
+                     gof = gof$gof,
+                     gof.decimal = gof$gof.decimal
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("ANY"), 
+          definition = extract.broom)
 
 # extension for Arima objects (stats package)
 extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE, 

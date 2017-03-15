@@ -1308,3 +1308,47 @@ customcolumnnames <- function(modelnames, custom.columns, custom.col.pos,
 print.texregTable <- function(x, ...) {
   cat(x, ...)
 }
+
+# extract coefficients using the broom package
+broom_coefficients <- function(x) {
+  out <- broom::tidy(x)
+  out <- out[, c('term', 'estimate', 'std.error', 'p.value')]
+  return(out)
+}
+
+# extract gof using the broom package
+broom_gof <- function(x) {
+  # extract
+  out <- broom::glance(x)[1, ]
+  gof.decimal <- sapply(out, function(k) class(k)[1]) # type inference
+  gof.decimal <- ifelse(gof.decimal %in% c('integer', 'logical'), FALSE, TRUE)
+  out <- data.frame('gof.names' = colnames(out),
+                    'gof' = as.numeric(out),
+                    'gof.decimal' = gof.decimal,
+                    stringsAsFactors = FALSE)
+  # rename
+  gof_dict <- c(
+                'adj.r.squared' = 'Adj.\ R$^2$',
+                'deviance' = 'Deviance',
+                'df' = 'DF',
+                'df.residual' = 'DF Resid.',
+                'finTol' = 'Tolerance',
+                'isConv' = 'Convergence',
+                'logLik' = 'Log Likelihood',
+                'null.deviance' = 'Deviance (Null)',
+                'p.value' = 'P Value',
+                'r.squared' = 'R$^2$',
+                'sigma' = 'Sigma',
+                'statistic' = 'Statistic'
+                )
+  gof_dict <- gof_dict[names(gof_dict) %in% out$gof.names]
+  idx <- match(names(gof_dict), out$gof.names)
+  out$gof.names[idx] <- gof_dict
+  if (any(is.na(out$gof))) {
+    warning('texreg used the broom package to extract the following GOF measures, but could not cast them to numeric type: ',
+            out$gof.names[is.na(out$gof)])
+  }
+  out <- stats::na.omit(out)
+  # output
+  return(out)
+}
