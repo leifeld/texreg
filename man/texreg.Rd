@@ -2,6 +2,9 @@
 \alias{texreg}
 \alias{htmlreg}
 \alias{screenreg}
+\alias{matrixreg}
+\alias{csvreg}
+\alias{wordreg}
 \title{Convert regression output to LaTeX or HTML tables}
 \description{Conversion of R regression output to LaTeX or HTML tables.}
 \usage{
@@ -48,6 +51,36 @@ screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
     ci.test = 0, groups = NULL, custom.columns = NULL, 
     custom.col.pos = NULL, column.spacing = 2, outer.rule = "=", 
     inner.rule = "-", ...)
+
+matrixreg(l, single.row = FALSE, stars = c(0.001, 0.01, 0.05),
+	custom.model.names = NULL, custom.coef.names = NULL, custom.coef.map = NULL,
+	custom.gof.names = NULL, digits = 2, leading.zero = TRUE, symbol = ".",
+	override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0,
+	override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL,
+	ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, groups = NULL,
+	custom.columns = NULL, custom.col.pos = NULL, output.type = 'ascii',
+	include.attributes = FALSE, ...) 
+
+csvreg(l, file = NULL, 
+    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
+    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
+    custom.note = NULL, digits = 2, leading.zero = TRUE, symbol = ".", 
+    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
+    caption = 'Statistical Models', ...)
+ 
+wordreg(l, file, single.row = FALSE, 
+    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
+    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
+    digits = 2, leading.zero = TRUE, symbol = ".", 
+    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
+    include.attributes = FALSE, ...) 
+
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -78,6 +111,16 @@ Moreover, once a table has been prepared in the R console, it
 can be later exported to LaTeX or HTML with little extra effort 
 because the majority of arguments of the three functions is 
 identical.
+
+The \code{wordreg()} function creates a Microsoft Word document with the
+requested table. 
+
+The \code{matrixreg()} function creates text representations of 
+tables and prints them to the R console. 
+
+The \code{csvreg()} function creates a spreadsheet in CSV containing the
+information in the tables. 
+
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of models can be specified as \code{l = list(model.1, model.2, ...)}. Different object types can also be mixed.}
