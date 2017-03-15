@@ -1,8 +1,7 @@
 \name{extract}
 \alias{extract}
 \alias{extract-methods}
-\alias{extract.broom}
-\alias{extract,broom-method}
+\alias{extract,ANY-method}
 \alias{extract.aftreg}
 \alias{extract,aftreg-method}
 \alias{extract.Arima}
@@ -21,6 +20,7 @@
 \alias{extract,betareg-method}
 \alias{extract.brglm}
 \alias{extract,brglm-method}
+\alias{extract.broom}
 \alias{extract.btergm}
 \alias{extract,btergm-method}
 \alias{extract.censReg}
@@ -198,7 +198,7 @@ Extract coefficients and GOF measures from a statistical object.
 \usage{
 extract(model, ...)
 
-\S4method{extract}{broom}(model, ...)
+\S4method{extract}{ANY}(model, ...)
 
 \S4method{extract}{aftreg}(model, include.loglik = TRUE, 
     include.lr = TRUE, include.nobs = TRUE, include.events = TRUE, 

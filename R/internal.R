@@ -1320,9 +1320,11 @@ broom_coefficients <- function(x) {
 broom_gof <- function(x) {
   # extract
   out <- broom::glance(x)[1, ]
+  gof.decimal <- sapply(out, function(k) class(k)[1]) # type inference
+  gof.decimal <- ifelse(gof.decimal %in% c('integer', 'logical'), FALSE, TRUE)
   out <- data.frame('gof.names' = colnames(out),
                     'gof' = as.numeric(out),
-                    'gof.decimal' = TRUE,
+                    'gof.decimal' = gof.decimal,
                     stringsAsFactors = FALSE)
   # rename
   gof_dict <- c(
