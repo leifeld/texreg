@@ -4744,7 +4744,6 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
       stop("texreg relies on Zelig's combine_coef_se function to extract model information. Install Zelig >= 5.0-17 to see if texreg can format your model.")
     }
     combined <- Zelig::combine_coef_se(model, messages = FALSE)
-    gof <- c(nrow(model$data), model$originaldata$m)
     gof <- gof.names <- gof.decimal <- NULL
     if (include.nobs) {
       gof <- c(gof, nrow(model$data))
@@ -4752,9 +4751,15 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
       gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.nimp) {
-      gof <- c(gof, model$originaldata$m)
-      gof.names <- c(gof.names, 'Num. imp.')
-      gof.decimal <- c(gof.decimal, FALSE)
+      if (class(model$originaldata)[1] == 'amelia') { 
+        gof <- c(gof, model$originaldata$m)
+        gof.names <- c(gof.names, 'Num. imp.')
+        gof.decimal <- c(gof.decimal, FALSE)
+      } else if (class(model$originaldata)[1] == 'mi') { # when imputed dataset was created using to_zelig_mi
+        gof <- c(gof, length(model$originaldata))
+        gof.names <- c(gof.names, 'Num. imp.')
+        gof.decimal <- c(gof.decimal, FALSE)
+      } 
     }
     out <- createTexreg(coef.names = row.names(combined),
                         coef = combined[, 'Estimate'],
