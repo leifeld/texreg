@@ -3228,7 +3228,7 @@ setMethod("extract", signature = className("pgmm", "plm"),
 
 # extension for plm objects (from the plm package)
 extract.plm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE, 
-    include.nobs = TRUE, ...) {
+    include.nobs = TRUE, include.ercomp = TRUE, ...) {
   s <- summary(model, ...)
   
   coefficient.names <- rownames(coef(s))
@@ -3243,6 +3243,14 @@ extract.plm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
+  if (include.ercomp == TRUE) {
+    if (model$args$model == "random") {
+      se <- sqrt(unlist(ercomp(model)$sigma))
+      gof <- c(gof, se)
+      gof.names <- c(gof.names, paste0("s_", names(se)))
+      gof.decimal <- c(gof.decimal, rep(TRUE, length(se)))
+    }
+  }
   if (include.rsquared == TRUE) {
     gof <- c(gof, rs)
     gof.names <- c(gof.names, "R$^2$")

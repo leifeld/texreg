@@ -467,7 +467,8 @@ extract(model, ...)
     include.trisk = TRUE, ...)
 
 \S4method{extract}{plm}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, ...)
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.ercomp = TRUE, ...)
 
 \S4method{extract}{pmg}(model, include.nobs = TRUE, ...)
 
@@ -960,6 +961,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.dic}{ If available: should the deviance information criterion (DIC) be reported? }
 \item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
 \item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }
+\item{include.ercomp}{ If available: should the error component be included? }
 \item{include.errors}{ If available: should the error terms of a sample selection model be reported? }
 \item{include.events}{ If available: should the number of events be reported (in survival models)? }
 \item{include.formation}{ If available: should the coefficients for the formation phase in a STERGM be reported? }
