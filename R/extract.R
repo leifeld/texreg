@@ -4013,14 +4013,15 @@ setMethod("extract", signature = className("tobit", "AER"),
 
 
 # extension for weibreg objects (eha package)
-extract.weibreg <- function(model, include.loglik = TRUE, include.lr = TRUE, 
-    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, ...) {
-  
+extract.weibreg <- function(model, include.loglik = TRUE, include.lr = TRUE,
+    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE,
+    include.aic = TRUE, ...) {
+
   coefs <- model$coefficients
   coef.names <- names(coefs)
   se <- sqrt(diag(model$var))
-  pval <- 1 - pchisq((coefs / se)^2, 1)
-  
+  pval <- 1 - pchisq((coefs / se)^ 2, 1)
+
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
@@ -4035,6 +4036,12 @@ extract.weibreg <- function(model, include.loglik = TRUE, include.lr = TRUE,
     gof <- c(gof, lr)
     gof.names <- c(gof.names, "LR test")
     gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.aic == TRUE) {
+    aic <- 2 * model$loglik[2] + 2 * length(coefs)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.nobs == TRUE) {
     n <- nobs(model)
@@ -4054,31 +4061,35 @@ extract.weibreg <- function(model, include.loglik = TRUE, include.lr = TRUE,
     gof.names <- c(gof.names, "Total time at risk")
     gof.decimal <- c(gof.decimal, FALSE)
   }
-  
+
   tr <- createTexreg(
-      coef.names = coef.names, 
-      coef = coefs, 
-      se = se, 
-      pvalues = pval, 
-      gof.names = gof.names, 
-      gof = gof, 
+      coef.names = coef.names,
+      coef = coefs,
+      se = se,
+      pvalues = pval,
+      gof.names = gof.names,
+      gof = gof,
       gof.decimal = gof.decimal
   )
   return(tr)
 }
 
-setMethod("extract", signature = className("weibreg", "eha"), 
+setMethod("extract", signature = className("weibreg", "eha"),
     definition = extract.weibreg)
-
+	  
 extract.phreg <- extract.weibreg
-setMethod("extract", signature = className("phreg", "eha"), 
+setMethod("extract", signature = className("phreg", "eha"),
     definition = extract.phreg)
 
 extract.aftreg <- extract.weibreg
-setMethod("extract", signature = className("aftreg", "eha"), 
+setMethod("extract", signature = className("aftreg", "eha"),
     definition = extract.aftreg)
 
+extract.coxreg <- extract.weibreg
+setMethod("extract", signature = className("coxreg", "eha"),
+    definition = extract.coxreg)
 
+	  
 # extension for zelig objects (Zelig package < 5.0)
 extract.zelig <- function(model, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
