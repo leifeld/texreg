@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 75 supported model types (version 1.37).]{\label{tab:types} List of 75 supported model types (version 1.37).} \\
+\caption[List of 76 supported model types (version 1.37).]{\label{tab:types} List of 76 supported model types (version 1.37).} \\
 \endlastfoot
 
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
