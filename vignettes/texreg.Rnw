@@ -332,8 +332,8 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
 \code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
 \code{groups}			& $\bullet$	& $\bullet$	& $\bullet$	& Partition rows of the table into groups with labels \\
-\code{custom.columns}   & $\bullet$	& $\bullet$	& $\bullet$	& Add custom text columns to the table \\
-\code{custom.col.pos}   & $\bullet$	& $\bullet$	& $\bullet$	& Define where custom columns should be placed \\
+\code{custom.columns}		& $\bullet$	& $\bullet$	& $\bullet$	& Add custom text columns to the table \\
+\code{custom.col.pos}		& $\bullet$	& $\bullet$	& $\bullet$	& Define where custom columns should be placed \\
 \code{bold}			& $\bullet$	& $\bullet$	& $\circ$	& $p$~value below which coefficients are bolded \\
 \code{center}			& $\bullet$	& $\bullet$	& $\circ$	& Horizontal alignment on the page \\
 \code{caption}			& $\bullet$	& $\bullet$	& $\circ$	& Set the caption of the table \\
@@ -341,7 +341,7 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{label}			& $\bullet$	& $\circ$	& $\circ$	& Set the label of the table \\
 \code{booktabs}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{booktabs} package \citep{fear2005booktabs}? \\
 \code{dcolumn}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{dcolumn} package \citep{carlisle2001dcolumn}? \\
-\code{lyx}      & $\bullet$ & $\circ$ & $\circ$ & Double the newline characters found in the output to facilitate transfer of output to the LyX document processor \\
+\code{lyx}			& $\bullet$	& $\circ$	& $\circ$	& Double the newline characters found in the output to facilitate transfer of output to the LyX document processor \\
 \code{sideways}			& $\bullet$	& $\circ$	& $\circ$	& Use \code{sidewaystable} \citep{rahtz2008rotating} \\
 \code{use.packages}		& $\bullet$	& $\circ$	& $\circ$	& Print the \verb+\usepackage{}+ declarations? \\
 \code{table}			& $\bullet$	& $\circ$	& $\circ$	& Wrap \code{tabular} in a table environment? \\
@@ -447,6 +447,8 @@ Class			& Package			& Description \\
 `\code{ARIMA}'			& \pkg{forecast}		& ARIMA time series models \\
 `\code{averaging}'		& \pkg{MuMIn}			& Model averaging objects \\
 `\code{bam}'			& \pkg{mgcv}			& Generalized additive models \\
+`\code{betamfx}'		& \pkg{mfx}			& Beta regression with marginal effects \\
+`\code{betaor}' 		& \pkg{mfx}			& Beta regression with odds ratios \\
 `\code{betareg}'		& \pkg{betareg}			& Beta regression for rates and proportions \\
 `\code{brglm}'			& \pkg{brglm}			& Bias-reduced generalized linear models \\
 `\code{btergm}'			& \pkg{xergm}			& Temporal exponential random graph models \\
@@ -483,6 +485,8 @@ Class			& Package			& Description \\
 `\code{lme4}'			& \pkg{lme4} ($\geq$ 1.0)	& Linear mixed-effects models \\
 `\code{lmrob}'  		& \pkg{robustbase}		& MM-type estimators for linear models \\
 `\code{lnam}'			& \pkg{sna}			& Linear network autocorrelation models \\
+`\code{logitmfx}'		& \pkg{mfx}			& Logistic regression with marginal effects \\
+`\code{logitor}'		& \pkg{mfx}			& Logistic regression with odds ratios \\
 `\code{lqmm}'			& \pkg{lqmm}			& Linear quantile mixed models \\
 `\code{lrm}'			& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
 `\code{maBina}'			& \pkg{erer}			& Marginal effects for binary response models \\
@@ -492,6 +496,8 @@ Class			& Package			& Description \\
 `\code{model.selection}'	& \pkg{MuMIn}			& Model selection objects \\
 `\code{mtergm}'			& \pkg{btergm}			& MCMC-based TERGM \\
 `\code{negbin}'			& \pkg{MASS}			& Negative binomial generalized linear models \\
+`\code{negbinirr}'		& \pkg{mfx}			& Negative binomial models with incidence rate ratios \\
+`\code{negbinmfx}'		& \pkg{mfx}			& Negative binomial models with marginal effects \\
 `\code{netlogit}'		& \pkg{sna}			& Logistic regression for networks \\
 `\code{nlme}'			& \pkg{nlme}			& Nonlinear mixed-effects models \\
 `\code{ols}'			& \pkg{rms}			& Ordinary least squares linear models \\
@@ -499,7 +505,10 @@ Class			& Package			& Description \\
 `\code{phreg}'			& \pkg{eha}			& Parametric proportional hazards regression \\
 `\code{plm}'			& \pkg{plm}			& Linear models for panel data \\
 `\code{pmg}'			& \pkg{plm}			& Linear panel models with heterogeneous coefficients \\
+`\code{poissonirr}'		& \pkg{mfx}			& Poisson models with incidence rate ratios \\
+`\code{poissonmfx}'		& \pkg{mfx}			& Poisson models with marginal effects \\
 `\code{polr}'			& \pkg{MASS}			& Ordered logistic or probit regression \\
+`\code{probitmfx}'		& \pkg{mfx}			& Probit regression with marginal effects \\
 `\code{Relogit}'		& \pkg{Zelig}			& Rare events logistic regression \\
 `\code{rem.dyad}'		& \pkg{relevent}		& Relational event models for dyadic data \\
 `\code{rlm}'			& \pkg{MASS}			& Robust fitting of linear models \\
@@ -516,7 +525,9 @@ Class			& Package			& Description \\
 `\code{systemfit}'		& \pkg{systemfit}		& Linear structural equations \\
 `\code{texreg}'			& \pkg{texreg}			& For easy manipulation of \pkg{texreg} tables \\
 `\code{tobit}'			& \pkg{AER}			& Tobit regression models for censored data \\
+`\code{vglm}'			& \pkg{VGAM}			& Vector generalized linear models \\
 `\code{weibreg}'		& \pkg{eha}			& Weibull regression \\
+`\code{wls}'			& \pkg{metaSEM}			& Weighted least squares models \\
 `\code{zelig}'			& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
 `\code{Zelig}'			& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
 `\code{zeroinfl}'		& \pkg{pscl}			& Zero-inflated regression models \\
@@ -552,16 +563,18 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 above model types (that is, the union of all three packages, is 
 extensible, and offers additional built-in functions for the following 
 model classes: `\code{ARIMA}', `\code{averaging}', `\code{bam}', 
-`\code{brglm}', `\code{btergm}', `\code{censReg}', `\code{coxph.penal}', 
-`\code{ergmm}', `\code{ets}', `\code{fGARCH}', `\code{forecast}', 
-`\code{gamlss}', `\code{glmmadmb}', `\code{glmrob}', `\code{felm}', 
-`\code{gmm}', `\code{lme}', `\code{lme4}', `\code{lnam}', `\code{lqmm}', 
+`\code{betamfx}', `\code{betaor}', `\code{brglm}', `\code{btergm}', 
+`\code{censReg}', `\code{coxph.penal}', `\code{ergmm}', `\code{ets}', 
+`\code{fGARCH}', `\code{forecast}', `\code{gamlss}', `\code{glmmadmb}', 
+`\code{glmrob}', `\code{felm}', `\code{gmm}', `\code{lme}', `\code{lme4}', 
+`\code{lnam}', `\code{logitmfx}', `\code{logitor}', `\code{lqmm}', 
 `\code{maBina}', `\code{mlogit}', `\code{mnlogit}', `\code{mtergm}', 
-`\code{model.selection}', `\code{netlogit}', `\code{nlme}', 
-`\code{rem.dyad}', `\code{rq}', `\code{sclm}', `\code{selection}', 
-`\code{stergm}', `\code{systemfit}', and `\code{texreg}' objects. 
-Table~\ref{tab:types} gives an overview of currently implemented model 
-types.
+`\code{model.selection}', `\code{negbinirr}', `\code{negbinmfx}', 
+`\code{netlogit}', `\code{nlme}', `\code{poissonirr}', `\code{poissonmfx}', 
+`\code{probitmfx}', `\code{rem.dyad}', `\code{rq}', `\code{sclm}', 
+`\code{selection}', `\code{stergm}', `\code{systemfit}', `\code{texreg}', 
+`\code{vglm}', and `\code{wls}' objects. Table~\ref{tab:types} gives 
+an overview of currently implemented model types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
 Markdown, and \pkg{knitr} whereas the other packages

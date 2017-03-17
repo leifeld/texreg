@@ -1,6 +1,7 @@
 \name{extract}
 \alias{extract}
 \alias{extract-methods}
+\alias{extract,ANY-method}
 \alias{extract.aftreg}
 \alias{extract,aftreg-method}
 \alias{extract.Arima}
@@ -11,10 +12,15 @@
 \alias{extract,averaging-method}
 \alias{extract.bam}
 \alias{extract,bam-method}
+\alias{extract.betamfx}
+\alias{extract,betamfx-method}
+\alias{extract.betaor}
+\alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
 \alias{extract.brglm}
 \alias{extract,brglm-method}
+\alias{extract.broom}
 \alias{extract.btergm}
 \alias{extract,btergm-method}
 \alias{extract.censReg}
@@ -87,6 +93,10 @@
 \alias{extract,lmrob-method}
 \alias{extract.lnam}
 \alias{extract,lnam-method}
+\alias{extract.logitmfx}
+\alias{extract,logitmfx-method}
+\alias{extract.logitor}
+\alias{extract,logitor-method}
 \alias{extract.lqmm}
 \alias{extract,lqmm-method}
 \alias{extract.lrm}
@@ -107,6 +117,10 @@
 \alias{extract,multinom-method}
 \alias{extract.negbin}
 \alias{extract,negbin-method}
+\alias{extract.negbinirr}
+\alias{extract,negbinirr-method}
+\alias{extract.negbinmfx}
+\alias{extract,negbinmfx-method}
 \alias{extract.netlogit}
 \alias{extract,netlogit-method}
 \alias{extract.nlme}
@@ -123,8 +137,14 @@
 \alias{extract,plm-method}
 \alias{extract.pmg}
 \alias{extract,pmg-method}
+\alias{extract.poissonirr}
+\alias{extract,poissonirr-method}
+\alias{extract.poissonmfx}
+\alias{extract,poissonmfx-method}
 \alias{extract.polr}
 \alias{extract,polr-method}
+\alias{extract.probitmfx}
+\alias{extract,probitmfx-method}
 \alias{extract.rem.dyad}
 \alias{extract,rem.dyad-method}
 \alias{extract.rlm}
@@ -155,8 +175,12 @@
 \alias{extract,texreg-method}
 \alias{extract.tobit}
 \alias{extract,tobit-method}
+\alias{extract.vglm}
+\alias{extract,vglm-method}
 \alias{extract.weibreg}
 \alias{extract,weibreg-method}
+\alias{extract.wls}
+\alias{extract,wls-method}
 \alias{extract.zelig}
 \alias{extract,zelig-method}
 \alias{extract.Zelig}
@@ -173,6 +197,8 @@ Extract coefficients and GOF measures from a statistical object.
 }
 \usage{
 extract(model, ...)
+
+\S4method{extract}{ANY}(model, ...)
 
 \S4method{extract}{aftreg}(model, include.loglik = TRUE, 
     include.lr = TRUE, include.nobs = TRUE, include.events = TRUE, 
@@ -194,6 +220,12 @@ extract(model, ...)
     include.dev.expl = TRUE, include.dispersion = TRUE, 
     include.rsquared = TRUE, include.gcv = TRUE, 
     include.nobs = TRUE, include.nsmooth = TRUE, ...)
+
+\S4method{extract}{betamfx}(model, include.pseudors = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{betaor}(model, include.pseudors = TRUE, 
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{betareg}(model, include.precision = TRUE, 
     include.pseudors = TRUE, include.loglik = TRUE, 
@@ -353,6 +385,14 @@ extract(model, ...)
     include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE, 
     include.loglik = TRUE, ...)
 
+\S4method{extract}{logitmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
+\S4method{extract}{logitor}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
 \S4method{extract}{lqmm}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
     include.nobs = TRUE, include.groups = TRUE, 
@@ -395,6 +435,14 @@ extract(model, ...)
     include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
+\S4method{extract}{negbinirr}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
+\S4method{extract}{negbinmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
 \S4method{extract}{netlogit}(model, include.aic = TRUE, 
     include.bic = TRUE, include.deviance = TRUE, 
     include.nobs = TRUE, ...)
@@ -423,13 +471,26 @@ extract(model, ...)
     include.trisk = TRUE, ...)
 
 \S4method{extract}{plm}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, ...)
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.variance = TRUE, ...)
 
 \S4method{extract}{pmg}(model, include.nobs = TRUE, ...)
+
+\S4method{extract}{poissonirr}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
+
+\S4method{extract}{poissonmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
 
 \S4method{extract}{polr}(model, include.thresholds = FALSE, 
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
     include.deviance = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{probitmfx}(model, include.nobs = TRUE, 
+    include.loglik = TRUE, include.deviance = TRUE, 
+    include.aic = TRUE, include.bic = TRUE, ...)
 
 \S4method{extract}{rem.dyad}(model, include.nvertices = TRUE, 
     include.events = TRUE, include.aic = TRUE, 
@@ -490,9 +551,14 @@ extract(model, ...)
     include.deviance = TRUE, include.nobs = FALSE, 
     include.censnobs = TRUE, include.wald=TRUE, ...)
 
+\S4method{extract}{vglm}(model, include.loglik = TRUE, 
+    include.df = TRUE, include.nobs = TRUE, ...)
+
 \S4method{extract}{weibreg}(model, include.loglik = TRUE, 
     include.lr = TRUE, include.nobs = TRUE, 
     include.events = TRUE, include.trisk = TRUE, ...)
+
+\S4method{extract}{wls}(model, include.nobs = TRUE, ...)
 
 \S4method{extract}{zelig}(model, include.aic = TRUE, 
     include.bic = TRUE, include.loglik = TRUE, 
@@ -500,10 +566,8 @@ extract(model, ...)
     include.rsquared = TRUE, include.adjrs = TRUE, 
     include.fstatistic = TRUE, ...)
 
-\S4method{extract}{Zelig}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.censnobs = TRUE, include.wald = TRUE, ...)
+\S4method{extract}{Zelig}(model, include.nobs = TRUE, 
+                          include.nimp = TRUE, ...)
 
 \S4method{extract}{zeroinfl}(model, beside = FALSE, 
     include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
@@ -511,6 +575,10 @@ extract(model, ...)
 }
 \section{Methods}{
 \describe{
+
+\item{\code{broom}}{
+A default extract method. Prompts users to install the \pkg{broom} package if \pkg{texreg} cannot directly extract information from models of the supplied class. 
+}
 
 \item{\code{aftreg}}{
 An extract method for aftreg objects from the \pkg{eha} package.
@@ -530,6 +598,14 @@ An extract method for averaging objects from the \pkg{MuMIn} package.
 
 \item{\code{bam}}{
 An extract method for bam objects from the \pkg{mgcv} package.
+}
+
+\item{\code{betamfx}}{
+An extract method for betamfx objects from the \pkg{mfx} package.
+}
+
+\item{\code{betaor}}{
+An extract method for betaor objects from the \pkg{mfx} package.
 }
 
 \item{\code{betareg}}{
@@ -684,6 +760,14 @@ An extract method for lmrob objects from the \pkg{robustbase} package.
 An extract method for lnam objects from the \pkg{sna} package.
 }
 
+\item{\code{logitmfx}}{
+An extract method for logitmfx objects from the \pkg{mfx} package.
+}
+
+\item{\code{logitor}}{
+An extract method for logitor objects from the \pkg{mfx} package.
+}
+
 \item{\code{lqmm}}{
 An extract method for lqmm objects from the \pkg{lqmm} package.
 }
@@ -724,6 +808,14 @@ An extract method for multinom objects from the \pkg{nnet} package.
 An extract method for negbin objects from the \pkg{MASS} package.
 }
 
+\item{\code{negbinirr}}{
+An extract method for negbinirr objects from the \pkg{mfx} package.
+}
+
+\item{\code{negbinmfx}}{
+An extract method for negbinmfx objects from the \pkg{mfx} package.
+}
+
 \item{\code{netlogit}}{
 An extract method for netlogit objects from the \pkg{sna} package.
 }
@@ -756,8 +848,20 @@ An extract method for plm objects from the \pkg{plm} package.
 An extract method for pmg objects from the \pkg{plm} package.
 }
 
+\item{\code{poissonirr}}{
+An extract method for poissonirr objects from the \pkg{mfx} package.
+}
+
+\item{\code{poissonmfx}}{
+An extract method for poissonmfx objects from the \pkg{mfx} package.
+}
+
 \item{\code{polr}}{
 An extract method for polr objects from the \pkg{MASS} package.
+}
+
+\item{\code{probitmfx}}{
+An extract method for probitmfx objects from the \pkg{mfx} package.
 }
 
 \item{\code{rem.dyad}}{
@@ -820,8 +924,16 @@ An extract method for texreg objects from the \pkg{texreg} package. The purpose 
 An extract method for tobit objects from the \pkg{AER} package.
 }
 
+\item{\code{vglm}}{
+An extract method for vglm objects from the \pkg{VGAM} package.
+}
+
 \item{\code{weibreg}}{
 An extract method for weibreg objects from the \pkg{eha} package.
+}
+
+\item{\code{wls}}{
+An extract method for wls objects from the \pkg{metaSEM} package.
 }
 
 \item{\code{zelig}}{
@@ -830,6 +942,10 @@ An extract method for zelig objects from the \pkg{Zelig} package.
 
 \item{\code{Zelig}}{
 An extract method for Zelig objects from the \pkg{Zelig} package.
+
+When fitting models, \pkg{Zelig} often wraps additional information around a model object produced by a different \code{R} library. It is often possible to recover that model object using the \code{from_zelig_model} function from \pkg{Zelig} (>= 5.0-16). If that underlying model is supported by \code{texreg}, tables will be produced as usual, automatically. To identify the relevant model-specific arguments (e.g., \code{include.adjrs = TRUE}), identify the class of the underlying model (\code{class(Zelig::from_zelig_model(model))}), and check the appropriate \code{extract.*} function in \code{texreg}.
+
+When working with models estimated by \pkg{Zelig} using data processed by multiple imputation, \pkg{texreg} will automatically combine coefficients and standard errors using Rubin's rules, as encoded in \pkg{Zelig}'s (>= 5.0-16) \code{combine_coef_se} function.
 }
 
 \item{\code{zeroinfl}}{
@@ -852,6 +968,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.delta}{ If available: should the delta statistic be included? }
 \item{include.dev.expl}{ If available: should the deviance explained be reported? }
 \item{include.deviance}{ If available: should the deviance be reported? }
+\item{include.df}{ If available: should the degrees of freedom be reported? }
 \item{include.dic}{ If available: should the deviance information criterion (DIC) be reported? }
 \item{include.dispersion}{ If available: should the dispersion or scale parameter be reported? }
 \item{include.dissolution}{ If available: should the coefficients for the dissolution phase in a STERGM be reported? }
@@ -873,6 +990,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.missings}{ If available: should the number of missing observations be reported (in survival models)? }
 \item{include.mse}{If available: should the mean square error be reported? }
 \item{include.nagelkerke}{ If available: should Nagelkerke's R-squared be reported? }
+\item{include.nimp}{ If available: should the number of multiple imputations be reported (in Zelig models with imputed data)?}
 \item{include.nobs}{ If available: should the number of observations be reported? }
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
