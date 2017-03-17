@@ -472,7 +472,7 @@ extract(model, ...)
 
 \S4method{extract}{plm}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.ercomp = TRUE, ...)
+    include.variance = TRUE, ...)
 
 \S4method{extract}{pmg}(model, include.nobs = TRUE, ...)
 
