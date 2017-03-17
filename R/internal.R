@@ -482,48 +482,45 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
 }
 
 
-# use custom coefficient names if provided
-customnames <- function(m, custom.names) {
-  if (is.null(custom.names)) {
-    return(m)
-  } else if (length(custom.names) > 1) {
-    if (!class(custom.names) == "character") {
-      stop("Custom coefficient names must be provided as a vector of strings!")
-    } else if (length(custom.names) != length(rownames(m))) {
-      stop(paste("There are", length(rownames(m)), 
-          "coefficients, but you provided", length(custom.names), 
-          "custom names for them."))
-    } else {
-      custom.names[is.na(custom.names)] <- rownames(m)[is.na(custom.names)]
-      rownames(m) <- custom.names
-    }
-  } else if (!is.na(custom.names) & class(custom.names) != "character") {
-    stop("Custom coefficient names must be provided as a vector of strings.")
-  } else if (length(custom.names) == 1 & class(custom.names) == "character"
-      & is.na(custom.names)) {
-    rownames(m) <- custom.names
-  } else if (length(custom.names) == length(rownames(m))) {
-    rownames(m) <- custom.names
-  }
-  return(m)
-}
-
-
-# remove coefficient rows that match the omit.coef regular expression
-omitcoef <- function(m, omit.coef) {
+# function to apply the omit.coef and custom.coef.names operations
+omit_rename <- function(m, omit.coef, custom.coef.names) {
+  # omit
   if (!is.null(omit.coef)) {
     if (!is.character(omit.coef) || is.na(omit.coef)) {
-      stop("omit.coef must be a character string!")
+      stop("omit.coef must be a character string.")
     }
-    remove.rows <- grep(omit.coef, rownames(m))
-    if (length(remove.rows) == 0) {
-      return(m)
-    } else if (length(remove.rows) == nrow(m)) {
+    idx <- !grepl(omit.coef, row.names(m))
+    if (all(!idx)) {
       stop("You were trying to remove all coefficients using omit.coef.")
-    } else {
-      m <- m[-remove.rows, ]
     }
+  } else {
+    idx <- rep(TRUE, nrow(m))
   }
+  
+  # rename
+  if (!is.null(custom.coef.names)) {
+    if (!class(custom.coef.names) == "character") { # check type
+      stop("custom.coef.names must be a vector of strings.")
+    }
+    if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
+      if (nrow(m) == sum(idx)) {
+        stop("custom.coef.names must be a string vector of length ", nrow(m), '.')
+      } else {
+        stop("custom.coef.names must be a string vector of length ", sum(idx), ' or ', nrow(m), '.')
+      }
+    }
+    if (length(custom.coef.names) == sum(idx)) { # user submits number of custom names after omission
+      custom.coef.names <- custom.coef.names 
+    } else { # user submits number of custom names before omission
+      custom.coef.names <- custom.coef.names[idx]
+    } 
+  } else {
+    custom.coef.names <- row.names(m)[idx]
+  }
+
+  # output
+  m <- m[idx, ]
+  row.names(m) <- custom.coef.names
   return(m)
 }
 
@@ -1310,4 +1307,48 @@ customcolumnnames <- function(modelnames, custom.columns, custom.col.pos,
 # print method for texreg table strings
 print.texregTable <- function(x, ...) {
   cat(x, ...)
+}
+
+# extract coefficients using the broom package
+broom_coefficients <- function(x) {
+  out <- broom::tidy(x)
+  out <- out[, c('term', 'estimate', 'std.error', 'p.value')]
+  return(out)
+}
+
+# extract gof using the broom package
+broom_gof <- function(x) {
+  # extract
+  out <- broom::glance(x)[1, ]
+  gof.decimal <- sapply(out, function(k) class(k)[1]) # type inference
+  gof.decimal <- ifelse(gof.decimal %in% c('integer', 'logical'), FALSE, TRUE)
+  out <- data.frame('gof.names' = colnames(out),
+                    'gof' = as.numeric(out),
+                    'gof.decimal' = gof.decimal,
+                    stringsAsFactors = FALSE)
+  # rename
+  gof_dict <- c(
+                'adj.r.squared' = 'Adj.\ R$^2$',
+                'deviance' = 'Deviance',
+                'df' = 'DF',
+                'df.residual' = 'DF Resid.',
+                'finTol' = 'Tolerance',
+                'isConv' = 'Convergence',
+                'logLik' = 'Log Likelihood',
+                'null.deviance' = 'Deviance (Null)',
+                'p.value' = 'P Value',
+                'r.squared' = 'R$^2$',
+                'sigma' = 'Sigma',
+                'statistic' = 'Statistic'
+                )
+  gof_dict <- gof_dict[names(gof_dict) %in% out$gof.names]
+  idx <- match(names(gof_dict), out$gof.names)
+  out$gof.names[idx] <- gof_dict
+  if (any(is.na(out$gof))) {
+    warning('texreg used the broom package to extract the following GOF measures, but could not cast them to numeric type: ',
+            out$gof.names[is.na(out$gof)])
+  }
+  out <- stats::na.omit(out)
+  # output
+  return(out)
 }
