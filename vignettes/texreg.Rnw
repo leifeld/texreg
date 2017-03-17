@@ -565,7 +565,7 @@ above model types (that is, the union of all three packages, is
 extensible, and offers additional built-in functions for the following
 model classes: `\code{ARIMA}', `\code{averaging}', `\code{bam}',
 `\code{betamfx}', `\code{betaor}', `\code{brglm}', `\code{btergm}',
-`\code{censReg}', `\code{coxph.penal}', `\code{ergmm}', `\code{ets}',
+`\code{censReg}', `\code{coxph.penal}', `\code{coxreg}',  `\code{ergmm}', `\code{ets}',
 `\code{fGARCH}', `\code{forecast}', `\code{gamlss}', `\code{glmmadmb}',
 `\code{glmrob}', `\code{felm}', `\code{gmm}', `\code{lme}', `\code{lme4}',
 `\code{lnam}', `\code{logitmfx}', `\code{logitor}', `\code{lqmm}',
