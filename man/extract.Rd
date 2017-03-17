@@ -37,6 +37,8 @@
 \alias{extract,coxph-method}
 \alias{extract.coxph.penal}
 \alias{extract,coxph.penal-method}
+\alias{extract.coxreg}
+\alias{extract,coxreg-method}
 \alias{extract.dynlm}
 \alias{extract,dynlm-method}
 \alias{extract.ergm}
@@ -200,384 +202,388 @@ extract(model, ...)
 
 \S4method{extract}{ANY}(model, ...)
 
-\S4method{extract}{aftreg}(model, include.loglik = TRUE, 
-    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE, 
+\S4method{extract}{aftreg}(model, include.aic = TRUE, include.loglik = TRUE,
+    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE,
     include.trisk = TRUE, ...)
 
-\S4method{extract}{Arima}(model, include.pvalues = FALSE, 
+\S4method{extract}{Arima}(model, include.pvalues = FALSE,
     include.aic = TRUE, include.loglik = TRUE, ...)
 
-\S4method{extract}{ARIMA}(model, include.pvalues = FALSE, 
-    include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE, 
+\S4method{extract}{ARIMA}(model, include.pvalues = FALSE,
+    include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...)
 
-\S4method{extract}{averaging}(model, use.ci = FALSE, 
+\S4method{extract}{averaging}(model, use.ci = FALSE,
     adjusted.se = FALSE, include.nobs = TRUE, ...)
 
-\S4method{extract}{bam}(model, include.smooth = TRUE, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.dev.expl = TRUE, include.dispersion = TRUE, 
-    include.rsquared = TRUE, include.gcv = TRUE, 
+\S4method{extract}{bam}(model, include.smooth = TRUE,
+    include.aic = TRUE, include.bic = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
+    include.dev.expl = TRUE, include.dispersion = TRUE,
+    include.rsquared = TRUE, include.gcv = TRUE,
     include.nobs = TRUE, include.nsmooth = TRUE, ...)
 
-\S4method{extract}{betamfx}(model, include.pseudors = TRUE, 
+\S4method{extract}{betamfx}(model, include.pseudors = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{betaor}(model, include.pseudors = TRUE, 
+\S4method{extract}{betaor}(model, include.pseudors = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{betareg}(model, include.precision = TRUE, 
-    include.pseudors = TRUE, include.loglik = TRUE, 
+\S4method{extract}{betareg}(model, include.precision = TRUE,
+    include.pseudors = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{brglm}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{brglm}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{btergm}(model, level = 0.95, 
+\S4method{extract}{btergm}(model, level = 0.95,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{censReg}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{censReg}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{clm}(model, include.thresholds = TRUE, 
-    include.aic = TRUE, include.bic=TRUE, include.loglik = TRUE, 
+\S4method{extract}{clm}(model, include.thresholds = TRUE,
+    include.aic = TRUE, include.bic=TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
 \S4method{extract}{clmm}(model, include.thresholds = TRUE,
-    include.loglik = TRUE, include.aic = TRUE,  
-    include.bic = TRUE, include.nobs = TRUE, 
+    include.loglik = TRUE, include.aic = TRUE,
+    include.bic = TRUE, include.nobs = TRUE,
     include.groups = TRUE, include.variance = TRUE, ...)
 
-\S4method{extract}{clogit}(model, include.aic = TRUE, 
-    include.rsquared = TRUE, include.maxrs = TRUE, 
-    include.events = TRUE, include.nobs = TRUE, 
+\S4method{extract}{clogit}(model, include.aic = TRUE,
+    include.rsquared = TRUE, include.maxrs = TRUE,
+    include.events = TRUE, include.nobs = TRUE,
     include.missings = TRUE, ...)
 
 \S4method{extract}{coeftest}(model, ...)
 
-\S4method{extract}{coxph}(model, include.aic = TRUE, 
-    include.rsquared = TRUE, include.maxrs=TRUE, 
-    include.events = TRUE, include.nobs = TRUE, 
+\S4method{extract}{coxph}(model, include.aic = TRUE,
+    include.rsquared = TRUE, include.maxrs=TRUE,
+    include.events = TRUE, include.nobs = TRUE,
     include.missings = TRUE, include.zph = TRUE, ...)
 
-\S4method{extract}{coxph.penal}(model, include.aic = TRUE, 
-    include.rsquared = TRUE, include.maxrs = TRUE, 
-    include.events = TRUE, include.nobs = TRUE, 
+\S4method{extract}{coxph.penal}(model, include.aic = TRUE,
+    include.rsquared = TRUE, include.maxrs = TRUE,
+    include.events = TRUE, include.nobs = TRUE,
     include.missings = TRUE, include.zph = TRUE, ...)
 
-\S4method{extract}{dynlm}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, 
+\S4method{extract}{coxreg}(model, include.aic = TRUE, include.loglik = TRUE,
+    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE,
+    include.trisk = TRUE, ...)
+
+\S4method{extract}{dynlm}(model, include.rsquared = TRUE,
+    include.adjrs = TRUE, include.nobs = TRUE,
     include.fstatistic = FALSE, include.rmse = TRUE, ...)
 
-\S4method{extract}{ergm}(model, include.aic = TRUE, 
+\S4method{extract}{ergm}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE, ...)
 
 \S4method{extract}{ergmm}(model, include.bic = TRUE, ...)
 
-\S4method{extract}{ets}(model, include.pvalues = FALSE, 
-    include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE, 
+\S4method{extract}{ets}(model, include.pvalues = FALSE,
+    include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...)
 
-\S4method{extract}{felm}(model, include.nobs = TRUE, 
-    include.rsquared = TRUE, include.adjrs = TRUE, 
+\S4method{extract}{felm}(model, include.nobs = TRUE,
+    include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, ...)
 
-\S4method{extract}{fGARCH}(model, include.nobs = TRUE, 
+\S4method{extract}{fGARCH}(model, include.nobs = TRUE,
     include.aic = TRUE, include.loglik = TRUE, ...)
 
 \S4method{extract}{forecast}(model, ...)
 
-\S4method{extract}{gam}(model, include.smooth = TRUE, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
-    include.dev.expl = TRUE, include.dispersion = TRUE, 
-    include.rsquared = TRUE, include.gcv = TRUE, 
+\S4method{extract}{gam}(model, include.smooth = TRUE,
+    include.aic = TRUE, include.bic = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
+    include.dev.expl = TRUE, include.dispersion = TRUE,
+    include.rsquared = TRUE, include.gcv = TRUE,
     include.nobs = TRUE, include.nsmooth = TRUE, ...)
 
-\S4method{extract}{gamlss}(model, robust = FALSE, 
-    include.nobs = TRUE, include.nagelkerke = TRUE, 
+\S4method{extract}{gamlss}(model, robust = FALSE,
+    include.nobs = TRUE, include.nagelkerke = TRUE,
     include.gaic = TRUE, ...)
 
-\S4method{extract}{gee}(model, robust = TRUE, 
+\S4method{extract}{gee}(model, robust = TRUE,
     include.dispersion = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{geeglm}(model, include.scale = TRUE, 
+\S4method{extract}{geeglm}(model, include.scale = TRUE,
     include.correlation = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{gel}(model, include.obj.fcn = TRUE, 
-    include.overidentification = FALSE, include.nobs = TRUE, 
+\S4method{extract}{gel}(model, include.obj.fcn = TRUE,
+    include.overidentification = FALSE, include.nobs = TRUE,
     overIdentTest = c("LR", "LM", "J "), ...)
 
-\S4method{extract}{glm}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{glm}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{glmerMod}(model, method = c("naive", 
-    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
-    include.deviance = FALSE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{glmerMod}(model, method = c("naive",
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000,
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE,
+    include.deviance = FALSE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
 
-\S4method{extract}{glmmadmb}(model, include.variance = TRUE, 
-    include.dispersion = TRUE, include.zero = TRUE, 
-    include.aic = TRUE, include.bic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, 
+\S4method{extract}{glmmadmb}(model, include.variance = TRUE,
+    include.dispersion = TRUE, include.zero = TRUE,
+    include.aic = TRUE, include.bic = TRUE,
+    include.loglik = TRUE, include.nobs = TRUE,
     include.groups = TRUE, ...)
 
-\S4method{extract}{glmmPQL}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{glmmPQL}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = FALSE, ...)
 
 \S4method{extract}{glmrob}(model, include.nobs = TRUE, ...)
 
-\S4method{extract}{gls}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{gls}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{gmm}(model, include.obj.fcn = TRUE, 
+\S4method{extract}{gmm}(model, include.obj.fcn = TRUE,
     include.overidentification = FALSE, include.nobs = TRUE, ...)
 
-\S4method{extract}{H2OBinomialModel}(model, standardized = FALSE, 
-      include.mse = TRUE, include.rsquared = TRUE, 
-      include.logloss = TRUE, include.meanerror = TRUE, 
-      include.auc = TRUE, include.gini = TRUE, 
+\S4method{extract}{H2OBinomialModel}(model, standardized = FALSE,
+      include.mse = TRUE, include.rsquared = TRUE,
+      include.logloss = TRUE, include.meanerror = TRUE,
+      include.auc = TRUE, include.gini = TRUE,
       include.deviance = TRUE, include.aic = TRUE, ...)
 
-\S4method{extract}{hurdle}(model, beside = FALSE, 
-    include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
+\S4method{extract}{hurdle}(model, beside = FALSE,
+    include.count = TRUE, include.zero = TRUE, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{ivreg}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, 
+\S4method{extract}{ivreg}(model, include.rsquared = TRUE,
+    include.adjrs = TRUE, include.nobs = TRUE,
     include.fstatistic = FALSE, include.rmse = TRUE, ...)
 
-\S4method{extract}{lm}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, 
+\S4method{extract}{lm}(model, include.rsquared = TRUE,
+    include.adjrs = TRUE, include.nobs = TRUE,
     include.fstatistic = FALSE, include.rmse = TRUE, ...)
 
-\S4method{extract}{lme}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{lme}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = FALSE, ...)
 
-\S4method{extract}{lme4}(model, method = c("naive", 
-    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
-    include.deviance = FALSE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{lme4}(model, method = c("naive",
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000,
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE,
+    include.deviance = FALSE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
 
-\S4method{extract}{lmerMod}(model, method = c("naive", 
-    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
-    include.deviance = FALSE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{lmerMod}(model, method = c("naive",
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000,
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE,
+    include.deviance = FALSE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
 
 \S4method{extract}{lmrob}(model, include.nobs = TRUE, ...)
 
-\S4method{extract}{lnam}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE, 
+\S4method{extract}{lnam}(model, include.rsquared = TRUE,
+    include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...)
 
-\S4method{extract}{logitmfx}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{logitmfx}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
     include.aic = TRUE, include.bic = TRUE, ...)
 
-\S4method{extract}{logitor}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{logitor}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
     include.aic = TRUE, include.bic = TRUE, ...)
 
-\S4method{extract}{lqmm}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{lqmm}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.tau = FALSE, use.ci = FALSE, beside = TRUE, ...)
 
-\S4method{extract}{lrm}(model, include.pseudors = TRUE, 
+\S4method{extract}{lrm}(model, include.pseudors = TRUE,
     include.lr = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{maBina}(model, ...)
 
-\S4method{extract}{mer}(model, method = c("naive", 
-    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
-    include.deviance = FALSE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{mer}(model, method = c("naive",
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000,
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE,
+    include.deviance = FALSE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
 
-\S4method{extract}{mnlogit}(model, include.aic = TRUE, 
-    include.loglik = TRUE, include.nobs = TRUE, 
-    include.groups = TRUE, include.intercept = TRUE, 
+\S4method{extract}{mnlogit}(model, include.aic = TRUE,
+    include.loglik = TRUE, include.nobs = TRUE,
+    include.groups = TRUE, include.intercept = TRUE,
     include.iterations = FALSE, beside = FALSE, ...)
 
-\S4method{extract}{mlogit}(model, include.aic = TRUE, 
+\S4method{extract}{mlogit}(model, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{model.selection}(model, include.loglik = TRUE, 
-    include.aicc = TRUE, include.delta = TRUE, 
+\S4method{extract}{model.selection}(model, include.loglik = TRUE,
+    include.aicc = TRUE, include.delta = TRUE,
     include.weight = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{mtergm}(model, include.nobs = TRUE, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{mtergm}(model, include.nobs = TRUE,
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE,
     ...)
-    
-\S4method{extract}{multinom}(model, include.pvalues = TRUE, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
+
+\S4method{extract}{multinom}(model, include.pvalues = TRUE,
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE,
+    include.deviance = TRUE, include.nobs = TRUE,
     levels = model$lev, beside = TRUE, ...)
 
-\S4method{extract}{negbin}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{negbin}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{negbinirr}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{negbinirr}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
     include.aic = TRUE, include.bic = TRUE, ...)
 
-\S4method{extract}{negbinmfx}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{negbinmfx}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
     include.aic = TRUE, include.bic = TRUE, ...)
 
-\S4method{extract}{netlogit}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.deviance = TRUE, 
+\S4method{extract}{netlogit}(model, include.aic = TRUE,
+    include.bic = TRUE, include.deviance = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{nlme}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{nlme}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = FALSE, ...)
 
-\S4method{extract}{nlmerMod}(model, method = c("naive", 
-    "profile", "boot", "Wald"), level = 0.95, nsim = 1000, 
-    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE, 
-    include.deviance = FALSE, include.loglik = TRUE, 
-    include.nobs = TRUE, include.groups = TRUE, 
+\S4method{extract}{nlmerMod}(model, method = c("naive",
+    "profile", "boot", "Wald"), level = 0.95, nsim = 1000,
+    include.aic = TRUE, include.bic = TRUE, include.dic = FALSE,
+    include.deviance = FALSE, include.loglik = TRUE,
+    include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
 
-\S4method{extract}{ols}(model, include.nobs = TRUE, 
-    include.rsquared = TRUE, include.adjrs = TRUE, 
+\S4method{extract}{ols}(model, include.nobs = TRUE,
+    include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, include.lr = TRUE, ...)
 
-\S4method{extract}{pgmm}(model, include.nobs = TRUE, 
+\S4method{extract}{pgmm}(model, include.nobs = TRUE,
     include.sargan = TRUE, include.wald = TRUE, ...)
 
-\S4method{extract}{phreg}(model, include.loglik = TRUE, 
-    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE, 
+\S4method{extract}{phreg}(model, include.aic = TRUE, include.loglik = TRUE,
+    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE,
     include.trisk = TRUE, ...)
 
-\S4method{extract}{plm}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, 
+\S4method{extract}{plm}(model, include.rsquared = TRUE,
+    include.adjrs = TRUE, include.nobs = TRUE,
     include.variance = TRUE, ...)
 
 \S4method{extract}{pmg}(model, include.nobs = TRUE, ...)
 
-\S4method{extract}{poissonirr}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{poissonirr}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
     include.aic = TRUE, include.bic = TRUE, ...)
 
-\S4method{extract}{poissonmfx}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{poissonmfx}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
     include.aic = TRUE, include.bic = TRUE, ...)
 
-\S4method{extract}{polr}(model, include.thresholds = FALSE, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{polr}(model, include.thresholds = FALSE,
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{probitmfx}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.deviance = TRUE, 
+\S4method{extract}{probitmfx}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE,
     include.aic = TRUE, include.bic = TRUE, ...)
 
-\S4method{extract}{rem.dyad}(model, include.nvertices = TRUE, 
-    include.events = TRUE, include.aic = TRUE, 
+\S4method{extract}{rem.dyad}(model, include.nvertices = TRUE,
+    include.events = TRUE, include.aic = TRUE,
     include.aicc = TRUE, include.bic = TRUE, ...)
 
 \S4method{extract}{rlm}(model, include.nobs = TRUE, ...)
 
-\S4method{extract}{rq}(model, include.nobs = TRUE, 
+\S4method{extract}{rq}(model, include.nobs = TRUE,
     include.percentile = TRUE, ...)
 
-\S4method{extract}{sarlm}(model, include.nobs = TRUE, 
-    include.loglik = TRUE, include.aic = TRUE, include.lr = TRUE, 
+\S4method{extract}{sarlm}(model, include.nobs = TRUE,
+    include.loglik = TRUE, include.aic = TRUE, include.lr = TRUE,
     include.wald = TRUE, ...)
 
-\S4method{extract}{sclm}(model, include.thresholds = TRUE, 
-    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{sclm}(model, include.thresholds = TRUE,
+    include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{selection}(model, prefix = TRUE, 
-    include.selection = TRUE, include.outcome = TRUE, 
-    include.errors = TRUE, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.rsquared = TRUE, include.adjrs = TRUE, 
+\S4method{extract}{selection}(model, prefix = TRUE,
+    include.selection = TRUE, include.outcome = TRUE,
+    include.errors = TRUE, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.rsquared = TRUE, include.adjrs = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{sienaFit}(model, include.iterations = TRUE, 
+\S4method{extract}{sienaFit}(model, include.iterations = TRUE,
     ...)
 
-\S4method{extract}{simex}(model, jackknife = TRUE, 
+\S4method{extract}{simex}(model, jackknife = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{stergm}(model, beside = FALSE, 
-    include.formation = TRUE, include.dissolution = TRUE, 
-    include.nvertices = TRUE, include.aic = FALSE, 
+\S4method{extract}{stergm}(model, beside = FALSE,
+    include.formation = TRUE, include.dissolution = TRUE,
+    include.nvertices = TRUE, include.aic = FALSE,
     include.bic = FALSE, include.loglik = FALSE, ...)
 
-\S4method{extract}{survreg}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{survreg}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{survreg.penal}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
+\S4method{extract}{survreg.penal}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{svyglm}(model, include.aic = FALSE, 
-    include.bic = FALSE, include.loglik = FALSE, 
-    include.deviance = TRUE, include.dispersion = TRUE, 
+\S4method{extract}{svyglm}(model, include.aic = FALSE,
+    include.bic = FALSE, include.loglik = FALSE,
+    include.deviance = TRUE, include.dispersion = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{systemfit}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, beside = FALSE, 
+\S4method{extract}{systemfit}(model, include.rsquared = TRUE,
+    include.adjrs = TRUE, include.nobs = TRUE, beside = FALSE,
     include.suffix = FALSE, ...)
 
 \S4method{extract}{texreg}(model, ...)
 
-\S4method{extract}{tobit}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = FALSE, 
+\S4method{extract}{tobit}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.deviance = TRUE, include.nobs = FALSE,
     include.censnobs = TRUE, include.wald=TRUE, ...)
 
-\S4method{extract}{vglm}(model, include.loglik = TRUE, 
+\S4method{extract}{vglm}(model, include.loglik = TRUE,
     include.df = TRUE, include.nobs = TRUE, ...)
 
-\S4method{extract}{weibreg}(model, include.loglik = TRUE, 
-    include.lr = TRUE, include.nobs = TRUE, 
+\S4method{extract}{weibreg}(model, include.aic = TRUE, include.loglik = TRUE,
+    include.lr = TRUE, include.nobs = TRUE,
     include.events = TRUE, include.trisk = TRUE, ...)
 
 \S4method{extract}{wls}(model, include.nobs = TRUE, ...)
 
-\S4method{extract}{zelig}(model, include.aic = TRUE, 
-    include.bic = TRUE, include.loglik = TRUE, 
-    include.deviance = TRUE, include.nobs = TRUE, 
-    include.rsquared = TRUE, include.adjrs = TRUE, 
+\S4method{extract}{zelig}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.deviance = TRUE, include.nobs = TRUE,
+    include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = TRUE, ...)
 
-\S4method{extract}{Zelig}(model, include.nobs = TRUE, 
+\S4method{extract}{Zelig}(model, include.nobs = TRUE,
                           include.nimp = TRUE, ...)
 
-\S4method{extract}{zeroinfl}(model, beside = FALSE, 
-    include.count = TRUE, include.zero = TRUE, include.aic = TRUE, 
+\S4method{extract}{zeroinfl}(model, beside = FALSE,
+    include.count = TRUE, include.zero = TRUE, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
 }
 \section{Methods}{
 \describe{
 
 \item{\code{broom}}{
-A default extract method. Prompts users to install the \pkg{broom} package if \pkg{texreg} cannot directly extract information from models of the supplied class. 
+A default extract method. Prompts users to install the \pkg{broom} package if \pkg{texreg} cannot directly extract information from models of the supplied class.
 }
 
 \item{\code{aftreg}}{
@@ -646,6 +652,10 @@ An extract method for coxph objects from the \pkg{survival} package.
 
 \item{\code{coxph.penal}}{
 An extract method for coxph.penal objects from the \pkg{survival} package.
+}
+
+\item{\code{coxreg}}{
+An extract method for coxreg objects from the \pkg{eha} package.
 }
 
 \item{\code{dynlm}}{
@@ -1029,7 +1039,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{...}{ Custom parameters which are handed over to subroutines. }
 }
 \references{
-Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 
+Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to
 LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
 \url{http://www.jstatsoft.org/v55/i08/}.
 }
