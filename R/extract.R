@@ -1767,10 +1767,10 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {
   s <- summary(model, ...)
   
-  names <- rownames(s$coef)
-  co <- s$coef[, 1]
-  se <- s$coef[, 2]
-  pval <- s$coef[, 4]
+  names <- rownames(s$coefficients)
+  co <- s$coefficients[, 1]
+  se <- s$coefficients[, 2]
+  pval <- s$coefficients[, 4]
   
   rs <- s$r.squared  #extract R-squared
   adj <- s$adj.r.squared  #extract adjusted R-squared
