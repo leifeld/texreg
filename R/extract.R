@@ -4439,8 +4439,9 @@ setMethod("extract", signature = className("vglm", "VGAM"),
 
 
 # extension for weibreg objects (eha package)
-extract.weibreg <- function(model, include.aic = TRUE, include.loglik = TRUE, include.lr = TRUE,
-    include.nobs = TRUE, include.events = TRUE, include.trisk = TRUE, ...) {
+extract.weibreg <- function(model, include.aic = TRUE, include.loglik = TRUE,
+    include.lr = TRUE, include.nobs = TRUE, include.events = TRUE,
+    include.trisk = TRUE, ...) {
 
   coefs <- model$coefficients
   coef.names <- names(coefs)
