@@ -3270,7 +3270,7 @@ extract.plm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
   gof.decimal <- logical()
   if (include.ercomp == TRUE) {
     if (model$args$model == "random") {
-      se <- sqrt(unlist(ercomp(model)$sigma))
+      se <- sqrt(unlist(ercomp(model)$sigma2))
       gof <- c(gof, se)
       gof.names <- c(gof.names, paste0("s_", names(se)))
       gof.decimal <- c(gof.decimal, rep(TRUE, length(se)))
