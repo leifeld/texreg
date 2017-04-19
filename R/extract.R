@@ -3143,7 +3143,7 @@ extract.ols <- function (model, include.nobs = TRUE, include.rsquared = TRUE,
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.adjrs == TRUE) {
-    adj <- 1 - (1 - rs) * (n - 1)/(n - model$stats["d.f."] - 1)
+    adj <- 1 - (1 - model$stats["R2"]) * (n - 1)/(n - model$stats["d.f."] - 1)
     gof <- c(gof, adj)
     gof.names <- c(gof.names, "Adj.\ R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
