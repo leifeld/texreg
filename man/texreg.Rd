@@ -58,8 +58,7 @@ matrixreg(l, single.row = FALSE, stars = c(0.001, 0.01, 0.05),
 	override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0,
 	override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL,
 	ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, groups = NULL,
-	custom.columns = NULL, custom.col.pos = NULL,
-	include.attributes = FALSE, ...) 
+	custom.columns = NULL, custom.col.pos = NULL, ...) 
 
 csvreg(l, file = NULL, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
@@ -71,15 +70,14 @@ csvreg(l, file = NULL,
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
     caption = 'Statistical Models', ...)
  
-wordreg(l, file, single.row = FALSE, 
+wordreg(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
     digits = 2, leading.zero = TRUE, symbol = ".", 
     override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    include.attributes = FALSE, ...) 
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, ...) 
 
 }
 \details{

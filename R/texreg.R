@@ -11,15 +11,21 @@ matrixreg <- function(l, single.row = FALSE,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    output.type = 'ascii', dcolumn = TRUE, include.attributes = FALSE, ...) {
+    dcolumn = TRUE, include.attributes = FALSE, ...) {
   
   # unnamed arguments to environment
   dots <- list(...)
 
+  # argument for internal use
+  if (!'output.type' %in% dots) {
+    dots[['output.type']] = 'ascii'
+  }
+
+  # extract
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
   models <- override(models, override.coef, override.se, override.pvalues, 
       override.ci.low, override.ci.up)
-  if (output.type != 'latex') {
+  if (dots$output.type != 'latex') {
     models <- tex.replace(models, type = "screen")  #convert TeX code to text code
   }
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
@@ -60,13 +66,13 @@ matrixreg <- function(l, single.row = FALSE,
   }
   
   # output matrix
-  if (output.type == 'ascii') {
+  if (dots$output.type == 'ascii') {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
         posinfstring = "Inf", leading.zero, digits, 
         se.prefix = " (", se.suffix = ")", star.prefix = " ", star.suffix = "", 
         stars, dcolumn = TRUE, star.symbol = star.symbol, symbol = symbol, bold = bold, 
         bold.prefix = "", bold.suffix = "", ci = ci, ci.test = ci.test)
-  } else if (output.type == 'latex') {
+  } else if (dots$output.type == 'latex') {
     output.matrix <- outputmatrix(m, single.row, 
         neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
         posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
@@ -74,7 +80,7 @@ matrixreg <- function(l, single.row = FALSE,
         star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
         symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", bold.suffix = "}", ci = ci, 
         semicolon = ";\\ ", ci.test = ci.test)
-  } else if (output.type == 'html') {
+  } else if (dots$output.type == 'html') {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
         posinfstring = "Inf", leading.zero, digits, 
         se.prefix = " (", se.suffix = ")", star.symbol = dots$star.symbol, 
@@ -105,7 +111,7 @@ matrixreg <- function(l, single.row = FALSE,
   }
   output.matrix <- cbind(output.matrix[, 1], temp)
 
-  if (output.type == 'ascii') { # otherwise we get duplicate model names in latex and html
+  if (dots$output.type == 'ascii') { # otherwise we get duplicate model names in latex and html
     output.matrix <- rbind(c("", mod.names), output.matrix)
   }
   
@@ -115,7 +121,7 @@ matrixreg <- function(l, single.row = FALSE,
       modelnames = TRUE)
 
   # attributes required for printing functions
-  if (include.attributes) {
+  if (dots$include.attributes) {
     attr(output.matrix, 'ci') <- ci
     attr(output.matrix, 'ci.test') <- ci.test
     attr(output.matrix, 'gof.names') <- gof.names
@@ -266,7 +272,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL,
     custom.gof.names = NULL, custom.note = NULL, digits = 2, 
-    leading.zero = TRUE, star.symbol = '*', symbol = "\\cdot", override.coef = 0, 
+    leading.zero = TRUE, symbol = "\\cdot", override.coef = 0, 
     override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
