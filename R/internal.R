@@ -2,7 +2,6 @@
 # Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
 # for bug reports, help or feature requests.
 
-
 # display version number and date when the package is loaded
 .onAttach <- function(libname, pkgname) {
   desc  <- packageDescription(pkgname, libname)

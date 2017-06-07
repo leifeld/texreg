@@ -19,7 +19,9 @@ matrixreg <- function(l, single.row = FALSE,
   models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
   models <- override(models, override.coef, override.se, override.pvalues, 
       override.ci.low, override.ci.up)
-  models <- tex.replace(models, type = "screen")  #convert TeX code to text code
+  if (output.type != 'latex') {
+    models <- tex.replace(models, type = "screen")  #convert TeX code to text code
+  }
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  #extract names of GOFs
   models <- correctDuplicateCoefNames(models)
