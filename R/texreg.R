@@ -11,13 +11,13 @@ matrixreg <- function(l, single.row = FALSE,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    dcolumn = TRUE, include.attributes = FALSE, ...) {
+    dcolumn = TRUE, ...) {
   
   # unnamed arguments to environment
   dots <- list(...)
 
   # argument for internal use
-  if (!'output.type' %in% dots) {
+  if (!'output.type' %in% names(dots)) {
     dots[['output.type']] = 'ascii'
   }
 
@@ -83,7 +83,7 @@ matrixreg <- function(l, single.row = FALSE,
   } else if (dots$output.type == 'html') {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
         posinfstring = "Inf", leading.zero, digits, 
-        se.prefix = " (", se.suffix = ")", star.symbol = dots$star.symbol, 
+        se.prefix = " (", se.suffix = ")", star.symbol = star.symbol, 
         star.prefix = paste0("<sup", dots$css.sup, ">"), star.suffix = "</sup>", 
         stars, dcolumn = TRUE, symbol = symbol, bold = bold, bold.prefix = "<b>", 
         bold.suffix = "</b>", ci = ci, ci.test = ci.test)
@@ -121,12 +121,14 @@ matrixreg <- function(l, single.row = FALSE,
       modelnames = TRUE)
 
   # attributes required for printing functions
-  if (dots$include.attributes) {
-    attr(output.matrix, 'ci') <- ci
-    attr(output.matrix, 'ci.test') <- ci.test
-    attr(output.matrix, 'gof.names') <- gof.names
-    attr(output.matrix, 'coef.names') <- coef.names
-    attr(output.matrix, 'mod.names') <- mod.names
+  if ('include.attributes' %in% names(dots)) {
+    if (dots$include.attributes) {
+      attr(output.matrix, 'ci') <- ci
+      attr(output.matrix, 'ci.test') <- ci.test
+      attr(output.matrix, 'gof.names') <- gof.names
+      attr(output.matrix, 'coef.names') <- coef.names
+      attr(output.matrix, 'mod.names') <- mod.names
+    }
   }
 
   return(output.matrix)
@@ -323,7 +325,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   output.matrix <- matrixreg(l, single.row = single.row, 
     stars = stars, custom.model.names = custom.model.names, 
     custom.coef.names = custom.coef.names, custom.coef.map = custom.coef.map, custom.gof.names = custom.gof.names, 
-    digits = digits, leading.zero = leading.zero, star.symbol = star.symbol, symbol = symbol, 
+    digits = digits, leading.zero = leading.zero, star.symbol = '*', symbol = symbol, 
     override.coef = override.coef, override.se = override.se, override.pvalues = override.pvalues, override.ci.low = override.ci.low, 
     override.ci.up = override.ci.up, omit.coef = omit.coef, reorder.coef = reorder.coef, 
     reorder.gof = reorder.gof, ci.force = ci.force, ci.force.level = ci.force.level, ci.test = ci.test, 
@@ -498,7 +500,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # stars note (define now, add later)
-  snote <- get_stars(pval = NULL, stars = stars, star.symbol = star.symbol, symbol = symbol, ci = ci, ci.test = ci.test, output = 'latex')$note
+  snote <- get_stars(pval = NULL, stars = stars, star.symbol = '*', symbol = symbol, ci = ci, ci.test = ci.test, output = 'latex')$note
 
 
   if (is.null(fontsize)) {
@@ -985,8 +987,7 @@ wordreg <- function(l, file = NULL, single.row = FALSE,
     override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    include.attributes = FALSE, ...) {
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, ...) {
 
   if (!'rmarkdown' %in% row.names(installed.packages())) {
     stop('The wordreg function requires the rmarkdown package. Install it and try again.')
