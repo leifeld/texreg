@@ -13,7 +13,7 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
     column.spacing = 2, outer.rule = "=", 
-    inner.rule = "-", ...) {
+    inner.rule = "-", add.lines = NULL, add.lines.sep = FALSE, ...) {
   
   stars <- check.stars(stars)
   
@@ -36,7 +36,11 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
   if (!is.null(custom.coef.map)) {
     m <- custommap(m, custom.coef.map)
   } else {
-    m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
+    if(nrow(m) != 1){
+      m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
+    } else {
+      m
+    }
   }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
@@ -70,6 +74,22 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
       digits)
+  
+  #If user wants to add more lines (ex: fixed effects indicator)
+  if(!is.null(add.lines)){
+    extras=matrix()[0]
+    for(item in add.lines){
+      if(length(item)!=(length(l)+1))
+        stop('Need add.lines arg to be of the same size (1 per column)')
+      extras = rbind(extras,item)
+    }
+    gof.matrix =rbind(extras, gof.matrix)
+    
+    if(add.lines.sep == FALSE){
+      gof.names = c(extras[,1], gof.names)
+    }
+  }
+  
   
   # combine the coefficient and gof matrices vertically
   output.matrix <- rbind(output.matrix, gof.matrix)
@@ -132,7 +152,7 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # write coefficients
-  for (i in 2:(length(output.matrix[, 1]) - length(gof.names))) {
+  for (i in 2:(length(output.matrix[, 1]) - length(gof.matrix[,1]))) {
     for (j in 1:length(output.matrix[1, ])) {
       string <- paste0(string, output.matrix[i,j])
       if (j == length(output.matrix[1, ])) {
@@ -143,6 +163,26 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
     }
   }
   
+  #if add.lines.sep = TRUE, then we want write the added lines separately from 
+  #the gofs
+  if(add.lines.sep == TRUE){
+    if (inner.rule != "") {
+      string <- paste0(string, i.rule, "\n")
+    }
+    
+    for (i in (length(output.matrix[, 1]) - (length(gof.matrix[,1]) - 1)):
+         (length(output.matrix[, 1]) - length(gof.names))){
+      for (j in 1:length(output.matrix[1, ])) {
+        string <- paste0(string, output.matrix[i,j])
+        if (j == length(output.matrix[1, ])) {
+          string <- paste0(string, "\n")
+        } else {
+          string <- paste0(string, spacing)
+        }
+      }
+    } 
+  }
+
   if (length(gof.names) > 0) {
     # mid rule 2
     if (inner.rule != "") {
@@ -151,7 +191,7 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
     
     # write GOF part of the output matrix
     for (i in (length(output.matrix[, 1]) - (length(gof.names) - 1)):
-        (length(output.matrix[, 1]))) {
+         (length(output.matrix[, 1]))) {
       for (j in 1:length(output.matrix[1, ])) {
         string <- paste0(string, output.matrix[i, j])
         if (j == length(output.matrix[1, ])) {
@@ -162,6 +202,10 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
       }
     }
   }
+    
+
+  
+  
   
   # write table footer
   if (outer.rule != "") {
@@ -237,7 +281,8 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     center = TRUE, caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, lyx = FALSE,
     sideways = FALSE, longtable = FALSE, use.packages = TRUE, table = TRUE, 
-    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", ...) {
+    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", 
+    add.lines = NULL, add.lines.sep = FALSE, ...) {
   
   stars <- check.stars(stars)
   
@@ -296,7 +341,11 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   if (!is.null(custom.coef.map)) {
     m <- custommap(m, custom.coef.map)
   } else {
-    m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
+    if(nrow(m) != 1){
+      m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
+    } else {
+      m
+    }
   }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
@@ -342,6 +391,20 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   # create GOF matrix (the lower part of the final output matrix)
   gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
       digits)
+  
+  if(!is.null(add.lines)){
+    extras=matrix()[0]
+    for(item in add.lines){
+      if(length(item)!=(length(l)+1))
+        stop('Need add.lines arg to be of the same size (1 per column)')
+      extras = rbind(extras,item)
+    }
+    gof.matrix =rbind(extras, gof.matrix)
+    
+    if(add.lines.sep == FALSE){
+      gof.names = c(extras[,1], gof.names)
+    }
+  }
   
   # combine the coefficient and gof matrices vertically
   output.matrix <- rbind(output.matrix, gof.matrix)
@@ -616,7 +679,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # write coefficients to string object
-  for (i in 1:(length(output.matrix[, 1]) - length(gof.names))) {
+  for (i in 1:(length(output.matrix[, 1]) - length(gof.matrix[,1]))) {
     for (j in 1:length(output.matrix[1, ])) {
       string <- paste0(string, output.matrix[i, j])
       if (j == length(output.matrix[1, ])) {
@@ -625,6 +688,30 @@ texreg <- function(l, file = NULL, single.row = FALSE,
         string <- paste0(string, " & ")
       }
     }
+  }
+  
+  #id add.lines.sep = TRUE, then we want write the added lines separately from 
+  #the gofs
+  if(add.lines.sep == TRUE){
+    if (booktabs == TRUE) {
+      string <- paste0(string, "\\midrule", linesep)
+    } else {
+      string <- paste0(string, "\\hline", linesep)
+    }
+  
+    for (i in (length(output.matrix[, 1]) - (length(gof.matrix[,1]) - 1)):
+         (length(output.matrix[, 1]) - length(gof.names))){
+      for (j in 1:length(output.matrix[1, ])) {
+        string <- paste0(string, output.matrix[i, j])
+        if (j == length(output.matrix[1, ])) {
+          string <- paste0(string, " \\\\", linesep)
+        } else {
+          string <- paste0(string, " & ")
+        }
+      }
+    }
+    
+    
   }
   
   if (length(gof.names) > 0) {
