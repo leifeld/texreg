@@ -1,0 +1,25 @@
+
+\usepackage{booktabs}
+\usepackage{dcolumn}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l D{)}{)}{11)-Inf} D{)}{)}{11)-Inf} }
+\toprule
+ & \multicolumn{1}{c}{Model 1} & \multicolumn{1}{c}{Model 2} \\
+\midrule
+(Intercept) & 0.17 \; (0.18)  & 2.44 \; (1.40)  \\
+x1          & -0.15 \; (0.32) &                 \\
+x2          &                 & -0.52 \; (0.31) \\
+\midrule
+R$^2$       & 0.00            & 0.03            \\
+Adj. R$^2$  & -0.01           & 0.02            \\
+Num. obs.   & 100             & 100             \\
+RMSE        & 0.92            & 0.90            \\
+\bottomrule
+\multicolumn{3}{l}{\scriptsize{$^{***}p<0.001$, $^{**}p<0.01$, $^*p<0.05$}}
+\end{tabular}
+\caption{Statistical models}
+\label{table:coefficients}
+\end{center}
+\end{table}
