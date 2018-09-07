@@ -1,6 +1,6 @@
- #The texreg package was written by Philip Leifeld.
- #Please use the issue tracker at http://github.com/leifeld/texreg
- #for bug reports, help, or feature requests.
+# The texreg package was written by Philip Leifeld.
+# Please use the issue tracker at http://github.com/leifeld/texreg
+# for bug reports, help, or feature requests.
 
 # matrixreg function
 matrixreg <- function(l, single.row = FALSE, 

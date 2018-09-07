@@ -1333,38 +1333,38 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
 
   # sanity checks and prep
   if (!output %in% c('ascii', 'latex', 'html')) {
-    stop('output argument must be ascii, latex, or html')
+    stop("'output' argument must be 'ascii', 'latex', or 'html'.")
   }
   if (!is.numeric(ci.test) && !is.null(ci.test)) {
-    stop('The argument ci.test must be NULL or numeric')
+    stop("The argument 'ci.test' must be NULL or numeric.")
   }
   if (!is.logical(ci)) {
-    stop('The argument ci must be logical')
+    stop("The argument 'ci' must be logical.")
   }
   if (!is.null(stars) && !is.numeric(stars)) {
-    stop('The argument stars must be NULL or numeric')
+    stop("The argument 'stars' must be NULL or numeric.")
   }
   if (any(stars > 1) | any(stars < 0)) {
-    stop('All values in the stars argument must be between 0 and 1.')
+    stop("All values in the 'stars' argument must be between 0 and 1.")
   }
   if (length(stars) > 4) {
-    stop('Length of the stars argument must be smaller than 5') 
+    stop("Length of the 'stars' argument must be smaller than 5.") 
   }
   if (any(is.na(stars))) {
-    stop("NA value are not allowed in the stars argument.")
+    stop("NA value are not allowed in the 'stars' argument.")
   } 
   if (length(unique(stars)) != length(stars)) {
-    stop("Duplicate elements are not allowed in the stars argument.")
+    stop("Duplicate elements are not allowed in the 'stars' argument.")
   }
   if (!is.null(symbol) && !is.character(symbol)) {
-    stop('The argument symbol must be NULL or character')
+    stop("The argument 'symbol' must be NULL or character.")
   }
   if (is.null(css.sup) & (output == 'html')) {
-    stop('To write a star note in html, you must supply css.sup')
+    stop("To write a star note in html, you must supply 'css.sup'.")
   }
 
   p_note_flag <- any(!ci) # at least one model does not print a confidence interval
-  ci_note_flag <- any(ci) # at least one model does prints a confidence interval
+  ci_note_flag <- any(ci) # at least one model prints a confidence interval
 
   symbols <- c(paste(rep(star.symbol, 3), collapse = ''),
                paste(rep(star.symbol, 2), collapse = ''),
@@ -1446,7 +1446,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
       pval <- 1.0
     }
     idx <- pval < st 
-    if (any(idx)) { # choose lowest threshold (relies on previou sorting)
+    if (any(idx)) { # choose lowest threshold (relies on previous sorting)
       p <- paste0(star.prefix, symbols[idx][1], star.suffix)
     } else {  # not significant
       p <- ""
