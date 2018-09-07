@@ -3,15 +3,34 @@
 # for bug reports, help, or feature requests.
 
 # matrixreg function
-matrixreg <- function(l, single.row = FALSE, 
-    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    dcolumn = TRUE, ...) {
+matrixreg <- function(l,
+                      single.row = FALSE,
+                      stars = c(0.001, 0.01, 0.05),
+                      custom.model.names = NULL,
+                      custom.coef.names = NULL,
+                      custom.coef.map = NULL,
+                      custom.gof.names = NULL,
+                      digits = 2,
+                      leading.zero = TRUE,
+                      star.symbol = '*',
+                      symbol = ".",
+                      override.coef = 0,
+                      override.se = 0,
+                      override.pvalues = 0,
+                      override.ci.low = 0,
+                      override.ci.up = 0,
+                      omit.coef = NULL,
+                      reorder.coef = NULL,
+                      reorder.gof = NULL,
+                      ci.force = FALSE,
+                      ci.force.level = 0.95,
+                      ci.test = 0,
+                      bold = 0,
+                      groups = NULL,
+                      custom.columns = NULL,
+                      custom.col.pos = NULL,
+                      dcolumn = TRUE,
+                      ...) {
   
   # unnamed arguments to environment
   dots <- list(...)
@@ -22,11 +41,11 @@ matrixreg <- function(l, single.row = FALSE,
   }
 
   # extract
-  models <- get.data(l, ...)  #extract relevant coefficients, SEs, GOFs, etc.
+  models <- get.data(l, ...)  # extract relevant coefficients, SEs, GOFs etc.
   models <- override(models, override.coef, override.se, override.pvalues, 
       override.ci.low, override.ci.up)
   if (dots$output.type != 'latex') {
-    models <- tex.replace(models, type = "screen")  #convert TeX code to text code
+    models <- tex.replace(models, type = "screen")  # convert TeX code to text
   }
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  #extract names of GOFs
@@ -43,7 +62,9 @@ matrixreg <- function(l, single.row = FALSE,
   if (!is.null(custom.coef.map)) {
     m <- custommap(m, custom.coef.map)
   } else {
-    m <- omit_rename(m, omit.coef = omit.coef, custom.coef.names = custom.coef.names)
+    m <- omit_rename(m,
+                     omit.coef = omit.coef,
+                     custom.coef.names = custom.coef.names)
   }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
@@ -70,23 +91,25 @@ matrixreg <- function(l, single.row = FALSE,
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
         posinfstring = "Inf", leading.zero, digits, 
         se.prefix = " (", se.suffix = ")", star.prefix = " ", star.suffix = "", 
-        stars, dcolumn = TRUE, star.symbol = star.symbol, symbol = symbol, bold = bold, 
-        bold.prefix = "", bold.suffix = "", ci = ci, ci.test = ci.test)
+        stars, dcolumn = TRUE, star.symbol = star.symbol, symbol = symbol, 
+        bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
+        ci.test = ci.test)
   } else if (dots$output.type == 'latex') {
     output.matrix <- outputmatrix(m, single.row, 
         neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
         posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
         se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
         star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
-        symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", bold.suffix = "}", ci = ci, 
-        semicolon = ";\\ ", ci.test = ci.test)
+        symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", 
+        bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test)
   } else if (dots$output.type == 'html') {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
         posinfstring = "Inf", leading.zero, digits, 
         se.prefix = " (", se.suffix = ")", star.symbol = star.symbol, 
-        star.prefix = paste0("<sup", dots$css.sup, ">"), star.suffix = "</sup>", 
-        stars, dcolumn = TRUE, symbol = symbol, bold = bold, bold.prefix = "<b>", 
-        bold.suffix = "</b>", ci = ci, ci.test = ci.test)
+        star.prefix = paste0("<sup", dots$css.sup, ">"), 
+        star.suffix = "</sup>", stars, dcolumn = TRUE, symbol = symbol, 
+        bold = bold, bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, 
+        ci.test = ci.test)
   }
 
   # grouping
@@ -110,8 +133,9 @@ matrixreg <- function(l, single.row = FALSE,
         single.row = single.row, digits = digits)
   }
   output.matrix <- cbind(output.matrix[, 1], temp)
-
-  if (dots$output.type == 'ascii') { # otherwise we get duplicate model names in latex and html
+  
+  # otherwise we get duplicate model names in latex and html
+  if (dots$output.type == 'ascii') {
     output.matrix <- rbind(c("", mod.names), output.matrix)
   }
   
@@ -135,26 +159,66 @@ matrixreg <- function(l, single.row = FALSE,
 } 
 
 # screenreg function
-screenreg <- function(l, file = NULL, single.row = FALSE, 
-    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    column.spacing = 2, outer.rule = "=", 
-    inner.rule = "-", ...) {
+screenreg <- function(l,
+                      file = NULL,
+                      single.row = FALSE,
+                      stars = c(0.001, 0.01, 0.05),
+                      custom.model.names = NULL,
+                      custom.coef.names = NULL,
+                      custom.coef.map = NULL,
+                      custom.gof.names = NULL,
+                      custom.note = NULL,
+                      digits = 2,
+                      leading.zero = TRUE,
+                      star.symbol = '*',
+                      symbol = ".",
+                      override.coef = 0,
+                      override.se = 0,
+                      override.pvalues = 0,
+                      override.ci.low = 0, 
+                      override.ci.up = 0,
+                      omit.coef = NULL,
+                      reorder.coef = NULL,
+                      reorder.gof = NULL,
+                      ci.force = FALSE,
+                      ci.force.level = 0.95,
+                      ci.test = 0,
+                      groups = NULL,
+                      custom.columns = NULL,
+                      custom.col.pos = NULL,
+                      column.spacing = 2,
+                      outer.rule = "=",
+                      inner.rule = "-",
+                      ...) {
   
   # matrixreg produces the output matrix
-  output.matrix <- matrixreg(l, single.row = single.row, 
-    stars = stars, custom.model.names = custom.model.names, 
-    custom.coef.names = custom.coef.names, custom.coef.map = custom.coef.map, custom.gof.names = custom.gof.names, 
-    digits = digits, leading.zero = leading.zero, star.symbol = star.symbol, symbol = symbol, 
-    override.coef = override.coef, override.se = override.se, override.pvalues = override.pvalues, override.ci.low = override.ci.low, 
-    override.ci.up = override.ci.up, omit.coef = omit.coef, reorder.coef = reorder.coef, 
-    reorder.gof = reorder.gof, ci.force = ci.force, ci.force.level = ci.force.level, ci.test = ci.test, 
-    groups = groups, custom.columns = custom.columns, custom.col.pos = custom.col.pos, include.attributes = TRUE, ...)
+  output.matrix <- matrixreg(l,
+                             single.row = single.row,
+                             stars = stars,
+                             custom.model.names = custom.model.names,
+                             custom.coef.names = custom.coef.names,
+                             custom.coef.map = custom.coef.map,
+                             custom.gof.names = custom.gof.names,
+                             digits = digits,
+                             leading.zero = leading.zero,
+                             star.symbol = star.symbol,
+                             symbol = symbol,
+                             override.coef = override.coef,
+                             override.se = override.se,
+                             override.pvalues = override.pvalues,
+                             override.ci.low = override.ci.low,
+                             override.ci.up = override.ci.up,
+                             omit.coef = omit.coef,
+                             reorder.coef = reorder.coef,
+                             reorder.gof = reorder.gof,
+                             ci.force = ci.force,
+                             ci.force.level = ci.force.level,
+                             ci.test = ci.test,
+                             groups = groups,
+                             custom.columns = custom.columns,
+                             custom.col.pos = custom.col.pos,
+                             include.attributes = TRUE,
+                             ...)
 
   gof.names <- attr(output.matrix, 'gof.names')
   coef.names <- attr(output.matrix, 'coef.names')
@@ -241,7 +305,13 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # stars note
-  snote <- get_stars(pval = NULL, stars = stars, star.symbol = star.symbol, symbol = symbol, ci = ci, ci.test = ci.test, output = 'ascii')$note
+  snote <- get_stars(pval = NULL,
+                     stars = stars,
+                     star.symbol = star.symbol,
+                     symbol = symbol,
+                     ci = ci,
+                     ci.test = ci.test,
+                     output = 'ascii')$note
 
   # custom note
   if (is.null(custom.note)) {
@@ -270,19 +340,49 @@ screenreg <- function(l, file = NULL, single.row = FALSE,
 
 
 # texreg function
-texreg <- function(l, file = NULL, single.row = FALSE, 
-    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.coef.map = NULL,
-    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
-    leading.zero = TRUE, symbol = "\\cdot", override.coef = 0, 
-    override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, bold = 0.00, 
-    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
-    label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, lyx = FALSE,
-    sideways = FALSE, longtable = FALSE, use.packages = TRUE, table = TRUE, 
-    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", ...) {
+texreg <- function(l,
+                   file = NULL,
+                   single.row = FALSE,
+                   stars = c(0.001, 0.01, 0.05),
+                   custom.model.names = NULL,
+                   custom.coef.names = NULL,
+                   custom.coef.map = NULL,
+                   custom.gof.names = NULL,
+                   custom.note = NULL,
+                   digits = 2,
+                   leading.zero = TRUE,
+                   symbol = "\\cdot",
+                   override.coef = 0,
+                   override.se = 0,
+                   override.pvalues = 0,
+                   override.ci.low = 0,
+                   override.ci.up = 0,
+                   omit.coef = NULL,
+                   reorder.coef = NULL,
+                   reorder.gof = NULL,
+                   ci.force = FALSE,
+                   ci.force.level = 0.95,
+                   ci.test = 0,
+                   groups = NULL,
+                   custom.columns = NULL,
+                   custom.col.pos = NULL,
+                   bold = 0.00,
+                   center = TRUE,
+                   caption = "Statistical models",
+                   caption.above = FALSE,
+                   label = "table:coefficients",
+                   booktabs = FALSE,
+                   dcolumn = FALSE,
+                   lyx = FALSE,
+                   sideways = FALSE,
+                   longtable = FALSE,
+                   use.packages = TRUE,
+                   table = TRUE,
+                   no.margin = FALSE,
+                   fontsize = NULL,
+                   scalebox = NULL,
+                   float.pos = "",
+                   ...) {
   
   #check dcolumn vs. bold
   if (dcolumn == TRUE && bold > 0) {
@@ -322,15 +422,36 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   }
 
   # matrixreg produces the output matrix
-  output.matrix <- matrixreg(l, single.row = single.row, 
-    stars = stars, custom.model.names = custom.model.names, 
-    custom.coef.names = custom.coef.names, custom.coef.map = custom.coef.map, custom.gof.names = custom.gof.names, 
-    digits = digits, leading.zero = leading.zero, star.symbol = '*', symbol = symbol, 
-    override.coef = override.coef, override.se = override.se, override.pvalues = override.pvalues, override.ci.low = override.ci.low, 
-    override.ci.up = override.ci.up, omit.coef = omit.coef, reorder.coef = reorder.coef, 
-    reorder.gof = reorder.gof, ci.force = ci.force, ci.force.level = ci.force.level, ci.test = ci.test, 
-    groups = groups, custom.columns = custom.columns, custom.col.pos = custom.col.pos, 
-    dcolumn = dcolumn, bold = bold, include.attributes = TRUE, output.type = 'latex', ...)
+  output.matrix <- matrixreg(l,
+                             single.row = single.row,
+                             stars = stars,
+                             custom.model.names = custom.model.names,
+                             custom.coef.names = custom.coef.names,
+                             custom.coef.map = custom.coef.map,
+                             custom.gof.names = custom.gof.names,
+                             digits = digits,
+                             leading.zero = leading.zero,
+                             star.symbol = '*',
+                             symbol = symbol,
+                             override.coef = override.coef,
+                             override.se = override.se,
+                             override.pvalues = override.pvalues,
+                             override.ci.low = override.ci.low, 
+                             override.ci.up = override.ci.up,
+                             omit.coef = omit.coef,
+                             reorder.coef = reorder.coef,
+                             reorder.gof = reorder.gof,
+                             ci.force = ci.force,
+                             ci.force.level = ci.force.level,
+                             ci.test = ci.test,
+                             groups = groups,
+                             custom.columns = custom.columns,
+                             custom.col.pos = custom.col.pos,
+                             dcolumn = dcolumn,
+                             bold = bold,
+                             include.attributes = TRUE,
+                             output.type = 'latex',
+                             ...)
 
   gof.names <- attr(output.matrix, 'gof.names')
   coef.names <- attr(output.matrix, 'coef.names')
@@ -446,7 +567,8 @@ texreg <- function(l, file = NULL, single.row = FALSE,
       if (float.pos == "") {
         string <- paste0(string, "\\begin{", t, "table}", linesep)
       } else {
-        string <- paste0(string, "\\begin{", t, "table}[", float.pos, "]", linesep)
+        string <- paste0(string, "\\begin{", t, "table}[", float.pos, "]", 
+                         linesep)
       }
       if (caption.above == TRUE) {
         string <- paste0(string, "\\caption{", caption, "}", linesep)
@@ -500,7 +622,13 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # stars note (define now, add later)
-  snote <- get_stars(pval = NULL, stars = stars, star.symbol = '*', symbol = symbol, ci = ci, ci.test = ci.test, output = 'latex')$note
+  snote <- get_stars(pval = NULL,
+                     stars = stars,
+                     star.symbol = '*',
+                     symbol = symbol,
+                     ci = ci,
+                     ci.test = ci.test,
+                     output = 'latex')$note
 
   if (is.null(fontsize)) {
     notesize <- "scriptsize"
@@ -535,7 +663,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     note <- gsub("%stars", snote, note, perl = TRUE)
   }
   if (note != "") {
-    if (longtable == TRUE) {  # longtable requires line break after note & caption
+    if (longtable == TRUE) {  # longtable requires line break after note/caption
       note <- paste0(note, "\\\\", linesep)
     } else {
       note <- paste0(note, linesep)
@@ -553,14 +681,14 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   if (longtable == TRUE) {
     if (caption.above == TRUE) {
       string <- paste0(string, "\\caption{", caption, "}", linesep, "\\label{", 
-          label, "}\\\\", linesep, tablehead, "\\endfirsthead", linesep, tablehead, 
-          "\\endhead", linesep, bottomline, "\\endfoot", linesep, bottomline, note, 
-          "\\endlastfoot", linesep)
+          label, "}\\\\", linesep, tablehead, "\\endfirsthead", linesep, 
+          tablehead, "\\endhead", linesep, bottomline, "\\endfoot", linesep, 
+          bottomline, note, "\\endlastfoot", linesep)
     } else {
       string <- paste0(string, tablehead, "\\endfirsthead", linesep, tablehead, 
-          "\\endhead", linesep, bottomline, "\\endfoot", linesep, bottomline, note, 
-          "\\caption{", caption, "}", linesep, "\\label{", label, "}", linesep, 
-          "\\endlastfoot \\\\", linesep)
+          "\\endhead", linesep, bottomline, "\\endfoot", linesep, bottomline, 
+          note, "\\caption{", caption, "}", linesep, "\\label{", label, "}", 
+          linesep, "\\endlastfoot \\\\", linesep)
     }
   }
   
@@ -670,20 +798,46 @@ texreg <- function(l, file = NULL, single.row = FALSE,
 
 
 # htmlreg function
-htmlreg <- function(l, file = NULL, single.row = FALSE, 
-    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = "&middot;", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, 
-    custom.col.pos = NULL, bold = 0.00, center = TRUE, 
-    caption = "Statistical models", caption.above = FALSE, 
-    inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
-    head.tag = FALSE, body.tag = FALSE, indentation = "", 
-    vertical.align.px = 0, ...) {
-
+htmlreg <- function(l,
+                    file = NULL,
+                    single.row = FALSE,
+                    stars = c(0.001, 0.01, 0.05),
+                    custom.model.names = NULL, 
+                    custom.coef.names = NULL,
+                    custom.coef.map = NULL,
+                    custom.gof.names = NULL,
+                    custom.note = NULL,
+                    digits = 2,
+                    leading.zero = TRUE,
+                    star.symbol = '*',
+                    symbol = "&middot;",
+                    override.coef = 0,
+                    override.se = 0,
+                    override.pvalues = 0,
+                    override.ci.low = 0,
+                    override.ci.up = 0,
+                    omit.coef = NULL,
+                    reorder.coef = NULL,
+                    reorder.gof = NULL,
+                    ci.force = FALSE,
+                    ci.force.level = 0.95,
+                    ci.test = 0,
+                    groups = NULL,
+                    custom.columns = NULL,
+                    custom.col.pos = NULL,
+                    bold = 0.00,
+                    center = TRUE,
+                    caption = "Statistical models",
+                    caption.above = FALSE,
+                    inline.css = TRUE,
+                    doctype = TRUE,
+                    html.tag = FALSE,
+                    head.tag = FALSE,
+                    body.tag = FALSE,
+                    indentation = "",
+                    vertical.align.px = 0,
+                    ...) {
+  
   # inline CSS definitions
   if (inline.css == TRUE) {
     css.table <- " style=\"border: none;\""
@@ -707,16 +861,36 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
   }
 
   # matrixreg produces the output matrix
-  output.matrix <- matrixreg(l, single.row = single.row, 
-    stars = stars, custom.model.names = custom.model.names, 
-    custom.coef.names = custom.coef.names, custom.coef.map = custom.coef.map, 
-    custom.gof.names = custom.gof.names, digits = digits, leading.zero = leading.zero, 
-    star.symbol = star.symbol, symbol = symbol, override.coef = override.coef, override.se = override.se, 
-    override.pvalues = override.pvalues, override.ci.low = override.ci.low, 
-    override.ci.up = override.ci.up, omit.coef = omit.coef, reorder.coef = reorder.coef, 
-    reorder.gof = reorder.gof, ci.force = ci.force, ci.force.level = ci.force.level, 
-    ci.test = ci.test, groups = groups, custom.columns = custom.columns, custom.col.pos = custom.col.pos, 
-    bold = bold, include.attributes = TRUE, output.type = 'html', css.sup = css.sup, ...)
+  output.matrix <- matrixreg(l,
+                             single.row = single.row, 
+                             stars = stars,
+                             custom.model.names = custom.model.names,
+                             custom.coef.names = custom.coef.names,
+                             custom.coef.map = custom.coef.map,
+                             custom.gof.names = custom.gof.names,
+                             digits = digits,
+                             leading.zero = leading.zero,
+                             star.symbol = star.symbol,
+                             symbol = symbol,
+                             override.coef = override.coef,
+                             override.se = override.se,
+                             override.pvalues = override.pvalues,
+                             override.ci.low = override.ci.low, 
+                             override.ci.up = override.ci.up,
+                             omit.coef = omit.coef,
+                             reorder.coef = reorder.coef,
+                             reorder.gof = reorder.gof,
+                             ci.force = ci.force,
+                             ci.force.level = ci.force.level,
+                             ci.test = ci.test,
+                             groups = groups,
+                             custom.columns = custom.columns,
+                             custom.col.pos = custom.col.pos,
+                             bold = bold,
+                             include.attributes = TRUE,
+                             output.type = 'html',
+                             css.sup = css.sup,
+                             ...)
 
   gof.names <- attr(output.matrix, 'gof.names')
   coef.names <- attr(output.matrix, 'coef.names')
@@ -900,7 +1074,14 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
   }
   
   # stars note
-  snote <- get_stars(pval = NULL, stars = stars, star.symbol = star.symbol, symbol = symbol, ci = ci, ci.test = ci.test, css.sup = css.sup, output = 'html')$note
+  snote <- get_stars(pval = NULL,
+                     stars = stars,
+                     star.symbol = star.symbol,
+                     symbol = symbol,
+                     ci = ci,
+                     ci.test = ci.test,
+                     css.sup = css.sup,
+                     output = 'html')$note
 
   if (is.null(custom.note)) {
     note <- snote
@@ -911,10 +1092,26 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
     note <- gsub("%stars", snote, note)
   }
   if (note != "") {
-    string <- paste0(string, h.ind, b.ind, ind, "<tr>\n", h.ind, b.ind, ind, ind, 
-                     "<td", css.td, " colspan=\"", (1 + length(mod.names)), 
-                     "\"><span style=\"font-size:0.8em\">", note, "</span></td>\n", h.ind, 
-                     b.ind, ind, "</tr>\n")
+    string <- paste0(string,
+                     h.ind,
+                     b.ind,
+                     ind,
+                     "<tr>\n",
+                     h.ind,
+                     b.ind,
+                     ind,
+                     ind,
+                     "<td",
+                     css.td,
+                     " colspan=\"",
+                     (1 + length(mod.names)),
+                     "\"><span style=\"font-size:0.8em\">",
+                     note,
+                     "</span></td>\n",
+                     h.ind,
+                     b.ind,
+                     ind,
+                     "</tr>\n")
   }
   
   # write table footer
@@ -940,26 +1137,63 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
 }
 
 # csvreg function
-csvreg <- function(l, file, 
-    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    caption = 'Statistical Models', ...) {
+csvreg <- function(l,
+                   file,
+                   stars = c(0.001, 0.01, 0.05),
+                   custom.model.names = NULL,
+                   custom.coef.names = NULL,
+                   custom.coef.map = NULL,
+                   custom.gof.names = NULL,
+                   custom.note = NULL,
+                   digits = 2,
+                   leading.zero = TRUE,
+                   star.symbol = '*',
+                   symbol = ".",
+                   override.coef = 0,
+                   override.se = 0,
+                   override.pvalues = 0,
+                   override.ci.low = 0,
+                   override.ci.up = 0,
+                   omit.coef = NULL,
+                   reorder.coef = NULL,
+                   reorder.gof = NULL,
+                   ci.force = FALSE,
+                   ci.force.level = 0.95,
+                   ci.test = 0,
+                   groups = NULL,
+                   custom.columns = NULL,
+                   custom.col.pos = NULL,
+                   caption = 'Statistical Models',
+                   ...) {
   
   # matrixreg produces the output matrix
-  output.matrix <- matrixreg(l, 
-    stars = stars, custom.model.names = custom.model.names, 
-    custom.coef.names = custom.coef.names, custom.coef.map = custom.coef.map, custom.gof.names = custom.gof.names, 
-    digits = digits, leading.zero = leading.zero, star.symbol = star.symbol, symbol = symbol, 
-    override.coef = override.coef, override.se = override.se, override.pvalues = override.pvalues, override.ci.low = override.ci.low, 
-    override.ci.up = override.ci.up, omit.coef = omit.coef, reorder.coef = reorder.coef, 
-    reorder.gof = reorder.gof, ci.force = ci.force, ci.force.level = ci.force.level, ci.test = ci.test, 
-    groups = groups, custom.columns = custom.columns, custom.col.pos = custom.col.pos, include.attributes = TRUE, ...)
-
+  output.matrix <- matrixreg(l,
+                             stars = stars,
+                             custom.model.names = custom.model.names,
+                             custom.coef.names = custom.coef.names,
+                             custom.coef.map = custom.coef.map,
+                             custom.gof.names = custom.gof.names,
+                             digits = digits,
+                             leading.zero = leading.zero,
+                             star.symbol = star.symbol,
+                             symbol = symbol, 
+                             override.coef = override.coef,
+                             override.se = override.se,
+                             override.pvalues = override.pvalues,
+                             override.ci.low = override.ci.low,
+                             override.ci.up = override.ci.up,
+                             omit.coef = omit.coef,
+                             reorder.coef = reorder.coef,
+                             reorder.gof = reorder.gof,
+                             ci.force = ci.force,
+                             ci.force.level = ci.force.level,
+                             ci.test = ci.test,
+                             groups = groups,
+                             custom.columns = custom.columns,
+                             custom.col.pos = custom.col.pos,
+                             include.attributes = TRUE,
+                             ...)
+  
   # attributes
   ci <- attr(output.matrix, 'ci')
   ci.test <- attr(output.matrix, 'ci.test')
@@ -969,7 +1203,13 @@ csvreg <- function(l, file,
   if (is.character(caption) && (caption != '')) {
     out <- rbind(out, c('Caption: ', caption, rep('', ncol(output.matrix) - 2)))
   }
-  snote <- get_stars(pval = NULL, stars = stars, star.symbol = star.symbol, symbol = symbol, ci = ci, ci.test = ci.test, output = 'ascii')$note
+  snote <- get_stars(pval = NULL,
+                     stars = stars,
+                     star.symbol = star.symbol,
+                     symbol = symbol,
+                     ci = ci,
+                     ci.test = ci.test,
+                     output = 'ascii')$note
   if (trimws(snote) != '') {
     out <- rbind(out, c('Note: ', snote, rep('', ncol(output.matrix) - 2)))
   } 
@@ -982,25 +1222,50 @@ csvreg <- function(l, file,
   if (!is.character(file)) {
     stop('file must be a character string')
   } else {
-    write.table(out, file = file, sep = ',', quote = TRUE, col.names = FALSE, row.names = FALSE)
+    write.table(out,
+                file = file,
+                sep = ',',
+                quote = TRUE,
+                col.names = FALSE,
+                row.names = FALSE)
   }
 }
 
 # Microsoft Word function
-wordreg <- function(l, file = NULL, single.row = FALSE, 
-    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    digits = 2, leading.zero = TRUE, star.symbol = star.symbol, symbol = ".", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, ...) {
+wordreg <- function(l,
+                    file = NULL,
+                    single.row = FALSE,
+                    stars = c(0.001, 0.01, 0.05),
+                    custom.model.names = NULL,
+                    custom.coef.names = NULL,
+                    custom.coef.map = NULL,
+                    custom.gof.names = NULL,
+                    digits = 2,
+                    leading.zero = TRUE,
+                    star.symbol = star.symbol,
+                    symbol = ".",
+                    override.coef = 0,
+                    override.se = 0,
+                    override.pvalues = 0,
+                    override.ci.low = 0,
+                    override.ci.up = 0,
+                    omit.coef = NULL,
+                    reorder.coef = NULL,
+                    reorder.gof = NULL,
+                    ci.force = FALSE,
+                    ci.force.level = 0.95,
+                    ci.test = 0,
+                    groups = NULL,
+                    custom.columns = NULL,
+                    custom.col.pos = NULL,
+                    ...) {
 
   if (!'rmarkdown' %in% row.names(installed.packages())) {
-    stop('The wordreg function requires the rmarkdown package. Install it and try again.')
+    stop(paste("The wordreg function requires the 'rmarkdown' package.",
+               "Install it and try again."))
   }
   if (is.null(file)) {
-    stop('file must be a valid file path')
+    stop("'file' must be a valid file path.")
   }
   mat <- matrixreg(l, 
                    single.row = single.row,
@@ -1011,7 +1276,7 @@ wordreg <- function(l, file = NULL, single.row = FALSE,
                    custom.gof.names = custom.gof.names,
                    digits = digits,
                    leading.zero = leading.zero,
-                   star.symbol = '*', # produces an error if fed star.symbol itself
+                   star.symbol = '*', # produces error if fed star.symbol itself
                    symbol = symbol,
                    override.coef = override.coef,
                    override.se = override.se,
@@ -1030,9 +1295,10 @@ wordreg <- function(l, file = NULL, single.row = FALSE,
                    output.type = 'ascii',
                    include.attributes = FALSE
                    )
+  wd <- getwd()
   f = tempfile(fileext = '.Rmd')
-  cat(file =f, '```{r, echo = FALSE}
+  cat(file = f, '```{r, echo = FALSE}
                 knitr::kable(mat)
                 ```', append = TRUE)
-  rmarkdown::render(f, output_file = file)
+  rmarkdown::render(f, output_file = paste0(wd, "/", file))
 }

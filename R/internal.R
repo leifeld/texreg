@@ -312,8 +312,10 @@ tex.replace <- function(models, type = "html", style = "") {
     models[[i]]@gof.names <- gsub("\\ ", " ", models[[i]]@gof.names)
     
     # extract.sarlm coefficient name replacement
-    models[[i]]@coef.names <- gsub("\\$\\\\rho\\$", "rho", models[[i]]@coef.names)
-    models[[i]]@coef.names <- gsub("\\$\\\\lambda\\$", "lambda", models[[i]]@coef.names)
+    models[[i]]@coef.names <- gsub("\\$\\\\rho\\$", "rho", 
+                                   models[[i]]@coef.names)
+    models[[i]]@coef.names <- gsub("\\$\\\\lambda\\$", "lambda", 
+                                   models[[i]]@coef.names)
     
     # extract.gamlss coefficient name replacement
     models[[i]]@coef.names <- gsub("\\$\\\\mu\\$", "mu", models[[i]]@coef.names)
@@ -350,7 +352,8 @@ correctDuplicateCoefNames <- function(models) {
       if (models[[i]]@coef.names[j] %in% models[[i]]@coef.names[-j]) {
         indices <- j
         for (k in 1:length(models[[i]]@coef.names)) {
-          if (models[[i]]@coef.names[j] == models[[i]]@coef.names[k] && j != k) {
+          if (models[[i]]@coef.names[j] == models[[i]]@coef.names[k] && 
+              j != k) {
             indices <- c(indices, k)
           }
         }
@@ -503,12 +506,19 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
     }
     if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
       if (nrow(m) == sum(idx)) {
-        stop("custom.coef.names must be a string vector of length ", nrow(m), '.')
+        stop("custom.coef.names must be a string vector of length ",
+             nrow(m),
+             '.')
       } else {
-        stop("custom.coef.names must be a string vector of length ", sum(idx), ' or ', nrow(m), '.')
+        stop("custom.coef.names must be a string vector of length ",
+             sum(idx),
+             ' or ',
+             nrow(m),
+             '.')
       }
     }
-    if (length(custom.coef.names) == sum(idx)) { # user submits number of custom names after omission
+    # user submits number of custom names after omission
+    if (length(custom.coef.names) == sum(idx)) {
       custom.coef.names <- custom.coef.names 
     } else { # user submits number of custom names before omission
       custom.coef.names <- custom.coef.names[idx]
@@ -535,7 +545,8 @@ custommap <- function(m, custom.coef.map) {
     stop('custom.coef.map must be a named list.') 
   }
   if (!any(names(custom.coef.map) %in% row.names(m))) {
-    stop('None of the coefficient names supplied in custom.coef.map appear to be in your models.')
+    stop(paste("None of the coefficient names supplied in custom.coef.map", 
+               "appear to be in your models."))
   }
 
   # when user supplies NA as destination, replace with origin
@@ -545,7 +556,8 @@ custommap <- function(m, custom.coef.map) {
   # subset of coefficients to keep
   origin <- names(custom.coef.map)[names(custom.coef.map) %in% row.names(m)]
   destination <- unlist(custom.coef.map[origin])
-  out <- m[origin, , drop = FALSE] # otherwise R converts to numeric if a single coefficient is passed
+  # otherwise R converts to numeric if a single coefficient is passed
+  out <- m[origin, , drop = FALSE]
 
   # rename
   row.names(out) <- destination
@@ -1310,20 +1322,22 @@ broom_gof <- function(x) {
   idx <- match(names(gof_dict), out$gof.names)
   out$gof.names[idx] <- gof_dict
   if (any(is.na(out$gof))) {
-    warning('texreg used the broom package to extract the following GOF measures, but could not cast them to numeric type: ',
-            out$gof.names[is.na(out$gof)])
+    warning(paste("texreg used the broom package to extract the following GOF",
+                  "measures, but could not cast them to numeric type:",
+                  out$gof.names[is.na(out$gof)]))
   }
   out <- stats::na.omit(out)
-  # output
   return(out)
 }
 
 # create the star note (legend) printed at the bottom of tables and the stars
 # printed next to standard errors
-get_stars <- function(pval = NULL, # test statistics; leave NULL if you only want the legend
-                      stars = c(0.01, 0.05, 0.1), # numeric vector of cut-offs
-                      star.symbol = '*', # character to repeat for first 3 levels of significance
-                      symbol = '.', # character for 4th level of significance
+get_stars <- function(pval = NULL, # test statistics; 
+                                   # leave NULL if you only want the legend
+                      stars = c(0.01, 0.05, 0.1),  # numeric vector of cut-offs
+                      star.symbol = '*',  # character to repeat for first 3
+                                          # levels of significance
+                      symbol = '.',  # character for 4th level of significance
                       star.prefix = '',
                       star.suffix = '',
                       ci = FALSE,  
@@ -1365,7 +1379,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
   if (length(stars) == 0) {
     stars <- NULL
   }
-  p_note_flag <- any(!ci) # at least one model does not print a confidence interval
+  p_note_flag <- any(!ci) # at least one model doesn't print confidence interval
   ci_note_flag <- any(ci) # at least one model prints a confidence interval
 
   symbols <- c(paste(rep(star.symbol, 3), collapse = ''),
@@ -1381,7 +1395,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
   } 
 
   # p_note
-  if (p_note_flag && !is.null(stars)) { # stars supplied = build note
+  if (p_note_flag && !is.null(stars)) {  # stars supplied = build note
     st <- sort(stars)
     if (output == 'ascii') {
       p_note <- paste0(star.prefix,
@@ -1412,7 +1426,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
   }
   
   # ci_note
-  if (ci_note_flag) { # ci calculated for at least one model -> build ci note
+  if (ci_note_flag) {  # ci calculated for at least one model -> build ci note
     if (is.numeric(ci.test) && !is.na(ci.test)) { # sanity check  
       ci_note <- paste(ci.test, "outside the confidence interval")
     } else {
@@ -1425,7 +1439,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
     } else if (output == 'html') {
       ci_symbol <- paste0('<sup', css.sup, '>*</sup>') 
     }
-  } else { # ci not calculated for any model -> empty ci note
+  } else {  # ci not calculated for any model -> empty ci note
     ci_note <- ''
   }
   
@@ -1448,7 +1462,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
       pval <- 1.0
     }
     idx <- pval < st 
-    if (any(idx)) { # choose lowest threshold (relies on previous sorting)
+    if (any(idx)) {  # choose lowest threshold (relies on previous sorting)
       p <- paste0(star.prefix, symbols[idx][1], star.suffix)
     } else {  # not significant
       p <- ""
