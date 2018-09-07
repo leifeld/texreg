@@ -1350,7 +1350,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
   if (length(stars) > 4) {
     stop("Length of the 'stars' argument must be smaller than 5.") 
   }
-  if (any(is.na(stars))) {
+  if (!is.null(stars) && any(is.na(stars))) {
     stop("NA value are not allowed in the 'stars' argument.")
   } 
   if (length(unique(stars)) != length(stars)) {
@@ -1362,7 +1362,9 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
   if (is.null(css.sup) & (output == 'html')) {
     stop("To write a star note in html, you must supply 'css.sup'.")
   }
-
+  if (length(stars) == 0) {
+    stars <- NULL
+  }
   p_note_flag <- any(!ci) # at least one model does not print a confidence interval
   ci_note_flag <- any(ci) # at least one model prints a confidence interval
 
@@ -1452,7 +1454,7 @@ get_stars <- function(pval = NULL, # test statistics; leave NULL if you only wan
       p <- ""
     }
   }
-      
+  
   out <- list('note' = s_note, 'coefficients' = p)
   return(out)
 }

@@ -502,7 +502,6 @@ texreg <- function(l, file = NULL, single.row = FALSE,
   # stars note (define now, add later)
   snote <- get_stars(pval = NULL, stars = stars, star.symbol = '*', symbol = symbol, ci = ci, ci.test = ci.test, output = 'latex')$note
 
-
   if (is.null(fontsize)) {
     notesize <- "scriptsize"
   } else if (fontsize == "tiny" || fontsize == "scriptsize" || 
@@ -522,8 +521,12 @@ texreg <- function(l, file = NULL, single.row = FALSE,
     notesize <- "Large"
   }
   if (is.null(custom.note)) {
-    note <- paste0("\\multicolumn{", length(mod.names), 
-        "}{l}{\\", notesize, "{", snote, "}}")
+    if (snote == "") {
+      note <- ""
+    } else {
+      note <- paste0("\\multicolumn{", length(mod.names), 
+                     "}{l}{\\", notesize, "{", snote, "}}")
+    }
   } else if (custom.note == "") {
     note <- ""
   } else {
@@ -531,10 +534,12 @@ texreg <- function(l, file = NULL, single.row = FALSE,
         "}{l}{\\", notesize, "{", custom.note, "}}")
     note <- gsub("%stars", snote, note, perl = TRUE)
   }
-  if (longtable == TRUE) {  # longtable requires line break after note & caption
-    note <- paste0(note, "\\\\", linesep)
-  } else {
-    note <- paste0(note, linesep)
+  if (note != "") {
+    if (longtable == TRUE) {  # longtable requires line break after note & caption
+      note <- paste0(note, "\\\\", linesep)
+    } else {
+      note <- paste0(note, linesep)
+    }
   }
   
   # bottom rule (define now, add later)
@@ -555,7 +560,7 @@ texreg <- function(l, file = NULL, single.row = FALSE,
       string <- paste0(string, tablehead, "\\endfirsthead", linesep, tablehead, 
           "\\endhead", linesep, bottomline, "\\endfoot", linesep, bottomline, note, 
           "\\caption{", caption, "}", linesep, "\\label{", label, "}", linesep, 
-          "\\endlastfoot", linesep)
+          "\\endlastfoot \\\\", linesep)
     }
   }
   
@@ -905,10 +910,12 @@ htmlreg <- function(l, file = NULL, single.row = FALSE,
     note <- custom.note
     note <- gsub("%stars", snote, note)
   }
-  string <- paste0(string, h.ind, b.ind, ind, "<tr>\n", h.ind, b.ind, ind, ind, 
-      "<td", css.td, " colspan=\"", (1 + length(mod.names)), 
-      "\"><span style=\"font-size:0.8em\">", note, "</span></td>\n", h.ind, 
-      b.ind, ind, "</tr>\n")
+  if (note != "") {
+    string <- paste0(string, h.ind, b.ind, ind, "<tr>\n", h.ind, b.ind, ind, ind, 
+                     "<td", css.td, " colspan=\"", (1 + length(mod.names)), 
+                     "\"><span style=\"font-size:0.8em\">", note, "</span></td>\n", h.ind, 
+                     b.ind, ind, "</tr>\n")
+  }
   
   # write table footer
   string <- paste0(string, h.ind, b.ind, "</table>\n")
