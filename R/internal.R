@@ -2,7 +2,6 @@
 # Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
 # for bug reports, help or feature requests.
 
-
 # display version number and date when the package is loaded
 .onAttach <- function(libname, pkgname) {
   desc  <- packageDescription(pkgname, libname)
@@ -600,57 +599,12 @@ modelnames <- function(model.list, tr.objects, model.names) {
 }
 
 
-# check if stars argument is OK
-check.stars <- function(stars) {
-  if (is.null(stars)) {
-    s <- numeric(0)
-  } else if (class(stars) != "numeric") {
-    stop("The stars argument must be a numeric vector.")
-  } else if (any(is.na(stars))) {
-    stop("NA value are not allowed in the stars argument.")
-  } else {
-    s <- stars
-  }
-  return(s)
-}
-
-
-# create stars string
-stars.string <- function(pval, stars, star.char, star.prefix, star.suffix, 
-    symbol) {
-  st <- sort(stars)
-  if (length(unique(st)) != length(st)) {
-    stop("Duplicate elements are not allowed in the stars argument.")
-  }
-  if (is.na(pval)) {
-    pval <- 1.0
-  }
-  if (length(st) > 4) {
-    stop("A maximum of four values is allowed in the stars argument.")
-  } else if (length(st) > 2 && pval < st[1]) {  # three stars
-    p <- paste0(star.prefix, star.char, star.char, star.char, star.suffix)
-  } else if (  # two stars
-      (length(st) > 2 && pval < st[2]) || 
-      (length(st) == 2 && pval < st[1]) ) {
-    p <- paste0(star.prefix, star.char, star.char, star.suffix)
-  } else if (  # one star
-      (length(st) > 2 && pval < st[3]) || 
-      (length(st) == 2 && pval < st[2]) || 
-      (length(st) == 1 && pval < st) ) {
-    p <- paste0(star.prefix, star.char, star.suffix)
-  } else if (length(st) == 4 && pval < st[4]) {  # symbol
-    p <- paste0(star.prefix, symbol, star.suffix)
-  } else {  # not significant
-    p <- ""
-  }
-  return(p) 
-}
 
 
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, posinfstring, 
     leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
-    star.char = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
+    star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
     bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
     ci.test = 0) {
   
@@ -698,12 +652,18 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
           }
           
           if (ci[k - 1] == FALSE) {
-            p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
-              star.suffix, symbol)
+            p <- get_stars(pval = m[i, j + 2], 
+                           stars = stars, 
+                           star.symbol = star.symbol,
+                           symbol = symbol,
+                           star.prefix = star.prefix,
+                           star.suffix = star.suffix,
+                           ci = ci
+                           )$coefficients
           } else { # significance from confidence interval
             if (is.numeric(ci.test) && !is.na(ci.test) && 
                 (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
-              p <- paste0(star.prefix, star.char, star.suffix)
+              p <- paste0(star.prefix, star.symbol, star.suffix)
             } else {
               p <- ""
             }
@@ -775,12 +735,17 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
             se.suffix.current <- ""
           }
           if (ci[k - 1] == FALSE) {
-            p <- stars.string(m[i, j + 2], stars, star.char, star.prefix, 
-              star.suffix, symbol)
+            p <- get_stars(pval = m[i, j + 2], 
+                           stars = stars, 
+                           star.symbol = star.symbol, 
+                           symbol = symbol,
+                           star.prefix = star.prefix, 
+                           star.suffix = star.suffix
+                           )$coefficients
           } else { # significance from confidence interval
             if (is.numeric(ci.test) && !is.na(ci.test) && 
                 (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
-              p <- paste0(star.prefix, star.char, star.suffix)
+              p <- paste0(star.prefix, star.symbol, star.suffix)
             } else {
               p <- ""
             }
@@ -1350,5 +1315,144 @@ broom_gof <- function(x) {
   }
   out <- stats::na.omit(out)
   # output
+  return(out)
+}
+
+# create the star note (legend) printed at the bottom of tables and the stars
+# printed next to standard errors
+get_stars <- function(pval = NULL, # test statistics; leave NULL if you only want the legend
+                      stars = c(0.01, 0.05, 0.1), # numeric vector of cut-offs
+                      star.symbol = '*', # character to repeat for first 3 levels of significance
+                      symbol = '.', # character for 4th level of significance
+                      star.prefix = '',
+                      star.suffix = '',
+                      ci = FALSE,  
+                      ci.test = NULL, 
+                      css.sup = NULL,  
+                      output = 'ascii') {
+
+  # sanity checks and prep
+  if (!output %in% c('ascii', 'latex', 'html')) {
+    stop('output argument must be ascii, latex, or html')
+  }
+  if (!is.numeric(ci.test) && !is.null(ci.test)) {
+    stop('The argument ci.test must be NULL or numeric')
+  }
+  if (!is.logical(ci)) {
+    stop('The argument ci must be logical')
+  }
+  if (!is.null(stars) && !is.numeric(stars)) {
+    stop('The argument stars must be NULL or numeric')
+  }
+  if (any(stars > 1) | any(stars < 0)) {
+    stop('All values in the stars argument must be between 0 and 1.')
+  }
+  if (length(stars) > 4) {
+    stop('Length of the stars argument must be smaller than 5') 
+  }
+  if (any(is.na(stars))) {
+    stop("NA value are not allowed in the stars argument.")
+  } 
+  if (length(unique(stars)) != length(stars)) {
+    stop("Duplicate elements are not allowed in the stars argument.")
+  }
+  if (!is.null(symbol) && !is.character(symbol)) {
+    stop('The argument symbol must be NULL or character')
+  }
+  if (is.null(css.sup) & (output == 'html')) {
+    stop('To write a star note in html, you must supply css.sup')
+  }
+
+  p_note_flag <- any(!ci) # at least one model does not print a confidence interval
+  ci_note_flag <- any(ci) # at least one model does prints a confidence interval
+
+  symbols <- c(paste(rep(star.symbol, 3), collapse = ''),
+               paste(rep(star.symbol, 2), collapse = ''),
+               star.symbol,
+               symbol)
+  if (length(stars) == 1) {
+    symbols <- symbols[3]
+  } else if (length(stars) == 2) {
+    symbols <- symbols[2:3]
+  } else if (length(stars) == 3) {
+    symbols <- symbols[1:3]
+  } 
+
+  # p_note
+  if (p_note_flag && !is.null(stars)) { # stars supplied = build note
+    st <- sort(stars)
+    if (output == 'ascii') {
+      p_note <- paste0(star.prefix,
+                       symbols, 
+                       star.suffix,
+                       ' p < ', st)
+    } else if (output == 'latex') {
+      p_note <- paste0('$^{', 
+                       star.prefix,
+                       symbols, 
+                       star.suffix,
+                       '} p <', 
+                       st, 
+                       '$')
+    } else if (output == 'html') {
+      p_note <- paste0('<sup', 
+                       css.sup, 
+                       '>', 
+                       star.prefix,
+                       symbols, 
+                       star.suffix,
+                       '</sup> p &lt; ', 
+                       st)
+    }
+    p_note <- paste(p_note, collapse = '; ')
+  } else { # no stars supplied = empty note
+    p_note <- ''
+  }
+  
+  # ci_note
+  if (ci_note_flag) { # ci calculated for at least one model -> build ci note
+    if (is.numeric(ci.test) && !is.na(ci.test)) { # sanity check  
+      ci_note <- paste(ci.test, "outside the confidence interval")
+    } else {
+      ci_note <- ''
+    }
+    if (output == 'ascii') {
+      ci_symbol <- '*'
+    } else if (output == 'latex') {
+      ci_symbol <- '$^*$'
+    } else if (output == 'html') {
+      ci_symbol <- paste0('<sup', css.sup, '>*</sup>') 
+    }
+  } else { # ci not calculated for any model -> empty ci note
+    ci_note <- ''
+  }
+  
+  # combine p and ci notes
+  if (p_note_flag && ci_note_flag && (p_note != '') && (ci_note != '')) {
+    s_note <- paste0(p_note, ' (or ', ci_note, ').')
+  } else if (p_note_flag && (p_note != '')) {
+    s_note <- p_note
+  } else if (ci_note_flag && (ci_note != '')) {
+    s_note <- paste0(ci_symbol, ' ', ci_note, '.')
+  } else {
+    s_note <- ''
+  }
+
+  # stars for individual coefficients 
+  if (is.null(pval) | is.null(stars)) {
+      p = ''
+  } else {
+    if (is.na(pval)) {
+      pval <- 1.0
+    }
+    idx <- pval < st 
+    if (any(idx)) { # choose lowest threshold (relies on previou sorting)
+      p <- paste0(star.prefix, symbols[idx][1], star.suffix)
+    } else {  # not significant
+      p <- ""
+    }
+  }
+      
+  out <- list('note' = s_note, 'coefficients' = p)
   return(out)
 }
