@@ -4432,7 +4432,7 @@ extract.vglm <- function(model, include.loglik = TRUE, include.df = TRUE,
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.nobs == TRUE) {
-    gof <- c(gof, length(stats::residuals(s)))
+    gof <- c(gof, length(VGAM::residuals(s)))
     gof.names <- c(gof.names, "Num.\\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
