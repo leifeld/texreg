@@ -1842,86 +1842,88 @@ setMethod("extract",  signature = className("speedlm", "speedglm"),
 
 # extension for lme objects
 extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
-    include.loglik = TRUE, include.nobs = TRUE, include.groups = TRUE,
-    include.variance = FALSE, ...) {
-
-  s <- summary(model, ...)
-
-  coefficient.names <- rownames(s$tTable)
-  coefficients <- s$tTable[, 1]
-  standard.errors <- s$tTable[, 2]
-  significance <- s$tTable[, 5]
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    aic <- s$AIC
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    bic <- s$BIC
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    lik <- s$logLik
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    n <- nobs(model)
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  if (include.groups == TRUE) {
-    grp <- model$dims$ngrps[1:model$dims$Q]
-    gof <- c(gof, grp)
-    gof.names <- c(gof.names, "Num.\ groups")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  if (include.variance == TRUE ) {
-    sig.all <- s$sigma
-    if (!is.null(sig.all) && !is.na(sig.all)) {
-      gof <- c(gof, sig.all)
-      gof.names <- c(gof.names, "sigma")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-
-    vc <- nlme::VarCorr(model)
-    if ("(Intercept)" %in% rownames(vc) && "StdDev" %in% colnames(vc)) {
-      sig.RE <- as.numeric(vc["(Intercept)", "StdDev"])
-      if (!is.null(sig.RE) && !is.na(sig.RE)) {
-        gof <- c(gof, sig.RE)
-        gof.names <- c(gof.names, "sigma.\ RE")
+                        include.loglik = TRUE, include.nobs = TRUE, include.groups = TRUE,
+                        include.variance = FALSE, ...) {
+    
+    s <- summary(model, ...)
+    
+    coefficient.names <- rownames(s$tTable)
+    coefficients <- s$tTable[, 1]
+    standard.errors <- s$tTable[, 2]
+    significance <- s$tTable[, 5]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        aic <- s$AIC
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
         gof.decimal <- c(gof.decimal, TRUE)
-      }
     }
-
-    cf <- coef(model$modelStruct, unconstrained = FALSE)["corStruct.Phi1"]
-    rho <- unname(cf)
-    if (!is.null(rho) && !is.na(rho)) {
-      gof <- c(gof, rho)
-      gof.names <- c(gof.names, "rho")
-      gof.decimal <- c(gof.decimal, TRUE)
+    if (include.bic == TRUE) {
+        bic <- s$BIC
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
     }
-  }
-
-  tr <- createTexreg(
-      coef.names = coefficient.names,
-      coef = coefficients,
-      se = standard.errors,
-      pvalues = significance,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-  )
-  return(tr)
+    if (include.loglik == TRUE) {
+        lik <- s$logLik
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        n <- nobs(model)
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.groups == TRUE) {
+        grp <- model$dims$ngrps[1:model$dims$Q]
+        for(i in 1:length(grp)){
+            gof <- c(gof, grp[i])
+            gof.names <- c(gof.names, paste("Num.\ groups:", names(grp)[i]))
+            gof.decimal <- c(gof.decimal, FALSE)
+        }
+    }
+    if (include.variance == TRUE ) {
+        sig.all <- s$sigma
+        if (!is.null(sig.all) && !is.na(sig.all)) {
+            gof <- c(gof, sig.all)
+            gof.names <- c(gof.names, "sigma")
+            gof.decimal <- c(gof.decimal, TRUE)
+        }
+        
+        vc <- nlme::VarCorr(model)
+        if ("(Intercept)" %in% rownames(vc) && "StdDev" %in% colnames(vc)) {
+            sig.RE <- as.numeric(vc["(Intercept)", "StdDev"])
+            if (!is.null(sig.RE) && !is.na(sig.RE)) {
+                gof <- c(gof, sig.RE)
+                gof.names <- c(gof.names, "sigma.\ RE")
+                gof.decimal <- c(gof.decimal, TRUE)
+            }
+        }
+        
+        cf <- coef(model$modelStruct, unconstrained = FALSE)["corStruct.Phi1"]
+        rho <- unname(cf)
+        if (!is.null(rho) && !is.na(rho)) {
+            gof <- c(gof, rho)
+            gof.names <- c(gof.names, "rho")
+            gof.decimal <- c(gof.decimal, TRUE)
+        }
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = coefficients,
+        se = standard.errors,
+        pvalues = significance,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
 }
 
 setMethod("extract", signature = className("lme", "nlme"),
