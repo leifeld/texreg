@@ -2576,47 +2576,51 @@ setMethod("extract", signature = className("maBina", "erer"),
 
 # extension for mlogit objects (mlogit package)
 extract.mlogit <- function(model, include.aic = TRUE, include.loglik = TRUE,
-    include.nobs = TRUE, ...) {
-  s <- summary(model, ...)
-
-  coefs <- s$CoefTable[, 1]
-  rn <- rownames(s$CoefTable)
-  se <- s$CoefTable[, 2]
-  pval <- s$CoefTable[, 4]
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    gof <- AIC(model)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    gof <- c(gof, logLik(model)[1])
-    gof.names <- c(gof.names, "Log\ Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    gof <- c(gof, nrow(s$residuals))
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-  tr <- createTexreg(
-      coef.names = rn,
-      coef = coefs,
-      se = se,
-      pvalues = pval,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-  )
-  return(tr)
+                           include.nobs = TRUE, include.order =TRUE, ...) {
+    s <- summary(model, ...)
+    
+    if (include.order == TRUE) {
+        s$CoefTable <- s$CoefTable[order(rownames(s$CoefTable)),]
+    } 
+    
+    coefs <- s$CoefTable[, 1]
+    rn <- rownames(s$CoefTable)
+    se <- s$CoefTable[, 2]
+    pval <- s$CoefTable[, 4]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        gof <- AIC(model)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        gof <- c(gof, logLik(model)[1])
+        gof.names <- c(gof.names, "Log\ Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, nrow(s$residuals))
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = rn,
+        coef = coefs,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
 }
 
 setMethod("extract", signature = className("mlogit", "mlogit"),
-    definition = extract.mlogit)
+          definition = extract.mlogit)
 
 
 # extension for mnlogit objects (mnlogit package)
