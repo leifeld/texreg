@@ -1421,6 +1421,10 @@ extract.negbin <- extract.glm
 setMethod("extract", signature = className("negbin", "MASS"),
     definition = extract.negbin)
 
+#extension for speedglm objects 
+extract.speedglm <- extract.glm
+setMethod("extract",  signature = className("speedglm", "speedglm"), 
+          definition = extract.speedglm)
 
 # extension for glmmadmb objects (glmmADMB package)
 extract.glmmadmb <- function(model, include.variance = TRUE,
@@ -1829,6 +1833,11 @@ setMethod("extract", signature = className("dynlm", "dynlm"),
 extract.ivreg <- extract.lm
 setMethod("extract", signature = className("ivreg", "AER"),
     definition = extract.ivreg)
+
+#extension for speed.lm objects
+extract.speedlm <- extract.lm
+setMethod("extract",  signature = className("speedlm", "speedglm"), 
+          definition = extract.speedlm)
 
 
 # extension for lme objects
@@ -4931,4 +4940,50 @@ setMethod("extract", signature = className("zeroinfl", "pscl"),
 extract.hurdle <- extract.zeroinfl
 setMethod("extract", signature = className("hurdle", "pscl"),
     definition = extract.hurdle)
+
+extract.biglm <- function(model, include.nobs = TRUE, include.aic = TRUE, use.ci = FALSE, ...) {
+    
+    tab <-summary(model)$mat
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.nobs == TRUE) {
+        gof <- c(gof, model$n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.aic == TRUE) {
+        gof <- c(gof, AIC(model))
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    if (use.ci == TRUE) {
+        tr <- createTexreg(
+            coef.names = rownames(tab),
+            coef = tab[, 1],
+            ci.low = tab[, 2],
+            ci.up = tab[, 3],
+            gof.names = gof.names,
+            gof = gof,
+            gof.decimal = gof.decimal
+        )
+        
+    } else {
+        tr <- createTexreg(
+            coef.names = rownames(tab),
+            coef = tab[, 1],
+            se = tab[, 4],
+            pvalues = tab[, 5],
+            gof.names = gof.names,
+            gof = gof,
+            gof.decimal = gof.decimal
+        )
+    } 
+    return(tr)
+}
+
+setMethod("extract", signature = className("biglm", "biglm"),
+          definition = extract.biglm)
 
