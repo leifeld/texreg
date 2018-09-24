@@ -18,8 +18,6 @@
 \alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
-\alias{extract.biglm}
-\alias{extract,biglm-method}
 \alias{extract.brglm}
 \alias{extract,brglm-method}
 \alias{extract.broom}
@@ -165,18 +163,8 @@
 \alias{extract,sienaFit-method}
 \alias{extract.simex}
 \alias{extract,simex-method}
-\alias{extract.speedglm}
-\alias{extract,speedglm-method}
-\alias{extract.speedlm}
-\alias{extract,speedlm-method}
 \alias{extract.stergm}
 \alias{extract,stergm-method}
-\alias{extract.summary.dynlm}
-\alias{extract,summary.dynlm-method}
-\alias{extract.summary.ivreg}
-\alias{extract,summary.ivreg-method}
-\alias{extract.summary.lm}
-\alias{extract,summary.lm-method}
 \alias{extract.survreg}
 \alias{extract,survreg-method}
 \alias{extract.survreg.penal}
@@ -244,9 +232,6 @@ extract(model, ...)
 \S4method{extract}{betareg}(model, include.precision = TRUE,
     include.pseudors = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
-    
-\S4method{extract}{biglm}(model, include.nobs = TRUE,
-    include.aic = TRUE, use.ci = FALSE, ...)    
 
 \S4method{extract}{brglm}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
@@ -437,7 +422,7 @@ extract(model, ...)
     include.iterations = FALSE, beside = FALSE, ...)
 
 \S4method{extract}{mlogit}(model, include.aic = TRUE,
-    include.loglik = TRUE, include.nobs = TRUE, include.order = TRUE, ...)
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{model.selection}(model, include.loglik = TRUE,
     include.aicc = TRUE, include.delta = TRUE,
@@ -543,30 +528,10 @@ extract(model, ...)
 \S4method{extract}{simex}(model, jackknife = TRUE,
     include.nobs = TRUE, ...)
 
-\S4method{extract}{speedglm}(model, include.aic = TRUE,
-    include.bic = TRUE, include.loglik = TRUE,
-    include.deviance = TRUE, include.nobs = TRUE, ...)
-    
-\S4method{extract}{speedlm}(model, include.rsquared = TRUE,
-    include.adjrs = TRUE, include.nobs = TRUE,
-    include.fstatistic = FALSE, include.rmse = TRUE, ...)
-
 \S4method{extract}{stergm}(model, beside = FALSE,
     include.formation = TRUE, include.dissolution = TRUE,
     include.nvertices = TRUE, include.aic = FALSE,
     include.bic = FALSE, include.loglik = FALSE, ...)
-  
-\S4method{extract}{summary.dynlm}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, includ.rmse = TRUE, ...) 
-
-\S4method{extract}{summary.ivreg}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, includ.rmse = TRUE, ...)   
-    
-\S4method{extract}{summary.lm}(model, include.rsquared = TRUE, 
-    include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, includ.rmse = TRUE, ...)
 
 \S4method{extract}{survreg}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
@@ -651,10 +616,6 @@ An extract method for betaor objects from the \pkg{mfx} package.
 
 \item{\code{betareg}}{
 An extract method for betareg objects from the \pkg{betareg} package.
-}
-
-\item{\code{biglm}}{
-An extract method for biglm objects from the \pkg{biglm} package.
 }
 
 \item{\code{brglm}}{
@@ -945,28 +906,8 @@ An extract method for sienaFit objects from the \pkg{RSiena} package.
 An extract method for simex objects from the \pkg{simex} package.
 }
 
-\item{\code{speedglm}}{
-An extract method for speedglm objects from the \pkg{speedglm} package.
-}
-
-\item{\code{speedlm}}{
-An extract method for speedlm objects from the \pkg{speedglm} package.
-}
-
 \item{\code{stergm}}{
 An extract method for stergm objects from the \pkg{tergm} package.
-}
-
-\item{\code{summary.dynlm}}{
-An extract method for summary.dynlm objects from the \pkg{dynlm} package.
-}
-
-\item{\code{summary.ivreg}}{
-An extract method for summary.ivreg objects from the \pkg{AER} package.
-}
-
-\item{\code{summary.lm}}{
-An extract method for summary.lm objects from the \pkg{stats} and the \pkg{URCA} packages.
 }
 
 \item{\code{survreg}}{
@@ -1064,7 +1005,6 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
 \item{include.obj.fcn}{ If available: should the value of the objective function (= criterion function) be reported (for \code{gel} and \code{gmm} objects)? More precisely, this returns \code{E(g)var(g)^{-1}E(g)}. }
-\item{include.order}{ If available: should the names of coefficients be in alphabetic order?}
 \item{include.outcome}{ If available: should the outcome component of a sample selection model be reported? }
 \item{include.overidentification}{ If available: should the J-test for overidentification be reported (for \code{gel} and \code{gmm} objects)? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }

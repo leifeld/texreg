@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 79 supported model types (version 1.37).]{\label{tab:types} List of 79 supported model types (version 1.37).} \\
+\caption[List of 76 supported model types (version 1.37).]{\label{tab:types} List of 76 supported model types (version 1.37).} \\
 \endlastfoot
 
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
@@ -450,7 +450,6 @@ Class			& Package			& Description \\
 `\code{betamfx}'		& \pkg{mfx}			& Beta regression with marginal effects \\
 `\code{betaor}' 		& \pkg{mfx}			& Beta regression with odds ratios \\
 `\code{betareg}'		& \pkg{betareg}			& Beta regression for rates and proportions \\
-`\code{biglm}'			& \pkg{biglm}			& Bounded memory linear and generalized linear models \\
 `\code{brglm}'			& \pkg{brglm}			& Bias-reduced generalized linear models \\
 `\code{btergm}'			& \pkg{xergm}			& Temporal exponential random graph models \\
 `\code{censReg}'		& \pkg{censReg}			& Censored regression (tobit) models \\
@@ -520,12 +519,7 @@ Class			& Package			& Description \\
 `\code{selection}'		& \pkg{sampleSelection}		& Sample selection models \\
 `\code{sienaFit}'		& \pkg{RSiena}			& Stochastic actor-oriented models for networks \\
 `\code{simex}'			& \pkg{simex}			& SIMEX algorithm for measurement error models \\
-`\code{speedglm}'		& \pkg{speedglm}		& Fitting Generalized Linear Models to Large Data Sets \\
-`\code{speedlm}'		& \pkg{speedglm}		& Fitting Linear Models to Large Data Sets \\
 `\code{stergm}'			& \pkg{tergm}			& Temporal exponential random graph models \\
-`\code{summary.dynlm}'	& \pkg{dynlm}		& Summary objects for time series regression models \\
-`\code{summary.ivreg}'	& \pkg{AER}		& Summary objects for instrumental-variable regression using 2SLS \\
-`\code{summary.lm}'	    & \pkg{stats}		& Summary objects for Ordinary least squares  \\
 `\code{survreg}'		& \pkg{survival}		& Parametric survival regression models \\
 `\code{survreg.penal}'		& \pkg{survival}		& Frailty survival models \\
 `\code{svyglm}' 		& \pkg{survey}			& Survey-weighted generalized linear models \\
