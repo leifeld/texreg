@@ -165,6 +165,12 @@
 \alias{extract,simex-method}
 \alias{extract.stergm}
 \alias{extract,stergm-method}
+\alias{extract.summary.dynlm}
+\alias{extract,summary.dynlm-method}
+\alias{extract.summary.ivreg}
+\alias{extract,summary.ivreg-method}
+\alias{extract.summary.lm}
+\alias{extract,summary.lm-method}
 \alias{extract.survreg}
 \alias{extract,survreg-method}
 \alias{extract.survreg.penal}
@@ -532,6 +538,18 @@ extract(model, ...)
     include.formation = TRUE, include.dissolution = TRUE,
     include.nvertices = TRUE, include.aic = FALSE,
     include.bic = FALSE, include.loglik = FALSE, ...)
+  
+\S4method{extract}{summary.dynlm}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, includ.rmse = TRUE, ...) 
+
+\S4method{extract}{summary.ivreg}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, includ.rmse = TRUE, ...)   
+    
+\S4method{extract}{summary.lm}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, includ.rmse = TRUE, ...)
 
 \S4method{extract}{survreg}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
@@ -908,6 +926,18 @@ An extract method for simex objects from the \pkg{simex} package.
 
 \item{\code{stergm}}{
 An extract method for stergm objects from the \pkg{tergm} package.
+}
+
+\item{\code{summary.dynlm}}{
+An extract method for summary.dynlm objects from the \pkg{dynlm} package.
+}
+
+\item{\code{summary.ivreg}}{
+An extract method for summary.ivreg objects from the \pkg{AER} package.
+}
+
+\item{\code{summary.lm}}{
+An extract method for summary.lm objects from the \pkg{stats} and the \pkg{URCA} packages.
 }
 
 \item{\code{survreg}}{
