@@ -563,15 +563,15 @@ extract(model, ...)
   
 \S4method{extract}{summary.dynlm}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, includ.rmse = TRUE, ...) 
+    include.fstatistic = FALSE, include.rmse = TRUE, ...) 
 
 \S4method{extract}{summary.ivreg}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, includ.rmse = TRUE, ...)   
+    include.fstatistic = FALSE, include.rmse = TRUE, ...)   
     
 \S4method{extract}{summary.lm}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, includ.rmse = TRUE, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, ...)
 
 \S4method{extract}{survreg}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
