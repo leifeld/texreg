@@ -12,3 +12,4 @@ Depends: R (>= 2.15.0)
 Imports: methods, grDevices, graphics, stats
 Enhances: AER, betareg, brglm, censReg, dynlm, eha, erer, fGarch, gamlss, gee, geepack, gmm, h2o, latentnet, lmtest, lqmm, MASS, mfx, mgcv, mlogit, mnlogit, MuMIn, nnet, ordinal, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, survey, systemfit, tergm, VGAM, xergm
 License: GPL-2 | GPL-3
+RoxygenNote: 6.1.0
