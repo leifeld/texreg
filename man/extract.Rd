@@ -95,6 +95,8 @@
 \alias{extract,lmerMod-method}
 \alias{extract.lmrob}
 \alias{extract,lmrob-method}
+\alias{extract.lmRob}
+\alias{extract,lmRob-method}
 \alias{extract.lnam}
 \alias{extract,lnam-method}
 \alias{extract.logitmfx}
@@ -401,6 +403,9 @@ extract(model, ...)
     include.variance = TRUE, ...)
 
 \S4method{extract}{lmrob}(model, include.nobs = TRUE, ...)
+
+\S4method{extract}{lmRob}(model, include.rsquared = TRUE,
+    include.nobs = TRUE, include.rmse = TRUE, ...)
 
 \S4method{extract}{lnam}(model, include.rsquared = TRUE,
     include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE,
@@ -803,6 +808,10 @@ An extract method for lmerMod objects from the (old) \pkg{lme4} package.
 
 \item{\code{lmrob}}{
 An extract method for lmrob objects from the \pkg{robustbase} package.
+}
+
+\item{\code{lmRob}}{
+An extract method for lmRob objects from the \pkg{robust} package.
 }
 
 \item{\code{lnam}}{

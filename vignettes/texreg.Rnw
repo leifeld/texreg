@@ -486,6 +486,7 @@ Class			& Package			& Description \\
 `\code{lme}'			& \pkg{nlme}			& Linear mixed-effects models \\
 `\code{lme4}'			& \pkg{lme4} ($\geq$ 1.0)	& Linear mixed-effects models \\
 `\code{lmrob}'  		& \pkg{robustbase}		& MM-type estimators for linear models \\
+`\code{lmRob}'  		& \pkg{robust}		& Robust linear regression Models \\
 `\code{lnam}'			& \pkg{sna}			& Linear network autocorrelation models \\
 `\code{logitmfx}'		& \pkg{mfx}			& Logistic regression with marginal effects \\
 `\code{logitor}'		& \pkg{mfx}			& Logistic regression with odds ratios \\

@@ -3524,6 +3524,7 @@ extract.rlm <- function (model, include.nobs = TRUE, ...) {
   names <- rownames(s$coef)
   co <- s$coef[, 1]
   se <- s$coef[, 2]
+  pval <- 1 - pchisq((co / se)^2, 1)
 
   gof <- numeric()
   gof.names <- character()
@@ -3539,6 +3540,7 @@ extract.rlm <- function (model, include.nobs = TRUE, ...) {
     coef.names = names,
     coef = co,
     se = se,
+    pvalues = pval,
     gof.names = gof.names,
     gof = gof,
     gof.decimal = gof.decimal
@@ -5057,4 +5059,51 @@ extract.summary.ivreg <- extract.summary.lm
 setMethod("extract",  signature = className("summary.ivreg", "AER"), 
           definition = extract.summary.ivreg)
 
+#extension for lmRob objects (robust package)
 
+extract.lmRob <- function(model, include.rsquared = TRUE,
+                          include.nobs = TRUE, include.rmse = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    names <- rownames(s$coefficients)
+    co <- s$coefficients[, 1]
+    se <- s$coefficients[, 2]
+    pval <- s$coefficients[, 4]
+    
+    rs <- s$r.squared  #extract R-squared
+    n <- length(model$residuals)  #extract number of observations
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.rsquared == TRUE) {
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.rmse == TRUE && !is.null(s$sigma)) {
+        rmse <- s$sigma[[1]]
+        gof <- c(gof, rmse)
+        gof.names <- c(gof.names, "RMSE")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract", signature = className("lmRob", "robust"),
+          definition = extract.lmRob)
