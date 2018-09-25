@@ -1881,10 +1881,12 @@ extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
-    grp <- model$dims$ngrps[1:model$dims$Q]
-    gof <- c(gof, grp)
-    gof.names <- c(gof.names, "Num.\ groups")
-    gof.decimal <- c(gof.decimal, FALSE)
+      grp <- model$dims$ngrps[1:model$dims$Q]
+      for(i in 1:length(grp)){
+          gof <- c(gof, grp[i])
+          gof.names <- c(gof.names, paste("Num.\ groups:", names(grp)[i]))
+          gof.decimal <- c(gof.decimal, FALSE)
+      }
   }
   if (include.variance == TRUE ) {
     sig.all <- s$sigma
@@ -1930,11 +1932,18 @@ setMethod("extract", signature = className("lme", "nlme"),
 
 extract.nlme <- extract.lme
 setMethod("extract", signature = className("nlme", "nlme"),
-    definition = extract.nlme)
+          definition = extract.nlme)
 
 extract.glmmPQL <- extract.lme
 setMethod("extract", signature = className("glmmPQL", "MASS"),
-    definition = extract.glmmPQL)
+          definition = extract.glmmPQL)
+
+
+
+
+
+
+
 
 
 # extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
