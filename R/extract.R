@@ -2576,8 +2576,12 @@ setMethod("extract", signature = className("maBina", "erer"),
 
 # extension for mlogit objects (mlogit package)
 extract.mlogit <- function(model, include.aic = TRUE, include.loglik = TRUE,
-    include.nobs = TRUE, ...) {
+    include.nobs = TRUE, include.order = FALSE, ...) {
   s <- summary(model, ...)
+  
+  if (include.order == TRUE) {
+      s$CoefTable <- s$CoefTable[order(rownames(s$CoefTable)),]
+  } 
 
   coefs <- s$CoefTable[, 1]
   rn <- rownames(s$CoefTable)

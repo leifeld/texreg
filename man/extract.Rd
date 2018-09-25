@@ -422,7 +422,7 @@ extract(model, ...)
     include.iterations = FALSE, beside = FALSE, ...)
 
 \S4method{extract}{mlogit}(model, include.aic = TRUE,
-    include.loglik = TRUE, include.nobs = TRUE, ...)
+    include.loglik = TRUE, include.nobs = TRUE, include.order = FALSE, ...)
 
 \S4method{extract}{model.selection}(model, include.loglik = TRUE,
     include.aicc = TRUE, include.delta = TRUE,
@@ -1005,6 +1005,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
 \item{include.obj.fcn}{ If available: should the value of the objective function (= criterion function) be reported (for \code{gel} and \code{gmm} objects)? More precisely, this returns \code{E(g)var(g)^{-1}E(g)}. }
+\item{include.order}{ If available: should coefficient names be in alphabetic order? }
 \item{include.outcome}{ If available: should the outcome component of a sample selection model be reported? }
 \item{include.overidentification}{ If available: should the J-test for overidentification be reported (for \code{gel} and \code{gmm} objects)? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }
