@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 93 supported model types (version 1.37).]{\label{tab:types} List of 93 supported model types (version 1.37).} \\
+\caption[List of 94 supported model types (version 1.37).]{\label{tab:types} List of 94 supported model types (version 1.37).} \\
 \endlastfoot
 
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
@@ -486,6 +486,7 @@ Class			& Package			& Description \\
 `\code{lme}'			& \pkg{nlme}			& Linear mixed-effects models \\
 `\code{lme4}'			& \pkg{lme4} ($\geq$ 1.0)	& Linear mixed-effects models \\
 `\code{lmrob}'  		& \pkg{robustbase}		& MM-type estimators for linear models \\
+`\code{lmRob}'  		& \pkg{robust}		& Robust linear regression with high breakdown point and high efficiency regression \\
 `\code{lnam}'			& \pkg{sna}			& Linear network autocorrelation models \\
 `\code{logitmfx}'		& \pkg{mfx}			& Logistic regression with marginal effects \\
 `\code{logitor}'		& \pkg{mfx}			& Logistic regression with odds ratios \\
