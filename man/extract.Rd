@@ -135,6 +135,8 @@
 \alias{extract,nlmerMod-method}
 \alias{extract.ols}
 \alias{extract,ols-method}
+\alias{extract.pglm}
+\alias{extract,pglm-method}
 \alias{extract.pgmm}
 \alias{extract,pgmm-method}
 \alias{extract.phreg}
@@ -484,6 +486,9 @@ extract(model, ...)
 \S4method{extract}{ols}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, include.lr = TRUE, ...)
+
+\S4method{extract}{pglm}(model, include.aic = TRUE,
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{pgmm}(model, include.nobs = TRUE,
     include.sargan = TRUE, include.wald = TRUE, ...)
@@ -877,6 +882,10 @@ An extract method for nlmerMod objects from the (old) \pkg{lme4} package.
 
 \item{\code{ols}}{
 An extract method for ols objects from the \pkg{rms} package.
+}
+
+\item{\code{pglm}}{
+An extract method for pglm objects from the \pkg{pglm} package.
 }
 
 \item{\code{pgmm}}{

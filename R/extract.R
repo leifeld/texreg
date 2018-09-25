@@ -5109,3 +5109,50 @@ extract.lmRob <- function(model, include.rsquared = TRUE,
 setMethod("extract", signature = className("lmRob", "robust"),
           definition = extract.lmRob)
 
+#extension for pglm objects (pglm package)
+extract.pglm <- function(model, include.aic = TRUE,
+                         include.loglik = TRUE, include.nobs = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    coefficient.names <- rownames(s$estimate)
+    coefficients <- s$estimate[, 1]
+    standard.errors <- s$estimate[, 2]
+    significance <- s$estimate[, 4]
+    
+    aic <- AIC(model)
+    lik <- logLik(model)[1]
+    n <- length(model$gradientObs[,1])
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = coefficients,
+        se = standard.errors,
+        pvalues = significance,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract", signature = className("pglm", "pglm"),
+          definition = extract.pglm)
