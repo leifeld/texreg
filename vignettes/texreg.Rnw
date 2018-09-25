@@ -520,6 +520,7 @@ Class			& Package			& Description \\
 `\code{sienaFit}'		& \pkg{RSiena}			& Stochastic actor-oriented models for networks \\
 `\code{simex}'			& \pkg{simex}			& SIMEX algorithm for measurement error models \\
 `\code{stergm}'			& \pkg{tergm}			& Temporal exponential random graph models \\
+`\code{summary.lm}'		& \pkg{stats}			& Summary objects for linear models \\
 `\code{survreg}'		& \pkg{survival}		& Parametric survival regression models \\
 `\code{survreg.penal}'		& \pkg{survival}		& Frailty survival models \\
 `\code{svyglm}' 		& \pkg{survey}			& Survey-weighted generalized linear models \\

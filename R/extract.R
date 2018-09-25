@@ -4932,3 +4932,63 @@ extract.hurdle <- extract.zeroinfl
 setMethod("extract", signature = className("hurdle", "pscl"),
     definition = extract.hurdle)
 
+
+#extension for summary.lm objects
+extract.summary.lm <- function (model, include.rsquared = TRUE, include.adjrs = TRUE, 
+                                include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, 
+                                ...) {
+    s <- model
+    names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 4]
+    
+    rs <- s$r.squared
+    adj <- s$adj.r.squared
+    n <- length(s$residuals)
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.rsquared == TRUE) {
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.adjrs == TRUE) {
+        gof <- c(gof, adj)
+        gof.names <- c(gof.names, "Adj. R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num. obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.fstatistic == TRUE) {
+        fstat <- s$fstatistic[[1]]
+        gof <- c(gof, fstat)
+        gof.names <- c(gof.names, "F statistic")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
+        rmse <- s$sigma[[1]]
+        gof <- c(gof, rmse)
+        gof.names <- c(gof.names, "RMSE")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names, 
+        coef = co, 
+        se = se, 
+        pvalues = pval, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract",  signature = className("summary.lm", "stats"), 
+          definition = extract.summary.lm)
