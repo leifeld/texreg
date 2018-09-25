@@ -981,7 +981,7 @@ setMethod("extract", signature = className("ergmm", "latentnet"),
 extract.felm <- function(model, include.nobs = TRUE, include.rsquared = TRUE,
     include.adjrs = TRUE, include.fstatistic = FALSE, ...) {
 
-  s <- summary(model)
+  s <- summary(model, ...)
   nam <- rownames(s$coefficients)
   co <- s$coefficients[, 1]
   se <- s$coefficients[, 2]
@@ -5108,3 +5108,4 @@ extract.lmRob <- function(model, include.rsquared = TRUE,
 
 setMethod("extract", signature = className("lmRob", "robust"),
           definition = extract.lmRob)
+
