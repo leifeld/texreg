@@ -18,6 +18,8 @@
 \alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
+\alias{extract.biglm}
+\alias{extract,biglm-method}
 \alias{extract.brglm}
 \alias{extract,brglm-method}
 \alias{extract.broom}
@@ -163,6 +165,10 @@
 \alias{extract,sienaFit-method}
 \alias{extract.simex}
 \alias{extract,simex-method}
+\alias{extract.speedglm}
+\alias{extract,speedglm-method}
+\alias{extract.speedlm}
+\alias{extract,speedlm-method}
 \alias{extract.stergm}
 \alias{extract,stergm-method}
 \alias{extract.summary.lm}
@@ -235,6 +241,9 @@ extract(model, ...)
     include.pseudors = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
+\S4method{extract}{biglm}(model, include.nobs = TRUE, 
+    include.aic = TRUE, use.ci = FALSE, ...)    
+    
 \S4method{extract}{brglm}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
@@ -529,6 +538,14 @@ extract(model, ...)
 
 \S4method{extract}{simex}(model, jackknife = TRUE,
     include.nobs = TRUE, ...)
+    
+\S4method{extract}{speedglm}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)   
+
+\S4method{extract}{speedlm}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, include.rmse = TRUE, ...)    
 
 \S4method{extract}{stergm}(model, beside = FALSE,
     include.formation = TRUE, include.dissolution = TRUE,
@@ -622,6 +639,10 @@ An extract method for betaor objects from the \pkg{mfx} package.
 
 \item{\code{betareg}}{
 An extract method for betareg objects from the \pkg{betareg} package.
+}
+
+\item{\code{biglm}}{
+An extract method for biglm objects from the \pkg{biglm} package.
 }
 
 \item{\code{brglm}}{
@@ -910,6 +931,14 @@ An extract method for sienaFit objects from the \pkg{RSiena} package.
 
 \item{\code{simex}}{
 An extract method for simex objects from the \pkg{simex} package.
+}
+
+\item{\code{speedglm}}{
+An extract method for speedglm objects from the \pkg{speedglm} package.
+}
+
+\item{\code{speedlm}}{
+An extract method for speedlm objects from the \pkg{speedglm} package.
 }
 
 \item{\code{stergm}}{
