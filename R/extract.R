@@ -1939,13 +1939,6 @@ setMethod("extract", signature = className("glmmPQL", "MASS"),
           definition = extract.glmmPQL)
 
 
-
-
-
-
-
-
-
 # extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
 extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
     level = 0.95, nsim = 1000, include.aic = TRUE, include.bic = TRUE,
@@ -2298,11 +2291,14 @@ extract.logitor <- function(model, include.nobs = TRUE, include.loglik = TRUE,
   coefs <- model$oddsratio[, 1]
   se <- model$oddsratio[, 2]
   pval <- model$oddsratio[, 4]
+  
   n <- nrow(model$fit$model)
   ll <- (model$fit$aic - (2 * length(model$fit$coefficients))) / -2
+ 
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
+  
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\\ obs.")
