@@ -2298,10 +2298,8 @@ extract.logitor <- function(model, include.nobs = TRUE, include.loglik = TRUE,
   coefs <- model$oddsratio[, 1]
   se <- model$oddsratio[, 2]
   pval <- model$oddsratio[, 4]
-
   n <- nrow(model$fit$model)
   ll <- (model$fit$aic - (2 * length(model$fit$coefficients))) / -2
-
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
