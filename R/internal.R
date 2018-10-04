@@ -945,7 +945,7 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero,
     dollar <- "$"
   }
     #replace special characters in gof rownames by LaTex equivalents
-    gn <- rownames(gofs)[i]
+    gn <- rownames(gofs)
     for (i in 1:length(gn)) {
         if (!grepl("\\$", gn[i])) {
             gn[i] <- gsub("_", "\\\\_", gn[i])
@@ -1110,7 +1110,7 @@ grouping <- function(output.matrix, groups, indentation = "    ",
         nrow(output.matrix)) {
       stop("'groups' argument contains indices outside the table dimensions")
     }
-      ng <- names(groups)[[i]]
+      ng <- names(groups)
       for (i in 1:length(ng)) {
           if (!grepl("\\$", ng[i])) {
               ng[i] <- gsub("_", "\\\\_", ng[i])
