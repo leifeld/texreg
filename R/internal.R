@@ -944,10 +944,24 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero,
   } else {
     dollar <- "$"
   }
+    #replace special characters in gof rownames by LaTex equivalents
+    gn <- rownames(gofs)[i]
+    for (i in 1:length(gn)) {
+        if (!grepl("\\$", gn[i])) {
+            gn[i] <- gsub("_", "\\\\_", gn[i])
+            gn[i] <- gsub("<", "\\$<\\$", gn[i])
+            gn[i] <- gsub(">", "\\$>\\$", gn[i])
+            gn[i] <- gsub("%", "\\\\%", gn[i])
+            gn[i] <- gsub("^2", "\\$^2\\$", gn[i])
+            gn[i] <- gsub("^3", "\\$^3\\$", gn[i])
+            gn[i] <- gsub("^4", "\\$^4\\$", gn[i])
+            gn[i] <- gsub("^5", "\\$^5\\$", gn[i])
+        }
+    }
   gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
   if (length(gof.matrix) > 0) {
     for (i in 1:length(gofs[, 1])) {
-      gof.matrix[i, 1] <- rownames(gofs)[i]
+      gof.matrix[i, 1] <- gn[i]
       for (j in 1:length(gofs[1, ])) {
         strg <- coeftostring(gofs[i, j], leading.zero, 
             digits = decimal.matrix[i, j])
@@ -1096,8 +1110,21 @@ grouping <- function(output.matrix, groups, indentation = "    ",
         nrow(output.matrix)) {
       stop("'groups' argument contains indices outside the table dimensions")
     }
-    for (i in length(groups):1) {
-      label <- paste0(prefix, names(groups)[[i]], suffix)
+      ng <- names(groups)[[i]]
+      for (i in 1:length(ng)) {
+          if (!grepl("\\$", ng[i])) {
+              ng[i] <- gsub("_", "\\\\_", ng[i])
+              ng[i] <- gsub("<", "\\$<\\$", ng[i])
+              ng[i] <- gsub(">", "\\$>\\$", ng[i])
+              ng[i] <- gsub("%", "\\\\%", ng[i])
+              ng[i] <- gsub("^2", "\\$^2\\$", ng[i])
+              ng[i] <- gsub("^3", "\\$^3\\$", ng[i])
+              ng[i] <- gsub("^4", "\\$^4\\$", ng[i])
+              ng[i] <- gsub("^5", "\\$^5\\$", ng[i])
+          }
+      }
+      for (i in length(groups):1) {
+          label <- paste0(prefix, ng[i], suffix)
       for (j in nrow(output.matrix):1) {
         if (j %in% groups[[i]]) {
           output.matrix[j, 1] <- paste0(indentation, output.matrix[j, 1])
