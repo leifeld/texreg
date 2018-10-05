@@ -1302,3 +1302,58 @@ wordreg <- function(l,
                 ```', append = TRUE)
   rmarkdown::render(f, output_file = paste0(wd, "/", file))
 }
+
+
+huxtablereg <- function(l,
+                        file = NULL,
+                        single.row = FALSE,
+                        stars = c(0.001, 0.01, 0.05),
+                        custom.model.names = NULL,
+                        custom.coef.names = NULL,
+                        custom.coef.map = NULL,
+                        custom.gof.names = NULL,
+                        digits = 2,
+                        leading.zero = TRUE,
+                        star.symbol = star.symbol,
+                        symbol = "+",
+                        override.coef = 0,
+                        override.se = 0,
+                        override.pvalues = 0,
+                        override.ci.low = 0,
+                        override.ci.up = 0,
+                        omit.coef = NULL,
+                        reorder.coef = NULL,
+                        reorder.gof = NULL,
+                        ci.force = FALSE,
+                        ci.force.level = 0.95,
+                        ci.test = 0,
+                        groups = NULL,
+                        custom.columns = NULL,
+                        custom.col.pos = NULL,
+                        ...)  {
+  if (! requireNamespace("huxtable", quietly = TRUE)) {
+    stop("huxtablereg requires the \"huxtable\" package to be installed.\n", 
+         "To do this, enter `install.packages(\"huxtable\")`.")
+  }
+  
+  mr.call <- match.call(expand.dots = FALSE)
+  mr.call[[1L]] <- quote(texreg::matrixreg)
+  mr.call$include.attributes = TRUE
+  mx <- eval(mr.call)
+  
+  gof.names <- attr(mx, 'gof.names')
+  coef.names <- attr(mx, 'coef.names') # currently returns NULL
+  ci <- attr(mx, 'ci')
+  
+  hx <- huxtable::as_hux(mx, add_colnames = FALSE, autoformat = TRUE)
+  align(hx)[-1, -1] <- 'right'
+  coef.rows <- which(as.matrix(hx[, 1]) %in% coef.names)
+  hx <- huxtable::set_align(hx, coef.rows, -1, ".")
+  if (! single.row) {
+    hx <- huxtable::set_align(hx, coef.rows + 1, c(FALSE, ! ci), ".")  
+  }
+  gof.rows <- as.matrix(hx[, 1]) %in% gof.names
+  hx <- huxtable::set_align(hx, gof.rows, -1, ".")
+  
+  return(hx)
+}
