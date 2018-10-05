@@ -1346,7 +1346,7 @@ huxtablereg <- function(l,
   ci <- attr(mx, 'ci')
   
   hx <- huxtable::as_hux(mx, add_colnames = FALSE, autoformat = TRUE)
-  align(hx)[-1, -1] <- 'right'
+  huxtable::align(hx)[-1, -1] <- 'right'
   coef.rows <- which(as.matrix(hx[, 1]) %in% coef.names)
   hx <- huxtable::set_align(hx, coef.rows, -1, ".")
   if (! single.row) {

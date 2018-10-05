@@ -82,7 +82,7 @@ wordreg(l, file = NULL, single.row = FALSE,
 huxtablereg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, custom.coef.names = NULL, 
     custom.coef.map = NULL, custom.gof.names = NULL, digits = 2, 
-    leading.zero = TRUE, star.symbol = star.symbol, symbol = ".", 
+    leading.zero = TRUE, star.symbol = star.symbol, symbol = "+", 
     override.coef = 0, override.se = 0, override.pvalues = 0, 
     override.ci.low = 0, override.ci.up = 0, omit.coef = NULL, 
     reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE, 
@@ -242,9 +242,10 @@ unlink("texreg.doc")
 if (requireNamespace('huxtable')) {
   hr <- huxtablereg(list(model.1, model.2))
   hr <- huxtable::set_bottom_border(hr, 1, -1, 0.4)
-  hr <- huxtable::set_bold(hr, everywhere, 1, TRUE)
+  hr <- huxtable::set_bold(hr, 1:nrow(hr), 1, TRUE)
   hr <- huxtable::set_bold(hr, 1, -1, TRUE)
-  hr <- huxtable::set_background_color_by(hr, huxtable::by_matching("\\\\*" = "orange"))
+  hr <- huxtable::set_all_borders(hr, 4, 2, 0.4)
+  hr <- huxtable::set_all_border_colors(hr, 4, 2, "red")
   hr
   \dontrun{
   huxtable::quick_pdf(hr)
@@ -253,6 +254,7 @@ if (requireNamespace('huxtable')) {
   }
 }
 }
+\seealso{\code{\link[huxtable]{huxreg}}}
 \keyword{print}
 \keyword{misc}
 \keyword{utilities}
