@@ -131,8 +131,8 @@ information in the tables.
 The \code{huxtablereg()} function creates a 
 \code{\link[huxtable]{huxtable}} object using the \sQuote{huxtable} 
 package. This allows output to HTML, LaTeX, Word, Excel, Powerpoint, and 
-RTF. The object can be formatted using huxtable package functions. 
-
+RTF. The object can be formatted using huxtable package functions. See also
+\code{\link[huxtable]{huxreg}}.
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of models can be specified as \code{l = list(model.1, model.2, ...)}. Different object types can also be mixed.}
@@ -213,7 +213,6 @@ LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
 }
 \seealso{
 \code{\link{texreg-package} \link{extract} \link{extract-methods} \link{plotreg}}
-\code{\link[huxtable]{huxreg}}
 }
 \author{
 Philip Leifeld (\url{http://www.philipleifeld.com})
