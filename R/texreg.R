@@ -96,6 +96,7 @@ matrixreg <- function(l,
         bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
         ci.test = ci.test)
   } else if (dots$output.type == 'latex') {
+      m <- replaceSymbol(m)
     output.matrix <- outputmatrix(m, single.row, 
         neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
         posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
@@ -453,7 +454,7 @@ texreg <- function(l,
                              include.attributes = TRUE,
                              output.type = 'latex',
                              ...)
-  output.matrix <- replaceSymbols(output.matrix)
+  #output.matrix <- replaceSymbols(output.matrix)
   gof.names <- attr(output.matrix, 'gof.names')
   coef.names <- attr(output.matrix, 'coef.names')
   mod.names <- attr(output.matrix, 'mod.names')
