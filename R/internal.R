@@ -897,18 +897,22 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
         regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
       whitespace1 <- sub(regex, "\\1", x[i])
       whitespace1 <- sub("\\s+$", "", whitespace1)
+      cat("\nwhitespace1: ", whitespace1)
       if (nchar(whitespace1) > 0) {
         whitespace1 <- paste0(whitespace1, " ")
       }
       whitespace2 <- sub(regex, "\\4", x[i])
+      cat("\nwhitespace2: ", whitespace2)
       first <- sub(regex, "\\2", x[i])
       difference <- ci.lower.length - nchar(first)
       zeros <- paste(rep(" ", difference), collapse = "")
       first <- paste0(zeros, first)
+      cat("\nfirst: ", first)
       last <- sub(regex, "\\3", x[i])
       difference <- ci.upper.length - nchar(last)
       zeros <- paste(rep(" ", difference), collapse = "")
       last <- paste0(zeros, last)
+      cat("\nlast: ", last)
       x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
     }
   }
