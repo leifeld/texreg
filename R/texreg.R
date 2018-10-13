@@ -96,7 +96,6 @@ matrixreg <- function(l,
         bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
         ci.test = ci.test)
   } else if (dots$output.type == 'latex') {
-      m <- replaceSymbols(m)
     output.matrix <- outputmatrix(m, single.row, 
         neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
         posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
@@ -104,6 +103,7 @@ matrixreg <- function(l,
         star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
         symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", 
         bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test)
+    output.matrix <- replaceSymbols(output.matrix)
   } else if (dots$output.type == 'html') {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
         posinfstring = "Inf", leading.zero, digits, 
