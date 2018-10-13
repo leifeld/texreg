@@ -622,16 +622,21 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
     leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
     star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
     bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
-    ci.test = 0) {
+    ci.test = 0, rowLabelType = 'text') {
   
   # write coefficient rows
   if (single.row == TRUE) {
     output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
-    
+
     # row labels
     for (i in 1:length(rownames(m))) {
-      output.matrix[i, 1] <- rownames(m)[i]
+        if (rowLabelType == 'latex')
+            output.matrix[i, 1] <- (rownames(replaceSymbols(m))[i])
+        else{
+            output.matrix[i, 1] <- rownames(m)[i]
+        }
     }
+
     
     # coefficients and standard errors
     for (i in 1:length(m[, 1])) { #go through rows
