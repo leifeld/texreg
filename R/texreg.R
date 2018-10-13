@@ -96,7 +96,7 @@ matrixreg <- function(l,
         bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
         ci.test = ci.test)
   } else if (dots$output.type == 'latex') {
-      m <- replaceSymbol(m)
+      m <- replaceSymbols(m)
     output.matrix <- outputmatrix(m, single.row, 
         neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
         posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
