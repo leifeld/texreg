@@ -453,7 +453,7 @@ texreg <- function(l,
                              include.attributes = TRUE,
                              output.type = 'latex',
                              ...)
-  #output.matrix <- replaceSymbols(output.matrix)
+  output.matrix <- replaceSymbols(output.matrix)
   gof.names <- attr(output.matrix, 'gof.names')
   coef.names <- attr(output.matrix, 'coef.names')
   mod.names <- attr(output.matrix, 'mod.names')
