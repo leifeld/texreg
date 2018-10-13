@@ -894,6 +894,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
   }
   for (i in 1:length(x)) {
     if (grepl("\\[.+\\]", x[i])) {
+        cat("\nx[i]: ", x[i])
         regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
       whitespace1 <- sub(regex, "\\1", x[i])
       whitespace1 <- sub("\\s+$", "", whitespace1)
