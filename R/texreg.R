@@ -68,6 +68,7 @@ matrixreg <- function(l,
   }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
+
   
   mod.names <- modelnames(l, models, custom.model.names)  # model names
   
@@ -458,6 +459,7 @@ texreg <- function(l,
   mod.names <- attr(output.matrix, 'mod.names')
   ci <- attr(output.matrix, 'ci')
   ci.test <- attr(output.matrix, 'ci.test')
+  m <- replaceSymbols(m)
    
   # what is the optimal length of the labels?
   lab.list <- c(coef.names, gof.names)
