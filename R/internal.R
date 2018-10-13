@@ -880,12 +880,13 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
   ci.upper.length <- 0
   for (i in 1:length(x)) {
     if (grepl("\\[.+\\]", x[i])) {
-      first <- sub(".*\\[(.+?); (.+?)\\].*", "\\1", x[i])
+        regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
+      first <- sub(regex, "\\1", x[i])
       first <- nchar(first)
       if (first > ci.lower.length) {
         ci.lower.length <- first
       }
-      last <- sub(".*\\[(.+?); (.+?)\\].*", "\\2", x[i])
+      last <- sub(regex, "\\2", x[i])
       last <- nchar(last)
       if (last > ci.upper.length) {
         ci.upper.length <- last
