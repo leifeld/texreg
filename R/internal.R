@@ -338,10 +338,10 @@ replaceSymbols <- function(m) {
       rn[i] <- gsub("<", "\\$<\\$", rn[i])
       rn[i] <- gsub(">", "\\$>\\$", rn[i])
       rn[i] <- gsub("%", "\\\\%", rn[i])
-      rn[i] <- gsub("^2", "\\$^2\\$", rn[i])
-      rn[i] <- gsub("^3", "\\$^3\\$", rn[i])
-      rn[i] <- gsub("^4", "\\$^4\\$", rn[i])
-      rn[i] <- gsub("^5", "\\$^5\\$", rn[i])
+      rn[i] <- gsub("\\^2", "\\$^2\\$", rn[i])
+      rn[i] <- gsub("\\^3", "\\$^3\\$", rn[i])
+      rn[i] <- gsub("\\^4", "\\$^4\\$", rn[i])
+      rn[i] <- gsub("\\^5", "\\$^5\\$", rn[i])
     }
   }
   rownames(m) <- rn
