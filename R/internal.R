@@ -638,6 +638,13 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
        }
     }
     
+    #replace R syntax
+    for (i in 1:length(m[, 1])) {
+        if (grepl("I\\(", rownames(m)[i]) == TRUE){ 
+            output.matrix[i, 1] <- gsub("I\\(", "", output.matrix[i, 1])
+            output.matrix[i, 1] <- gsub("\\)", "", output.matrix[i, 1])  
+        }
+    }
     # coefficients and standard errors
     for (i in 1:length(m[, 1])) { #go through rows
       j <- 1 #column in the original, merged coef table
@@ -731,6 +738,13 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
         output.matrix[(i * 2), 1] <- ""
             }
+    }
+    #replace R syntax
+    for (i in 1:length(m[, 1])) {
+        if (grepl("I\\(", rownames(m)[i]) == TRUE){ 
+            output.matrix[(i * 2) - 1, 1] <- gsub("I\\(", "", output.matrix[(i * 2) - 1, 1])
+            output.matrix[(i * 2) - 1, 1] <- gsub("\\)", "", output.matrix[(i * 2) - 1, 1])  
+        }
     }
 
     # coefficients and standard deviations
