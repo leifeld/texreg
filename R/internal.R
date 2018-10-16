@@ -623,20 +623,20 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
     star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
     bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
     ci.test = 0, rowLabelType = 'text') {
-  
+    #row labels
+
   # write coefficient rows
   if (single.row == TRUE) {
     output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
 
     # row labels
     for (i in 1:length(rownames(m))) {
-        if (rowLabelType == 'latex')
-            output.matrix[i, 1] <- (rownames(replaceSymbols(m))[i])
-        else{
+        if (rowLabelType == 'latex') {
+           output.matrix[i, 1] <- (rownames(replaceSymbols(m))[i])
+        }else{
             output.matrix[i, 1] <- rownames(m)[i]
-        }
+       }
     }
-
     
     # coefficients and standard errors
     for (i in 1:length(m[, 1])) { #go through rows
@@ -724,10 +724,15 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
     
     # row labels
     for (i in 1:length(rownames(m))) {
-      output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
-      output.matrix[(i * 2), 1] <- ""
+        if (rowLabelType == 'latex'){
+        output.matrix[(i * 2) - 1, 1] <- rownames(replaceSymbols(m))[i]
+        output.matrix[(i * 2), 1] <- ""   
+           }else{
+        output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
+        output.matrix[(i * 2), 1] <- ""
+            }
     }
-    
+
     # coefficients and standard deviations
     for (i in 1:length(m[, 1])) {  # i = row
       j <- 1  # j = column within model (from 1 to 3)
