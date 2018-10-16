@@ -952,10 +952,10 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero,
             gn[i] <- gsub("<", "\\$<\\$", gn[i])
             gn[i] <- gsub(">", "\\$>\\$", gn[i])
             gn[i] <- gsub("%", "\\\\%", gn[i])
-            gn[i] <- gsub("^2", "\\$^2\\$", gn[i])
-            gn[i] <- gsub("^3", "\\$^3\\$", gn[i])
-            gn[i] <- gsub("^4", "\\$^4\\$", gn[i])
-            gn[i] <- gsub("^5", "\\$^5\\$", gn[i])
+            gn[i] <- gsub("\\^2", "\\$^2\\$", gn[i])
+            gn[i] <- gsub("\\^3", "\\$^3\\$", gn[i])
+            gn[i] <- gsub("\\^4", "\\$^4\\$", gn[i])
+            gn[i] <- gsub("\\^5", "\\$^5\\$", gn[i])
         }
     }
   gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
@@ -1117,10 +1117,10 @@ grouping <- function(output.matrix, groups, indentation = "    ",
               ng[i] <- gsub("<", "\\$<\\$", ng[i])
               ng[i] <- gsub(">", "\\$>\\$", ng[i])
               ng[i] <- gsub("%", "\\\\%", ng[i])
-              ng[i] <- gsub("^2", "\\$^2\\$", ng[i])
-              ng[i] <- gsub("^3", "\\$^3\\$", ng[i])
-              ng[i] <- gsub("^4", "\\$^4\\$", ng[i])
-              ng[i] <- gsub("^5", "\\$^5\\$", ng[i])
+              ng[i] <- gsub("\\^2", "\\$^2\\$", ng[i])
+              ng[i] <- gsub("\\^3", "\\$^3\\$", ng[i])
+              ng[i] <- gsub("\\^4", "\\$^4\\$", ng[i])
+              ng[i] <- gsub("\\^5", "\\$^5\\$", ng[i])
           }
       }
       for (i in length(groups):1) {
