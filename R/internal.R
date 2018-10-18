@@ -857,8 +857,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
         } else {
             difference <- first.length - first.dot
         }
-        spaces <- paste(rep(" ", difference), collapse="")
-        x[i] <- paste(spaces, x[i], sep="")
+        x[i] <- paste(x[i], sep="")
         
         #adjust indentation for SEs
         if (single.row == TRUE) {
