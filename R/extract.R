@@ -5151,6 +5151,7 @@ extract.pglm <- function(model, include.aic = TRUE,
 setMethod("extract", signature = className("pglm", "pglm"),
           definition = extract.pglm)
 
+
 # extension for mhurdle objects (mhurdle package)
 extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...){
     
@@ -5187,6 +5188,7 @@ extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, 
     return(tr)
 }
 
-setMethod("extract", signature = className("mhurdle", "mhurdle"), definition = extract.mhurdle)
+setMethod("extract", signature = className("mhurdle", "mhurdle"), 
+          definition = extract.mhurdle)
 
 
