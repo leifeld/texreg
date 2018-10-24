@@ -77,6 +77,8 @@
 \alias{extract,glmrob-method}
 \alias{extract.gls}
 \alias{extract,gls-method}
+\alias{extract.gnls}
+\alias{extract,gnls-method}
 \alias{extract.gmm}
 \alias{extract,gmm-method}
 \alias{extract.H2OBinomialModel}
@@ -359,6 +361,10 @@ extract(model, ...)
 \S4method{extract}{gls}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
+    
+\S4method{extract}{gnls}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, ...)    
 
 \S4method{extract}{gmm}(model, include.obj.fcn = TRUE,
     include.overidentification = FALSE, include.nobs = TRUE, ...)
@@ -766,6 +772,11 @@ An extract method for glmrob objects from the \pkg{robustbase} package.
 \item{\code{gls}}{
 An extract method for gls objects from the \pkg{nlme} package.
 }
+
+\item{\code{gnls}}{
+An extract method for gnls objects from the \pkg{nlme} package.
+}
+
 
 \item{\code{gmm}}{
 An extract method for gmm objects from the \pkg{gmm} package.

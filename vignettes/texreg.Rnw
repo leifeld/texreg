@@ -478,6 +478,7 @@ Class			& Package			& Description \\
 `\code{glmmadmb}'		& \pkg{glmmADMB}		& Generalized linear mixed models and extensions \\
 `\code{glmrob}  		& \pkg{robustbase}		& Robust fitting of generalized linear models \\
 `\code{gls}'			& \pkg{nlme}			& Generalized least squares \\
+`\code{gnls}'			& \pkg{nlme}			& Non linear generalized least squares \\
 `\code{gmm}'			& \pkg{gmm}			& Generalized method of moments estimation \\
 `\code{hurdle}'			& \pkg{pscl}			& Hurdle regression models for count data \\
 `\code{ivreg}'			& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
