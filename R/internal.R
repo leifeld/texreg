@@ -486,51 +486,59 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
 
 # function to apply the omit.coef and custom.coef.names operations
 omit_rename <- function(m, omit.coef, custom.coef.names) {
-  # omit
-  if (!is.null(omit.coef)) {
-    if (!is.character(omit.coef) || is.na(omit.coef)) {
-      stop("omit.coef must be a character string.")
+    # omit
+    if (!is.null(omit.coef)) {
+        if (!is.character(omit.coef) || is.na(omit.coef)) {
+            stop("omit.coef must be a character string.")
+        }
+        idx <- !grepl(omit.coef, row.names(m))
+        if (all(!idx)) {
+            stop("You were trying to remove all coefficients using omit.coef.")
+        }
+    } else {
+        idx <- rep(TRUE, nrow(m))
+        
     }
-    idx <- !grepl(omit.coef, row.names(m))
-    if (all(!idx)) {
-      stop("You were trying to remove all coefficients using omit.coef.")
+    
+    # rename
+    if (!is.null(custom.coef.names)) {
+        if (!class(custom.coef.names) == "character") { # check type
+            stop("custom.coef.names must be a vector of strings.")
+        }
+        if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
+            if (nrow(m) == sum(idx)) {
+                stop("custom.coef.names must be a string vector of length ",
+                     nrow(m),
+                     '.')
+            } else {
+                stop("custom.coef.names must be a string vector of length ",
+                     sum(idx),
+                     ' or ',
+                     nrow(m),
+                     '.')
+            }
+        }
+        # user submits number of custom names after omission
+        if (length(custom.coef.names) == sum(idx)) {
+            custom.coef.names <- custom.coef.names 
+        } else { # user submits number of custom names before omission
+            custom.coef.names <- custom.coef.names[idx]
+        } 
+    } else {
+        custom.coef.names <- row.names(m)[idx]
     }
-  } else {
-    idx <- rep(TRUE, nrow(m))
-  }
-  
-  # rename
-  if (!is.null(custom.coef.names)) {
-    if (!class(custom.coef.names) == "character") { # check type
-      stop("custom.coef.names must be a vector of strings.")
+    
+    # output
+    #corrects for the case in which all the coef were omitted but one
+    if (length(m[idx, ]) == 3) {
+        m <- (m[idx, ])
+        m <- matrix(m, 1, 3)
+    }else{
+        m <- (m[idx, ])
     }
-    if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
-      if (nrow(m) == sum(idx)) {
-        stop("custom.coef.names must be a string vector of length ",
-             nrow(m),
-             '.')
-      } else {
-        stop("custom.coef.names must be a string vector of length ",
-             sum(idx),
-             ' or ',
-             nrow(m),
-             '.')
-      }
-    }
-    # user submits number of custom names after omission
-    if (length(custom.coef.names) == sum(idx)) {
-      custom.coef.names <- custom.coef.names 
-    } else { # user submits number of custom names before omission
-      custom.coef.names <- custom.coef.names[idx]
-    } 
-  } else {
-    custom.coef.names <- row.names(m)[idx]
-  }
-
-  # output
-  m <- m[idx, ]
-  row.names(m) <- custom.coef.names
-  return(m)
+    
+    row.names(m) <- custom.coef.names
+    return(m)
 }
 
 
@@ -628,7 +636,6 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
     for (i in 1:length(rownames(m))) {
       output.matrix[i, 1] <- rownames(m)[i]
     }
-    
     # coefficients and standard errors
     for (i in 1:length(m[, 1])) { #go through rows
       j <- 1 #column in the original, merged coef table
@@ -714,10 +721,10 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         nrow = 2 * length(m[, 1]))
     
     # row labels
-    for (i in 1:length(rownames(m))) {
+        for (i in 1:length(rownames(m))) {
       output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
       output.matrix[(i * 2), 1] <- ""
-    }
+      }
     
     # coefficients and standard deviations
     for (i in 1:length(m[, 1])) {  # i = row
