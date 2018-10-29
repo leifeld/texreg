@@ -379,7 +379,7 @@ extract(model, ...)
 
 \S4method{extract}{lm}(model, include.rsquared = TRUE,
     include.adjrs = TRUE, include.nobs = TRUE,
-    include.fstatistic = FALSE, include.rmse = TRUE, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, include.Df, ...)
 
 \S4method{extract}{lme}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,

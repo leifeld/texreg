@@ -1088,7 +1088,7 @@ greater than $0$ cause \pkg{texreg} to print estimates in bold where
 the \code{ci.test} value is outside the confidence interval, regardless
 of the actual value of the \code{bold} argument (see Table~\ref{table:coefficients}):
 <<results=tex>>=
-texreg(list(m1, m1, m2), ci.force = c(FALSE, TRUE, TRUE), ci.test = 0,
+texreg(list(m1, m1, m2), ci.force = c("null", "ndistr", "tdistr"), ci.test = 0,
     ci.force.level = 0.95, bold = 0.05, float.pos = "tb",
     caption = "Enforcing confidence intervals.",
     booktabs = TRUE, use.packages = FALSE, single.row = TRUE)

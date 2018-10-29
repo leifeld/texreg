@@ -1813,7 +1813,7 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.df == TRUE) {
-      Df <- df.res
+      Df.res <- df.res
       gof <- c(gof, Df)
       gof.names <- c(gof.names, "D.F.")
       gof.decimal <- c(gof.decimal, FALSE)
@@ -1827,7 +1827,7 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
       gof.names = gof.names,
       gof = gof,
       gof.decimal = gof.decimal,
-      Df = df.res,
+      Df.res = df.res,
   )
   return(tr)
 }

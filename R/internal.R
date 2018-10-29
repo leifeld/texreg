@@ -1053,14 +1053,14 @@ ciforce <- function(models, ci.force = rep("null", length(models)),
       models[[i]]@se <- numeric(0)
       models[[i]]@pvalues <- numeric(0)
     } else if (ci.force[i] == "tdistr" && length(models[[i]]@se) > 0) {
-        z <- qt(1 - ((1 - ci.level)/2), models[[i]]@Df)
-        upper <- models[[i]]@coef + (z * models[[i]]@se)
-        lower <- models[[i]]@coef - (z * models[[i]]@se)
+        quant <- qt(1 - ((1 - ci.level)/2), models[[i]]@Df.res)
+        upper <- models[[i]]@coef + (quant * models[[i]]@se)
+        lower <- models[[i]]@coef - (quant * models[[i]]@se)
         models[[i]]@ci.low <- lower
         models[[i]]@ci.up <- upper
         models[[i]]@se <- numeric(0)
         models[[i]]@pvalues <- numeric(0) 
-        models[[i]]@Df <- numeric(0)
+        models[[i]]@Df.res <- numeric(0)
     }else if (ci.force[i] == "null" && length(models[[i]]@se) > 0) {
         #do nothing
     }
