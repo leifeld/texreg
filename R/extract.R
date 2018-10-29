@@ -1769,7 +1769,7 @@ setMethod("extract", signature = className("H2OBinomialModel", "h2o"),
 
 # extension for lm objects
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
-    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {
+    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, include.df = FALSE, ...) {
   s <- summary(model, ...)
 
   names <- rownames(s$coefficients)
@@ -1780,6 +1780,7 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
   rs <- s$r.squared  #extract R-squared
   adj <- s$adj.r.squared  #extract adjusted R-squared
   n <- nobs(model)  #extract number of observations
+  df.res <- df.residual(model) #extract residuals degrees of freedom 
 
   gof <- numeric()
   gof.names <- character()
@@ -1811,6 +1812,12 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     gof.names <- c(gof.names, "RMSE")
     gof.decimal <- c(gof.decimal, TRUE)
   }
+  if (include.df == TRUE) {
+      Df <- df.res
+      gof <- c(gof, Df)
+      gof.names <- c(gof.names, "D.F.")
+      gof.decimal <- c(gof.decimal, FALSE)
+  }
 
   tr <- createTexreg(
       coef.names = names,
@@ -1819,7 +1826,8 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
       pvalues = pval,
       gof.names = gof.names,
       gof = gof,
-      gof.decimal = gof.decimal
+      gof.decimal = gof.decimal,
+      Df = df.res,
   )
   return(tr)
 }

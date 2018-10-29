@@ -101,8 +101,8 @@ get.data <- function(l, ...) {
       models <- append(models, list(model))
     }
   }
-  
   return(models)
+  
 }
 
 
@@ -1031,20 +1031,20 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
 
 
 # convert SEs and p values to confidence intervals
-ciforce <- function(models, ci.force = rep(FALSE, length(models)), 
+ciforce <- function(models, ci.force = rep("null", length(models)), 
     ci.level = 0.95) {
-  if (class(ci.force) == "logical" && length(ci.force) == 1) {
+  if (class(ci.force) == "character" && length(ci.force) == 1) {
     ci.force <- rep(ci.force, length(models))
   }
-  if (class(ci.force) != "logical") {
-    stop("The 'ci.force' argument must be a vector of logical values.")
+  if (class(ci.force) != "character") {
+    stop("The 'ci.force' argument must be a vector of character values (either ndistr, tdistr or null).")
   }
   if (length(ci.force) != length(models)) {
     stop(paste("There are", length(models), "models and", length(ci.force), 
         "ci.force values."))
   }
   for (i in 1:length(models)) {
-    if (ci.force[i] == TRUE && length(models[[i]]@se) > 0) {
+    if (ci.force[i] == "ndistr" && length(models[[i]]@se) > 0) {
       z <- qnorm(1 - ((1 - ci.level) / 2))
       upper <- models[[i]]@coef + (z * models[[i]]@se)
       lower <- models[[i]]@coef - (z * models[[i]]@se)
@@ -1052,6 +1052,17 @@ ciforce <- function(models, ci.force = rep(FALSE, length(models)),
       models[[i]]@ci.up <- upper
       models[[i]]@se <- numeric(0)
       models[[i]]@pvalues <- numeric(0)
+    } else if (ci.force[i] == "tdistr" && length(models[[i]]@se) > 0) {
+        z <- qt(1 - ((1 - ci.level)/2), models[[i]]@Df)
+        upper <- models[[i]]@coef + (z * models[[i]]@se)
+        lower <- models[[i]]@coef - (z * models[[i]]@se)
+        models[[i]]@ci.low <- lower
+        models[[i]]@ci.up <- upper
+        models[[i]]@se <- numeric(0)
+        models[[i]]@pvalues <- numeric(0) 
+        models[[i]]@Df <- numeric(0)
+    }else if (ci.force[i] == "null" && length(models[[i]]@se) > 0) {
+        #do nothing
     }
   }
   return(models)

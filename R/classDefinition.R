@@ -15,7 +15,8 @@ setClass(Class = "texreg",
         gof.names = "character",   # row names of the goodness-of-fit block
         gof = "numeric",           # goodness-of-fit statistics
         gof.decimal = "logical",   # number of decimal places for each GOF value
-        model.name = "character"   # name of the model
+        model.name = "character",  # name of the model
+        Df = "numeric"           # residuals degrees of freedom
     ), 
     validity = function(object) {
         if (length(object@coef.names) != length(object@coef)) {
@@ -54,10 +55,10 @@ setClass(Class = "texreg",
 createTexreg <- function(coef.names, coef, se = numeric(0), 
     pvalues = numeric(0), ci.low = numeric(0), ci.up = numeric(0), 
     gof.names = character(0), gof = numeric(0), gof.decimal = logical(0), 
-    model.name = character(0)) {
+    model.name = character(0), Df = numeric(0)) {
   new("texreg", coef.names = coef.names, coef = coef, se = se, 
       pvalues = pvalues, ci.low = ci.low, ci.up = ci.up, gof.names = gof.names, 
-      gof = gof, gof.decimal = gof.decimal, model.name = model.name)
+      gof = gof, gof.decimal = gof.decimal, model.name = model.name, Df = Df)
 }
 
 # define show method for pretty output of texreg objects
@@ -81,7 +82,12 @@ setMethod(f = "show", signature = "texreg", definition = function(object) {
     cat("\n")
     coefBlock <- cbind(object@coef, object@se, object@pvalues)
     colnames(coefBlock) <- c("coef.", "s.e.", "p")
-  } else {
+  } else if (length(object@Df)  == 0) {
+      cat(paste("\nNo degrees of freedom were defined for this texreg object.\n"))
+  } else if (length(object@Df)  == 1) {
+      coefBlock <- cbind(object@Df)
+      colnames(coefBlock) <- c("DF")
+  }else {
     cat("\nNo p-values were defined for this texreg object.\n")
     coefBlock <- cbind(object@coef, object@se)
     colnames(coefBlock) <- c("coef.", "s.e.")
