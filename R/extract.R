@@ -1368,6 +1368,7 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
   lik <- logLik(model)[1]
   dev <- deviance(model)
   n <- nobs(model)
+  df.res <- df.residual(model)
 
   gof <- numeric()
   gof.names <- character()
@@ -1405,7 +1406,8 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
       pvalues = significance,
       gof.names = gof.names,
       gof = gof,
-      gof.decimal = gof.decimal
+      gof.decimal = gof.decimal,
+      Df.res = df.res
   )
   return(tr)
 }
@@ -4456,7 +4458,7 @@ extract.vglm <- function(model, include.loglik = TRUE, include.df = TRUE,
 		pvalues = pval,
 		gof.names = gof.names,
 		gof = gof,
-		gof.decimal = gof.decimal
+		gof.decimal = gof.decimal,
 	)
 	return(tr)
 }
