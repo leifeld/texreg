@@ -1053,7 +1053,7 @@ ciforce <- function(models, ci.force = rep("null", length(models)),
       models[[i]]@se <- numeric(0)
       models[[i]]@pvalues <- numeric(0)
     } else if (ci.force[i] == "tdistr" && length(models[[i]]@se) > 0) {
-        if (models[[i]]@Df.res > 0) {
+        if (length(models[[i]]@Df.res > 0)) {
         quant <- qt(1 - ((1 - ci.level)/2), models[[i]]@Df.res)
         upper <- models[[i]]@coef + (quant * models[[i]]@se)
         lower <- models[[i]]@coef - (quant * models[[i]]@se)
@@ -1063,7 +1063,7 @@ ciforce <- function(models, ci.force = rep("null", length(models)),
         models[[i]]@pvalues <- numeric(0) 
         models[[i]]@Df.res <- numeric(0)
         } else {
-            stop('T distribution not available for models of class ', class(model), '.')
+            stop('T distribution not available for models of this class')
         }
     }else if (ci.force[i] == "null" && length(models[[i]]@se) > 0) {
         #do nothing
