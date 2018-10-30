@@ -5,7 +5,7 @@
 \usage{
 createTexreg(coef.names, coef, se, pvalues = numeric(0), ci.low = numeric(0), 
     ci.up = numeric(0), gof.names = character(0), gof = numeric(0), 
-    gof.decimal = logical(0), model.name = character(0))
+    gof.decimal = logical(0), model.name = character(0), Df.res = numeric(0))
 }
 \details{
 This function creates a texreg object. A texreg object contains 

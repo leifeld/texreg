@@ -291,7 +291,7 @@ extract(model, ...)
 
 \S4method{extract}{dynlm}(model, include.rsquared = TRUE,
     include.adjrs = TRUE, include.nobs = TRUE,
-    include.fstatistic = FALSE, include.rmse = TRUE, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, include.Df = FALSE ...)
 
 \S4method{extract}{ergm}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE, ...)
@@ -375,11 +375,11 @@ extract(model, ...)
 
 \S4method{extract}{ivreg}(model, include.rsquared = TRUE,
     include.adjrs = TRUE, include.nobs = TRUE,
-    include.fstatistic = FALSE, include.rmse = TRUE, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, include.Df = FALSE, ...)
 
 \S4method{extract}{lm}(model, include.rsquared = TRUE,
     include.adjrs = TRUE, include.nobs = TRUE,
-    include.fstatistic = FALSE, include.rmse = TRUE, include.Df, ...)
+    include.fstatistic = FALSE, include.rmse = TRUE, include.Df = FALSE, ...)
 
 \S4method{extract}{lme}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
@@ -555,7 +555,7 @@ extract(model, ...)
 
 \S4method{extract}{speedlm}(model, include.rsquared = TRUE, 
     include.adjrs = TRUE, include.nobs = TRUE, 
-    include.fstatistic = FALSE, include.rmse = TRUE, ...)    
+    include.fstatistic = FALSE, include.rmse = TRUE, include.Df = FALSE ...)    
 
 \S4method{extract}{stergm}(model, beside = FALSE,
     include.formation = TRUE, include.dissolution = TRUE,
