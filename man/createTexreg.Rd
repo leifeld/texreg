@@ -27,6 +27,7 @@ representations of the model results.
 \item{gof}{ A vector of goodness-of-fit statistics. }
 \item{gof.decimal}{ A vector of boolean/logical values indicating for each GOF statistic if decimal places shall be used. This is optional. }
 \item{model.name}{ The name of the model. In some cases, models consist of two separate columns because two separate data-generating processes are modeled. In these cases, it may make sense to specify default names for the columns (that is, for each \code{texreg} object). This argument is optional. }
+\item{Df.res}{Residuals degrees of freedom. Optional argument used to compute t distribution }
 }
 \references{
 Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 
