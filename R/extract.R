@@ -1771,7 +1771,7 @@ setMethod("extract", signature = className("H2OBinomialModel", "h2o"),
 
 # extension for lm objects
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
-    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, include.df = FALSE, ...) {
+    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {
   s <- summary(model, ...)
 
   names <- rownames(s$coefficients)
@@ -1797,11 +1797,7 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     gof.names <- c(gof.names, "Adj.\ R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.nobs == TRUE) {
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
+
   if (include.fstatistic == TRUE) {
     fstat <- s$fstatistic[[1]]
     gof <- c(gof, fstat)
@@ -1814,10 +1810,9 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     gof.names <- c(gof.names, "RMSE")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.df == TRUE) {
-      Df.res <- df.res
-      gof <- c(gof, Df)
-      gof.names <- c(gof.names, "D.F.")
+  if (include.nobs == TRUE) {
+      gof <- c(gof, n)
+      gof.names <- c(gof.names, "Num.\ obs.")
       gof.decimal <- c(gof.decimal, FALSE)
   }
 
