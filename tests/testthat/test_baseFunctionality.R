@@ -20,7 +20,8 @@ expect_true(grepl("x1 +& *\\$-0.15\\$", out))
 expect_true(grepl("& Model 1", out))
 
 ## test for correct customisation
-out <- texreg(res.x1, custom.model.names = "Custom 1", custom.coef.names = c("someName", "someOther"))
+out <- texreg(res.x1, custom.model.names = "Custom 1",
+              custom.coef.names = c("someName", "someOther"))
 expect_true(grepl("& Custom 1", out))
 expect_true(grepl("someName *& *\\$0.17\\$ *\\\\", out))
 expect_true(grepl("someOther +& *\\$-0.15\\$", out))
