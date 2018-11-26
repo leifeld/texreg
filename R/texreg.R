@@ -30,6 +30,8 @@ matrixreg <- function(l,
                       custom.columns = NULL,
                       custom.col.pos = NULL,
                       dcolumn = TRUE,
+                      custom.header = NULL,
+                      tablehead = NULL,
                       ...) {
   
   # unnamed arguments to environment
@@ -144,6 +146,165 @@ matrixreg <- function(l,
       single.row = single.row, numcoef = nrow(m), groups = groups, 
       modelnames = TRUE)
 
+  # Customise header with dep var or groups
+  if (!is.null(custom.header) & !is.list(custom.header)) {
+      custom.header <- list(custom.header)
+  }
+  
+  #for groups of variables
+  if (!is.null(custom.header)) {
+      
+      if(dots$output.type == 'latex') { 
+          tablehead <- NULL
+          for (i in 1:length(custom.header)) {
+              tablehead <- paste0(tablehead, " & \\multicolumn{", length(custom.header[[i]]),
+                                  "}{c}{", names(custom.header[i]), "}")
+          }
+          tablehead <- paste0(tablehead, "\\\\ ", "\n") 
+          for (i in 1:length(custom.header)) {
+              tablehead <- paste0(tablehead, "\\cmidrule(lr){",
+                                  min(custom.header[[i]]) + 1, "-",
+                                  max(custom.header[[i]]) + 1, "}")
+          }
+          tablehead <- paste0(tablehead, "\n")
+          
+      } else if (dots$output.type == 'ascii') {
+          
+          #initialize pieces to build tablehead
+          for (i in 1: 5) { 
+              pieces <- paste("piece", i, sep = "") 
+              pieces <- assign(pieces, NULL)
+          }
+          
+          if(single.row == FALSE) { 
+              #create pieces
+              for (i in 1:length(custom.header)) { 
+                  space <- " "
+                  if (max(custom.header[[i]]) - min(custom.header[[i]]) == 0 ) {
+                      #piece1[i] <- paste0(space, paste(rep(" ",((9 - nchar(names(custom.header[i])[1]))/2)), 
+                      #                                 sep ="", collapse = ""), names(custom.header[i])[1], 
+                      #                    paste(rep(" ",((10- nchar(names(custom.header[i])[1]))/2)),sep ="", 
+                      #                          collapse = "") , space, space)
+                      cat("\ncompute.width: ", compute.width(output.matrix[,i]))
+                      piece1[i] <- paste0(paste(rep(" ",((compute.width(output.matrix[,i]) - nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i])[1], 
+                                          paste(rep(" ",((compute.width(output.matrix[,i])- nchar(names(custom.header[i])[1]))/2)),sep ="", 
+                                                collapse = ""), space, space)
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 1 ) {
+                     # piece2[i] <- paste0(space, paste(rep(" ",((21 - nchar(names(custom.header[i][1])))/2)), 
+                     #                                  sep ="", collapse = ""), names(custom.header[i][1]), 
+                      #                    paste(rep(" ",((22- nchar(names(custom.header[i][1])))/2)),sep ="", 
+                      #                          collapse = "") , space, space)
+                      piece2[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*2) - nchar(names(custom.header[i][1])))/2)), 
+                                                        sep ="", collapse = ""), names(custom.header[i][1]), 
+                                            paste(rep(" ",(((compute.width(output.matrix[,i])*2)- nchar(names(custom.header[i][1])))/2)),sep ="", 
+                                                 collapse = ""), space, space)
+                      
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 2 ) {
+                      #piece3[i] <- paste0(space, paste(rep(" ",((34 - nchar(names(custom.header[i])[1]))/2)), 
+                       #                                sep ="", collapse = ""), names(custom.header[i][1]), 
+                       #                   paste(rep(" ",((35- nchar(names(custom.header[i])[1]))/2)), sep ="", 
+                       #                         collapse = ""), space, space)
+                      piece3[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*3) - nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
+                                          paste(rep(" ",(((compute.width(output.matrix[,i])*3)- nchar(names(custom.header[i])[1]))/2)), sep ="", 
+                                                collapse = ""), space, space)
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 3 ) {
+                      #piece4[i] <- paste0(space, paste(rep(" ",((44- nchar(names(custom.header[i])[1]))/2)), 
+                      #                                 sep ="", collapse = ""), names(custom.header[i][1]), 
+                      #                    paste(rep(" ",((47- nchar(names(custom.header[i])[1]))/2)), sep ="", 
+                      #                          collapse = ""), space, space)
+                      piece4[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*4)- nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
+                                          paste(rep(" ",(((compute.width(output.matrix[,i])*4)- nchar(names(custom.header[i])[1]))/2)), sep ="", 
+                                                collapse = ""), space, space)
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 4 ) {
+                      #piece5[i] <- paste0(space, paste(rep(" ",((55- nchar(names(custom.header[i])[1]))/2)), 
+                      #                                 sep ="", collapse = ""), names(custom.header[i][1]), 
+                      #                    paste(rep(" ",((55- nchar(names(custom.header[i])[1]))/2)), 
+                      #                          sep ="", collapse = ""), space, space)
+                      piece5[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*5)- nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
+                                          paste(rep(" ",(((compute.width(output.matrix[,i])*5)- nchar(names(custom.header[i])[1]))/2)), 
+                                                sep ="", collapse = ""), space, space)
+                  }
+              }    
+              
+          } else {
+              for (i in 1:length(custom.header)) { 
+                  space <- " "
+                  if (max(custom.header[[i]]) - min(custom.header[[i]]) == 0 ) {
+                      piece1[i] <- paste0(space, paste(rep(" ",((15 - nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i])[1], 
+                                          paste(rep(" ",((16- nchar(names(custom.header[i])[1]))/2)),
+                                                sep ="", collapse = "") , space, space)
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 1 ) {
+                      piece2[i] <- paste0(space, paste(rep(" ",((34 - nchar(names(custom.header[i][1])))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
+                                          paste(rep(" ",((35- nchar(names(custom.header[i][1])))/2)),
+                                                sep ="", collapse = "") , space, space)
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 2 ) {
+                      piece3[i] <- paste0(space, paste(rep(" ",((51 - nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
+                                          paste(rep(" ",((52- nchar(names(custom.header[i])[1]))/2)), 
+                                                sep ="", collapse = ""), space, space)
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 3 ) {
+                      piece4[i] <- paste0(space, paste(rep(" ",((70- nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
+                                          paste(rep(" ",((71- nchar(names(custom.header[i])[1]))/2)), 
+                                                sep ="", collapse = ""), space, space)
+                      
+                  } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 4 ) {
+                      piece5[i] <- paste0(space, paste(rep(" ",((80- nchar(names(custom.header[i])[1]))/2)), 
+                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
+                                          paste(rep(" ",((81- nchar(names(custom.header[i])[1]))/2)), 
+                                                sep ="", collapse = ""), space, space)
+                  }
+              }    
+              
+          }
+          #making an index for pieces order
+          ind <- NULL
+          for (i in 1: length(custom.header)) {
+              ind[i] <- max(custom.header[[i]]) - min(custom.header[[i]])
+          }
+          
+          #place pieces in the right order 
+          tablehead <- as.character(unique(ind))
+          #change pieces indexes symbols so they can be called by the user not being replaced by regex
+          tablehead <- sub(0, "ù", tablehead)
+          tablehead <- sub(1, "à", tablehead)
+          tablehead <- sub(2, "è", tablehead)
+          tablehead <- sub(3, "ì", tablehead)
+          tablehead <- sub(4, "ò", tablehead)
+          #create tablehead replacing pieces over index
+          tablehead <- sub("ù", paste(piece1, sep ="", collapse = ""), tablehead)
+          tablehead <- sub("à", paste(piece2, sep ="", collapse = ""), tablehead)
+          tablehead <- sub("è", paste(piece3, sep ="", collapse = ""), tablehead)
+          tablehead <- sub("ì", paste(piece4, sep ="", collapse = ""), tablehead)
+          tablehead <- sub("ò", paste(piece5, sep ="", collapse = ""), tablehead)
+          tablehead <- sub("\\NA", "", tablehead)
+          tablehead <- paste(tablehead, sep ="", collapse = "")
+          
+      }else if (dots$output.type == 'html'){
+          
+          tablehead <- NULL
+          for (i in 1:length(custom.header)) {
+              tablehead <- paste0(tablehead, "<th colspan=\"", max(custom.header[[i]]),
+                                  "\"scope=\"colgroup\">", names(custom.header[i]), "</th>", "\n")
+          }
+      }
+  }  
+  
+  
+  
   # attributes required for printing functions
   if ('include.attributes' %in% names(dots)) {
     if (dots$include.attributes) {
@@ -152,6 +313,7 @@ matrixreg <- function(l,
       attr(output.matrix, 'gof.names') <- gof.names
       attr(output.matrix, 'coef.names') <- coef.names
       attr(output.matrix, 'mod.names') <- mod.names
+      attr(output.matrix, 'table.head') <- tablehead
     }
   }
 
@@ -189,6 +351,8 @@ screenreg <- function(l,
                       column.spacing = 2,
                       outer.rule = "=",
                       inner.rule = "-",
+                      custom.header = NULL,
+                      tablehead = NULL,
                       ...) {
   
   # matrixreg produces the output matrix
@@ -218,6 +382,8 @@ screenreg <- function(l,
                              custom.columns = custom.columns,
                              custom.col.pos = custom.col.pos,
                              include.attributes = TRUE,
+                             custom.header = custom.header,
+                             tablehead = tablehead,
                              ...)
 
   gof.names <- attr(output.matrix, 'gof.names')
@@ -225,7 +391,8 @@ screenreg <- function(l,
   mod.names <- attr(output.matrix, 'mod.names')
   ci <- attr(output.matrix, 'ci')
   ci.test <- attr(output.matrix, 'ci.test')
-
+  tablehead <- attr(output.matrix, 'table.head')
+  
   # add spaces
   for (i in 1:ncol(output.matrix)) {
     output.matrix[, i] <- fill.spaces(output.matrix[, i])
@@ -250,6 +417,121 @@ screenreg <- function(l,
   # specify model names
   spacing <- paste(rep(" ", column.spacing), collapse = "")
   string <- paste(string, output.matrix[1, 1], sep = "")
+  
+  #add header
+  if (length(custom.header) != 0 & single.row == FALSE) {
+      string <- paste0(string, tablehead) 
+      string <- paste0(string, "\n")
+      #lines under tablehead
+      #initialize lines under pieces 
+      for (i in 1: 5) { 
+          lineps <- paste("linep", i, sep = "") 
+          lineps <- assign(lineps, NULL)
+      }
+      space <- " "
+      for (i in 1:length(custom.header)) { 
+          
+          if (max(custom.header[[i]]) - min(custom.header[[i]]) == 0) {
+              linep1[i] <- paste0(space, paste(rep("-", 9), sep ="", 
+                                               collapse = ""), space, space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 1 ) {
+              linep2[i] <- paste0(space,paste(rep("-", 21), sep ="", 
+                                              collapse = ""), space, space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 2 ) {
+              linep3[i] <- paste0(space, paste(rep("-", 34), sep ="", 
+                                               collapse = ""), space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 3 ) {
+              linep4[i] <- paste0(space, paste(rep("-", 46), sep ="", 
+                                               collapse = ""), space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 4 ) {
+              linep5[i] <- paste0(space, paste(rep("-", 57), sep ="", 
+                                               collapse = ""), space)
+          }
+          
+      }
+      
+      ind <- NULL
+      for (i in 1: length(custom.header)) {
+          ind[i] <- max(custom.header[[i]]) - min(custom.header[[i]])
+      }
+      
+      headline <- as.character(unique(ind))
+      headline <- sub(0, paste(linep1, sep ="", collapse = ""), headline)
+      headline <- sub(1, paste(linep2, sep ="", collapse = ""), headline)
+      headline <- sub(2, paste(linep3, sep ="", collapse = ""), headline)
+      headline <- sub(3, paste(linep4, sep ="", collapse = ""), headline)
+      headline <- sub(4, paste(linep5, sep ="", collapse = ""), headline)
+      headline <- sub("\\NA", "", headline)
+      headline <- paste(headline, sep ="", collapse = "")
+      
+      string <- paste0(string, output.matrix[1, 1])
+      string <- paste0(string, headline) 
+      string <- paste0(string, "\n")
+      string <- paste0(string, output.matrix[1, 1])
+  } else if (length(custom.header) != 0 & single.row == TRUE) { 
+      string <- paste0(string, tablehead) 
+      string <- paste0(string, "\n")
+      #lines under tablehead
+      #initialize lines under pieces 
+      for (i in 1: 5) { 
+          lineps <- paste("linep", i, sep = "") 
+          lineps <- assign(lineps, NULL)
+      }
+      space <- " "
+      for (i in 1:length(custom.header)) { 
+          
+          if (max(custom.header[[i]]) - min(custom.header[[i]]) == 0) {
+              linep1[i] <- paste0(space, paste(rep("-", 15), sep ="", 
+                                               collapse = ""), space, space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 1 ) {
+              linep2[i] <- paste0(space,paste(rep("-", 36), sep ="", 
+                                              collapse = ""), space, space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 2 ) {
+              linep3[i] <- paste0(space, paste(rep("-", 54), sep ="", 
+                                               collapse = ""), space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 3 ) {
+              linep4[i] <- paste0(space, paste(rep("-", 72), sep ="", 
+                                               collapse = ""), space)
+              
+          } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 4 ) {
+              linep5[i] <- paste0(space, paste(rep("-", 90), sep ="", 
+                                               collapse = ""), space)
+          }
+          
+      }
+      
+      ind <- NULL
+      for (i in 1: length(custom.header)) {
+          ind[i] <- max(custom.header[[i]]) - min(custom.header[[i]])
+      }
+      
+      headline <- as.character(unique(ind))
+      headline <- sub(0, paste(linep1, sep ="", collapse = ""), headline)
+      headline <- sub(1, paste(linep2, sep ="", collapse = ""), headline)
+      headline <- sub(2, paste(linep3, sep ="", collapse = ""), headline)
+      headline <- sub(3, paste(linep4, sep ="", collapse = ""), headline)
+      headline <- sub(4, paste(linep5, sep ="", collapse = ""), headline)
+      headline <- sub("\\NA", "", headline)
+      headline <- paste(headline, sep ="", collapse = "")
+      
+      string <- paste0(string, output.matrix[1, 1])
+      string <- paste0(string, headline) 
+      string <- paste0(string, "\n")
+      string <- paste0(string, output.matrix[1, 1])
+      
+  }else { 
+      #do nothing
+  }
+  
+  
+  
   for (i in 2:ncol(output.matrix)) {
     string <- paste0(string, spacing, output.matrix[1, i])
   }
@@ -382,6 +664,7 @@ texreg <- function(l,
                    fontsize = NULL,
                    scalebox = NULL,
                    float.pos = "",
+                   tablehead = NULL,
                    ...) {
   
   #check dcolumn vs. bold
@@ -451,6 +734,7 @@ texreg <- function(l,
                              bold = bold,
                              include.attributes = TRUE,
                              output.type = 'latex',
+                             tablehead = tablehead,
                              ...)
 
   gof.names <- attr(output.matrix, 'gof.names')
@@ -458,7 +742,8 @@ texreg <- function(l,
   mod.names <- attr(output.matrix, 'mod.names')
   ci <- attr(output.matrix, 'ci')
   ci.test <- attr(output.matrix, 'ci.test')
-   
+  table.head <- attr(output.matrix, 'table.head')
+  
   # what is the optimal length of the labels?
   lab.list <- c(coef.names, gof.names)
   lab.length <- 0
@@ -593,6 +878,9 @@ texreg <- function(l,
   } else {
     tablehead <- paste0(tablehead, "\\hline", linesep)
   }
+  
+  #specify header with groups or dependent variable
+  tablehead <- paste0(tablehead, table.head)
   
   # specify model names
   tablehead <- paste0(tablehead, mod.names[1])
@@ -836,6 +1124,7 @@ htmlreg <- function(l,
                     body.tag = FALSE,
                     indentation = "",
                     vertical.align.px = 0,
+                    tablehead = NULL,
                     ...) {
   
   # inline CSS definitions
@@ -890,6 +1179,7 @@ htmlreg <- function(l,
                              include.attributes = TRUE,
                              output.type = 'html',
                              css.sup = css.sup,
+                             tablehead = tablehead,
                              ...)
 
   gof.names <- attr(output.matrix, 'gof.names')
@@ -897,6 +1187,7 @@ htmlreg <- function(l,
   mod.names <- attr(output.matrix, 'mod.names')
   ci <- attr(output.matrix, 'ci')
   ci.test <- attr(output.matrix, 'ci.test')
+  tablehead <- attr(output.matrix, 'table.head')
 
   coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos, 
       types = TRUE)
@@ -1013,13 +1304,46 @@ htmlreg <- function(l,
       h.ind, b.ind, ind, "<tr>\n"
   )
   
-  # specify model names (header row)
-  for (i in 1:length(mod.names)) {
-    string <- paste0(string, 
-        h.ind, b.ind, ind, ind, "<th", css.th, "><b>", mod.names[i], 
-        "</b></th>\n")
-  }
-  string <- paste0(string, h.ind, b.ind, ind, "</tr>\n")
+  if (length(tablehead) != 0 & inline.css == TRUE ) {
+      string <- paste0(string, "<th style=\"text-align: center; border-top: 2px solid black;",
+                       "padding-right: 12px;\"><b></b></th>\n")
+      tablehead <- gsub("<th ", "<th style=\"text-align: center; border-bottom: 1px solid é", tablehead)
+      tablehead <- gsub("é","black;border-top: 2px solid black;padding-right: 12px;\"", tablehead)
+      string <- paste0(string, tablehead)
+      string <- paste0(string, "</tr>\n")
+      nameheader <- NULL
+      css.th <- " style=\"text-align: left; border-bottom: 1px solid black; padding-right: 12px;\""
+      for (i in 1:length(mod.names)) {
+          nameheader <- paste0(nameheader, 
+                               h.ind, b.ind, ind, ind, "<th", css.th, "><b>", mod.names[i], 
+                               "</b></th>\n")
+      }
+      nameheader <- paste0("<tr>\n", nameheader)
+      nameheader <- paste0(nameheader, h.ind, b.ind, ind, "</tr>\n")
+      string <- paste0(string, nameheader)
+  }else if (length(tablehead) != 0 & inline.css == FALSE){ 
+      string <- paste0(string, "<th><b></b></th>\n")
+      string <- paste0(string, tablehead)
+      string <- paste0(string, "</tr>\n")
+      nameheader <- NULL
+      for (i in 1:length(mod.names)) {
+          nameheader <- paste0(nameheader, 
+                               h.ind, b.ind, ind, ind, "<th", css.th, "><b>", mod.names[i], 
+                               "</b></th>\n")
+      }
+      nameheader <- paste0("<tr>\n", nameheader)
+      nameheader <- paste0(nameheader, h.ind, b.ind, ind, "</tr>\n")
+      string <- paste0(string, nameheader)
+      
+  }else { 
+      # specify model names (header row)
+      for (i in 1:length(mod.names)) {
+          string <- paste0(string, 
+                           h.ind, b.ind, ind, ind, "<th", css.th, "><b>", mod.names[i], 
+                           "</b></th>\n")
+      }
+      string <- paste0(string, h.ind, b.ind, ind, "</tr>\n")
+  } 
   
   # write coefficients to string object
   coef.length <- length(output.matrix[, 1]) - length(gof.names)
@@ -1164,6 +1488,7 @@ csvreg <- function(l,
                    custom.columns = NULL,
                    custom.col.pos = NULL,
                    caption = 'Statistical Models',
+                   tablehead = NULL,
                    ...) {
   
   # matrixreg produces the output matrix
@@ -1192,11 +1517,13 @@ csvreg <- function(l,
                              custom.columns = custom.columns,
                              custom.col.pos = custom.col.pos,
                              include.attributes = TRUE,
+                             tablehead = tablehead,
                              ...)
   
   # attributes
   ci <- attr(output.matrix, 'ci')
   ci.test <- attr(output.matrix, 'ci.test')
+  tablehead <- attr(output.matrix, 'table.head') 
 
   # append notes to bottom of table 
   out <- output.matrix
@@ -1215,6 +1542,10 @@ csvreg <- function(l,
   } 
   if (is.character(custom.note) && (custom.note != '')) {
     out <- rbind(out, c('Note: ', custom.note, rep('', ncol(output.matrix) - 2)))
+  }
+  if (length(tablehead)!= 0) {
+      
+      out <- rbind(c(' ', tablehead, rep('', ncol(output.matrix) - 2) ), out)
   }
   out <- as.data.frame(out)
 

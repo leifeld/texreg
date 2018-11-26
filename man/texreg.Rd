@@ -21,7 +21,7 @@ texreg(l, file = NULL, single.row = FALSE,
     center = TRUE, caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, lyx = FALSE,
     sideways = FALSE, longtable = FALSE, use.packages = TRUE, table = TRUE, 
-    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", ...)
+    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", custom.header = NULL, ...)
 
 htmlreg(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
@@ -35,7 +35,7 @@ htmlreg(l, file = NULL, single.row = FALSE,
     caption = "Statistical models", caption.above = FALSE, 
     inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
     head.tag = FALSE, body.tag = FALSE, indentation = "", 
-    vertical.align.px = 0, ...) 
+    vertical.align.px = 0, custom.header = NULL, ...) 
 
 screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
@@ -47,7 +47,7 @@ screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001,
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
     ci.test = 0, groups = NULL, custom.columns = NULL, 
     custom.col.pos = NULL, column.spacing = 2, outer.rule = "=", 
-    inner.rule = "-", ...)
+    inner.rule = "-", custom.header = NULL, ...)
 
 matrixreg(l, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
@@ -57,7 +57,7 @@ matrixreg(l, single.row = FALSE,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    dcolumn = TRUE, ...) 
+    dcolumn = TRUE, custom.header = NULL, ...) 
 
 csvreg(l, file,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
@@ -67,7 +67,7 @@ csvreg(l, file,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    caption = 'Statistical Models', ...)
+    caption = 'Statistical Models', custom.header = NULL, ...)
  
 wordreg(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
@@ -158,6 +158,8 @@ Users must supply a named list of this form: \code{list('x' = 'First variable', 
 \item{groups}{This argument can be used to group the rows of the table into blocks. For example, there could be one block for hypotheses and another block for control variables. Each group has a heading, and the row labels within a group are indented. The partitions must be handed over as a list of named numeric vectors, where each number is a row index and each name is the heading of the group. Example: \code{groups = list("first group" = 1:4, "second group" = 7:8)}.}
 \item{custom.columns}{An optional list of additional text columns to be inserted into the table, for example coefficient types. The list should contain one or more character vectors with as many character or numeric elements as there are rows. If the vectors in the list are named, the names are used as labels in the table header. For example, \code{custom.columns = list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is labeled while the second one is not. Note that the numeric elements of the second column will be converted to character objects in this example. The consequence is that decimal alignment with the \pkg{dcolumn} package is switched off in these columns. Note that this argument is processed after any arguments that affect the number of rows.}
 \item{custom.col.pos}{An optional integer vector of positions for the columns given in the \code{custom columns} argument. For example, if there are three custom columns, \code{custom.col.pos = c(1, 3, 3)} will insert the first custom column before the first column of the original table and the remaining two custom columns after the second column of the original table. By default, all custom columns are placed after the first column, which usually contains the coefficient names.}
+
+\item{custom.header}{This argument can be used to display an optional header such as one or more labels above model names to indicate groups of models or to show the dependent variable(s) name. The header placed above one column or above several. The header must be handed over as a list of named numeric vectors, where each number is a column index and each name is the header of the group of models. For example \code{custom.header = list("Group One" = 1, "Group Two" = 2:4))}. Available for \code{texreg}, \code{htmlreg, \code{screenreg}, \code{csvreg}.}
 
 \item{bold}{[only in the \code{texreg} and \code{htmlreg} functions] The p value threshold below which the coefficient shall be formatted in a bold font. For example, \code{bold = 0.05} will cause all coefficients which are significant at the 95\% level to be formatted in bold. Note that this is not compatible with the dcolumn argument in the \code{texreg} function. If both are \code{TRUE}, dcolumn is switched off and a warning message appears. Note also that it is advisable to use \code{stars = FALSE} together with the \code{bold} argument because having both bolded coefficients and significance stars usually does not make any sense.}
 \item{center}{[only in the \code{texreg} and \code{htmlreg} functions] Should the table be horizontally aligned at the center of the page?}
