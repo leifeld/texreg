@@ -355,9 +355,10 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{head.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<head>} tag? \\
 \code{body.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<body>} tag? \\
 \code{indentation}		& $\circ$	& $\bullet$	& $\circ$	& Indentation of subelements in the HTML code \\
-\code{column.spacing}		& $\circ$	& $\circ$	& $\bullet$	& Number of spaces between columns \\
+\code{column.spacing}	& $\circ$	& $\circ$	& $\bullet$	& Number of spaces between columns \\
 \code{outer.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the outer rule \\
 \code{inner.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the inner rule \\
+\code{custom.header}	& $\bullet$	& $\bullet$	& $\bullet$	& Include customisable header \\
 \code{...}			& $\bullet$	& $\bullet$	& $\bullet$	& Additional arguments for the extract functions \\
 \bottomrule\\
 \end{longtable}

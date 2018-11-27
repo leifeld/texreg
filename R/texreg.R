@@ -1612,7 +1612,9 @@ wordreg <- function(l,
                      custom.columns = custom.columns,
                      custom.col.pos = custom.col.pos,
                      output.type = 'ascii',
-                     include.attributes = FALSE
+                     include.attributes = FALSE,
+                     custom.header = custom.header,
+                     tablehead = tablehead
     )
     wd <- getwd()
     f = tempfile(fileext = '.Rmd')
