@@ -31,7 +31,6 @@ matrixreg <- function(l,
                       custom.col.pos = NULL,
                       dcolumn = TRUE,
                       custom.header = NULL,
-                      tablehead = NULL, 
                       ...) {
     
     # unnamed arguments to environment
@@ -368,7 +367,6 @@ screenreg <- function(l,
                                custom.col.pos = custom.col.pos,
                                include.attributes = TRUE,
                                custom.header = custom.header,
-                               tablehead = tablehead,
                                ...)
     
     gof.names <- attr(output.matrix, 'gof.names')
@@ -720,7 +718,6 @@ texreg <- function(l,
                                include.attributes = TRUE,
                                output.type = 'latex',
                                custom.header = custom.header,
-                               tablehead = tablehead,
                                ...)
     
     gof.names <- attr(output.matrix, 'gof.names')
@@ -1166,7 +1163,6 @@ htmlreg <- function(l,
                                output.type = 'html',
                                css.sup = css.sup,
                                custom.header = custom.header,
-                               tablehead = tablehead,
                                ...)
     
     gof.names <- attr(output.matrix, 'gof.names')
@@ -1505,7 +1501,6 @@ csvreg <- function(l,
                                custom.col.pos = custom.col.pos,
                                include.attributes = TRUE,
                                custom.header = custom.header,
-                               tablehead = tablehead,
                                ...)
     
     # attributes
@@ -1613,9 +1608,7 @@ wordreg <- function(l,
                      custom.col.pos = custom.col.pos,
                      output.type = 'ascii',
                      include.attributes = FALSE,
-                     custom.header = custom.header,
-                     tablehead = tablehead
-    )
+                     ...)
     wd <- getwd()
     f = tempfile(fileext = '.Rmd')
     cat(file = f, '```{r, echo = FALSE}

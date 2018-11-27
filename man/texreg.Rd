@@ -58,7 +58,7 @@ matrixreg(l, single.row = FALSE,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    dcolumn = TRUE, custom.header = NULL, tablehead = NULL, ...) 
+    dcolumn = TRUE, custom.header = NULL, ...) 
 
 csvreg(l, file,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
