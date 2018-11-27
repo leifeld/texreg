@@ -21,7 +21,8 @@ texreg(l, file = NULL, single.row = FALSE,
     center = TRUE, caption = "Statistical models", caption.above = FALSE, 
     label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, lyx = FALSE,
     sideways = FALSE, longtable = FALSE, use.packages = TRUE, table = TRUE, 
-    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", custom.header = NULL, ...)
+    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", 
+    custom.header = NULL, ...)
 
 htmlreg(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
@@ -57,7 +58,7 @@ matrixreg(l, single.row = FALSE,
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
     groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    dcolumn = TRUE, custom.header = NULL, ...) 
+    dcolumn = TRUE, custom.header = NULL, tablehead = NULL, ...) 
 
 csvreg(l, file,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
@@ -158,14 +159,10 @@ Users must supply a named list of this form: \code{list('x' = 'First variable', 
 \item{groups}{This argument can be used to group the rows of the table into blocks. For example, there could be one block for hypotheses and another block for control variables. Each group has a heading, and the row labels within a group are indented. The partitions must be handed over as a list of named numeric vectors, where each number is a row index and each name is the heading of the group. Example: \code{groups = list("first group" = 1:4, "second group" = 7:8)}.}
 \item{custom.columns}{An optional list of additional text columns to be inserted into the table, for example coefficient types. The list should contain one or more character vectors with as many character or numeric elements as there are rows. If the vectors in the list are named, the names are used as labels in the table header. For example, \code{custom.columns = list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is labeled while the second one is not. Note that the numeric elements of the second column will be converted to character objects in this example. The consequence is that decimal alignment with the \pkg{dcolumn} package is switched off in these columns. Note that this argument is processed after any arguments that affect the number of rows.}
 \item{custom.col.pos}{An optional integer vector of positions for the columns given in the \code{custom columns} argument. For example, if there are three custom columns, \code{custom.col.pos = c(1, 3, 3)} will insert the first custom column before the first column of the original table and the remaining two custom columns after the second column of the original table. By default, all custom columns are placed after the first column, which usually contains the coefficient names.}
-
-\item{custom.header}{This argument can be used to display an optional header such as one or more labels above model names to indicate groups of models or to show the dependent variable(s) name. The header placed above one column or above several. The header must be handed over as a list of named numeric vectors, where each number is a column index and each name is the header of the group of models. For example \code{custom.header = list("Group One" = 1, "Group Two" = 2:4))}. Available for \code{texreg}, \code{htmlreg, \code{screenreg}, \code{csvreg}.}
-
 \item{bold}{[only in the \code{texreg} and \code{htmlreg} functions] The p value threshold below which the coefficient shall be formatted in a bold font. For example, \code{bold = 0.05} will cause all coefficients which are significant at the 95\% level to be formatted in bold. Note that this is not compatible with the dcolumn argument in the \code{texreg} function. If both are \code{TRUE}, dcolumn is switched off and a warning message appears. Note also that it is advisable to use \code{stars = FALSE} together with the \code{bold} argument because having both bolded coefficients and significance stars usually does not make any sense.}
 \item{center}{[only in the \code{texreg} and \code{htmlreg} functions] Should the table be horizontally aligned at the center of the page?}
 \item{caption}{[only in the \code{texreg} and \code{htmlreg} functions] Set the caption of the table. }
 \item{caption.above}{[only in the \code{texreg} and \code{htmlreg} functions] Should the caption of the table be placed above the table? By default, it is placed below the table.}
-
 \item{label}{[only in the \code{texreg} function] Set the label of the \code{table} environment.}
 \item{booktabs}{[only in the \code{texreg} function] Use the \code{booktabs} LaTeX package to get thick horizontal rules in the output table (recommended).}
 \item{dcolumn}{[only in the \code{texreg} function] Use the \code{dcolumn} LaTeX package to get a nice alignment of the coefficients (recommended).}
@@ -186,13 +183,13 @@ Users must supply a named list of this form: \code{list('x' = 'First variable', 
 \item{body.tag}{[only in the \code{htmlreg} function] Should the table code be enclosed in a <body> HTML tag? Suppressing this tag is recommended when \pkg{knitr} is used for dynamic HTML or Markdown report generation. Including this tag is recommended when the code is saved to a file, for example as an MS Word document.}
 \item{indentation}{[only in the \code{htmlreg} function] Characters used for indentation of the HTML code. By default, \code{indentation = ""} uses no indentation. Any number of spaces or characters can be used instead. For example, \code{indentation = "  "} uses two spaces of (additional) indentation for each subelement.}
 \item{vertical.align.px}{[only in the \code{htmlreg} function] Vertical alignment of significance stars. Browsers differ in their ways of displaying superscripted significance stars; in some browsers the stars are elevated by default, and in other browsers the stars are aligned vertically with the text, without any actual superscripting. This argument controls by how many additional pixels the stars are elevated. The default setting of 0 uses the defaults of the browser. In RStudio's internal browser, this looks OK, but in Firefox, this looks too low. A value of 4 looks OK in Firefox, for example, but is above the line in RStudio's internal browser. }
-
 \item{column.spacing}{[only in the \code{screenreg} function] The amount of space between any two columns of a table. By default, two spaces are used. If the tables do not fit on a single page horizontally, the value can be set to \code{1} or \code{0}.}
 \item{outer.rule}{[only in the \code{screenreg} function] The character which is used to draw the outer horizontal line above and below a table. If an empty character object is provided (i.e., \code{outer.rule = ""}), there will be no outer horizontal lines. Recommended values are \code{""}, \code{"="}, \code{"-"}, \code{"_"}, or \code{"#"}.}
 \item{inner.rule}{[only in the \code{screenreg} function] The character which is used to draw the inner horizontal line above and below a table. If an empty character object is provided (i.e., \code{outer.rule = ""}), there will be no inner horizontal lines. Recommended values are \code{""}, \code{"-"}, or \code{"_"}.}
-
+\item{custom.header}{This argument can be used to display an optional header such as one or more labels above model names to indicate groups of models or to show the dependent variable(s) name. The header placed above one column or above several. The header must be handed over as a list of named numeric vectors, where each number is a column index and each name is the header of the group of models. For example \code{custom.header = list("Group One" = 1, "Group Two" = 2:4))}. Available for \code{texreg}, \code{htmlreg}, \code{screenreg}, \code{csvreg}.}
 \item{...}{Custom options to be passed on to the extract function. For example, most extract methods provide custom options for the inclusion or exclusion of specific goodness-of-fit statistics. See the help entries of \link{extract} and \link{extract-methods} for more information.}
 }
+
 \references{
 Leifeld, Philip (2013). texreg: Conversion of Statistical Model Output in R to 
 LaTeX and HTML Tables. Journal of Statistical Software, 55(8), 1-24.
