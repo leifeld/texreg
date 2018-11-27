@@ -181,60 +181,43 @@ matrixreg <- function(l,
               for (i in 1:length(custom.header)) { 
                   space <- " "
                   if (max(custom.header[[i]]) - min(custom.header[[i]]) == 0 ) {
-                      #piece1[i] <- paste0(space, paste(rep(" ",((9 - nchar(names(custom.header[i])[1]))/2)), 
-                      #                                 sep ="", collapse = ""), names(custom.header[i])[1], 
-                      #                    paste(rep(" ",((10- nchar(names(custom.header[i])[1]))/2)),sep ="", 
-                      #                          collapse = "") , space, space)
-                      cat("\ncompute.width: ", compute.width(output.matrix[,i]))
-                      piece1[i] <- paste0(paste(rep(" ",((compute.width(output.matrix[,i]) - nchar(names(custom.header[i])[1]))/2)), 
+                      piece1[i] <- paste0(space, paste(rep(" ",((9 - nchar(names(custom.header[i])[1]))/2)), 
                                                        sep ="", collapse = ""), names(custom.header[i])[1], 
-                                          paste(rep(" ",((compute.width(output.matrix[,i])- nchar(names(custom.header[i])[1]))/2)),sep ="", 
-                                                collapse = ""), space, space)
+                                          paste(rep(" ",((10- nchar(names(custom.header[i])[1]))/2)),sep ="", 
+                                                collapse = "") , space, space)
+                      
                       
                   } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 1 ) {
-                     # piece2[i] <- paste0(space, paste(rep(" ",((21 - nchar(names(custom.header[i][1])))/2)), 
-                     #                                  sep ="", collapse = ""), names(custom.header[i][1]), 
-                      #                    paste(rep(" ",((22- nchar(names(custom.header[i][1])))/2)),sep ="", 
-                      #                          collapse = "") , space, space)
-                      piece2[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*2) - nchar(names(custom.header[i][1])))/2)), 
-                                                        sep ="", collapse = ""), names(custom.header[i][1]), 
-                                            paste(rep(" ",(((compute.width(output.matrix[,i])*2)- nchar(names(custom.header[i][1])))/2)),sep ="", 
-                                                 collapse = ""), space, space)
-                      
+                      piece2[i] <- paste0(space, paste(rep(" ",((21 - nchar(names(custom.header[i][1])))/2)), 
+                                                                                         sep ="", collapse = ""), names(custom.header[i][1]), 
+                                                                           paste(rep(" ",((22- nchar(names(custom.header[i][1])))/2)),sep ="", 
+                                                                                collapse = "") , space, space)
+                                                       
                       
                   } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 2 ) {
-                      #piece3[i] <- paste0(space, paste(rep(" ",((34 - nchar(names(custom.header[i])[1]))/2)), 
-                       #                                sep ="", collapse = ""), names(custom.header[i][1]), 
-                       #                   paste(rep(" ",((35- nchar(names(custom.header[i])[1]))/2)), sep ="", 
-                       #                         collapse = ""), space, space)
-                      piece3[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*3) - nchar(names(custom.header[i])[1]))/2)), 
-                                                       sep ="", collapse = ""), names(custom.header[i][1]), 
-                                          paste(rep(" ",(((compute.width(output.matrix[,i])*3)- nchar(names(custom.header[i])[1]))/2)), sep ="", 
-                                                collapse = ""), space, space)
+
+                      piece3[i] <- paste0(space, paste(rep(" ",((34 - nchar(names(custom.header[i])[1]))/2)), 
+                                                      sep ="", collapse = ""), names(custom.header[i][1]), 
+                                         paste(rep(" ",((35- nchar(names(custom.header[i])[1]))/2)), sep ="", 
+                                               collapse = ""), space, space)
                       
                   } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 3 ) {
-                      #piece4[i] <- paste0(space, paste(rep(" ",((44- nchar(names(custom.header[i])[1]))/2)), 
-                      #                                 sep ="", collapse = ""), names(custom.header[i][1]), 
-                      #                    paste(rep(" ",((47- nchar(names(custom.header[i])[1]))/2)), sep ="", 
-                      #                          collapse = ""), space, space)
-                      piece4[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*4)- nchar(names(custom.header[i])[1]))/2)), 
+                      piece4[i] <- paste0(space, paste(rep(" ",((44- nchar(names(custom.header[i])[1]))/2)), 
                                                        sep ="", collapse = ""), names(custom.header[i][1]), 
-                                          paste(rep(" ",(((compute.width(output.matrix[,i])*4)- nchar(names(custom.header[i])[1]))/2)), sep ="", 
+                                          paste(rep(" ",((47- nchar(names(custom.header[i])[1]))/2)), sep ="", 
                                                 collapse = ""), space, space)
                       
+                      
                   } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 4 ) {
-                      #piece5[i] <- paste0(space, paste(rep(" ",((55- nchar(names(custom.header[i])[1]))/2)), 
-                      #                                 sep ="", collapse = ""), names(custom.header[i][1]), 
-                      #                    paste(rep(" ",((55- nchar(names(custom.header[i])[1]))/2)), 
-                      #                          sep ="", collapse = ""), space, space)
-                      piece5[i] <- paste0(paste(rep(" ",(((compute.width(output.matrix[,i])*5)- nchar(names(custom.header[i])[1]))/2)), 
+                      piece5[i] <- paste0(space, paste(rep(" ",((55- nchar(names(custom.header[i])[1]))/2)), 
                                                        sep ="", collapse = ""), names(custom.header[i][1]), 
-                                          paste(rep(" ",(((compute.width(output.matrix[,i])*5)- nchar(names(custom.header[i])[1]))/2)), 
+                                          paste(rep(" ",((55- nchar(names(custom.header[i])[1]))/2)), 
                                                 sep ="", collapse = ""), space, space)
+                      
                   }
               }    
               
-          } else {
+          } else if (single.row == TRUE) {
               for (i in 1:length(custom.header)) { 
                   space <- " "
                   if (max(custom.header[[i]]) - min(custom.header[[i]]) == 0 ) {
@@ -243,17 +226,20 @@ matrixreg <- function(l,
                                           paste(rep(" ",((16- nchar(names(custom.header[i])[1]))/2)),
                                                 sep ="", collapse = "") , space, space)
                       
+                      
                   } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 1 ) {
                       piece2[i] <- paste0(space, paste(rep(" ",((34 - nchar(names(custom.header[i][1])))/2)), 
                                                        sep ="", collapse = ""), names(custom.header[i][1]), 
                                           paste(rep(" ",((35- nchar(names(custom.header[i][1])))/2)),
                                                 sep ="", collapse = "") , space, space)
                       
+                      
                   } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 2 ) {
                       piece3[i] <- paste0(space, paste(rep(" ",((51 - nchar(names(custom.header[i])[1]))/2)), 
                                                        sep ="", collapse = ""), names(custom.header[i][1]), 
                                           paste(rep(" ",((52- nchar(names(custom.header[i])[1]))/2)), 
                                                 sep ="", collapse = ""), space, space)
+                      
                       
                   } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 3 ) {
                       piece4[i] <- paste0(space, paste(rep(" ",((70- nchar(names(custom.header[i])[1]))/2)), 
@@ -265,7 +251,7 @@ matrixreg <- function(l,
                       piece5[i] <- paste0(space, paste(rep(" ",((80- nchar(names(custom.header[i])[1]))/2)), 
                                                        sep ="", collapse = ""), names(custom.header[i][1]), 
                                           paste(rep(" ",((81- nchar(names(custom.header[i])[1]))/2)), 
-                                                sep ="", collapse = ""), space, space)
+                                               sep ="", collapse = ""), space, space)
                   }
               }    
               
@@ -450,7 +436,7 @@ screenreg <- function(l,
           } else if (max(custom.header[[i]]) - min(custom.header[[i]]) == 4 ) {
               linep5[i] <- paste0(space, paste(rep("-", 57), sep ="", 
                                                collapse = ""), space)
-          }
+          }    
           
       }
       
