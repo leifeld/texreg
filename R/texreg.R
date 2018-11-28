@@ -298,7 +298,12 @@ matrixreg <- function(l,
             attr(output.matrix, 'gof.names') <- gof.names
             attr(output.matrix, 'coef.names') <- coef.names
             attr(output.matrix, 'mod.names') <- mod.names
-            attr(output.matrix, 'table.head') <- tablehead
+            if (length(custom.header) != 0) {
+                attr(output.matrix, 'table.head') <- tablehead
+            }else {
+                #do nothing
+            }
+            
         }
     }
     
