@@ -416,7 +416,6 @@ screenreg <- function(l,
         }
         space <- " "
         for (i in 1:length(custom.header)) { 
-            
             if (max(custom.header[[i]]) - min(custom.header[[i]]) == 0) {
                 linep1[i] <- paste0(space, paste(rep("-", 9), sep ="", 
                                                  collapse = ""), space, space)
