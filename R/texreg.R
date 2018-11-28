@@ -288,8 +288,6 @@ matrixreg <- function(l,
         }
     }  
     
-    
-    
     # attributes required for printing functions
     if ('include.attributes' %in% names(dots)) {
         if (dots$include.attributes) {
