@@ -1,6 +1,7 @@
-context("Test extract.alpaca")
+context("Test extract alpaca package")
 
-library(alpaca)
+## library(MASS)
+## library(alpaca)
 
 set.seed(1234)
 countries <- letters[1:10]
@@ -18,14 +19,14 @@ dta$impFE <- with(dta, interaction(imp, year))
 dta$yearFE <- factor(dta$year)
 dta$bilFE <- with(dta, interaction(exp, imp))
 
-mod1 <- feglm(tradeflow ~ tariffs + var1 | expFE + impFE + yearFE + bilFE,
+mod1 <- alpaca::feglm(tradeflow ~ tariffs + var1 | expFE + impFE + yearFE + bilFE,
               data = dta, family = poisson())
-mod2 <- feglm(tradeflow ~ tariffs + var2 | expFE + impFE + yearFE + bilFE,
+mod2 <- alpaca::feglm(tradeflow ~ tariffs + var2 | expFE + impFE + yearFE + bilFE,
               data = dta, family = poisson())
 
 
 test_that("Test extract.alpaca function", {
-    res <- texreg::extract.alpaca(mod1)
+    res <- texreg::extract.feglm(mod1)
 
     ## Number of slots
     expect_equal(length(slotNames(res)), 10)

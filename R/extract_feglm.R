@@ -1,14 +1,15 @@
-
-# extension for alpaca objects
-# contributed by Oliver Reiter (oliver_reiter@gmx.at)
-
-extract.alpaca <- function(model,
-                           include.nobs = TRUE,
-                           include.deviance = TRUE,
-                           ## include.loglik = TRUE,
-                           ## include.aic = TRUE,
-                           ## include.bic = TRUE,
-                           ...) {
+## extension for feglm objects from alpaca package
+## contributed by Oliver Reiter
+## Github: zauster
+## E: oliver_reiter@gmx.at
+#' @export
+extract.feglm <- function(model,
+                          include.nobs = TRUE,
+                          include.deviance = TRUE,
+                          ## include.loglik = TRUE,
+                          ## include.aic = TRUE,
+                          ## include.bic = TRUE,
+                          ...) {
     s <- summary(model)
     names <- names(model$coefficients)
     co <- s$cm[, 1]
@@ -60,5 +61,5 @@ extract.alpaca <- function(model,
     return(tr)
 }
 
-setMethod("extract",  signature = className("feglm", "alpaca"),
-          definition = extract.alpaca)
+setMethod("extract", signature = className("feglm", "alpaca"),
+          definition = extract.feglm)
