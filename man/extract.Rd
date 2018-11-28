@@ -51,6 +51,8 @@
 \alias{extract,ets-method}
 \alias{extract.felm}
 \alias{extract,felm-method}
+\alias{extract.feglm}
+\alias{extract,feglm-method}
 \alias{extract.fGARCH}
 \alias{extract,fGARCH-method}
 \alias{extract.forecast}
