@@ -112,6 +112,7 @@
 \alias{extract.mer}
 \alias{extract,mer-method}
 \alias{extract.mhurdle}
+\alias{extract,mhurdle-method}
 \alias{extract.mlogit}
 \alias{extract,mlogit-method}
 \alias{extract.mnlogit}
