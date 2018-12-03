@@ -986,7 +986,6 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero,
     return(gof.matrix)
 }
 
-
 # reorder a matrix according to a vector of new positions
 reorder <- function(mat, new.order) {
     if (is.null(new.order)) {
