@@ -1002,7 +1002,6 @@ reorder <- function(mat, new.order) {
   return(new.mat)
 }
 
-
 # compute column width left and right of the decimal separator
 compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   if (single.row == FALSE) {
