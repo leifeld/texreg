@@ -1292,8 +1292,8 @@ htmlreg <- function(l,
     if (length(tablehead) != 0 & inline.css == TRUE ) {
         string <- paste0(string, "<th style=\"text-align: center; border-top: 2px solid black;",
                          "padding-right: 12px;\"><b></b></th>\n")
-        tablehead <- gsub("<th ", "<th style=\"text-align: center; border-bottom: 1px solid E", tablehead)
-        tablehead <- gsub("E","black;border-top: 2px solid black;padding-right: 12px;\"", tablehead)
+        tablehead <- gsub("<th ", "<th style=\"text-align: center; border-bottom: 1px solid PART2", tablehead)
+        tablehead <- gsub("PART2","black;border-top: 2px solid black;padding-right: 12px;\"", tablehead)
         string <- paste0(string, tablehead)
         string <- paste0(string, "</tr>\n")
         nameheader <- NULL
