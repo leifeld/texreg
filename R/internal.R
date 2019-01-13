@@ -623,7 +623,6 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                          star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
                          bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
                          ci.test = 0, rowLabelType = 'text') {
-    #row labels
     
     # write coefficient rows
     if (single.row == TRUE) {
@@ -633,16 +632,16 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         for (i in 1:length(rownames(m))) {
             if (rowLabelType == 'latex') {
                 output.matrix[i, 1] <- (rownames(replaceSymbols(m))[i])
-            }else{
+            } else {
                 output.matrix[i, 1] <- rownames(m)[i]
             }
         }
         
-        #replace R syntax
+        # replace R syntax
         for (i in 1:length(m[, 1])) {
-            if (grepl("I\\(", rownames(m)[i]) == TRUE){ 
+            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
                 output.matrix[i, 1] <- gsub("I\\(", "", output.matrix[i, 1])
-                output.matrix[i, 1] <- gsub("\\)", "", output.matrix[i, 1])  
+                output.matrix[i, 1] <- sub("\\)", "", output.matrix[i, 1])  
             }
         }
         # coefficients and standard errors
@@ -739,11 +738,11 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                 output.matrix[(i * 2), 1] <- ""
             }
         }
-        #replace R syntax
+        # replace R syntax
         for (i in 1:length(m[, 1])) {
-            if (grepl("I\\(", rownames(m)[i]) == TRUE){ 
+            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
                 output.matrix[(i * 2) - 1, 1] <- gsub("I\\(", "", output.matrix[(i * 2) - 1, 1])
-                output.matrix[(i * 2) - 1, 1] <- gsub("\\)", "", output.matrix[(i * 2) - 1, 1])  
+                output.matrix[(i * 2) - 1, 1] <- sub("\\)", "", output.matrix[(i * 2) - 1, 1])  
             }
         }
         
