@@ -641,7 +641,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         for (i in 1:length(m[, 1])) {
             if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
                 output.matrix[i, 1] <- gsub("I\\(", "", output.matrix[i, 1])
-                output.matrix[i, 1] <- sub("\\)", "", output.matrix[i, 1])  
+                output.matrix[i, 1] <- sub("\\)*$", "", output.matrix[i, 1])  
             }
         }
         # coefficients and standard errors
@@ -742,7 +742,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         for (i in 1:length(m[, 1])) {
             if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
                 output.matrix[(i * 2) - 1, 1] <- gsub("I\\(", "", output.matrix[(i * 2) - 1, 1])
-                output.matrix[(i * 2) - 1, 1] <- sub("\\)", "", output.matrix[(i * 2) - 1, 1])  
+                output.matrix[(i * 2) - 1, 1] <- sub("\\)*$", "", output.matrix[(i * 2) - 1, 1])  
             }
         }
         
