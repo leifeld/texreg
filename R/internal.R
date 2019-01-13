@@ -614,8 +614,13 @@ modelnames <- function(model.list, tr.objects, model.names) {
     return(mnames)
 }
 
-
-
+string.counter<-function(strings, pattern){  
+    counts<-NULL
+    for(i in 1:length(strings)){
+        counts[i]<-length(attr(gregexpr(pattern,strings[i])[[1]], "match.length")[attr(gregexpr(pattern,strings[i])[[1]], "match.length")>0])
+    }
+    return(counts)
+}
 
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, posinfstring, 
@@ -641,7 +646,16 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         for (i in 1:length(m[, 1])) {
             if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
                 output.matrix[i, 1] <- gsub("I\\(", "", output.matrix[i, 1])
-                output.matrix[i, 1] <- sub("\\)*$", "", output.matrix[i, 1])  
+                
+                if (string.counter(rownames(m)[i], pattern = "\\)" ) == 1) {
+                    output.matrix[i, 1] <- sub("\\)*$", "", output.matrix[i, 1])  
+                } else if (string.counter(rownames(m)[i], pattern = "\\)" ) == 2) {
+                    output.matrix[i, 1] <- sub("\\))*$", "\\)", output.matrix[i, 1]) 
+                } else if (string.counter(rownames(m)[i], pattern = "\\)" ) == 3) {
+                    output.matrix[i, 1] <- sub("\\)))*$", "\\))", output.matrix[i, 1]) 
+                } else if (string.counter(rownames(m)[i], pattern = "\\)" ) == 4){
+                    output.matrix[i, 1] <- sub("\\))))*$", "\\)))", output.matrix[i, 1])
+                }  
             }
         }
         # coefficients and standard errors
@@ -738,11 +752,20 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                 output.matrix[(i * 2), 1] <- ""
             }
         }
-        # replace R syntax
+        
         for (i in 1:length(m[, 1])) {
             if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
                 output.matrix[(i * 2) - 1, 1] <- gsub("I\\(", "", output.matrix[(i * 2) - 1, 1])
-                output.matrix[(i * 2) - 1, 1] <- sub("\\)*$", "", output.matrix[(i * 2) - 1, 1])  
+                
+                if (string.counter(rownames(m)[i], pattern = "\\)" ) == 1) {
+                    output.matrix[(i * 2) - 1, 1] <- sub("\\)*$", "", output.matrix[(i * 2) - 1, 1])  
+                } else if (string.counter(rownames(m)[i], pattern = "\\)" ) == 2) {
+                    output.matrix[(i * 2) - 1, 1] <- sub("\\))*$", "\\)", output.matrix[(i * 2) - 1, 1]) 
+                } else if (string.counter(rownames(m)[i], pattern = "\\)" ) == 3) {
+                    output.matrix[(i * 2) - 1, 1] <- sub("\\)))*$", "\\))", output.matrix[(i * 2) - 1, 1]) 
+                } else if (string.counter(rownames(m)[i], pattern = "\\)" ) == 4){
+                    output.matrix[(i * 2) - 1, 1] <- sub("\\))))*$", "\\)))", output.matrix[(i * 2) - 1, 1])
+                }
             }
         }
         
