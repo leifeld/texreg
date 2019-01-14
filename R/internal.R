@@ -640,8 +640,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         # replace R syntax
         for (i in 1:length(m[, 1])) {
             if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
-                output.matrix[i, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", 
-                                                      output.matrix[i, 1])
+                output.matrix[i, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[i, 1])
             }
         }
         # coefficients and standard errors
@@ -733,7 +732,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
             if (rowLabelType == 'latex'){
                 output.matrix[(i * 2) - 1, 1] <- rownames(replaceSymbols(m))[i]
                 output.matrix[(i * 2), 1] <- ""   
-            }else{
+            } else {
                 output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
                 output.matrix[(i * 2), 1] <- ""
             }
@@ -741,8 +740,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         
         for (i in 1:length(m[, 1])) {
             if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
-                output.matrix[(i * 2) - 1, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", 
-                                                      output.matrix[(i * 2) - 1, 1])
+                output.matrix[(i * 2) - 1, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[(i * 2) - 1, 1])
             }
         }
         
