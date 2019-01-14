@@ -5150,3 +5150,67 @@ extract.pglm <- function(model, include.aic = TRUE,
 
 setMethod("extract", signature = className("pglm", "pglm"),
           definition = extract.pglm)
+
+
+# extension for oglmx objects
+extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
+                        include.loglik = TRUE, include.nobs = TRUE, include.rsquared = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    coefficient.names <- names(s$coefficients)
+    coefficients <- s$estimate[,1]
+    standard.errors <- s$estimate[,2]
+    significance <- s$estimate[,4]
+    
+    aic <- s$AIC[1]
+    lik <- s$loglikelihood[1]
+    n <- length(results.oprob$modelframes$Z)
+    it <- s$no.iterations
+    r2 <- s$McFaddensR2[1]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    if (include.iterations == TRUE) {
+        gof <- c(gof, it)
+        gof.names <- c(gof.names, "Iterations")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    if (include.rsquared == TRUE) {
+        gof <- c(gof, r2)
+        gof.names <- c(gof.names, "McFadden's R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = coefficients,
+        se = standard.errors,
+        pvalues = significance,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract", signature = className("oglmx", "oglmx"),
+          definition = extract.oglmx)
