@@ -31,137 +31,135 @@ matrixreg <- function(l,
                       custom.col.pos = NULL,
                       dcolumn = TRUE,
                       ...) {
-    
-    # unnamed arguments to environment
-    dots <- list(...)
-    
-    # argument for internal use
-    if (!'output.type' %in% names(dots)) {
-        dots[['output.type']] = 'ascii'
-    }
-    
-    # extract
-    models <- get.data(l, ...)  # extract relevant coefficients, SEs, GOFs etc.
-    models <- override(models, override.coef, override.se, override.pvalues, 
-                       override.ci.low, override.ci.up)
-    if (dots$output.type != 'latex') {
-        models <- tex.replace(models, type = "screen")  # convert TeX code to text
-    }
-    models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
-    gof.names <- get.gof(models)  #extract names of GOFs
-    models <- correctDuplicateCoefNames(models)
-    
-    # arrange coefficients and GOFs nicely in a matrix
-    gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
-                             returnobject = "gofs")
-    m <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
-                          returnobject = "m")
-    decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
-                                       digits, returnobject = "decimal.matrix")
-    
-    if (!is.null(custom.coef.map)) {
-        m <- custommap(m, custom.coef.map)
-    } else {
-        m <- omit_rename(m,
-                         omit.coef = omit.coef,
-                         custom.coef.names = custom.coef.names)
-    }
-    m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
-    m <- as.data.frame(m)
-    
-    mod.names <- modelnames(l, models, custom.model.names)  # model names
-    
-    # reorder GOF and coef matrix
-    m <- reorder(m, reorder.coef)
-    
-    if (length(reorder.gof) != 0){
+  
+  # unnamed arguments to environment
+  dots <- list(...)
+
+  # argument for internal use
+  if (!'output.type' %in% names(dots)) {
+    dots[['output.type']] = 'ascii'
+  }
+
+  # extract
+  models <- get.data(l, ...)  # extract relevant coefficients, SEs, GOFs etc.
+  models <- override(models, override.coef, override.se, override.pvalues, 
+      override.ci.low, override.ci.up)
+  if (dots$output.type != 'latex') {
+    models <- tex.replace(models, type = "screen")  # convert TeX code to text
+  }
+  models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
+  gof.names <- get.gof(models)  #extract names of GOFs
+  models <- correctDuplicateCoefNames(models)
+  
+  # arrange coefficients and GOFs nicely in a matrix
+  gofs <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject = "gofs")
+  m <- aggregate.matrix(models, gof.names, custom.gof.names, digits, 
+      returnobject = "m")
+  decimal.matrix <- aggregate.matrix(models, gof.names, custom.gof.names, 
+      digits, returnobject = "decimal.matrix")
+  
+  if (!is.null(custom.coef.map)) {
+    m <- custommap(m, custom.coef.map)
+  } else {
+    m <- omit_rename(m,
+                     omit.coef = omit.coef,
+                     custom.coef.names = custom.coef.names)
+  }
+  m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
+  m <- as.data.frame(m)
+
+  mod.names <- modelnames(l, models, custom.model.names)  # model names
+  
+  # reorder GOF and coef matrix
+  m <- reorder(m, reorder.coef)
+  if (length(reorder.gof) != 0){
         gofs <- gofs[reorder.gof, , drop = FALSE]
-        decimal.matrix <- decimal.matrix[reorder.gof, , drop = FALSE]
-        
-    }else{
+        decimal.matrix <- decimal.matrix[reorder.gof, , drop = FALSE]      
+    } else {
         #do nothing
     }
-    
-    # create output table with significance stars etc.
-    ci <- logical()
-    for (i in 1:length(models)) {
-        if (length(models[[i]]@se) == 0 && length(models[[i]]@ci.up) > 0) {
-            ci[i] <- TRUE
-        } else {
-            ci[i] <- FALSE
-        }
-    }
-    
-    # output matrix
-    if (dots$output.type == 'ascii') {
-        output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
-                                      posinfstring = "Inf", leading.zero, digits, 
-                                      se.prefix = " (", se.suffix = ")", star.prefix = " ", star.suffix = "", 
-                                      stars, dcolumn = TRUE, star.symbol = star.symbol, symbol = symbol, 
-                                      bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
-                                      ci.test = ci.test)
-    } else if (dots$output.type == 'latex') {
-        output.matrix <- outputmatrix(m, single.row, 
-                                      neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
-                                      posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
-                                      se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
-                                      star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
-                                      symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", 
-                                      bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test)
-    } else if (dots$output.type == 'html') {
-        output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
-                                      posinfstring = "Inf", leading.zero, digits, 
-                                      se.prefix = " (", se.suffix = ")", star.symbol = star.symbol, 
-                                      star.prefix = paste0("<sup", dots$css.sup, ">"), 
-                                      star.suffix = "</sup>", stars, dcolumn = TRUE, symbol = symbol, 
-                                      bold = bold, bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, 
-                                      ci.test = ci.test)
-    }
-    
-    # grouping
-    output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-                              single.row = single.row, prefix = "", suffix = "")
-    
-    # create GOF matrix (the lower part of the final output matrix)
-    gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
-                            digits)
-    
-    # combine the coefficient and gof matrices vertically
-    coef.names <- row.names(output.matrix)
-    output.matrix <- rbind(output.matrix, gof.matrix)
-    
-    # reformat output matrix
-    if (ncol(output.matrix) == 2) {
-        temp <- matrix(format.column(matrix(output.matrix[, -1]), 
-                                     single.row = single.row, digits = digits))
+  
+  # create output table with significance stars etc.
+  ci <- logical()
+  for (i in 1:length(models)) {
+    if (length(models[[i]]@se) == 0 && length(models[[i]]@ci.up) > 0) {
+      ci[i] <- TRUE
     } else {
-        temp <- apply(output.matrix[, -1], 2, format.column, 
-                      single.row = single.row, digits = digits)
+      ci[i] <- FALSE
     }
-    output.matrix <- cbind(output.matrix[, 1], temp)
-    
-    # otherwise we get duplicate model names in latex and html
-    if (dots$output.type == 'ascii') {
-        output.matrix <- rbind(c("", mod.names), output.matrix)
+  }
+  
+  # output matrix
+  if (dots$output.type == 'ascii') {
+    output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
+        posinfstring = "Inf", leading.zero, digits, 
+        se.prefix = " (", se.suffix = ")", star.prefix = " ", star.suffix = "", 
+        stars, dcolumn = TRUE, star.symbol = star.symbol, symbol = symbol, 
+        bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
+        ci.test = ci.test)
+  } else if (dots$output.type == 'latex') {
+    output.matrix <- outputmatrix(m, single.row, 
+        neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
+        posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
+        se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
+        star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
+        symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", 
+        bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test, rowLabelType = 'latex')
+  } else if (dots$output.type == 'html') {
+    output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
+        posinfstring = "Inf", leading.zero, digits, 
+        se.prefix = " (", se.suffix = ")", star.symbol = star.symbol, 
+        star.prefix = paste0("<sup", dots$css.sup, ">"), 
+        star.suffix = "</sup>", stars, dcolumn = TRUE, symbol = symbol, 
+        bold = bold, bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, 
+        ci.test = ci.test)
+  }
+
+  # grouping
+  output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
+      single.row = single.row, prefix = "", suffix = "")
+  
+  # create GOF matrix (the lower part of the final output matrix)
+  gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
+      digits)
+  
+  # combine the coefficient and gof matrices vertically
+  coef.names <- row.names(output.matrix)
+  output.matrix <- rbind(output.matrix, gof.matrix)
+  
+  # reformat output matrix
+  if (ncol(output.matrix) == 2) {
+    temp <- matrix(format.column(matrix(output.matrix[, -1]), 
+        single.row = single.row, digits = digits))
+  } else {
+    temp <- apply(output.matrix[, -1], 2, format.column, 
+        single.row = single.row, digits = digits)
+  }
+  output.matrix <- cbind(output.matrix[, 1], temp)
+  
+  # otherwise we get duplicate model names in latex and html
+  if (dots$output.type == 'ascii') {
+    output.matrix <- rbind(c("", mod.names), output.matrix)
+  }
+  
+  # add custom columns
+  output.matrix <- customcolumns(output.matrix, custom.columns, custom.col.pos, 
+      single.row = single.row, numcoef = nrow(m), groups = groups, 
+      modelnames = TRUE)
+
+  # attributes required for printing functions
+  if ('include.attributes' %in% names(dots)) {
+    if (dots$include.attributes) {
+      attr(output.matrix, 'ci') <- ci
+      attr(output.matrix, 'ci.test') <- ci.test
+      attr(output.matrix, 'gof.names') <- gof.names
+      attr(output.matrix, 'coef.names') <- coef.names
+      attr(output.matrix, 'mod.names') <- mod.names
     }
-    
-    # add custom columns
-    output.matrix <- customcolumns(output.matrix, custom.columns, custom.col.pos, 
-                                   single.row = single.row, numcoef = nrow(m), groups = groups, 
-                                   modelnames = TRUE)
-    
-    # attributes required for printing functions
-    if ('include.attributes' %in% names(dots)) {
-        if (dots$include.attributes) {
-            attr(output.matrix, 'ci') <- ci
-            attr(output.matrix, 'ci.test') <- ci.test
-            attr(output.matrix, 'gof.names') <- gof.names
-            attr(output.matrix, 'coef.names') <- coef.names
-            attr(output.matrix, 'mod.names') <- mod.names
-        }
-    }
-    
-    return(output.matrix)
+  }
+
+  return(output.matrix)
 } 
 
 # screenreg function
@@ -389,42 +387,116 @@ texreg <- function(l,
                    scalebox = NULL,
                    float.pos = "",
                    ...) {
-    
-    #check dcolumn vs. bold
-    if (dcolumn == TRUE && bold > 0) {
-        dcolumn <- FALSE
-        msg <- paste("The dcolumn package and the bold argument cannot be used at", 
-                     "the same time. Switching off dcolumn.")
-        if (length(stars) > 1 || stars == TRUE) {
-            warning(paste(msg, "You should also consider setting stars = 0."))
-        } else {
-            warning(msg)
-        }
+  
+  #check dcolumn vs. bold
+  if (dcolumn == TRUE && bold > 0) {
+    dcolumn <- FALSE
+    msg <- paste("The dcolumn package and the bold argument cannot be used at", 
+        "the same time. Switching off dcolumn.")
+    if (length(stars) > 1 || stars == TRUE) {
+      warning(paste(msg, "You should also consider setting stars = 0."))
+    } else {
+      warning(msg)
     }
-    
-    # check longtable vs. sideways
-    if (longtable == TRUE && sideways == TRUE) {
-        sideways <- FALSE
-        msg <- paste("The longtable package and sideways environment cannot be", 
-                     "used at the same time. You may want to use the pdflscape package.", 
-                     "Switching off sideways.")
-        warning(msg)
+  }
+  
+  # check longtable vs. sideways
+  if (longtable == TRUE && sideways == TRUE) {
+    sideways <- FALSE
+    msg <- paste("The longtable package and sideways environment cannot be", 
+        "used at the same time. You may want to use the pdflscape package.", 
+        "Switching off sideways.")
+    warning(msg)
+  }
+  
+  # check longtable vs. float.pos
+  if (longtable == TRUE && !(float.pos %in% c("", "l", "c", "r"))) {
+    float.pos <- ""
+    msg <- paste("When the longtable environment is used, the float.pos", 
+        "argument can only take one of the \"l\", \"c\", \"r\", or \"\"", 
+        "(empty) values. Setting float.pos = \"\".")
+    warning(msg)
+  }
+  
+  # check longtable vs. scalebox
+  if (longtable == TRUE && !is.null(scalebox)) {
+    scalebox <- NULL
+    warning(paste("longtable and scalebox are not compatible. Setting", 
+    "scalebox = NULL."))
+  }
+
+  # matrixreg produces the output matrix
+  output.matrix <- matrixreg(l,
+                             single.row = single.row,
+                             stars = stars,
+                             custom.model.names = custom.model.names,
+                             custom.coef.names = custom.coef.names,
+                             custom.coef.map = custom.coef.map,
+                             custom.gof.names = custom.gof.names,
+                             digits = digits,
+                             leading.zero = leading.zero,
+                             star.symbol = '*',
+                             symbol = symbol,
+                             override.coef = override.coef,
+                             override.se = override.se,
+                             override.pvalues = override.pvalues,
+                             override.ci.low = override.ci.low, 
+                             override.ci.up = override.ci.up,
+                             omit.coef = omit.coef,
+                             reorder.coef = reorder.coef,
+                             reorder.gof = reorder.gof,
+                             ci.force = ci.force,
+                             ci.force.level = ci.force.level,
+                             ci.test = ci.test,
+                             groups = groups,
+                             custom.columns = custom.columns,
+                             custom.col.pos = custom.col.pos,
+                             dcolumn = dcolumn,
+                             bold = bold,
+                             include.attributes = TRUE,
+                             output.type = 'latex',
+                             ...)
+  
+  gof.names <- attr(output.matrix, 'gof.names')
+  coef.names <- attr(output.matrix, 'coef.names')
+  mod.names <- attr(output.matrix, 'mod.names')
+  ci <- attr(output.matrix, 'ci')
+  ci.test <- attr(output.matrix, 'ci.test')
+  
+  # what is the optimal length of the labels?
+  lab.list <- c(coef.names, gof.names)
+  lab.length <- 0
+  for (i in 1:length(lab.list)) {
+    if (nchar(lab.list[i]) > lab.length) {
+      lab.length <- nchar(lab.list[i])
     }
-    
-    # check longtable vs. float.pos
-    if (longtable == TRUE && !(float.pos %in% c("", "l", "c", "r"))) {
-        float.pos <- ""
-        msg <- paste("When the longtable environment is used, the float.pos", 
-                     "argument can only take one of the \"l\", \"c\", \"r\", or \"\"", 
-                     "(empty) values. Setting float.pos = \"\".")
-        warning(msg)
+  }
+  
+  coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos, 
+      types = TRUE)
+  mod.names <- customcolumnnames(mod.names, custom.columns, custom.col.pos, 
+      types = FALSE)
+  
+  # define columns of the table (define now, add later)
+  coldef <- ""
+  if (no.margin == FALSE) {
+    margin.arg <- ""
+  } else {
+    margin.arg <- "@{}"
+  }
+  coefcount <- 0
+  for (i in 1:length(mod.names)) {
+    if (coltypes[i] == "coef") {
+      coefcount <- coefcount + 1
     }
-    
-    # check longtable vs. scalebox
-    if (longtable == TRUE && !is.null(scalebox)) {
-        scalebox <- NULL
-        warning(paste("longtable and scalebox are not compatible. Setting", 
-                      "scalebox = NULL."))
+    if (single.row == TRUE && coltypes[i] == "coef") {
+      if (ci[coefcount] == FALSE) {
+        separator <- ")"
+      } else {
+        separator <- "]"
+      }
+    } else {
+      separator <- "."
     }
     
     # matrixreg produces the output matrix
