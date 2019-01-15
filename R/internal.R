@@ -338,6 +338,10 @@ replaceSymbols <- function(m) {
             rn[i] <- gsub("<", "\\$<\\$", rn[i])
             rn[i] <- gsub(">", "\\$>\\$", rn[i])
             rn[i] <- gsub("%", "\\\\%", rn[i])
+            rn[i] <- gsub("\\^2", "\\$^2\\$", rn[i])
+            rn[i] <- gsub("\\^3", "\\$^3\\$", rn[i])
+            rn[i] <- gsub("\\^4", "\\$^4\\$", rn[i])
+            rn[i] <- gsub("\\^5", "\\$^5\\$", rn[i])
         }
     }
     rownames(m) <- rn
@@ -618,7 +622,8 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                          leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
                          star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
                          bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
-                         ci.test = 0) {
+                         ci.test = 0, rowLabelType = 'text') {
+
     
     # write coefficient rows
     if (single.row == TRUE) {
@@ -626,9 +631,19 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         
         # row labels
         for (i in 1:length(rownames(m))) {
-            output.matrix[i, 1] <- rownames(m)[i]
+            if (rowLabelType == 'latex') {
+                output.matrix[i, 1] <- (rownames(replaceSymbols(m))[i])
+            } else {
+                output.matrix[i, 1] <- rownames(m)[i]
+            }
         }
         
+        # replace R syntax
+        for (i in 1:length(m[, 1])) {
+            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
+                output.matrix[i, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[i, 1])
+            }
+        }
         # coefficients and standard errors
         for (i in 1:length(m[, 1])) { #go through rows
             j <- 1 #column in the original, merged coef table
@@ -715,8 +730,19 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
         
         # row labels
         for (i in 1:length(rownames(m))) {
-            output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
-            output.matrix[(i * 2), 1] <- ""
+            if (rowLabelType == 'latex'){
+                output.matrix[(i * 2) - 1, 1] <- rownames(replaceSymbols(m))[i]
+                output.matrix[(i * 2), 1] <- ""   
+            } else {
+                output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
+                output.matrix[(i * 2), 1] <- ""
+            }
+        }
+        
+        for (i in 1:length(m[, 1])) {
+            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
+                output.matrix[(i * 2) - 1, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[(i * 2) - 1, 1])
+            }
         }
         
         # coefficients and standard deviations
@@ -957,7 +983,6 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero,
     return(gof.matrix)
 }
 
-
 # reorder a matrix according to a vector of new positions
 reorder <- function(mat, new.order) {
     if (is.null(new.order)) {
@@ -986,6 +1011,7 @@ reorder <- function(mat, new.order) {
     new.mat <- mat[new.order, ]
     return(new.mat)
 }
+
 
 # compute column width left and right of the decimal separator
 compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
