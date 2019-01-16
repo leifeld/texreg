@@ -5162,19 +5162,19 @@ extract.panelAR=function(model, include.rsquared=TRUE, include.nobs=TRUE, includ
     gof.names = character()
     gof.decimal = logical()	
     
-    if (include.rsquared=TRUE){
+    if (include.rsquared == TRUE){
     	rs = s$r2
     	gof=c(gof, rs)
     	gof.names=c(gof.names, "")
     	gof.decimal=c(gof.decimal, TRUE)
     }
-        if (include.nobs=TRUE){
+        if (include.nobs == TRUE){
         nobs = length(s$residuals)
     	gof=c(gof, rs)
     	gof.names=c(gof.names, "Num.\\ obs.")
     	gof.decimal=c(gof.decimal, TRUE)
     }	
-    if (include.numpanles=TRUE){
+    if (include.numpanles == TRUE){
 	npan = length(s$vcov)
     	gof=c(gof, npan)
     	gof.names=c(gof.names, "Num. \\ panels")
