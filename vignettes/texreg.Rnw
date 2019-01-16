@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 95 supported model types (version 1.37).]{\label{tab:types} List of 95 supported model types (version 1.37).} \\
+\caption[List of 96 supported model types (version 1.37).]{\label{tab:types} List of 95 supported model types (version 1.37).} \\
 \endlastfoot
 
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
@@ -504,6 +504,7 @@ Class			& Package			& Description \\
 `\code{netlogit}'		& \pkg{sna}			& Logistic regression for networks \\
 `\code{nlme}'			& \pkg{nlme}			& Nonlinear mixed-effects models \\
 `\code{ols}'			& \pkg{rms}			& Ordinary least squares linear models \\
+`\code{panelAR}'			& \pkg{panelAR}			& AR(1)-autocorrelation and panel heteroskedasticity/contemporaneous correlation\\
 `\code{pglm}'			& \pkg{pglm}		& Estimation by maximum likelihood of glm \\
 `\code{pgmm}'			& \pkg{plm}			& GMM estimation for panel data \\
 `\code{phreg}'			& \pkg{eha}			& Parametric proportional hazards regression \\
