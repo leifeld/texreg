@@ -113,12 +113,28 @@ matrixreg <- function(l,
   }
 
   # grouping
-  output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-      single.row = single.row, prefix = "", suffix = "")
+  if (dots$output.type == 'ascii') {
+      output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
+                                single.row = single.row, prefix = "", suffix = "", rowLabelType = 'text')
+  } else if (dots$output.type == 'latex') {
+      output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
+                                single.row = single.row, prefix = "", suffix = "", rowLabelType = 'latex')
+  }    else if (dots$output.type == 'html') {
+      output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
+                                single.row = single.row, prefix = "", suffix = "", rowLabelType = 'text')
+  }
   
   # create GOF matrix (the lower part of the final output matrix)
-  gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
-      digits)
+  if (dots$output.type == 'ascii') {
+      gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
+                              digits, rowLabelType = 'text')
+  } else if (dots$output.type == 'latex') {
+      gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
+                              digits, rowLabelType = 'latex')
+  } else if (dots$output.type == 'html') {
+      gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
+                              digits, rowLabelType = 'text')
+  } 
   
   # combine the coefficient and gof matrices vertically
   coef.names <- row.names(output.matrix)

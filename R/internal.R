@@ -966,39 +966,31 @@ fill.spaces <- function(x) {
 
 # Return the goodness-of-fit matrix (i.e., the lower block of the final matrix)
 gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
-
-    digits) {
-  if (dcolumn == TRUE) {
-    dollar <- ""
-  } else {
-    dollar <- "$"
-  }
-    #replace special characters in gof rownames by LaTex equivalents
-    gn <- rownames(gofs)
-    for (i in 1:length(gn)) {
-        if (!grepl("\\$", gn[i])) {
-            gn[i] <- gsub("_", "\\\\_", gn[i])
-            gn[i] <- gsub("<", "\\$<\\$", gn[i])
-            gn[i] <- gsub(">", "\\$>\\$", gn[i])
-            gn[i] <- gsub("%", "\\\\%", gn[i])
-            gn[i] <- gsub("\\^2", "\\$^2\\$", gn[i])
-            gn[i] <- gsub("\\^3", "\\$^3\\$", gn[i])
-            gn[i] <- gsub("\\^4", "\\$^4\\$", gn[i])
-            gn[i] <- gsub("\\^5", "\\$^5\\$", gn[i])
+                      digits, rowLabelType = 'text') {
+    if (dcolumn == TRUE) {
+        dollar <- ""
+    } else {
+        dollar <- "$"
+    }
+    
+    gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
+    if (length(gof.matrix) > 0) {
+        for (i in 1:length(rownames(gofs))) {
+            
+            # replace symbols in latex  
+            if (rowLabelType == 'latex') {
+                gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
+            } else {
+                gof.matrix[i, 1] <- rownames(gofs)[i]
+            }
+            for (j in 1:length(gofs[1, ])) {
+                strg <- coeftostring(gofs[i, j], leading.zero, 
+                                     digits = decimal.matrix[i, j])
+                gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
+            }
         }
     }
-  gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
-  if (length(gof.matrix) > 0) {
-    for (i in 1:length(gofs[, 1])) {
-      gof.matrix[i, 1] <- gn[i]
-      for (j in 1:length(gofs[1, ])) {
-        strg <- coeftostring(gofs[i, j], leading.zero, 
-            digits = decimal.matrix[i, j])
-        gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
-      }
-    }
-  }
-  return(gof.matrix)
+    return(gof.matrix)
 }
 
 # reorder a matrix according to a vector of new positions
@@ -1100,7 +1092,7 @@ ciforce <- function(models, ci.force = rep(FALSE, length(models)),
 
 # function which adds groups to an output matrix
 grouping <- function(output.matrix, groups, indentation = "    ", 
-    single.row = FALSE, prefix = "", suffix = "") {
+    single.row = FALSE, prefix = "", suffix = "", rowLabelType = 'text') {
   if (!is.null(groups)) {
     if (class(groups) != "list") {
       stop("Groups must be specified as a list of numeric vectors.")
@@ -1137,21 +1129,12 @@ grouping <- function(output.matrix, groups, indentation = "    ",
         nrow(output.matrix)) {
       stop("'groups' argument contains indices outside the table dimensions")
     }
-      ng <- names(groups)
-      for (i in 1:length(ng)) {
-          if (!grepl("\\$", ng[i])) {
-              ng[i] <- gsub("_", "\\\\_", ng[i])
-              ng[i] <- gsub("<", "\\$<\\$", ng[i])
-              ng[i] <- gsub(">", "\\$>\\$", ng[i])
-              ng[i] <- gsub("%", "\\\\%", ng[i])
-              ng[i] <- gsub("\\^2", "\\$^2\\$", ng[i])
-              ng[i] <- gsub("\\^3", "\\$^3\\$", ng[i])
-              ng[i] <- gsub("\\^4", "\\$^4\\$", ng[i])
-              ng[i] <- gsub("\\^5", "\\$^5\\$", ng[i])
+      for (i in length(names(groups)):1) {
+          if (rowLabelType == 'latex') {
+              label <- paste0(prefix, rownames(replaceSymbols(t(as.data.frame(rbind(groups[i]))))), suffix)
+          } else if (rowLabelType == 'text') {
+              label <- paste0(prefix, names(groups)[[i]], suffix)
           }
-      }
-      for (i in length(groups):1) {
-          label <- paste0(prefix, ng[i], suffix)
       for (j in nrow(output.matrix):1) {
         if (j %in% groups[[i]]) {
           output.matrix[j, 1] <- paste0(indentation, output.matrix[j, 1])
