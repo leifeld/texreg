@@ -5174,7 +5174,7 @@ extract.panelAR=function(model, include.rsquared=TRUE, include.nobs=TRUE, includ
     	gof.names=c(gof.names, "Num.\\ obs.")
     	gof.decimal=c(gof.decimal, TRUE)
     }	
-    if (include.numpanles == TRUE){
+    if (include.numpanels == TRUE){
 	npan = length(s$vcov)
     	gof=c(gof, npan)
     	gof.names=c(gof.names, "Num. \\ panels")
