@@ -18,6 +18,8 @@
 \alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
+\alias{extract.bife}
+\alias{extract,bife-method}
 \alias{extract.biglm}
 \alias{extract,biglm-method}
 \alias{extract.brglm}
@@ -245,6 +247,9 @@ extract(model, ...)
     include.pseudors = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
+\S4method{extract}{bife}(model, include.loglik = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.nobs = TRUE, ...)    
+    
 \S4method{extract}{biglm}(model, include.nobs = TRUE, 
     include.aic = TRUE, use.ci = FALSE, ...)    
     
@@ -649,6 +654,10 @@ An extract method for betaor objects from the \pkg{mfx} package.
 
 \item{\code{betareg}}{
 An extract method for betareg objects from the \pkg{betareg} package.
+}
+
+\item{\code{bife}}{
+An extract method for bife objects from the \pkg{bife} package.
 }
 
 \item{\code{biglm}}{

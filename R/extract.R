@@ -5150,3 +5150,57 @@ extract.pglm <- function(model, include.aic = TRUE,
 
 setMethod("extract", signature = className("pglm", "pglm"),
           definition = extract.pglm)
+
+# extension for bife objects (bife package)
+extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE, 
+                         include.bic = TRUE, include.nobs = TRUE, ...) {
+    s <- summary(model)
+    names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 4]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    
+    if (include.loglik == TRUE) {
+        lik	<- s$loglik
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    if (include.aic == TRUE) {
+        aic <- s$AIC
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+        bic <- s$BIC
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    if (include.nobs == TRUE) {
+        n <- s$nobs
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names,
+        coef = co,
+        se=se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+setMethod("extract", signature = className("bife", "bife"), 
+          definition = extract.bife)
