@@ -5147,6 +5147,47 @@ extract.pglm <- function(model, include.aic = TRUE,
     )
     return(tr)
 }
-
 setMethod("extract", signature = className("pglm", "pglm"),
           definition = extract.pglm)
+					 
+					 
+#extention for panelAR objects (panelAR package)					 
+extract.panelAR=function(model, include.rsquared=TRUE, include.nobs=TRUE, include.numpanels=TRUE,...){
+    s=summary(model,...)
+    names = rownames(s$coef)
+    co = s$coef[, 1]
+    se = s$coef[, 2]
+    pval = s$coef[, 4]	
+    gof = numeric()
+    gof.names = character()
+    gof.decimal = logical()	
+    
+    if (include.rsquared=TRUE){
+    	rs = s$r2
+    	gof=c(gof, rs)
+    	gof.names=c(gof.names, "")
+    	gof.decimal=c(gof.decimal, TRUE)
+    }
+        if (include.nobs=TRUE){
+        nobs = length(s$residuals)
+    	gof=c(gof, rs)
+    	gof.names=c(gof.names, "Num.\\ obs.")
+    	gof.decimal=c(gof.decimal, TRUE)
+    }	
+    if (include.numpanles=TRUE){
+	npan = length(s$vcov)
+    	gof=c(gof, npan)
+    	gof.names=c(gof.names, "Num. \\ panels")
+    	gof.decimal=c(gof.decimal, FALSE)
+    }
+   
+    tr = createTexreg(coef.names = names,
+                       coef = co,
+                       se = se,
+                       pvalues = pval,
+                       gof.names = gof.names,
+                       gof = gof)
+    return(tr)
+}
+setMethod("extract", signature = className("panelAR", "stats"),
+          definition = extract.panelAR)
