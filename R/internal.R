@@ -621,13 +621,11 @@ modelnames <- function(model.list, tr.objects, model.names) {
 
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, posinfstring, 
-
                          leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
                          star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
                          bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
                          ci.test = 0, rowLabelType = 'text') {
 
-    
     # write coefficient rows
     if (single.row == TRUE) {
         output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
@@ -849,8 +847,8 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
 # Format a column (given as vector) of the output matrix nicely by adding spaces
 format.column <- function(x, single.row = FALSE, digits = 2) {
     
-    #max length before first dot and max length of parentheses
-    dots <- lapply(x, nchar)
+    # max length before first dot and max length of parentheses
+    dots <- nchar(as.vector(x))
     parentheses <- regexpr("\\(.+\\)", x)
     first.length <- 0
     paren.length <- 0
@@ -886,7 +884,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
         } else {
             difference <- first.length - first.dot
         }
-        x[i] <- paste(x[i], sep="")
+        x[i] <- paste0(x[i], sep = "")
         
         #adjust indentation for SEs
         if (single.row == TRUE) {
