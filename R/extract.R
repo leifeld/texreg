@@ -5181,12 +5181,12 @@ extract.panelAR=function(model, include.rsquared=TRUE, include.nobs=TRUE, includ
     	gof.decimal <- c(gof.decimal, FALSE)
     }
    
-    tr <- createTexreg(coef.names = names,
-                       coef = co,
-                       se = se,
-                       pvalues = pval,
-                       gof.names = gof.names,
-                       gof = gof)
+    tr <- createTexreg(coef.names <- names,
+                       coef <- co,
+                       se <- se,
+                       pvalues <- pval,
+                       gof.names <- gof.names,
+                       gof <- gof)
     return(tr)
 }
 setMethod("extract", signature = className("panelAR", "panelAR"),
