@@ -113,25 +113,19 @@ matrixreg <- function(l,
   }
 
   # grouping
-  if (dots$output.type == 'ascii') {
-      output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-                                single.row = single.row, prefix = "", suffix = "", rowLabelType = 'text')
-  } else if (dots$output.type == 'latex') {
+  if (dots$output.type == 'latex') {
       output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
                                 single.row = single.row, prefix = "", suffix = "", rowLabelType = 'latex')
-  }    else if (dots$output.type == 'html') {
+  } else {
       output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
                                 single.row = single.row, prefix = "", suffix = "", rowLabelType = 'text')
   }
   
   # create GOF matrix (the lower part of the final output matrix)
-  if (dots$output.type == 'ascii') {
-      gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
-                              digits, rowLabelType = 'text')
-  } else if (dots$output.type == 'latex') {
+  if (dots$output.type == 'latex') {
       gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
                               digits, rowLabelType = 'latex')
-  } else if (dots$output.type == 'html') {
+  } else {
       gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
                               digits, rowLabelType = 'text')
   } 

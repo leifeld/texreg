@@ -1059,7 +1059,7 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
     right.side <- sub("\\}", "", right.side)
     v.length <- max(nchar(right.side), na.rm = TRUE)
   }
-  return(v.length) 
+  return(v.length)
 }
 
 
@@ -1365,7 +1365,6 @@ broom_gof <- function(x) {
     }
     out <- stats::na.omit(out)
     return(out)
-
 }
 
 # create the star note (legend) printed at the bottom of tables and the stars
