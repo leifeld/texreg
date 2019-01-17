@@ -68,7 +68,7 @@ matrixreg <- function(l,
   }
   m <- rearrangeMatrix(m)  #resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
-  
+
   mod.names <- modelnames(l, models, custom.model.names)  # model names
   
   # reorder GOF and coef matrix
@@ -101,7 +101,7 @@ matrixreg <- function(l,
         se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
         star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
         symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", 
-        bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test)
+        bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test, rowLabelType = 'latex')
   } else if (dots$output.type == 'html') {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
         posinfstring = "Inf", leading.zero, digits, 
@@ -113,12 +113,22 @@ matrixreg <- function(l,
   }
 
   # grouping
-  output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-      single.row = single.row, prefix = "", suffix = "")
+  if (dots$output.type == 'latex') {
+      output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
+                                single.row = single.row, prefix = "", suffix = "", rowLabelType = 'latex')
+  } else {
+      output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
+                                single.row = single.row, prefix = "", suffix = "", rowLabelType = 'text')
+  }
   
   # create GOF matrix (the lower part of the final output matrix)
-  gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
-      digits)
+  if (dots$output.type == 'latex') {
+      gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
+                              digits, rowLabelType = 'latex')
+  } else {
+      gof.matrix <- gofmatrix(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
+                              digits, rowLabelType = 'text')
+  } 
   
   # combine the coefficient and gof matrices vertically
   coef.names <- row.names(output.matrix)
@@ -452,13 +462,13 @@ texreg <- function(l,
                              include.attributes = TRUE,
                              output.type = 'latex',
                              ...)
-
+  
   gof.names <- attr(output.matrix, 'gof.names')
   coef.names <- attr(output.matrix, 'coef.names')
   mod.names <- attr(output.matrix, 'mod.names')
   ci <- attr(output.matrix, 'ci')
   ci.test <- attr(output.matrix, 'ci.test')
-   
+  
   # what is the optimal length of the labels?
   lab.list <- c(coef.names, gof.names)
   lab.length <- 0
