@@ -5152,36 +5152,36 @@ setMethod("extract", signature = className("pglm", "pglm"),
 					 
 					 
 #extention for panelAR objects (panelAR package)					 
-extract.panelAR=function(model, include.rsquared=TRUE, include.nobs=TRUE, include.numpanels=TRUE,...){
-    s=summary(model,...)
-    names = rownames(s$coef)
-    co = s$coef[, 1]
-    se = s$coef[, 2]
-    pval = s$coef[, 4]	
-    gof = numeric()
-    gof.names = character()
-    gof.decimal = logical()	
+extract.panelAR=function(model, include.rsquared=TRUE, include.nobs=TRUE, include.groups=TRUE,...){
+    s <- summary(model,...)
+    names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 4]	
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()	
     
     if (include.rsquared == TRUE){
-    	rs = s$r2
-    	gof=c(gof, rs)
-    	gof.names=c(gof.names, "")
-    	gof.decimal=c(gof.decimal, TRUE)
+    	rs <- s$r2
+    	gof <- c(gof, rs)
+    	gof.names <- c(gof.names, "")
+    	gof.decimal <- c(gof.decimal, TRUE)
     }
         if (include.nobs == TRUE){
-        nobs = length(s$residuals)
-    	gof=c(gof, rs)
-    	gof.names=c(gof.names, "Num.\\ obs.")
-    	gof.decimal=c(gof.decimal, TRUE)
+        nobs <- length(s$residuals)
+    	gof <- c(gof, nobs)
+    	gof.names <- c(gof.names, "Num.\\ obs.")
+    	gof.decimal <- c(gof.decimal, TRUE)
     }	
-    if (include.numpanels == TRUE){
-	npan = length(s$vcov)
-    	gof=c(gof, npan)
-    	gof.names=c(gof.names, "Num. \\ panels")
-    	gof.decimal=c(gof.decimal, FALSE)
+    if (include.groups == TRUE){
+	ngroups <- sqrt(length(s$Sigma))
+    	gof <- c(gof, ngroups)
+    	gof.names <- c(gof.names, "Num. \\ panels")
+    	gof.decimal <- c(gof.decimal, FALSE)
     }
    
-    tr = createTexreg(coef.names = names,
+    tr <- createTexreg(coef.names = names,
                        coef = co,
                        se = se,
                        pvalues = pval,
@@ -5189,5 +5189,5 @@ extract.panelAR=function(model, include.rsquared=TRUE, include.nobs=TRUE, includ
                        gof = gof)
     return(tr)
 }
-setMethod("extract", signature = className("panelAR", "stats"),
+setMethod("extract", signature = className("panelAR", "panelAR"),
           definition = extract.panelAR)
