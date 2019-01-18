@@ -466,7 +466,7 @@ Class			& Package			& Description \\
 `\code{ergm}'			& \pkg{ergm}			& Exponential random graph models \\
 `\code{ergmm}'			& \pkg{latentnet}		& Latent space and latent cluster models \\
 `\code{ets}'			& \pkg{forecast}		& Exponential smoothing state space models \\
-`\code{feglm}'			& \pkg{alpaca}			& GLM’s with high-dimensional k-way fixed effects \\
+`\code{feglm}'			& \pkg{alpaca}			& GLM with high-dimensional k-way fixed effects \\
 `\code{felm}'			& \pkg{lfe}			& Linear models with multiple group fixed effects \\
 `\code{fGARCH}'			& \pkg{fGarch}			& GARCH time series models \\
 `\code{forecast}'		& \pkg{forecast}		& Time series forecasting \\
