@@ -135,6 +135,8 @@
 \alias{extract,nlmerMod-method}
 \alias{extract.ols}
 \alias{extract,ols-method}
+\alias{extract.panelAR}
+\alias{extract,panelAR-method}
 \alias{extract.pglm}
 \alias{extract,pglm-method}
 \alias{extract.pgmm}
