@@ -621,12 +621,11 @@ modelnames <- function(model.list, tr.objects, model.names) {
 
 # return the output matrix with coefficients, SEs and significance stars
 outputmatrix <- function(m, single.row, neginfstring, posinfstring, 
-
                          leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
                          star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
                          bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
                          ci.test = 0, rowLabelType = 'text') {
-    
+
     # write coefficient rows
     if (single.row == TRUE) {
         output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
@@ -848,8 +847,8 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
 # Format a column (given as vector) of the output matrix nicely by adding spaces
 format.column <- function(x, single.row = FALSE, digits = 2) {
     
-    #max length before first dot and max length of parentheses
-    dots <- gregexpr("\\.", x)
+    # max length before first dot and max length of parentheses
+    dots <- nchar(as.vector(x))
     parentheses <- regexpr("\\(.+\\)", x)
     first.length <- 0
     paren.length <- 0
@@ -885,8 +884,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
         } else {
             difference <- first.length - first.dot
         }
-        spaces <- paste(rep(" ", difference), collapse="")
-        x[i] <- paste(spaces, x[i], sep="")
+        x[i] <- paste0(x[i])
         
         #adjust indentation for SEs
         if (single.row == TRUE) {
@@ -908,12 +906,13 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
     ci.upper.length <- 0
     for (i in 1:length(x)) {
         if (grepl("\\[.+\\]", x[i])) {
-            first <- sub(".*\\[(.+?); (.+?)\\].*", "\\1", x[i])
+            regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
+            first <- sub(regex, "\\1", x[i])
             first <- nchar(first)
             if (first > ci.lower.length) {
                 ci.lower.length <- first
             }
-            last <- sub(".*\\[(.+?); (.+?)\\].*", "\\2", x[i])
+            last <- sub(regex, "\\2", x[i])
             last <- nchar(last)
             if (last > ci.upper.length) {
                 ci.upper.length <- last
@@ -922,20 +921,12 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
     }
     for (i in 1:length(x)) {
         if (grepl("\\[.+\\]", x[i])) {
-            whitespace1 <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\1", x[i])
+            regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
+            whitespace1 <- sub(regex, "\\1", x[i])
             whitespace1 <- sub("\\s+$", "", whitespace1)
-            if (nchar(whitespace1) > 0) {
-                whitespace1 <- paste0(whitespace1, " ")
-            }
-            whitespace2 <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\4", x[i])
-            first <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\2", x[i])
-            difference <- ci.lower.length - nchar(first)
-            zeros <- paste(rep(" ", difference), collapse = "")
-            first <- paste0(zeros, first)
-            last <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\3", x[i])
-            difference <- ci.upper.length - nchar(last)
-            zeros <- paste(rep(" ", difference), collapse = "")
-            last <- paste0(zeros, last)
+            whitespace2 <- sub(regex, "\\4", x[i])
+            first <- sub(regex, "\\2", x[i])
+            last <- sub(regex, "\\3", x[i])
             x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
         }
     }
