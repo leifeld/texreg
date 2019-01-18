@@ -884,7 +884,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
         } else {
             difference <- first.length - first.dot
         }
-        x[i] <- paste0(x[i], sep = "")
+        x[i] <- paste0(x[i])
         
         #adjust indentation for SEs
         if (single.row == TRUE) {
@@ -924,16 +924,9 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
             regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
             whitespace1 <- sub(regex, "\\1", x[i])
             whitespace1 <- sub("\\s+$", "", whitespace1)
-            if (nchar(whitespace1) > 0) {
-                whitespace1 <- paste0(whitespace1, " ")
-            }
             whitespace2 <- sub(regex, "\\4", x[i])
             first <- sub(regex, "\\2", x[i])
-            difference <- ci.lower.length - nchar(first)
-            zeros <- paste(rep(" ", difference), collapse = "")
             last <- sub(regex, "\\3", x[i])
-            difference <- ci.upper.length - nchar(last)
-            zeros <- paste(rep(" ", difference), collapse = "")
             x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
         }
     }
