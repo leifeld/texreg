@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 96 supported model types (version 1.37).]{\label{tab:types} List of 96 supported model types (version 1.37).} \\
+\caption[List of 97 supported model types (version 1.37).]{\label{tab:types} List of 97 supported model types (version 1.37).} \\
 \endlastfoot
 
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
@@ -466,6 +466,7 @@ Class			& Package			& Description \\
 `\code{ergm}'			& \pkg{ergm}			& Exponential random graph models \\
 `\code{ergmm}'			& \pkg{latentnet}		& Latent space and latent cluster models \\
 `\code{ets}'			& \pkg{forecast}		& Exponential smoothing state space models \\
+`\code{feglm}'			& \pkg{alpaca}			& GLM’s with high-dimensional k-way fixed effects \\
 `\code{felm}'			& \pkg{lfe}			& Linear models with multiple group fixed effects \\
 `\code{fGARCH}'			& \pkg{fGarch}			& GARCH time series models \\
 `\code{forecast}'		& \pkg{forecast}		& Time series forecasting \\

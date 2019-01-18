@@ -51,6 +51,8 @@
 \alias{extract,ergmm-method}
 \alias{extract.ets}
 \alias{extract,ets-method}
+\alias{extract.feglm}
+\alias{extract,feglm-method}
 \alias{extract.felm}
 \alias{extract,felm-method}
 \alias{extract.fGARCH}
@@ -306,6 +308,9 @@ extract(model, ...)
 \S4method{extract}{ets}(model, include.pvalues = FALSE,
     include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...)
+
+\S4method{extract}{feglm}(model, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, ...)
 
 \S4method{extract}{felm}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
@@ -718,6 +723,10 @@ An extract method for ergmm objects from the \pkg{latentnet} package.
 
 \item{\code{ets}}{
 An extract method for ets objects from the \pkg{forecast} package.
+}
+
+\item{\code{feglm}}{
+An extract method for feglm objects from the \pkg{alpaca} package.
 }
 
 \item{\code{felm}}{
