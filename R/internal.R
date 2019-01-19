@@ -1,5 +1,5 @@
 # The texreg package was written by Philip Leifeld.
-# Please use the forum at http://github.com/leifeld/texreg
+# Please use the issue tracker at http://github.com/leifeld/texreg
 # for bug reports, help or feature requests.
 
 # display version number and date when the package is loaded
