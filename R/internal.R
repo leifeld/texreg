@@ -1,5 +1,5 @@
 # The texreg package was written by Philip Leifeld.
-# Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
+# Please use the issue tracker at http://github.com/leifeld/texreg
 # for bug reports, help or feature requests.
 
 # display version number and date when the package is loaded
@@ -533,7 +533,7 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
     }
     
     # output
-    m <- m[idx, ]
+    m <- m[idx, , drop = FALSE]
     row.names(m) <- custom.coef.names
     return(m)
 }
