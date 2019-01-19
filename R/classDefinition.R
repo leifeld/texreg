@@ -1,5 +1,5 @@
 # The texreg package was written by Philip Leifeld.
-# Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
+# Please use the forum at http://github.com/leifeld/texreg
 # for bug reports, help or feature requests.
 
 
