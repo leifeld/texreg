@@ -5153,7 +5153,8 @@ setMethod("extract", signature = className("pglm", "pglm"),
 
 
 # extension for mhurdle objects (mhurdle package)
-extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...){
+extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...)
+    {
     
     s <- summary(model, ...)
     names <- rownames(s$coefficients)
@@ -5171,7 +5172,6 @@ extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, 
         gof.names <- c(gof.names, "Log Likelihood")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-    
     if (include.nobs == TRUE) {
         gof <- c(gof, length(s$model[ ,1]))
         gof.names <- c(gof.names, "Num.\\ obs.")
