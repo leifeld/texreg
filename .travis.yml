@@ -16,3 +16,6 @@ notifications:
       - philip.leifeld@glasgow.ac.uk
     on_success: change
     on_failure: change
+
+before_install:
+  - sudo apt-get install r-cran-mcmcpack

@@ -2,51 +2,82 @@
 \alias{texreg}
 \alias{htmlreg}
 \alias{screenreg}
+\alias{matrixreg}
+\alias{csvreg}
+\alias{wordreg}
 \title{Convert regression output to LaTeX or HTML tables}
 \description{Conversion of R regression output to LaTeX or HTML tables.}
 \usage{
-texreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
-    0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, 
-    symbol = "\\\\cdot", override.coef = 0, override.se = 0, 
-    override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
-    ci.test = 0, groups = NULL, custom.columns = NULL, 
-    custom.col.pos = NULL, bold = 0.00, center = TRUE, 
-    caption = "Statistical models", caption.above = FALSE, 
-    label = "table:coefficients", booktabs = FALSE, 
-    dcolumn = FALSE, sideways = FALSE, longtable = FALSE, 
-    use.packages = TRUE, table = TRUE, no.margin = FALSE, 
-    fontsize = NULL, scalebox = NULL, float.pos = "", ...)
 
-htmlreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
-    0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, 
-    symbol = "&middot;", override.coef = 0, override.se = 0, 
-    override.pvalues = 0, override.ci.low = 0, 
+texreg(l, file = NULL, single.row = FALSE, 
+    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
+    custom.coef.names = NULL, custom.coef.map = NULL,
+    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
+    leading.zero = TRUE, symbol = "\\\\cdot", override.coef = 0, 
+    override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
-    ci.test = 0, groups = NULL, custom.columns = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, bold = 0.00, 
+    center = TRUE, caption = "Statistical models", caption.above = FALSE, 
+    label = "table:coefficients", booktabs = FALSE, dcolumn = FALSE, lyx = FALSE,
+    sideways = FALSE, longtable = FALSE, use.packages = TRUE, table = TRUE, 
+    no.margin = FALSE, fontsize = NULL, scalebox = NULL, float.pos = "", ...)
+
+htmlreg(l, file = NULL, single.row = FALSE, 
+    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
+    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
+    custom.note = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*', 
+    symbol = "&middot;", override.coef = 0, override.se = 0, override.pvalues = 0, 
+    override.ci.low = 0, override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, custom.columns = NULL, 
     custom.col.pos = NULL, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
-    star.symbol = "*", inline.css = TRUE, doctype = TRUE, 
-    html.tag = FALSE, head.tag = FALSE, body.tag = FALSE, 
-    indentation = "", vertical.align.px = 0, ...)
+    inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
+    head.tag = FALSE, body.tag = FALSE, indentation = "", 
+    vertical.align.px = 0, ...) 
 
 screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
-    custom.coef.names = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, 
-    symbol = ".", override.coef = 0, override.se = 0, 
-    override.pvalues = 0, override.ci.low = 0, 
+    custom.coef.names = NULL, custom.coef.map = NULL,
+    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
+    leading.zero = TRUE, star.symbol = '*', symbol = ".", override.coef = 0, 
+    override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
     ci.test = 0, groups = NULL, custom.columns = NULL, 
     custom.col.pos = NULL, column.spacing = 2, outer.rule = "=", 
     inner.rule = "-", ...)
+
+matrixreg(l, single.row = FALSE, 
+    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
+    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
+    digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
+    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
+    dcolumn = TRUE, ...) 
+
+csvreg(l, file,
+    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
+    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
+    custom.note = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
+    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
+    caption = 'Statistical Models', ...)
+ 
+wordreg(l, file = NULL, single.row = FALSE, 
+    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
+    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
+    digits = 2, leading.zero = TRUE, star.symbol = star.symbol, symbol = ".", 
+    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
+    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
+    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, ...)
+
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -77,6 +108,16 @@ Moreover, once a table has been prepared in the R console, it
 can be later exported to LaTeX or HTML with little extra effort 
 because the majority of arguments of the three functions is 
 identical.
+
+The \code{wordreg()} function creates a Microsoft Word document with the
+requested table. 
+
+The \code{matrixreg()} function creates text representations of 
+tables and prints them to the R console. 
+
+The \code{csvreg()} function creates a spreadsheet in CSV containing the
+information in the tables. 
+
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of models can be specified as \code{l = list(model.1, model.2, ...)}. Different object types can also be mixed.}
@@ -89,6 +130,15 @@ identical.
 Sometimes it happens that the same variable has a different name in different models. In this case, the user can use this function to assign identical names. If possible, the rows will then be merged into a single row unless both rows contain values in the same column.
 
 Where the argument contains an \code{NA} value, the original name of the coefficient is kept. For example, \code{custom.coef.names = c(NA, "age", NA)} will only replace the second coef name and leave the first and third name as they are in the original model.}
+\item{custom.coef.map}{The \code{custom.coef.map} argument can be used to select, omit, rename, and reorder coefficients.
+    
+Users must supply a named list of this form: \code{list('x' = 'First variable', 'y' = NA, 'z' = 'Third variable')}. With that particular example of \code{custom.coef.map}, 
+
+1. coefficients will presented in order: x, y, z.
+
+2. variable x will appear as "First variable", variable y will appear as "y", and variable "z" will appear as "Third variable".
+
+3. all variables not named "x", "y", or "z" will be omitted from the table.}
 \item{custom.gof.names}{A character vector which is used to replace the names of the goodness-of-fit statistics at the bottom of the table. The vector must have the same length as the number of GOF statistics in the final table. The argument works like the \code{custom.coef.names} argument, but for the GOF values. \code{NA} values can be included where the original GOF name should be kept.}
 \item{custom.note}{With this argument, a replacement text for the significance note below the table can be provided. If an empty character object is provided (\code{custom.note = ""}), the note will be omitted completely. If some character string is provided (e.g., \code{custom.note = "My note"}), the significance legend is replaced by \code{My note}. The original significance legend can be included by inserting the \code{\%stars} wildcard. For example, a custom note can be added right after the significance legend by providing \code{custom.note = "\%stars. My note"}.}
 \item{digits}{Set the number of decimal places for coefficients, standard errors and goodness-of-fit statistics. Do not use negative values! The argument works like the \code{digits} argument in the \code{round} function of the \pkg{base} package.}
@@ -117,6 +167,7 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{label}{[only in the \code{texreg} function] Set the label of the \code{table} environment.}
 \item{booktabs}{[only in the \code{texreg} function] Use the \code{booktabs} LaTeX package to get thick horizontal rules in the output table (recommended).}
 \item{dcolumn}{[only in the \code{texreg} function] Use the \code{dcolumn} LaTeX package to get a nice alignment of the coefficients (recommended).}
+\item{lyx}{[only in the \code{texreg} function] \code{logical}; if \code{TRUE}, each newline in the output is doubled, which facilitates transferring the output into the LyX document processor. }
 \item{sideways}{[only in the \code{texreg} function] If \code{sideways = TRUE} is set, the \code{table} floating environment is replaced by a \code{sidewaystable} float, and the \code{rotating} package is loaded in the preamble. The argument only has an effect if \code{table = TRUE} is also set.}
 \item{longtable}{ [only in the \code{texreg} function] If \code{longtable = TRUE} is set, the \code{longtable} environment from the \code{longtable} LaTeX package is used to set tables across multiple pages. Note that this argument is not compatible with the \code{sideways} and \code{scalebox} arguments. These arguments will be automatically switched off when \code{longtable = TRUE} is set. }
 \item{use.packages}{[only in the \code{texreg} function] If this argument is set to \code{TRUE} (= the default behavior), the required LaTeX packages are loaded in the beginning. If set to \code{FALSE}, the use package statements are omitted from the output.}
@@ -125,7 +176,6 @@ Where the argument contains an \code{NA} value, the original name of the coeffic
 \item{fontsize}{[only in the \code{texreg} function] The \code{fontsize} argument serves to change the font size used in the table. Valid values are \code{"tiny"}, \code{"scriptsize"}, \code{"footnotesize"}, \code{"small"}, \code{"normalsize"}, \code{"large"}, \code{"Large"}, \code{"LARGE"}, \code{"huge"}, and \code{"Huge"}. Note that the \code{scalebox} argument often achieves better results when the goal is to change the size of the table. }
 \item{scalebox}{[only in the \code{texreg} function] The \code{scalebox} argument serves to resize the table. For example, \code{scalebox = 1.0} is equivalent to the normal size, \code{scalebox = 0.5} decreases the size of the table by one half, and \code{scalebox = 2.0} doubles the space occupied by the table. Note that the \code{scalebox} argument does not work when the \code{longtable} argument is used. }
 \item{float.pos}{[only in the \code{texreg} function] This argument specifies where the table should be located on the page or in the document. By default, no floating position is specified, and LaTeX takes care of the position automatically. Possible values include \code{h} (here), \code{p} (page), \code{t} (top), \code{b} (bottom), any combination thereof, e.g. \code{tb}, or any of these values followed by an exclamation mark, e.g. \code{t!}, in order to enforce this position. The square brackets do not have to be specified.}
-
 \item{star.symbol}{[only in the \code{htmlreg} function] Alternative characters for the significance stars can be specified. This is useful if \pkg{knitr} and Markdown are used for HTML report generation. In Markdown, asterisks or stars are interpreted as special characters, so they have to be escaped. To make \code{htmlreg} compatible with Markdown, specify \code{star.symbol = "\\*"}. Note that some other modifications are recommended for usage with \pkg{knitr} in combination with Markdown or HTML (see the \code{inline.css}, \code{doctype}, \code{html.tag}, \code{head.tag}, and \code{body.tag} arguments).}
 \item{inline.css}{[only in the \code{htmlreg} function] Should the CSS stylesheets be embedded directly in the code of the table (\code{inline.css = TRUE}), or should the CSS stylesheets be enclosed in the <head> tag, that is, separated from the table code (\code{inline.css = FALSE})? Having inline CSS code makes the code of the table more complex, but sometimes it may be helpful when only the table shall be printed, without the head of the HTML file (for example when the table is embedded in a \pkg{knitr} report). As a rule of thumb: use inline CSS if the table is not saved to a file.}
 \item{doctype}{[only in the \code{htmlreg} function] Should the first line of the HTML code contain the DOCTYPE definition? If \code{TRUE}, the HTML 4 TRANSITIONAL version is used. If \code{FALSE}, no DOCTYPE will be included. Omitting the DOCTYPE can be helpful when the \pkg{knitr} package is used to generate HTML code because \pkg{knitr} requires only the plain table, not the whole HTML document including the document type declaration. Including the DOCTYPE can be helpful when the code is saved to a file, for example as an MS Word document.}
