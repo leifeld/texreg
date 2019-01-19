@@ -168,7 +168,7 @@ matrixreg <- function(l,
       attr(output.matrix, 'mod.names') <- mod.names
     }
   }
-
+  
   return(output.matrix)
 } 
 
@@ -508,80 +508,6 @@ texreg <- function(l,
     } else {
       separator <- "."
     }
-    
-    # matrixreg produces the output matrix
-    output.matrix <- matrixreg(l,
-                               single.row = single.row,
-                               stars = stars,
-                               custom.model.names = custom.model.names,
-                               custom.coef.names = custom.coef.names,
-                               custom.coef.map = custom.coef.map,
-                               custom.gof.names = custom.gof.names,
-                               digits = digits,
-                               leading.zero = leading.zero,
-                               star.symbol = '*',
-                               symbol = symbol,
-                               override.coef = override.coef,
-                               override.se = override.se,
-                               override.pvalues = override.pvalues,
-                               override.ci.low = override.ci.low, 
-                               override.ci.up = override.ci.up,
-                               omit.coef = omit.coef,
-                               reorder.coef = reorder.coef,
-                               reorder.gof = reorder.gof,
-                               ci.force = ci.force,
-                               ci.force.level = ci.force.level,
-                               ci.test = ci.test,
-                               groups = groups,
-                               custom.columns = custom.columns,
-                               custom.col.pos = custom.col.pos,
-                               dcolumn = dcolumn,
-                               bold = bold,
-                               include.attributes = TRUE,
-                               output.type = 'latex',
-                               ...)
-    
-    gof.names <- attr(output.matrix, 'gof.names')
-    coef.names <- attr(output.matrix, 'coef.names')
-    mod.names <- attr(output.matrix, 'mod.names')
-    ci <- attr(output.matrix, 'ci')
-    ci.test <- attr(output.matrix, 'ci.test')
-    
-    # what is the optimal length of the labels?
-    lab.list <- c(coef.names, gof.names)
-    lab.length <- 0
-    for (i in 1:length(lab.list)) {
-        if (nchar(lab.list[i]) > lab.length) {
-            lab.length <- nchar(lab.list[i])
-        }
-    }
-    
-    coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos, 
-                                  types = TRUE)
-    mod.names <- customcolumnnames(mod.names, custom.columns, custom.col.pos, 
-                                   types = FALSE)
-    
-    # define columns of the table (define now, add later)
-    coldef <- ""
-    if (no.margin == FALSE) {
-        margin.arg <- ""
-    } else {
-        margin.arg <- "@{}"
-    }
-    coefcount <- 0
-    for (i in 1:length(mod.names)) {
-        if (coltypes[i] == "coef") {
-            coefcount <- coefcount + 1
-        }
-        if (single.row == TRUE && coltypes[i] == "coef") {
-            if (ci[coefcount] == FALSE) {
-                separator <- ")"
-            } else {
-                separator <- "]"
-            }
-        } else {
-            separator <- "."
-        }
         if (coltypes[i] %in% c("coef", "customcol")) {
             alignmentletter <- "c"
         } else if (coltypes[i] == "coefnames") {
@@ -1386,7 +1312,7 @@ wordreg <- function(l,
     wd <- getwd()
     f = tempfile(fileext = '.Rmd')
     cat(file = f, '```{r, echo = FALSE}
-                knitr::kable(mat)
-                ```', append = TRUE)
+                    knitr::kable(mat)
+                    ```', append = TRUE)
     rmarkdown::render(f, output_file = paste0(wd, "/", file))
 }
