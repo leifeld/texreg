@@ -1408,6 +1408,7 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
       gof = gof,
       gof.decimal = gof.decimal,
       Df.res = df.res
+
   )
   return(tr)
 }
@@ -1798,6 +1799,12 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     gof.decimal <- c(gof.decimal, TRUE)
   }
 
+  if (include.nobs == TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+
   if (include.fstatistic == TRUE) {
     fstat <- s$fstatistic[[1]]
     gof <- c(gof, fstat)
@@ -1810,11 +1817,13 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     gof.names <- c(gof.names, "RMSE")
     gof.decimal <- c(gof.decimal, TRUE)
   }
+
   if (include.nobs == TRUE) {
       gof <- c(gof, n)
       gof.names <- c(gof.names, "Num.\ obs.")
       gof.decimal <- c(gof.decimal, FALSE)
   }
+
 
   tr <- createTexreg(
       coef.names = names,
@@ -1825,6 +1834,7 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
       gof = gof,
       gof.decimal = gof.decimal,
       Df.res = df.res,
+      gof.decimal = gof.decimal
   )
   return(tr)
 }
@@ -4453,7 +4463,7 @@ extract.vglm <- function(model, include.loglik = TRUE, include.df = TRUE,
 		pvalues = pval,
 		gof.names = gof.names,
 		gof = gof,
-		gof.decimal = gof.decimal,
+		gof.decimal = gof.decimal
 	)
 	return(tr)
 }
@@ -5155,3 +5165,45 @@ extract.pglm <- function(model, include.aic = TRUE,
 
 setMethod("extract", signature = className("pglm", "pglm"),
           definition = extract.pglm)
+
+# extension for mhurdle objects (mhurdle package)
+extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...)
+    {
+    
+    s <- summary(model, ...)
+    names <- rownames(s$coefficients)
+    class(names) <- "character"
+    co <- s$coefficients[, 1]
+    se <- s$coefficients[, 2]
+    pval <- s$coefficients[, 4]
+    class(co) <- class(se) <- class(pval) <- "numeric"
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.loglik == TRUE) {
+        gof <- c(gof, as.numeric(s$naive$logLik))
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, length(s$model[ ,1]))
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(coef.names = names, 
+                       coef = co, 
+                       se = se, 
+                       pvalues = pval,
+                       gof.names = gof.names, 
+                       gof = gof, 
+                       gof.decimal = gof.decimal)
+    return(tr)
+}
+
+setMethod("extract", signature = className("mhurdle", "mhurdle"), 
+          definition = extract.mhurdle)
+
+
+

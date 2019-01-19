@@ -1,18 +1,17 @@
 # The texreg package was written by Philip Leifeld.
-# Please use the forum at http://r-forge.r-project.org/projects/texreg/ 
+# Please use the issue tracker at http://github.com/leifeld/texreg
 # for bug reports, help or feature requests.
 
 # display version number and date when the package is loaded
 .onAttach <- function(libname, pkgname) {
-    desc  <- packageDescription(pkgname, libname)
-    packageStartupMessage(
-        'Version:  ', desc$Version, '\n', 
-        'Date:     ', desc$Date, '\n',
-        'Author:   ', 'Philip Leifeld (University of Glasgow)', '\n\n', 
-        'Please cite the JSS article in your publications ', 
-        '-- see citation("texreg").'
-    )
-
+  desc  <- packageDescription(pkgname, libname)
+  packageStartupMessage(
+      'Version:  ', desc$Version, '\n', 
+      'Date:     ', desc$Date, '\n',
+      'Author:   ', 'Philip Leifeld (University of Glasgow)', '\n\n', 
+      'Please cite the JSS article in your publications ', 
+      '-- see citation("texreg").'
+  )
 }
 
 
@@ -39,7 +38,7 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
 
 # function which conflates a matrix with duplicate row names
 rearrangeMatrix <- function(m) {
-    
+  
     # The following code block rearranges a matrix with duplicate row names such 
     # that these rows are conflated where possible. First, an empty matrix q with
     # the same width is created. The rows will be copied iteratively into this 
@@ -86,7 +85,7 @@ rearrangeMatrix <- function(m) {
 
 
 # function which wraps models in a list and extracts texreg objects from them
-get.data <- function(l, ...) {   
+get.data <- function(l, ...) {
   
     # if a single model is handed over, put model inside a list
     if (!"list" %in% class(l)[1]) {
@@ -492,6 +491,7 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
 
 # function to apply the omit.coef and custom.coef.names operations
 omit_rename <- function(m, omit.coef, custom.coef.names) {
+
     # omit
     if (!is.null(omit.coef)) {
         if (!is.character(omit.coef) || is.na(omit.coef)) {
@@ -534,7 +534,7 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
     }
     
     # output
-    m <- m[idx, ]
+    m <- m[idx, , drop = FALSE]
     row.names(m) <- custom.coef.names
     return(m)
 }
@@ -626,7 +626,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                          star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
                          bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
                          ci.test = 0, rowLabelType = 'text') {
-    
+
     # write coefficient rows
     if (single.row == TRUE) {
         output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
@@ -848,8 +848,8 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
 # Format a column (given as vector) of the output matrix nicely by adding spaces
 format.column <- function(x, single.row = FALSE, digits = 2) {
     
-    #max length before first dot and max length of parentheses
-    dots <- gregexpr("\\.", x)
+    # max length before first dot and max length of parentheses
+    dots <- nchar(as.vector(x))
     parentheses <- regexpr("\\(.+\\)", x)
     first.length <- 0
     paren.length <- 0
@@ -885,8 +885,7 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
         } else {
             difference <- first.length - first.dot
         }
-        spaces <- paste(rep(" ", difference), collapse="")
-        x[i] <- paste(spaces, x[i], sep="")
+        x[i] <- paste0(x[i])
         
         #adjust indentation for SEs
         if (single.row == TRUE) {
@@ -908,12 +907,13 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
     ci.upper.length <- 0
     for (i in 1:length(x)) {
         if (grepl("\\[.+\\]", x[i])) {
-            first <- sub(".*\\[(.+?); (.+?)\\].*", "\\1", x[i])
+            regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
+            first <- sub(regex, "\\1", x[i])
             first <- nchar(first)
             if (first > ci.lower.length) {
                 ci.lower.length <- first
             }
-            last <- sub(".*\\[(.+?); (.+?)\\].*", "\\2", x[i])
+            last <- sub(regex, "\\2", x[i])
             last <- nchar(last)
             if (last > ci.upper.length) {
                 ci.upper.length <- last
@@ -922,20 +922,12 @@ format.column <- function(x, single.row = FALSE, digits = 2) {
     }
     for (i in 1:length(x)) {
         if (grepl("\\[.+\\]", x[i])) {
-            whitespace1 <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\1", x[i])
+            regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
+            whitespace1 <- sub(regex, "\\1", x[i])
             whitespace1 <- sub("\\s+$", "", whitespace1)
-            if (nchar(whitespace1) > 0) {
-                whitespace1 <- paste0(whitespace1, " ")
-            }
-            whitespace2 <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\4", x[i])
-            first <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\2", x[i])
-            difference <- ci.lower.length - nchar(first)
-            zeros <- paste(rep(" ", difference), collapse = "")
-            first <- paste0(zeros, first)
-            last <- sub("(.*?)\\[(.+?); (.+?)\\](.*?)$", "\\3", x[i])
-            difference <- ci.upper.length - nchar(last)
-            zeros <- paste(rep(" ", difference), collapse = "")
-            last <- paste0(zeros, last)
+            whitespace2 <- sub(regex, "\\4", x[i])
+            first <- sub(regex, "\\2", x[i])
+            last <- sub(regex, "\\3", x[i])
             x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
         }
     }
@@ -967,16 +959,23 @@ fill.spaces <- function(x) {
 
 # Return the goodness-of-fit matrix (i.e., the lower block of the final matrix)
 gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
-                      digits) {
+                      digits, rowLabelType = 'text') {
     if (dcolumn == TRUE) {
         dollar <- ""
     } else {
         dollar <- "$"
     }
+    
     gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
     if (length(gof.matrix) > 0) {
-        for (i in 1:length(gofs[, 1])) {
-            gof.matrix[i, 1] <- rownames(gofs)[i]
+        for (i in 1:length(rownames(gofs))) {
+            
+            # replace symbols in latex  
+            if (rowLabelType == 'latex') {
+                gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
+            } else {
+                gof.matrix[i, 1] <- rownames(gofs)[i]
+            }
             for (j in 1:length(gofs[1, ])) {
                 strg <- coeftostring(gofs[i, j], leading.zero, 
                                      digits = decimal.matrix[i, j])
@@ -989,72 +988,71 @@ gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero,
 
 # reorder a matrix according to a vector of new positions
 reorder <- function(mat, new.order) {
-    if (is.null(new.order)) {
-        return(mat)
-    } else if (nrow(mat) != length(new.order)) {
-        stop(paste("Error when reordering matrix: there are", nrow(mat), 
-                   "rows, but you provided", length(new.order), "numbers."))
-    } else if (class(new.order) == "list") {
-        stop("Arguments reorder.coef and reorder.gof must be provided as a vector.")
-    } else if (any(is.na(new.order))) {
-        stop("reorder.coef and reorder.gof arguments must not contain NA values.")
-    } else if (length(new.order) != length(unique(new.order))) {
-        stop(paste("There are two identical values in the reorder.coef or", 
-                   "reorder.gof argument. Ties are not allowed."))
-    } else if (max(new.order) != nrow(mat)) {
-        stop(paste("Table cannot be reordered because you provided a number that",
-                   "exceeds the number of rows of the relevant part of the table."))
+  if (is.null(new.order)) {
+    return(mat)
+  } else if (nrow(mat) != length(new.order)) {
+    stop(paste("Error when reordering matrix: there are", nrow(mat), 
+        "rows, but you provided", length(new.order), "numbers."))
+  } else if (class(new.order) == "list") {
+    stop("Arguments reorder.coef and reorder.gof must be provided as a vector.")
+  } else if (any(is.na(new.order))) {
+    stop("reorder.coef and reorder.gof arguments must not contain NA values.")
+  } else if (length(new.order) != length(unique(new.order))) {
+    stop(paste("There are two identical values in the reorder.coef or", 
+        "reorder.gof argument. Ties are not allowed."))
+  } else if (max(new.order) != nrow(mat)) {
+    stop(paste("Table cannot be reordered because you provided a number that",
+        "exceeds the number of rows of the relevant part of the table."))
+  }
+  new.sorted <- sort(new.order)
+  for (i in 2:length(new.sorted)) {
+    if (new.sorted[i] - 1 != new.sorted[i - 1]) {
+      stop(paste("Table cannot be reordered because there are non-adjacent", 
+          "values in the reorder.coef or reorder.gof vector you provided."))
     }
-    new.sorted <- sort(new.order)
-    for (i in 2:length(new.sorted)) {
-        if (new.sorted[i] - 1 != new.sorted[i - 1]) {
-            stop(paste("Table cannot be reordered because there are non-adjacent", 
-                       "values in the reorder.coef or reorder.gof vector you provided."))
-        }
-    }
-    new.mat <- mat[new.order, ]
-    return(new.mat)
+  }
+  new.mat <- mat[new.order, ]
+  return(new.mat)
 }
-
 
 # compute column width left and right of the decimal separator
 compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
-    if (single.row == FALSE) {
-        v[which(!grepl("\\.", v))] <- paste0(v[which(!grepl("\\.", v))], ".")
-        ssp <- strsplit(v, "\\.")
-        left.side <- character()
-        right.side <- character()
-        for (i in 1:length(ssp)) {
-            if (length(ssp[[i]]) == 1) {
-                ssp[[i]][2] <- ""
-            } else if (length(ssp[[i]]) == 3) {
-                ssp[[i]] <- c(ssp[[i]][1], paste0(ssp[[i]][2], ".", ssp[[i]][3]))
-            }
-            left.side[i] <- ssp[[i]][1]
-            right.side[i] <- ssp[[i]][2]
-        }
-    } else {
-        ssp <- strsplit(v, paste0("\\", bracket))
-        left.side <- character()
-        right.side <- character()
-        for (i in 1:length(ssp)) {
-            if (length(ssp[[i]]) == 0) {
-                # do nothing because empty cell
-            } else {
-                left.side <- append(left.side, ssp[[i]][1])
-                right.side <- append(right.side, ssp[[i]][2])
-            }
-        }
+  if (single.row == FALSE) {
+    v[which(!grepl("\\.", v))] <- paste0(v[which(!grepl("\\.", v))], ".")
+    ssp <- strsplit(v, "\\.")
+    left.side <- character()
+    right.side <- character()
+    for (i in 1:length(ssp)) {
+      if (length(ssp[[i]]) == 1) {
+        ssp[[i]][2] <- ""
+      } else if (length(ssp[[i]]) == 3) {
+        ssp[[i]] <- c(ssp[[i]][1], paste0(ssp[[i]][2], ".", ssp[[i]][3]))
+      }
+      left.side[i] <- ssp[[i]][1]
+      right.side[i] <- ssp[[i]][2]
     }
-    if (left == TRUE) {
-        left.side <- sub("\\\\; ", "", left.side)
-        v.length <- max(nchar(left.side), na.rm = TRUE)
-    } else {
-        right.side <- sub("\\^\\{", "", right.side)
-        right.side <- sub("\\}", "", right.side)
-        v.length <- max(nchar(right.side), na.rm = TRUE)
+  } else {
+    ssp <- strsplit(v, paste0("\\", bracket))
+    left.side <- character()
+    right.side <- character()
+    for (i in 1:length(ssp)) {
+      if (length(ssp[[i]]) == 0) {
+        # do nothing because empty cell
+      } else {
+        left.side <- append(left.side, ssp[[i]][1])
+        right.side <- append(right.side, ssp[[i]][2])
+      }
     }
-    return(v.length)
+  }
+  if (left == TRUE) {
+    left.side <- sub("\\\\; ", "", left.side)
+    v.length <- max(nchar(left.side), na.rm = TRUE)
+  } else {
+    right.side <- sub("\\^\\{", "", right.side)
+    right.side <- sub("\\}", "", right.side)
+    v.length <- max(nchar(right.side), na.rm = TRUE)
+  }
+  return(v.length)
 }
 
 
@@ -1102,72 +1100,76 @@ ciforce <- function(models, ci.force = rep("null", length(models)),
 
 # function which adds groups to an output matrix
 grouping <- function(output.matrix, groups, indentation = "    ", 
-                     single.row = FALSE, prefix = "", suffix = "") {
-    if (!is.null(groups)) {
-        if (class(groups) != "list") {
-            stop("Groups must be specified as a list of numeric vectors.")
-        }
-        for (i in 1:length(groups)) {
-            if (length(groups[[i]]) == 0) {
-                stop("Empty groups are not allowed.")
-            }
-            if (!is.numeric(groups[[i]])) {
-                stop("Groups must be specified as a list of numeric vectors.")
-            }
-            groups[[i]] <- sort(unique(groups[[i]]))
-            if (groups[[i]][length(groups[[i]])] - length(groups[[i]]) + 1 != 
-                groups[[i]][1]) {
-                stop("The group indices must be consecutive within each group.")
-            }
-        }
-        for (i in 1:length(groups)) {
-            for (j in 1:length(groups)) {
-                if (i != j && length(intersect(groups[[i]], groups[[j]])) > 0) {
-                    stop("Overlapping groups are not allowed. Change 'groups' argument!")
-                }
-                if (i < j && groups[[j]][1] < groups[[i]][1]) {
-                    stop("Groups must be specified in the correct order.")
-                }
-            }
-        }
-        for (i in 1:length(groups)) {
-            if (single.row == FALSE) {
-                groups[[i]] <- (groups[[i]] * 2) - 1
-            }
-        }
-        if (groups[[length(groups)]][length(groups[[length(groups)]])] > 
-            nrow(output.matrix)) {
-            stop("'groups' argument contains indices outside the table dimensions")
-        }
-        for (i in length(groups):1) {
-            label <- paste0(prefix, names(groups)[[i]], suffix)
-            for (j in nrow(output.matrix):1) {
-                if (j %in% groups[[i]]) {
-                    output.matrix[j, 1] <- paste0(indentation, output.matrix[j, 1])
-                }
-            }
-            groupindex <- groups[[i]][1]
-            lastingroup <- groups[[i]][length(groups[[i]])] + (1 - single.row)
-            if (groupindex == 1) {
-                prevmat <- NULL
-            } else {
-                prevmat <- output.matrix[1:(groupindex - 1), ]
-            }
-            currentmat <- output.matrix[groupindex:lastingroup, ]
-            if (lastingroup > nrow(output.matrix) - 2) {
-                nextmat <- NULL
-            } else {
-                nextmat <- output.matrix[(lastingroup + 1):nrow(output.matrix), ]
-            }
-            newrow <- matrix(rep("", ncol(output.matrix)), nrow = 1)
-            if (single.row == FALSE) {
-                newrow <- rbind(newrow, newrow)
-            }
-            newrow[1, 1] <- label
-            output.matrix <- rbind(prevmat, newrow, currentmat, nextmat)
-        }
+    single.row = FALSE, prefix = "", suffix = "", rowLabelType = 'text') {
+  if (!is.null(groups)) {
+    if (class(groups) != "list") {
+      stop("Groups must be specified as a list of numeric vectors.")
     }
-    return(output.matrix)
+    for (i in 1:length(groups)) {
+      if (length(groups[[i]]) == 0) {
+        stop("Empty groups are not allowed.")
+      }
+      if (!is.numeric(groups[[i]])) {
+        stop("Groups must be specified as a list of numeric vectors.")
+      }
+      groups[[i]] <- sort(unique(groups[[i]]))
+      if (groups[[i]][length(groups[[i]])] - length(groups[[i]]) + 1 != 
+          groups[[i]][1]) {
+        stop("The group indices must be consecutive within each group.")
+      }
+    }
+    for (i in 1:length(groups)) {
+      for (j in 1:length(groups)) {
+        if (i != j && length(intersect(groups[[i]], groups[[j]])) > 0) {
+          stop("Overlapping groups are not allowed. Change 'groups' argument!")
+        }
+        if (i < j && groups[[j]][1] < groups[[i]][1]) {
+          stop("Groups must be specified in the correct order.")
+        }
+      }
+    }
+    for (i in 1:length(groups)) {
+      if (single.row == FALSE) {
+        groups[[i]] <- (groups[[i]] * 2) - 1
+      }
+    }
+    if (groups[[length(groups)]][length(groups[[length(groups)]])] > 
+        nrow(output.matrix)) {
+      stop("'groups' argument contains indices outside the table dimensions")
+    }
+      for (i in length(names(groups)):1) {
+          if (rowLabelType == 'latex') {
+              label <- paste0(prefix, rownames(replaceSymbols(t(as.data.frame(rbind(groups[i]))))), suffix)
+          } else if (rowLabelType == 'text') {
+              label <- paste0(prefix, names(groups)[[i]], suffix)
+          }
+      for (j in nrow(output.matrix):1) {
+        if (j %in% groups[[i]]) {
+          output.matrix[j, 1] <- paste0(indentation, output.matrix[j, 1])
+        }
+      }
+      groupindex <- groups[[i]][1]
+      lastingroup <- groups[[i]][length(groups[[i]])] + (1 - single.row)
+      if (groupindex == 1) {
+        prevmat <- NULL
+      } else {
+        prevmat <- output.matrix[1:(groupindex - 1), ]
+      }
+      currentmat <- output.matrix[groupindex:lastingroup, ]
+      if (lastingroup > nrow(output.matrix) - 2) {
+        nextmat <- NULL
+      } else {
+        nextmat <- output.matrix[(lastingroup + 1):nrow(output.matrix), ]
+      }
+      newrow <- matrix(rep("", ncol(output.matrix)), nrow = 1)
+      if (single.row == FALSE) {
+        newrow <- rbind(newrow, newrow)
+      }
+      newrow[1, 1] <- label
+      output.matrix <- rbind(prevmat, newrow, currentmat, nextmat)
+    }
+  }
+  return(output.matrix)
 }
 
 # add custom columns to output matrix
@@ -1388,7 +1390,7 @@ get_stars <- function(pval = NULL, # test statistics;
                       ci.test = NULL, 
                       css.sup = NULL,  
                       output = 'ascii') {
-    
+
     # sanity checks and prep
     if (!output %in% c('ascii', 'latex', 'html')) {
         stop("'output' argument must be 'ascii', 'latex', or 'html'.")
