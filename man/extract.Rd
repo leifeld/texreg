@@ -111,6 +111,8 @@
 \alias{extract,maBina-method}
 \alias{extract.mer}
 \alias{extract,mer-method}
+\alias{extract.mhurdle}
+\alias{extract,mhurdle-method}
 \alias{extract.mlogit}
 \alias{extract,mlogit-method}
 \alias{extract.mnlogit}
@@ -438,6 +440,8 @@ extract(model, ...)
     include.loglik = TRUE, include.nobs = TRUE,
     include.groups = TRUE, include.intercept = TRUE,
     include.iterations = FALSE, beside = FALSE, ...)
+    
+\S4method{extract}{mhurdle}(model, include.nobs = TRUE, include.loglik = TRUE, ...)    
 
 \S4method{extract}{mlogit}(model, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, include.order = FALSE, ...)
@@ -834,6 +838,10 @@ An extract method for maBina objects from the \pkg{erer} package.
 
 \item{\code{mer}}{
 An extract method for mer objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{mhurdle}}{
+An extract method for mhurdle objects from the \pkg{mhurdle} package.
 }
 
 \item{\code{mlogit}}{
