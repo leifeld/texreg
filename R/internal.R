@@ -689,7 +689,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                                        ci = ci
                         )$coefficients
                     } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && bold != .05 && 
+                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 && 
                             (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
                             p <- paste0(star.prefix, star.symbol, star.suffix)
                         } else {
@@ -782,7 +782,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                                        star.suffix = star.suffix
                         )$coefficients
                     } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && bold != .05 &&
+                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
                             (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
                             p <- paste0(star.prefix, star.symbol, star.suffix)
                         } else {
