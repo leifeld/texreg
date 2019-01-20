@@ -496,7 +496,7 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
         if (!is.character(omit.coef) || is.na(omit.coef)) {
             stop("omit.coef must be a character string.")
         }
-        idx <- !grepl(omit.coef, row.names(m))
+        idx <- !grepl(omit.coef, row.names(m), perl = TRUE)
         if (all(!idx)) {
             stop("You were trying to remove all coefficients using omit.coef.")
         }
@@ -689,7 +689,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                                        ci = ci
                         )$coefficients
                     } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && 
+                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 && 
                             (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
                             p <- paste0(star.prefix, star.symbol, star.suffix)
                         } else {
@@ -782,7 +782,7 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
                                        star.suffix = star.suffix
                         )$coefficients
                     } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && 
+                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
                             (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
                             p <- paste0(star.prefix, star.symbol, star.suffix)
                         } else {
