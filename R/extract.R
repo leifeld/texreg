@@ -1580,6 +1580,9 @@ extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
 setMethod("extract", signature = className("gls", "nlme"),
     definition = extract.gls)
 
+extract.gnls <- extract.gls
+setMethod("extract", signature = className("gnls", "nlme"),
+          definition = extract.gnls)
 
 # extension for gel objects (gmm package)
 extract.gel <- function (model, include.obj.fcn = TRUE,
@@ -5151,7 +5154,6 @@ extract.pglm <- function(model, include.aic = TRUE,
 setMethod("extract", signature = className("pglm", "pglm"),
           definition = extract.pglm)
 
-
 # extension for mhurdle objects (mhurdle package)
 extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...)
     {
@@ -5190,5 +5192,4 @@ extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, 
 
 setMethod("extract", signature = className("mhurdle", "mhurdle"), 
           definition = extract.mhurdle)
-
 
