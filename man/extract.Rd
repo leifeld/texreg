@@ -77,6 +77,8 @@
 \alias{extract,glmrob-method}
 \alias{extract.gls}
 \alias{extract,gls-method}
+\alias{extract.gnls}
+\alias{extract,gnls-method}
 \alias{extract.gmm}
 \alias{extract,gmm-method}
 \alias{extract.H2OBinomialModel}
@@ -111,6 +113,8 @@
 \alias{extract,maBina-method}
 \alias{extract.mer}
 \alias{extract,mer-method}
+\alias{extract.mhurdle}
+\alias{extract,mhurdle-method}
 \alias{extract.mlogit}
 \alias{extract,mlogit-method}
 \alias{extract.mnlogit}
@@ -361,6 +365,10 @@ extract(model, ...)
 \S4method{extract}{gls}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
+    
+\S4method{extract}{gnls}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, ...)    
 
 \S4method{extract}{gmm}(model, include.obj.fcn = TRUE,
     include.overidentification = FALSE, include.nobs = TRUE, ...)
@@ -440,6 +448,8 @@ extract(model, ...)
     include.loglik = TRUE, include.nobs = TRUE,
     include.groups = TRUE, include.intercept = TRUE,
     include.iterations = FALSE, beside = FALSE, ...)
+    
+\S4method{extract}{mhurdle}(model, include.nobs = TRUE, include.loglik = TRUE, ...)    
 
 \S4method{extract}{mlogit}(model, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, include.order = FALSE, ...)
@@ -773,6 +783,10 @@ An extract method for glmrob objects from the \pkg{robustbase} package.
 An extract method for gls objects from the \pkg{nlme} package.
 }
 
+\item{\code{gnls}}{
+An extract method for gnls objects from the \pkg{nlme} package.
+}
+  
 \item{\code{gmm}}{
 An extract method for gmm objects from the \pkg{gmm} package.
 }
@@ -840,6 +854,10 @@ An extract method for maBina objects from the \pkg{erer} package.
 
 \item{\code{mer}}{
 An extract method for mer objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{mhurdle}}{
+An extract method for mhurdle objects from the \pkg{mhurdle} package.
 }
 
 \item{\code{mlogit}}{
