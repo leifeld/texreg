@@ -5155,7 +5155,7 @@ setMethod("extract", signature = className("pglm", "pglm"),
 extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE, 
                          include.bic = TRUE, include.nobs = TRUE, ...) {
     s <- summary(model)
-    names <- rownames(s$coef)
+    coefficient.names <- rownames(s$coef)
     co <- s$coef[, 1]
     se <- s$coef[, 2]
     pval <- s$coef[, 4]
@@ -5170,7 +5170,6 @@ extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE,
         gof.names <- c(gof.names, "Log Likelihood")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-    
     if (include.aic == TRUE) {
         aic <- s$AIC
         gof <- c(gof, aic)
@@ -5183,7 +5182,6 @@ extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE,
         gof.names <- c(gof.names, "BIC")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-    
     if (include.nobs == TRUE) {
         n <- s$nobs
         gof <- c(gof, n)
@@ -5192,9 +5190,9 @@ extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE,
     }
     
     tr <- createTexreg(
-        coef.names = names,
+        coef.names = coefficient.names,
         coef = co,
-        se=se,
+        se = se,
         pvalues = pval,
         gof.names = gof.names,
         gof = gof,
@@ -5210,7 +5208,7 @@ setMethod("extract", signature = className("bife", "bife"),
 extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE, 
                           include.groups = TRUE, ...) {
     s <- summary(model, ...)
-    names <- rownames(s$cm)
+    coefficient.names <- rownames(s$cm)
     co <- s$cm[, 1]
     se <- s$cm[, 2]
     pval <- s$cm[, 4]
@@ -5225,14 +5223,12 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
         gof.names <- c(gof.names, "Deviance")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-    
     if (include.nobs == TRUE) {
         n <- s$nobs
         gof <- c(gof, n)
         gof.names <- c(gof.names, "Num.\\ obs.")
         gof.decimal <- c(gof.decimal, FALSE)
     }
-    
     if (include.groups == TRUE) {
         grp <- s$lvls.k
         grp.names <- paste0("Num groups:", names(grp))
@@ -5242,9 +5238,9 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
     }
     
     tr <- createTexreg(
-        coef.names = names,
+        coef.names = coefficient.names,
         coef = co,
-        se=se,
+        se = se,
         pvalues = pval,
         gof.names = gof.names,
         gof = gof,
