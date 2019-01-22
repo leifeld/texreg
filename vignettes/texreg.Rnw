@@ -439,9 +439,8 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 95 supported model types (version 1.37).]{\label{tab:types} List of 95 supported model types (version 1.37).} \\
+\caption[List of 96 supported model types (version 1.37).]{\label{tab:types} List of 96 supported model types (version 1.37).} \\
 \endlastfoot
-
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
 `\code{Arima}'			& \pkg{stats}			& ARIMA time series models \\
 `\code{ARIMA}'			& \pkg{forecast}		& ARIMA time series models \\
@@ -478,6 +477,7 @@ Class			& Package			& Description \\
 `\code{glmmadmb}'		& \pkg{glmmADMB}		& Generalized linear mixed models and extensions \\
 `\code{glmrob}  		& \pkg{robustbase}		& Robust fitting of generalized linear models \\
 `\code{gls}'			& \pkg{nlme}			& Generalized least squares \\
+`\code{gnls}'			& \pkg{nlme}			& Generalized non-linear least squares  \\
 `\code{gmm}'			& \pkg{gmm}			& Generalized method of moments estimation \\
 `\code{hurdle}'			& \pkg{pscl}			& Hurdle regression models for count data \\
 `\code{ivreg}'			& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
@@ -493,6 +493,7 @@ Class			& Package			& Description \\
 `\code{lqmm}'			& \pkg{lqmm}			& Linear quantile mixed models \\
 `\code{lrm}'			& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
 `\code{maBina}'			& \pkg{erer}			& Marginal effects for binary response models \\
+`\code{mhurdle}' 		& \pkg{mhurdle}			& Models with zero left-censored variables \\
 `\code{mlogit}' 		& \pkg{mlogit}			& Multinomial logit models \\
 `\code{mnlogit}' 		& \pkg{mnlogit}			& Multinomial choice models \\
 `\code{multinom}'		& \pkg{nnet}			& Multinomial log-linear models \\
