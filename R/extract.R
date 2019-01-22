@@ -5192,54 +5192,56 @@ extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, 
 
 setMethod("extract", signature = className("mhurdle", "mhurdle"), 
           definition = extract.mhurdle)
-extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
-                        include.loglik = TRUE, include.nobs = TRUE, include.rsquared = TRUE, ...) {
-    s <- summary(model, ...)
 
-     coefficient.names <- names(s$coefficients)
+
+# extension for oglmx objects (oglmx package)
+extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
+                          include.loglik = TRUE, include.nobs = TRUE, include.rsquared = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    coefficient.names <- names(s$coefficients)
     coefficients <- s$estimate[,1]
     standard.errors <- s$estimate[,2]
     significance <- s$estimate[,4]
-
-     aic <- s$AIC[1]
-  lik <- s$loglikelihood[1]
-    n <- length(results.oprob$modelframes$Z)
-    it <- s$no.iterations
-    r2 <- s$McFaddensR2[1]
-
-     gof <- numeric()
+    
+    gof <- numeric()
     gof.names <- character()
     gof.decimal <- logical()
     if (include.aic == TRUE) {
+        aic <- s$AIC[1]
         gof <- c(gof, aic)
         gof.names <- c(gof.names, "AIC")
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.loglik == TRUE) {
+        lik <- s$loglikelihood[1]
         gof <- c(gof, lik)
         gof.names <- c(gof.names, "Log Likelihood")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-
-     if (include.nobs == TRUE) {
+    
+    if (include.nobs == TRUE) {
+        n <- length(results.oprob$modelframes$Z)
         gof <- c(gof, n)
         gof.names <- c(gof.names, "Num.\ obs.")
         gof.decimal <- c(gof.decimal, FALSE)
     }
-
-     if (include.iterations == TRUE) {
+    
+    if (include.iterations == TRUE) {
+        it <- s$no.iterations
         gof <- c(gof, it)
         gof.names <- c(gof.names, "Iterations")
         gof.decimal <- c(gof.decimal, FALSE)
     }
-
-     if (include.rsquared == TRUE) {
+    
+    if (include.rsquared == TRUE) {
+        r2 <- s$McFaddensR2[1]
         gof <- c(gof, r2)
         gof.names <- c(gof.names, "McFadden's R$^2$")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-
-     tr <- createTexreg(
+    
+    tr <- createTexreg(
         coef.names = coefficient.names,
         coef = coefficients,
         se = standard.errors,
@@ -5251,5 +5253,5 @@ extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
     return(tr)
 }
 
- setMethod("extract", signature = className("oglmx", "oglmx"),
+setMethod("extract", signature = className("oglmx", "oglmx"),
           definition = extract.oglmx)

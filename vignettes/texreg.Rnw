@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 96 supported model types (version 1.37).]{\label{tab:types} List of 96 supported model types (version 1.37).} \\
+\caption[List of 98 supported model types (version 1.36.24).]{\label{tab:types} List of 98 supported model types (version 1.36.24).} \\
 \endlastfoot
 `\code{aftreg}'			& \pkg{eha}			& Accelerated failure time regression \\
 `\code{Arima}'			& \pkg{stats}			& ARIMA time series models \\
