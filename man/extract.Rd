@@ -137,6 +137,8 @@
 \alias{extract,nlme-method}
 \alias{extract.nlmerMod}
 \alias{extract,nlmerMod-method}
+\alias{extract.oglmx}
+\alias{extract,oglmx-method}
 \alias{extract.ols}
 \alias{extract,ols-method}
 \alias{extract.pglm}
@@ -492,6 +494,10 @@ extract(model, ...)
     include.deviance = FALSE, include.loglik = TRUE,
     include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
+    
+\S4method{extract}{oglmx}(model, include.aic = TRUE, 
+    include.iterations = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.rsquared = TRUE, ...)
 
 \S4method{extract}{ols}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
@@ -896,6 +902,10 @@ An extract method for nlme objects from the \pkg{nlme} package.
 
 \item{\code{nlmerMod}}{
 An extract method for nlmerMod objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{oglmx}}{
+An extract method for oglmx objects from the \pkg{oglmx} package.
 }
 
 \item{\code{ols}}{
