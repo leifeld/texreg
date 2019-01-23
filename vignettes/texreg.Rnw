@@ -466,34 +466,33 @@ Class			& Package			& Description \\
 `\code{ergm}'			& \pkg{ergm}			& Exponential random graph models \\
 `\code{ergmm}'			& \pkg{latentnet}		& Latent space and latent cluster models \\
 `\code{ets}'			& \pkg{forecast}		& Exponential smoothing state space models \\
-
 `\code{feglm}'			& \pkg{alpaca}			& GLM with high-dimensional k-way fixed effects \\
 `\code{felm}'			& \pkg{lfe}			    & Linear models with multiple group fixed effects \\
 `\code{fGARCH}'			& \pkg{fGarch}			& GARCH time series models \\
 `\code{forecast}'		& \pkg{forecast}		& Time series forecasting \\
 `\code{gam}'			& \pkg{mgcv}			& Generalized additive models \\
 `\code{gamlss}'			& \pkg{gamlss}			& GAM for location scale and shape \\
-`\code{gee}'			& \pkg{gee}			& Generalized estimating equation \\
+`\code{gee}'			& \pkg{gee}			    & Generalized estimating equation \\
 `\code{geeglm}'			& \pkg{geepack}			& Generalized estimating equation \\
-`\code{gel}'			& \pkg{gmm}			& Generalized empirical likelihood estimation \\
+`\code{gel}'			& \pkg{gmm}			    & Generalized empirical likelihood estimation \\
 `\code{glm}'			& \pkg{stats}			& Generalized linear models \\
 `\code{[gl|l|nl]merMod}'	& \pkg{lme4} ($<$ 1.0) 		& Generalized linear mixed models \\
 `\code{glmmadmb}'		& \pkg{glmmADMB}		& Generalized linear mixed models and extensions \\
 `\code{glmrob}  		& \pkg{robustbase}		& Robust fitting of generalized linear models \\
 `\code{gls}'			& \pkg{nlme}			& Generalized least squares \\
 `\code{gnls}'			& \pkg{nlme}			& Generalized non-linear least squares  \\
-`\code{gmm}'			& \pkg{gmm}			& Generalized method of moments estimation \\
+`\code{gmm}'			& \pkg{gmm}			    & Generalized method of moments estimation \\
 `\code{hurdle}'			& \pkg{pscl}			& Hurdle regression models for count data \\
-`\code{ivreg}'			& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
+`\code{ivreg}'			& \pkg{AER}			    & Instrumental-variable regression using 2SLS \\
 `\code{H2OBinomialModel}'	& \pkg{h2o}			& Binomial generalized linear model \\
-`\code{lm}'			& \pkg{stats}			& Ordinary least squares \\
+`\code{lm}'			    & \pkg{stats}			& Ordinary least squares \\
 `\code{lme}'			& \pkg{nlme}			& Linear mixed-effects models \\
 `\code{lme4}'			& \pkg{lme4} ($\geq$ 1.0)	& Linear mixed-effects models \\
 `\code{lmrob}'  		& \pkg{robustbase}		& MM-type estimators for linear models \\
-`\code{lmRob}'  		& \pkg{robust}		& Robust linear regression with high breakdown point and high efficiency regression \\
-`\code{lnam}'			& \pkg{sna}			& Linear network autocorrelation models \\
-`\code{logitmfx}'		& \pkg{mfx}			& Logistic regression with marginal effects \\
-`\code{logitor}'		& \pkg{mfx}			& Logistic regression with odds ratios \\
+`\code{lmRob}'  		& \pkg{robust}		    & Robust linear regression with high breakdown point and high efficiency regression \\
+`\code{lnam}'			& \pkg{sna}			    & Linear network autocorrelation models \\
+`\code{logitmfx}'		& \pkg{mfx}			    & Logistic regression with marginal effects \\
+`\code{logitor}'		& \pkg{mfx}			    & Logistic regression with odds ratios \\
 `\code{lqmm}'			& \pkg{lqmm}			& Linear quantile mixed models \\
 `\code{lrm}'			& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
 `\code{maBina}'			& \pkg{erer}			& Marginal effects for binary response models \\
@@ -504,25 +503,25 @@ Class			& Package			& Description \\
 `\code{model.selection}'	& \pkg{MuMIn}			& Model selection objects \\
 `\code{mtergm}'			& \pkg{btergm}			& MCMC-based TERGM \\
 `\code{negbin}'			& \pkg{MASS}			& Negative binomial generalized linear models \\
-`\code{negbinirr}'		& \pkg{mfx}			& Negative binomial models with incidence rate ratios \\
-`\code{negbinmfx}'		& \pkg{mfx}			& Negative binomial models with marginal effects \\
-`\code{netlogit}'		& \pkg{sna}			& Logistic regression for networks \\
+`\code{negbinirr}'		& \pkg{mfx}			    & Negative binomial models with incidence rate ratios \\
+`\code{negbinmfx}'		& \pkg{mfx}			    & Negative binomial models with marginal effects \\
+`\code{netlogit}'		& \pkg{sna}			    & Logistic regression for networks \\
 `\code{nlme}'			& \pkg{nlme}			& Nonlinear mixed-effects models \\
 `\code{oglmx}'			& \pkg{oglmx}			& Ordered Generalized Linear Model \\
-`\code{ols}'			& \pkg{rms}			& Ordinary least squares linear models \\
-`\code{pglm}'			& \pkg{pglm}		& Estimation by maximum likelihood of glm \\
-`\code{pgmm}'			& \pkg{plm}			& GMM estimation for panel data \\
-`\code{phreg}'			& \pkg{eha}			& Parametric proportional hazards regression \\
-`\code{plm}'			& \pkg{plm}			& Linear models for panel data \\
-`\code{pmg}'			& \pkg{plm}			& Linear panel models with heterogeneous coefficients \\
-`\code{poissonirr}'		& \pkg{mfx}			& Poisson models with incidence rate ratios \\
-`\code{poissonmfx}'		& \pkg{mfx}			& Poisson models with marginal effects \\
+`\code{ols}'			& \pkg{rms}		    	& Ordinary least squares linear models \\
+`\code{pglm}'			& \pkg{pglm}		    & Estimation by maximum likelihood of glm \\
+`\code{pgmm}'			& \pkg{plm}			    & GMM estimation for panel data \\
+`\code{phreg}'			& \pkg{eha}			    & Parametric proportional hazards regression \\
+`\code{plm}'			& \pkg{plm}			    & Linear models for panel data \\
+`\code{pmg}'			& \pkg{plm}			    & Linear panel models with heterogeneous coefficients \\
+`\code{poissonirr}'		& \pkg{mfx}			    & Poisson models with incidence rate ratios \\
+`\code{poissonmfx}'		& \pkg{mfx}			    & Poisson models with marginal effects \\
 `\code{polr}'			& \pkg{MASS}			& Ordered logistic or probit regression \\
-`\code{probitmfx}'		& \pkg{mfx}			& Probit regression with marginal effects \\
+`\code{probitmfx}'		& \pkg{mfx}			    & Probit regression with marginal effects \\
 `\code{Relogit}'		& \pkg{Zelig}			& Rare events logistic regression \\
 `\code{rem.dyad}'		& \pkg{relevent}		& Relational event models for dyadic data \\
 `\code{rlm}'			& \pkg{MASS}			& Robust fitting of linear models \\
-`\code{rq}'			& \pkg{quantreg}		& Quantile regression models \\
+`\code{rq}'			    & \pkg{quantreg}		& Quantile regression models \\
 `\code{sarlm}'			& \pkg{spdep}			& Linear spatial autocorrelation and error models \\
 `\code{sclm}'			& \pkg{ordinal}			& Cumulative link models \\
 `\code{selection}'		& \pkg{sampleSelection}		& Sample selection models \\
@@ -533,13 +532,13 @@ Class			& Package			& Description \\
 `\code{stergm}'			& \pkg{tergm}			& Temporal exponential random graph models \\
 `\code{summary.lm}'		& \pkg{stats}			& Summary objects for linear models \\
 `\code{survreg}'		& \pkg{survival}		& Parametric survival regression models \\
-`\code{survreg.penal}'		& \pkg{survival}		& Frailty survival models \\
+`\code{survreg.penal}'	& \pkg{survival}		& Frailty survival models \\
 `\code{svyglm}' 		& \pkg{survey}			& Survey-weighted generalized linear models \\
 `\code{systemfit}'		& \pkg{systemfit}		& Linear structural equations \\
 `\code{texreg}'			& \pkg{texreg}			& For easy manipulation of \pkg{texreg} tables \\
-`\code{tobit}'			& \pkg{AER}			& Tobit regression models for censored data \\
+`\code{tobit}'			& \pkg{AER}			    & Tobit regression models for censored data \\
 `\code{vglm}'			& \pkg{VGAM}			& Vector generalized linear models \\
-`\code{weibreg}'		& \pkg{eha}			& Weibull regression \\
+`\code{weibreg}'		& \pkg{eha}			    & Weibull regression \\
 `\code{wls}'			& \pkg{metaSEM}			& Weighted least squares models \\
 `\code{zelig}'			& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
 `\code{Zelig}'			& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
