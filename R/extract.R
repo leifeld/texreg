@@ -5368,7 +5368,7 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
     pval <- s$coef[, 3]
 
     table <- as.data.frame(cbind(coefficients.names, co, se, pval))
-    table <- table[!is.na(table$se),]
+    table <- table[!is.na(table$se), ]
     coefficients.names <- as.character(table$coefficients.names)
     co <- as.numeric(as.character(table$co))
     se <- as.numeric(as.character(table$se))
@@ -5415,7 +5415,7 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.delta == TRUE) {
-        delta <- sum(na.omit(c(abs(residuals(model, "response"))))) / 
+        delta <- sum(na.omit(c(abs(residuals(model,"response")))))/ 
             sum(na.omit(c(abs(fitted(model)))))/2*100 # Dissimilarity index
         gof <- c(gof, delta)
         gof.names <- c(gof.names, "Dissim.\ Index")
