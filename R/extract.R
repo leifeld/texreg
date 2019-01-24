@@ -4419,8 +4419,8 @@ setMethod("extract", signature = className("tobit", "AER"),
 extract.vglm <- function(model, include.loglik = TRUE, include.df = TRUE,
     include.nobs = TRUE, ...) {
 
-  s <- summary(model)
-	names <- rownames(coef(s))
+  s <- VGAM::summary(model)
+	names <- rownames(VGAM::coef(s))
 	co <- s@coef3[, 1]
 	se <- s@coef3[, 2]
 	pval <- s@coef3[, 4]
