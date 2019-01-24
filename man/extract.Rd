@@ -386,8 +386,8 @@ extract(model, ...)
     include.overidentification = FALSE, include.nobs = TRUE, ...)
     
 \S4method{extract}{gnm}(model, include.aic = TRUE, include.bic = TRUE,
-    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, include.df = FALSE, 
-    include.chisq = FALSE, include.delta = FALSE, ...)    
+    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
+    include.df = FALSE, include.chisq = FALSE, include.delta = FALSE, ...)    
 
 \S4method{extract}{H2OBinomialModel}(model, standardized = FALSE,
       include.mse = TRUE, include.rsquared = TRUE,
@@ -1087,6 +1087,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.auc}{ If available: should the area under the curve (AUC) be reported? }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
 \item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
+\item{include.chisq}{ If available: should the Chi squared statistic be included? }
 \item{include.correlation}{ If available: should the correlation parameter alpha and its standard error be reported (for geeglm models)? }
 \item{include.count}{ If available: should the count model of a zero-inflated or hurdle regression be included in the coefficients block (before the zero-inflation or zero hurdle model)? }
 \item{include.delta}{ If available: should the delta statistic be included? }
