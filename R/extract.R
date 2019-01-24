@@ -5154,9 +5154,11 @@ setMethod("extract", signature = className("pglm", "pglm"),
 #extention for panelAR objects (panelAR package)					 
 extract.panelAR <- function(model, include.rsquared=TRUE, include.nobs=TRUE, include.groups=TRUE,...){
     s <- summary(model,...)
-    names <- rownames(s$coef)
+	
+    coefficient.names <- rownames(s$coef)
     co <- s$coef[, 1]
     se <- s$coef[, 2]
+	
     pval <- s$coef[, 4]	
     gof <- numeric()
     gof.names <- character()
@@ -5165,7 +5167,7 @@ extract.panelAR <- function(model, include.rsquared=TRUE, include.nobs=TRUE, inc
     if (include.rsquared == TRUE){
     	rs <- s$r2
     	gof <- c(gof, rs)
-    	gof.names <- c(gof.names, "")
+    	gof.names <- c(gof.names, "R$^2$")
     	gof.decimal <- c(gof.decimal, TRUE)
     }
         if (include.nobs == TRUE){
@@ -5181,12 +5183,13 @@ extract.panelAR <- function(model, include.rsquared=TRUE, include.nobs=TRUE, inc
     	gof.decimal <- c(gof.decimal, FALSE)
     }
    
-    tr <- createTexreg(coef.names = names,
+    tr <- createTexreg(coef.names = coefficient.names,
                        coef = co,
                        se = se,
                        pvalues = pval,
                        gof.names = gof.names,
-                       gof = gof)
+                       gof = gof
+    )
     return(tr)
 }
 setMethod("extract", signature = className("panelAR", "panelAR"),
