@@ -5194,104 +5194,83 @@ setMethod("extract", signature = className("mhurdle", "mhurdle"),
           definition = extract.mhurdle)
 
 # extension for gnm objects (gnm package)
-extract.gnm <- function(model, include.aic = FALSE, include.bic = FALSE,
+extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
                         include.loglik = TRUE, include.deviance = TRUE, 
-                        include.nobs = FALSE, include.ncell = FALSE, 
-                        include.df = TRUE, include.chisq = FALSE,
-                        include.pmodel = FALSE, include.aicl2 = TRUE, 
-                        include.bicl2 = TRUE, include.delta = TRUE, ...) {
+                        include.nobs = TRUE, include.df = FALSE, 
+                        include.chisq = FALSE, include.delta = FALSE, ...) {
     
-    s <- summary(model, ...)
-    
-    coefficient.names <- rownames(s$coef)
-    coefficients <- s$coef[, 1]
-    standard.errors <- s$coef[, 2]
-    significance <- s$coef[, 4]
-    
-    aic <- AIC(model)
-    bic <- BIC(model)
-    lik <- logLik(model)[1]
-    dev <- deviance(model) # L2
-    n <- sum(model$y) # count of cell frequencies ~ nobs in sample
-    ncell <- nobs(model) # number of cells are the observations of gnm models
-    df <- model$df.residual
-    chisq <- sum(na.omit(c(residuals(model, "pearson")^2)))
-    pmodel <- round(pchisq(deviance(model), model$df.residual, lower.tail=FALSE), 
-                    digits=4)
-    aicl2 <- deviance(model) - model$df.residual*2 # AIC(L2)
-    bicl2 <- deviance(model) - model$df.residual*log(sum(model$y)) # BIC(L2)
-    delta <- sum(na.omit(c(abs(residuals(model, "response"))))) / 
-        sum(na.omit(c(abs(fitted(model)))))/2*100 # Dissimilarity index
-    
+    s <- summary(model)
+    coefficients.names <- names(model$coefficients)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 3]
+
+    table <- as.data.frame(cbind(coefficients.names, co, se, pval))
+    table <- table[!is.na(table$se),]
+    coefficients.names <- as.character(table$coefficients.names)
+    co <- as.numeric(as.character(table$co))
+    se <- as.numeric(as.character(table$se))
+    pval <- as.numeric(as.character(table$pval))
+
     gof <- numeric()
     gof.names <- character()
     gof.decimal <- logical()
+    
     if (include.df == TRUE) {
+        df <- model$df.residual
         gof <- c(gof, df)
-        gof.names <- c(gof.names, "df")
+        gof.names <- c(gof.names, "df.\ residuals")
         gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.loglik == TRUE) {
+        lik <- logLik(model)[1]
         gof <- c(gof, lik)
         gof.names <- c(gof.names, "Log Likelihood")
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.deviance == TRUE) {
+        dev <- deviance(model)
         gof <- c(gof, dev)
         gof.names <- c(gof.names, "Deviance")
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.chisq == TRUE) {
+        chisq <- sum(na.omit(c(residuals(model, "pearson")^2)))
         gof <- c(gof, chisq)
         gof.names <- c(gof.names, "Pearson chi-squared")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-    if (include.pmodel == TRUE) {
-        gof <- c(gof, pmodel)
-        gof.names <- c(gof.names, "p-Value")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }  
     if (include.aic == TRUE) {
+        aic <- AIC(model)[1]
         gof <- c(gof, aic)
         gof.names <- c(gof.names, "AIC")
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.bic == TRUE) {
+        bic <- BIC(model)[1]
         gof <- c(gof, bic)
         gof.names <- c(gof.names, "BIC")
         gof.decimal <- c(gof.decimal, TRUE)
     }
-    if (include.aicl2 == TRUE) {
-        gof <- c(gof, aicl2)
-        gof.names <- c(gof.names, "AIC(L2)")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.bicl2 == TRUE) {
-        gof <- c(gof, bicl2)
-        gof.names <- c(gof.names, "BIC(L2)")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
     if (include.delta == TRUE) {
+        delta <- sum(na.omit(c(abs(residuals(model, "response"))))) / 
+            sum(na.omit(c(abs(fitted(model)))))/2*100 # Dissimilarity index
         gof <- c(gof, delta)
-        gof.names <- c(gof.names, "Delta")
+        gof.names <- c(gof.names, "Dissim.\ Index")
         gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.ncell == TRUE) {
-        gof <- c(gof, ncell)
-        gof.names <- c(gof.names, "Num. cells")
-        gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.nobs == TRUE) {
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num. obs.")
+        nobs <- length(model$y)
+        gof <- c(gof, nobs)
+        gof.names <- c(gof.names, "Num.\ obs.")
         gof.decimal <- c(gof.decimal, FALSE)
     }
     
     tr <- createTexreg(
-        coef.names = coefficient.names,
-        coef = coefficients,
-        se = standard.errors,
-        pvalues = significance,
+        coef.names = coefficients.names,
+        coef = co,
+        se = se,
+        pvalues = pval,
         gof.names = gof.names,
         gof = gof,
         gof.decimal = gof.decimal
@@ -5299,5 +5278,5 @@ extract.gnm <- function(model, include.aic = FALSE, include.bic = FALSE,
     return(tr)
 }
 
-setMethod("extract", signature = className("gnm", "gnm"), 
+setMethod("extract", signature = className("gnm", "gnm"),
           definition = extract.gnm)
