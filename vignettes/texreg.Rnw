@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 99 supported model types (version 1.36.24).]{\label{tab:types} List of 99 supported model types (version 1.36.24).} \\
+\caption[List of 100 supported model types (version 1.36.24).]{\label{tab:types} List of 100 supported model types (version 1.36.24).} \\ \\
 \endlastfoot
 
 `\code{aftreg}'         & \pkg{eha}	            & Accelerated failure time regression \\
@@ -482,6 +482,7 @@ Class			& Package			& Description \\
 `\code{gls}'            & \pkg{nlme}            & Generalized least squares \\
 `\code{gnls}'           & \pkg{nlme}            & Generalized non-linear least squares  \\
 `\code{gmm}'            & \pkg{gmm}             & Generalized method of moments estimation \\
+`\code{gnm}'            & \pkg{gnm}             & Generalized non-linear models \\
 `\code{hurdle}'         & \pkg{pscl}            & Hurdle regression models for count data \\
 `\code{ivreg}'          & \pkg{AER}             & Instrumental-variable regression using 2SLS \\
 `\code{H2OBinomialModel}'& \pkg{h2o}            & Binomial generalized linear model \\
