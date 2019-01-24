@@ -1,13 +1,13 @@
 Package: texreg
-Version: 1.36.23
-Date: 2017-03-03
+Version: 1.36.24
+Date: 2018-09-07
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Author: Philip Leifeld
 Maintainer: Philip Leifeld <philip.leifeld@glasgow.ac.uk>
 Description: Converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables or HTML tables/MS Word documents or to nicely formatted screen output for the R console for easy model comparison. A list of several models can be combined in a single table. The output is highly customizable. New model types can be easily implemented.
 URL: http://github.com/leifeld/texreg/
 BugReports: https://github.com/leifeld/texreg/issues
-Suggests: nlme, survival, network, ergm, lme4 (>= 1.0), btergm, broom (>= 0.4.2), Zelig (>= 5.0-16), plm (>= 1.4.0)
+Suggests: nlme, survival, network, ergm, lme4 (>= 1.0), btergm, broom (>= 0.4.2), Zelig (>= 5.0-16), plm (>= 1.4.0), rmarkdown (>= 1.5)
 Depends: R (>= 2.15.0)
 Imports: methods, grDevices, graphics, stats
 Enhances: AER, betareg, brglm, censReg, dynlm, eha, erer, fGarch, gamlss, gee, geepack, gmm, h2o, latentnet, lmtest, lqmm, MASS, mfx, mgcv, mlogit, mnlogit, MuMIn, nnet, ordinal, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, survey, systemfit, tergm, VGAM, xergm

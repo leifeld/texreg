@@ -18,6 +18,8 @@
 \alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
+\alias{extract.biglm}
+\alias{extract,biglm-method}
 \alias{extract.brglm}
 \alias{extract,brglm-method}
 \alias{extract.broom}
@@ -75,6 +77,8 @@
 \alias{extract,glmrob-method}
 \alias{extract.gls}
 \alias{extract,gls-method}
+\alias{extract.gnls}
+\alias{extract,gnls-method}
 \alias{extract.gmm}
 \alias{extract,gmm-method}
 \alias{extract.H2OBinomialModel}
@@ -93,6 +97,8 @@
 \alias{extract,lmerMod-method}
 \alias{extract.lmrob}
 \alias{extract,lmrob-method}
+\alias{extract.lmRob}
+\alias{extract,lmRob-method}
 \alias{extract.lnam}
 \alias{extract,lnam-method}
 \alias{extract.logitmfx}
@@ -107,6 +113,8 @@
 \alias{extract,maBina-method}
 \alias{extract.mer}
 \alias{extract,mer-method}
+\alias{extract.mhurdle}
+\alias{extract,mhurdle-method}
 \alias{extract.mlogit}
 \alias{extract,mlogit-method}
 \alias{extract.mnlogit}
@@ -129,8 +137,12 @@
 \alias{extract,nlme-method}
 \alias{extract.nlmerMod}
 \alias{extract,nlmerMod-method}
+\alias{extract.oglmx}
+\alias{extract,oglmx-method}
 \alias{extract.ols}
 \alias{extract,ols-method}
+\alias{extract.pglm}
+\alias{extract,pglm-method}
 \alias{extract.pgmm}
 \alias{extract,pgmm-method}
 \alias{extract.phreg}
@@ -163,8 +175,14 @@
 \alias{extract,sienaFit-method}
 \alias{extract.simex}
 \alias{extract,simex-method}
+\alias{extract.speedglm}
+\alias{extract,speedglm-method}
+\alias{extract.speedlm}
+\alias{extract,speedlm-method}
 \alias{extract.stergm}
 \alias{extract,stergm-method}
+\alias{extract.summary.lm}
+\alias{extract,summary.lm-method}
 \alias{extract.survreg}
 \alias{extract,survreg-method}
 \alias{extract.survreg.penal}
@@ -233,6 +251,9 @@ extract(model, ...)
     include.pseudors = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
+\S4method{extract}{biglm}(model, include.nobs = TRUE, 
+    include.aic = TRUE, use.ci = FALSE, ...)    
+    
 \S4method{extract}{brglm}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
     include.deviance = TRUE, include.nobs = TRUE, ...)
@@ -344,6 +365,10 @@ extract(model, ...)
 \S4method{extract}{gls}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
+    
+\S4method{extract}{gnls}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, ...)    
 
 \S4method{extract}{gmm}(model, include.obj.fcn = TRUE,
     include.overidentification = FALSE, include.nobs = TRUE, ...)
@@ -387,6 +412,9 @@ extract(model, ...)
 
 \S4method{extract}{lmrob}(model, include.nobs = TRUE, ...)
 
+\S4method{extract}{lmRob}(model, include.rsquared = TRUE,
+    include.nobs = TRUE, include.rmse = TRUE, ...)
+
 \S4method{extract}{lnam}(model, include.rsquared = TRUE,
     include.adjrs = TRUE, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...)
@@ -420,9 +448,11 @@ extract(model, ...)
     include.loglik = TRUE, include.nobs = TRUE,
     include.groups = TRUE, include.intercept = TRUE,
     include.iterations = FALSE, beside = FALSE, ...)
+    
+\S4method{extract}{mhurdle}(model, include.nobs = TRUE, include.loglik = TRUE, ...)    
 
 \S4method{extract}{mlogit}(model, include.aic = TRUE,
-    include.loglik = TRUE, include.nobs = TRUE, ...)
+    include.loglik = TRUE, include.nobs = TRUE, include.order = FALSE, ...)
 
 \S4method{extract}{model.selection}(model, include.loglik = TRUE,
     include.aicc = TRUE, include.delta = TRUE,
@@ -464,10 +494,17 @@ extract(model, ...)
     include.deviance = FALSE, include.loglik = TRUE,
     include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
+    
+\S4method{extract}{oglmx}(model, include.aic = TRUE, 
+    include.iterations = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.rsquared = TRUE, ...)
 
 \S4method{extract}{ols}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, include.lr = TRUE, ...)
+
+\S4method{extract}{pglm}(model, include.aic = TRUE,
+    include.loglik = TRUE, include.nobs = TRUE, ...)
 
 \S4method{extract}{pgmm}(model, include.nobs = TRUE,
     include.sargan = TRUE, include.wald = TRUE, ...)
@@ -527,11 +564,23 @@ extract(model, ...)
 
 \S4method{extract}{simex}(model, jackknife = TRUE,
     include.nobs = TRUE, ...)
+    
+\S4method{extract}{speedglm}(model, include.aic = TRUE, 
+    include.bic = TRUE, include.loglik = TRUE, 
+    include.deviance = TRUE, include.nobs = TRUE, ...)   
+
+\S4method{extract}{speedlm}(model, include.rsquared = TRUE, 
+    include.adjrs = TRUE, include.nobs = TRUE, 
+    include.fstatistic = FALSE, include.rmse = TRUE, ...)    
 
 \S4method{extract}{stergm}(model, beside = FALSE,
     include.formation = TRUE, include.dissolution = TRUE,
     include.nvertices = TRUE, include.aic = FALSE,
     include.bic = FALSE, include.loglik = FALSE, ...)
+    
+\S4method{extract}{summary.lm}(model, include.rsquared = TRUE, 
+        include.adjrs = TRUE, include.nobs = TRUE, 
+        include.fstatistic = FALSE, include.rmse = TRUE, ...)   
 
 \S4method{extract}{survreg}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
@@ -616,6 +665,10 @@ An extract method for betaor objects from the \pkg{mfx} package.
 
 \item{\code{betareg}}{
 An extract method for betareg objects from the \pkg{betareg} package.
+}
+
+\item{\code{biglm}}{
+An extract method for biglm objects from the \pkg{biglm} package.
 }
 
 \item{\code{brglm}}{
@@ -730,6 +783,10 @@ An extract method for glmrob objects from the \pkg{robustbase} package.
 An extract method for gls objects from the \pkg{nlme} package.
 }
 
+\item{\code{gnls}}{
+An extract method for gnls objects from the \pkg{nlme} package.
+}
+  
 \item{\code{gmm}}{
 An extract method for gmm objects from the \pkg{gmm} package.
 }
@@ -766,6 +823,11 @@ An extract method for lmerMod objects from the (old) \pkg{lme4} package.
 An extract method for lmrob objects from the \pkg{robustbase} package.
 }
 
+
+\item{\code{lmRob}}{
+An extract method for lmRob objects from the \pkg{robust} package.
+}
+
 \item{\code{lnam}}{
 An extract method for lnam objects from the \pkg{sna} package.
 }
@@ -792,6 +854,10 @@ An extract method for maBina objects from the \pkg{erer} package.
 
 \item{\code{mer}}{
 An extract method for mer objects from the (old) \pkg{lme4} package.
+}
+
+\item{\code{mhurdle}}{
+An extract method for mhurdle objects from the \pkg{mhurdle} package.
 }
 
 \item{\code{mlogit}}{
@@ -838,8 +904,16 @@ An extract method for nlme objects from the \pkg{nlme} package.
 An extract method for nlmerMod objects from the (old) \pkg{lme4} package.
 }
 
+\item{\code{oglmx}}{
+An extract method for oglmx objects from the \pkg{oglmx} package.
+}
+
 \item{\code{ols}}{
 An extract method for ols objects from the \pkg{rms} package.
+}
+
+\item{\code{pglm}}{
+An extract method for pglm objects from the \pkg{pglm} package.
 }
 
 \item{\code{pgmm}}{
@@ -906,8 +980,20 @@ An extract method for sienaFit objects from the \pkg{RSiena} package.
 An extract method for simex objects from the \pkg{simex} package.
 }
 
+\item{\code{speedglm}}{
+An extract method for speedglm objects from the \pkg{speedglm} package.
+}
+
+\item{\code{speedlm}}{
+An extract method for speedlm objects from the \pkg{speedglm} package.
+}
+
 \item{\code{stergm}}{
 An extract method for stergm objects from the \pkg{tergm} package.
+}
+
+\item{\code{summary.lm}}{
+An extract method for summary.lm objects from the \pkg{stats} and \pkg{URCA} packages.
 }
 
 \item{\code{survreg}}{
@@ -1005,6 +1091,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.nsmooth}{ If available: should the number of smooth terms be reported (in GAMs)? }
 \item{include.nvertices}{ If available: should the number of vertices be reported in a statistical network model? }
 \item{include.obj.fcn}{ If available: should the value of the objective function (= criterion function) be reported (for \code{gel} and \code{gmm} objects)? More precisely, this returns \code{E(g)var(g)^{-1}E(g)}. }
+\item{include.order}{ If available: should coefficient names be in alphabetic order? }
 \item{include.outcome}{ If available: should the outcome component of a sample selection model be reported? }
 \item{include.overidentification}{ If available: should the J-test for overidentification be reported (for \code{gel} and \code{gmm} objects)? }
 \item{include.percentile}{ If available: should the percentile (tau) be reported? }
