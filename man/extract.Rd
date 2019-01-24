@@ -18,6 +18,8 @@
 \alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
+\alias{extract.bife}
+\alias{extract,bife-method}
 \alias{extract.biglm}
 \alias{extract,biglm-method}
 \alias{extract.brglm}
@@ -49,6 +51,8 @@
 \alias{extract,ergmm-method}
 \alias{extract.ets}
 \alias{extract,ets-method}
+\alias{extract.feglm}
+\alias{extract,feglm-method}
 \alias{extract.felm}
 \alias{extract,felm-method}
 \alias{extract.fGARCH}
@@ -251,6 +255,9 @@ extract(model, ...)
     include.pseudors = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
+\S4method{extract}{bife}(model, include.loglik = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.nobs = TRUE, ...)    
+    
 \S4method{extract}{biglm}(model, include.nobs = TRUE, 
     include.aic = TRUE, use.ci = FALSE, ...)    
     
@@ -308,6 +315,9 @@ extract(model, ...)
     include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...)
 
+\S4method{extract}{feglm}(model, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, ...)
+  
 \S4method{extract}{felm}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, ...)
@@ -667,6 +677,10 @@ An extract method for betaor objects from the \pkg{mfx} package.
 An extract method for betareg objects from the \pkg{betareg} package.
 }
 
+\item{\code{bife}}{
+An extract method for bife objects from the \pkg{bife} package.
+}
+
 \item{\code{biglm}}{
 An extract method for biglm objects from the \pkg{biglm} package.
 }
@@ -725,6 +739,10 @@ An extract method for ergmm objects from the \pkg{latentnet} package.
 
 \item{\code{ets}}{
 An extract method for ets objects from the \pkg{forecast} package.
+}
+
+\item{\code{feglm}}{
+An extract method for feglm objects from the \pkg{alpaca} package.
 }
 
 \item{\code{felm}}{

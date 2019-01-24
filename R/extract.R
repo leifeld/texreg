@@ -1580,6 +1580,7 @@ extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
 setMethod("extract", signature = className("gls", "nlme"),
     definition = extract.gls)
 
+
 extract.gnls <- extract.gls
 setMethod("extract", signature = className("gnls", "nlme"),
           definition = extract.gnls)
@@ -4419,8 +4420,8 @@ setMethod("extract", signature = className("tobit", "AER"),
 extract.vglm <- function(model, include.loglik = TRUE, include.df = TRUE,
     include.nobs = TRUE, ...) {
 
-  s <- summary(model)
-	names <- rownames(coef(s))
+  s <- VGAM::summary(model)
+	names <- rownames(VGAM::coef(s))
 	co <- s@coef3[, 1]
 	se <- s@coef3[, 2]
 	pval <- s@coef3[, 4]
@@ -5193,7 +5194,6 @@ extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, 
 setMethod("extract", signature = className("mhurdle", "mhurdle"), 
           definition = extract.mhurdle)
 
-
 # extension for oglmx objects (oglmx package)
 extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
                           include.loglik = TRUE, include.nobs = TRUE, include.rsquared = TRUE, ...) {
@@ -5255,3 +5255,102 @@ extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
 
 setMethod("extract", signature = className("oglmx", "oglmx"),
           definition = extract.oglmx)
+                                         
+                                         # extension for bife objects (bife package)
+extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE, 
+                         include.bic = TRUE, include.nobs = TRUE, ...) {
+    s <- summary(model)
+    coefficient.names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 4]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    
+    if (include.loglik == TRUE) {
+        lik	<- s$loglik
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.aic == TRUE) {
+        aic <- s$AIC
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+        bic <- s$BIC
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        n <- s$nobs
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+setMethod("extract", signature = className("bife", "bife"), 
+          definition = extract.bife)
+
+
+# extension for feglm objects (alpaca package)
+extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE, 
+                          include.groups = TRUE, ...) {
+    s <- summary(model, ...)
+    coefficient.names <- rownames(s$cm)
+    co <- s$cm[, 1]
+    se <- s$cm[, 2]
+    pval <- s$cm[, 4]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    
+    if (include.deviance == TRUE) {
+        dev <- s$deviance
+        gof <- c(gof, dev)
+        gof.names <- c(gof.names, "Deviance")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        n <- s$nobs
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.groups == TRUE) {
+        grp <- s$lvls.k
+        grp.names <- paste0("Num groups:", names(grp))
+        gof <- c(gof, grp)
+        gof.names <- c(gof.names, grp.names)
+        gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+setMethod("extract", signature = className("feglm", "alpaca"), definition = extract.feglm)
