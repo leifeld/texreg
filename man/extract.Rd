@@ -488,6 +488,9 @@ extract(model, ...)
 \S4method{extract}{ols}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, include.lr = TRUE, ...)
+    
+\S4method{extract}{panelAR}(model, include.rsquared = TRUE, 
+    include.nobs = TRUE, include.group = TRUE, ...)
 
 \S4method{extract}{pglm}(model, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
