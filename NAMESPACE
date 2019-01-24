@@ -6,6 +6,7 @@ importFrom("graphics", "axis", "mtext", "par", "plot", "points", "segments",
 importFrom("stats", "AIC", "BIC", "coef", "confint", "deviance", "extractAIC", 
     "logLik", "model.frame", "nobs", "pchisq", "pnorm", "pt", "qnorm", 
     "residuals", "summary.lm", "vcov", "na.omit")
+importFrom("stats", "fitted")
 import("methods")
 export("texreg")
 export("htmlreg")
@@ -57,6 +58,7 @@ export("extract.glmmPQL")
 export("extract.glmrob")
 export("extract.gls")
 export("extract.gmm")
+export("extract.gnm")
 export("extract.H2OBinomialModel")
 export("extract.hurdle")
 export("extract.ivreg")
