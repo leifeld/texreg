@@ -81,6 +81,8 @@
 \alias{extract,gnls-method}
 \alias{extract.gmm}
 \alias{extract,gmm-method}
+\alias{extract.gnm}
+\alias{extract,gnm-method}
 \alias{extract.H2OBinomialModel}
 \alias{extract,H2OBinomialModel-method}
 \alias{extract.hurdle}
@@ -370,6 +372,10 @@ extract(model, ...)
 
 \S4method{extract}{gmm}(model, include.obj.fcn = TRUE,
     include.overidentification = FALSE, include.nobs = TRUE, ...)
+    
+\S4method{extract}{gnm}(model, include.aic = TRUE, include.bic = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, include.df = FALSE, 
+    include.chisq = FALSE, include.delta = FALSE, ...)    
 
 \S4method{extract}{H2OBinomialModel}(model, standardized = FALSE,
       include.mse = TRUE, include.rsquared = TRUE,
@@ -783,6 +789,10 @@ An extract method for gnls objects from the \pkg{nlme} package.
   
 \item{\code{gmm}}{
 An extract method for gmm objects from the \pkg{gmm} package.
+}
+
+\item{\code{gnm}}{
+An extract method for gnm objects from the \pkg{gnm} package.
 }
 
 \item{\code{H2OBinomialModel}}{
