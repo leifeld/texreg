@@ -5256,7 +5256,7 @@ extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
 setMethod("extract", signature = className("oglmx", "oglmx"),
           definition = extract.oglmx)
                                          
-                                         # extension for bife objects (bife package)
+# extension for bife objects (bife package)
 extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE, 
                          include.bic = TRUE, include.nobs = TRUE, ...) {
     s <- summary(model)
@@ -5355,7 +5355,7 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
 }
 setMethod("extract", signature = className("feglm", "alpaca"), definition = extract.feglm)
                                          
-                                         # extension for gnm objects (gnm package)
+# extension for gnm objects (gnm package)
 extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
                         include.loglik = TRUE, include.deviance = TRUE, 
                         include.nobs = TRUE, include.df = FALSE, 
@@ -5415,8 +5415,8 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.delta == TRUE) {
-        delta <- sum(na.omit(c(abs(residuals(model,"response")))))/ 
-            sum(na.omit(c(abs(fitted(model)))))/2*100 # Dissimilarity index
+        delta <- sum(na.omit(c(abs(residuals(model,"response"))))) / 
+            sum(na.omit(c(abs(fitted(model))))) / 2 * 100 # Dissimilarity index
         gof <- c(gof, delta)
         gof.names <- c(gof.names, "Dissim.\ Index")
         gof.decimal <- c(gof.decimal, TRUE)
