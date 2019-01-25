@@ -497,7 +497,7 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
         if (!is.character(omit.coef) || is.na(omit.coef)) {
             stop("omit.coef must be a character string.")
         }
-        idx <- !grepl(omit.coef, row.names(m))
+        idx <- !grepl(omit.coef, row.names(m), perl = TRUE)
         if (all(!idx)) {
             stop("You were trying to remove all coefficients using omit.coef.")
         }
