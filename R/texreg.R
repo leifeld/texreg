@@ -73,12 +73,8 @@ matrixreg <- function(l,
   
   # reorder GOF and coef matrix
   m <- reorder(m, reorder.coef)
-  if (length(reorder.gof) != 0){
-        gofs <- gofs[reorder.gof, , drop = FALSE]
-        decimal.matrix <- decimal.matrix[reorder.gof, , drop = FALSE]      
-    } else {
-        #do nothing
-    }
+  gofs <- reorder(gofs, reorder.gof)
+  decimal.matrix <- reorder(decimal.matrix, reorder.gof)
   
   # create output table with significance stars etc.
   ci <- logical()
