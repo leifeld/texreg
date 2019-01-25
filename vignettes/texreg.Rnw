@@ -1175,6 +1175,7 @@ extract.lm <- function(model) {
   rs <- s$r.squared
   adj <- s$adj.r.squared
   n <- nobs(model)
+  df.res <- df.residual(model)
 
   gof <- c(rs, adj, n)
   gof.names <- c("R$^2$", "Adj.\\ R$^2$", "Num.\\ obs.")
@@ -1185,6 +1186,7 @@ extract.lm <- function(model) {
       se = se,
       pvalues = pval,
       gof.names = gof.names,
+      Df.res = df.res,
       gof = gof
   )
   return(tr)
@@ -1241,6 +1243,7 @@ extract.lm <- function(model, include.rsquared = TRUE,
   co <- s$coef[, 1]
   se <- s$coef[, 2]
   pval <- s$coef[, 4]
+  df.res <- df.residual(model)
 
   gof <- numeric()
   gof.names <- character()
@@ -1271,6 +1274,7 @@ extract.lm <- function(model, include.rsquared = TRUE,
       pvalues = pval,
       gof.names = gof.names,
       gof = gof,
+      Df.res = df.res,
       gof.decimal = gof.decimal
   )
   return(tr)
