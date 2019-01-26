@@ -1009,7 +1009,7 @@ reorder <- function(mat, new.order) {
           "values in the reorder.coef or reorder.gof vector you provided."))
     }
   }
-  new.mat <- mat[new.order, ]
+  new.mat <- mat[new.order, , drop = FALSE]
   return(new.mat)
 }
 
