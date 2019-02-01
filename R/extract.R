@@ -5442,8 +5442,9 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
 
 setMethod("extract", signature = className("gnm", "gnm"),
           definition = extract.gnm)
+
 # extention for panelAR objects (panelAR package)					 
-extract.panelAR <- function(model, include.rsquared=TRUE, include.nobs=TRUE, include.groups=TRUE,...){
+extract.panelAR <- function(model, include.rsquared = TRUE, include.nobs = TRUE, include.groups = TRUE,...){
     s <- summary(model,...)
 	
     coefficient.names <- rownames(s$coef)
@@ -5470,7 +5471,7 @@ extract.panelAR <- function(model, include.rsquared=TRUE, include.nobs=TRUE, inc
     if (include.groups == TRUE){
 	ngroups <- sqrt(length(s$Sigma))
     	gof <- c(gof, ngroups)
-    	gof.names <- c(gof.names, "Num. \\ panels")
+    	gof.names <- c(gof.names, "Num.\\ panels")
     	gof.decimal <- c(gof.decimal, FALSE)
     }
    
