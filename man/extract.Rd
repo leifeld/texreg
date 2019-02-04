@@ -147,6 +147,8 @@
 \alias{extract,oglmx-method}
 \alias{extract.ols}
 \alias{extract,ols-method}
+\alias{extract.panelAR}
+\alias{extract,panelAR-method}
 \alias{extract.pglm}
 \alias{extract,pglm-method}
 \alias{extract.pgmm}
@@ -518,6 +520,9 @@ extract(model, ...)
 \S4method{extract}{ols}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, include.lr = TRUE, ...)
+  
+ \S4method{extract}{panelAR}(model, include.rsquared = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE,...)
 
 \S4method{extract}{pglm}(model, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
@@ -939,6 +944,10 @@ An extract method for oglmx objects from the \pkg{oglmx} package.
 \item{\code{ols}}{
 An extract method for ols objects from the \pkg{rms} package.
 }
+  
+\item{\code{panelAR}}{
+An extract method for panelAR objects from the \pkg{panelAR} package.
+} 
 
 \item{\code{pglm}}{
 An extract method for pglm objects from the \pkg{pglm} package.
