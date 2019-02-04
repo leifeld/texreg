@@ -33,6 +33,7 @@ extract.broom <- function(model, ...) {
 setMethod("extract", signature = className("ANY"),
           definition = extract.broom)
 
+
 # extension for Arima objects (stats package)
 extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE,
     include.loglik = TRUE, ...) {
@@ -1569,6 +1570,7 @@ extract.negbin <- extract.glm
 setMethod("extract", signature = className("negbin", "MASS"),
     definition = extract.negbin)
 
+
 #extension for speedglm objects 
 extract.speedglm <- extract.glm
 setMethod("extract",  signature = className("speedglm", "speedglm"), 
@@ -1728,10 +1730,10 @@ extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
 setMethod("extract", signature = className("gls", "nlme"),
     definition = extract.gls)
 
-
 extract.gnls <- extract.gls
 setMethod("extract", signature = className("gnls", "nlme"),
           definition = extract.gnls)
+
 
 # extension for gel objects (gmm package)
 extract.gel <- function (model, include.obj.fcn = TRUE,
@@ -2360,8 +2362,6 @@ setMethod("extract", signature = className("nlmerMod", "lme4"),
     definition = extract.nlmerMod)
 
 
-
-
 # extension for lmrob and glmrob objects (robustbase package)
 extract.lmrob <- function(model, include.nobs = TRUE, ...) {
   s <- summary(model, ...)
@@ -2401,8 +2401,8 @@ extract.glmrob <- extract.lmrob
 setMethod("extract", signature = className("glmrob", "robustbase"),
     definition = extract.glmrob)
 
-#extension for lmRob objects (robust package)
 
+#extension for lmRob objects (robust package)
 extract.lmRob <- function(model, include.rsquared = TRUE,
                           include.nobs = TRUE, include.rmse = TRUE, ...) {
     s <- summary(model, ...)
@@ -2568,7 +2568,6 @@ extract.logitmfx <- function(model, include.nobs = TRUE, include.loglik = TRUE,
 
 setMethod("extract", signature = className("logitmfx", "mfx"),
     definition = extract.logitmfx)
-
 
 # extension for probitmfx objects (mfx package)
 extract.probitmfx <- extract.logitmfx
@@ -2796,7 +2795,6 @@ extract.lqmm <- function(model, include.aic = TRUE, include.bic = TRUE,
 
 setMethod("extract", signature = className("lqmm", "lqmm"),
     definition = extract.lqmm)
-
 
 
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
@@ -3028,8 +3026,7 @@ setMethod("extract", signature = className("mnlogit", "mnlogit"),
 
 
 # extension for mhurdle objects (mhurdle package)
-extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...)
-{
+extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...) {
     
     s <- summary(model, ...)
     names <- rownames(s$coefficients)
@@ -3048,7 +3045,7 @@ extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, 
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.nobs == TRUE) {
-        gof <- c(gof, length(s$model[ ,1]))
+        gof <- c(gof, length(s$model[, 1]))
         gof.names <- c(gof.names, "Num.\\ obs.")
         gof.decimal <- c(gof.decimal, FALSE)
     }
@@ -3402,7 +3399,6 @@ extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
 setMethod("extract", signature = className("oglmx", "oglmx"),
           definition = extract.oglmx)
 
-
 # extension for poissonirr objects (mfx package)
 extract.poissonirr <- extract.negbinirr
 setMethod("extract", signature = className("poissonirr", "mfx"),
@@ -3469,7 +3465,6 @@ extract.negbinmfx <- function(model, include.nobs = TRUE,
 
 setMethod("extract", signature = className("negbinmfx", "mfx"),
     definition = extract.negbinmfx)
-
 
 # extension for poissonmfx objects (mfx package)
 extract.poissonmfx <- extract.negbinmfx
@@ -3590,8 +3585,8 @@ setMethod("extract", signature = className("ols", "rms"),
 
 
 # extention for panelAR objects (panelAR package)					 
-extract.panelAR <- function(model, include.rsquared = TRUE, include.nobs = TRUE, include.groups = TRUE,...) {
-    s <- summary(model,...)
+extract.panelAR <- function(model, include.rsquared = TRUE, include.nobs = TRUE, include.groups = TRUE, ...) {
+    s <- summary(model, ...)
     
     coefficient.names <- rownames(s$coef)
     co <- s$coef[, 1]
@@ -4543,7 +4538,7 @@ setMethod("extract", signature = className("stergm", "tergm"),
     definition = extract.stergm)
 
 
-#extension for summary.lm objects (stats)
+# extension for summary.lm objects (stats)
 extract.summary.lm <- function (model, include.rsquared = TRUE, include.adjrs = TRUE, 
                                 include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, 
                                 ...) {
