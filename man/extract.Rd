@@ -18,6 +18,8 @@
 \alias{extract,betaor-method}
 \alias{extract.betareg}
 \alias{extract,betareg-method}
+\alias{extract.bife}
+\alias{extract,bife-method}
 \alias{extract.biglm}
 \alias{extract,biglm-method}
 \alias{extract.brglm}
@@ -49,6 +51,8 @@
 \alias{extract,ergmm-method}
 \alias{extract.ets}
 \alias{extract,ets-method}
+\alias{extract.feglm}
+\alias{extract,feglm-method}
 \alias{extract.felm}
 \alias{extract,felm-method}
 \alias{extract.fGARCH}
@@ -77,8 +81,12 @@
 \alias{extract,glmrob-method}
 \alias{extract.gls}
 \alias{extract,gls-method}
+\alias{extract.gnls}
+\alias{extract,gnls-method}
 \alias{extract.gmm}
 \alias{extract,gmm-method}
+\alias{extract.gnm}
+\alias{extract,gnm-method}
 \alias{extract.H2OBinomialModel}
 \alias{extract,H2OBinomialModel-method}
 \alias{extract.hurdle}
@@ -111,6 +119,8 @@
 \alias{extract,maBina-method}
 \alias{extract.mer}
 \alias{extract,mer-method}
+\alias{extract.mhurdle}
+\alias{extract,mhurdle-method}
 \alias{extract.mlogit}
 \alias{extract,mlogit-method}
 \alias{extract.mnlogit}
@@ -133,8 +143,12 @@
 \alias{extract,nlme-method}
 \alias{extract.nlmerMod}
 \alias{extract,nlmerMod-method}
+\alias{extract.oglmx}
+\alias{extract,oglmx-method}
 \alias{extract.ols}
 \alias{extract,ols-method}
+\alias{extract.panelAR}
+\alias{extract,panelAR-method}
 \alias{extract.pglm}
 \alias{extract,pglm-method}
 \alias{extract.pgmm}
@@ -245,6 +259,9 @@ extract(model, ...)
     include.pseudors = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
 
+\S4method{extract}{bife}(model, include.loglik = TRUE, include.aic = TRUE, 
+    include.bic = TRUE, include.nobs = TRUE, ...)    
+    
 \S4method{extract}{biglm}(model, include.nobs = TRUE, 
     include.aic = TRUE, use.ci = FALSE, ...)    
     
@@ -302,6 +319,9 @@ extract(model, ...)
     include.aic = TRUE, include.aicc = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...)
 
+\S4method{extract}{feglm}(model, include.deviance = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE, ...)
+  
 \S4method{extract}{felm}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, ...)
@@ -359,9 +379,17 @@ extract(model, ...)
 \S4method{extract}{gls}(model, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE,
     include.nobs = TRUE, ...)
+    
+\S4method{extract}{gnls}(model, include.aic = TRUE,
+    include.bic = TRUE, include.loglik = TRUE,
+    include.nobs = TRUE, ...)    
 
 \S4method{extract}{gmm}(model, include.obj.fcn = TRUE,
     include.overidentification = FALSE, include.nobs = TRUE, ...)
+    
+\S4method{extract}{gnm}(model, include.aic = TRUE, include.bic = TRUE,
+    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, 
+    include.df = FALSE, include.chisq = FALSE, include.delta = FALSE, ...)    
 
 \S4method{extract}{H2OBinomialModel}(model, standardized = FALSE,
       include.mse = TRUE, include.rsquared = TRUE,
@@ -438,6 +466,8 @@ extract(model, ...)
     include.loglik = TRUE, include.nobs = TRUE,
     include.groups = TRUE, include.intercept = TRUE,
     include.iterations = FALSE, beside = FALSE, ...)
+    
+\S4method{extract}{mhurdle}(model, include.nobs = TRUE, include.loglik = TRUE, ...)    
 
 \S4method{extract}{mlogit}(model, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, include.order = FALSE, ...)
@@ -482,10 +512,17 @@ extract(model, ...)
     include.deviance = FALSE, include.loglik = TRUE,
     include.nobs = TRUE, include.groups = TRUE,
     include.variance = TRUE, ...)
+    
+\S4method{extract}{oglmx}(model, include.aic = TRUE, 
+    include.iterations = TRUE, include.loglik = TRUE, 
+    include.nobs = TRUE, include.rsquared = TRUE, ...)
 
 \S4method{extract}{ols}(model, include.nobs = TRUE,
     include.rsquared = TRUE, include.adjrs = TRUE,
     include.fstatistic = FALSE, include.lr = TRUE, ...)
+  
+ \S4method{extract}{panelAR}(model, include.rsquared = TRUE, 
+    include.nobs = TRUE, include.groups = TRUE,...)
 
 \S4method{extract}{pglm}(model, include.aic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...)
@@ -651,6 +688,10 @@ An extract method for betaor objects from the \pkg{mfx} package.
 An extract method for betareg objects from the \pkg{betareg} package.
 }
 
+\item{\code{bife}}{
+An extract method for bife objects from the \pkg{bife} package.
+}
+
 \item{\code{biglm}}{
 An extract method for biglm objects from the \pkg{biglm} package.
 }
@@ -711,6 +752,10 @@ An extract method for ergmm objects from the \pkg{latentnet} package.
 An extract method for ets objects from the \pkg{forecast} package.
 }
 
+\item{\code{feglm}}{
+An extract method for feglm objects from the \pkg{alpaca} package.
+}
+
 \item{\code{felm}}{
 An extract method for felm objects from the \pkg{lfe} package.
 }
@@ -767,8 +812,16 @@ An extract method for glmrob objects from the \pkg{robustbase} package.
 An extract method for gls objects from the \pkg{nlme} package.
 }
 
+\item{\code{gnls}}{
+An extract method for gnls objects from the \pkg{nlme} package.
+}
+  
 \item{\code{gmm}}{
 An extract method for gmm objects from the \pkg{gmm} package.
+}
+
+\item{\code{gnm}}{
+An extract method for gnm objects from the \pkg{gnm} package.
 }
 
 \item{\code{H2OBinomialModel}}{
@@ -836,6 +889,10 @@ An extract method for maBina objects from the \pkg{erer} package.
 An extract method for mer objects from the (old) \pkg{lme4} package.
 }
 
+\item{\code{mhurdle}}{
+An extract method for mhurdle objects from the \pkg{mhurdle} package.
+}
+
 \item{\code{mlogit}}{
 An extract method for mlogit objects from the \pkg{mlogit} package.
 }
@@ -880,9 +937,17 @@ An extract method for nlme objects from the \pkg{nlme} package.
 An extract method for nlmerMod objects from the (old) \pkg{lme4} package.
 }
 
+\item{\code{oglmx}}{
+An extract method for oglmx objects from the \pkg{oglmx} package.
+}
+
 \item{\code{ols}}{
 An extract method for ols objects from the \pkg{rms} package.
 }
+  
+\item{\code{panelAR}}{
+An extract method for panelAR objects from the \pkg{panelAR} package.
+} 
 
 \item{\code{pglm}}{
 An extract method for pglm objects from the \pkg{pglm} package.
@@ -1031,6 +1096,7 @@ An extract method for zeroinfl objects from the \pkg{pscl} package.
 \item{include.auc}{ If available: should the area under the curve (AUC) be reported? }
 \item{include.bic}{ If available: should the Bayesian information criterion (BIC) be reported? }
 \item{include.censnobs}{ If available: should the total, right-censored, left-censored, and uncensored number of observations be reported? }
+\item{include.chisq}{ If available: should the Chi squared statistic be included? }
 \item{include.correlation}{ If available: should the correlation parameter alpha and its standard error be reported (for geeglm models)? }
 \item{include.count}{ If available: should the count model of a zero-inflated or hurdle regression be included in the coefficients block (before the zero-inflation or zero hurdle model)? }
 \item{include.delta}{ If available: should the delta statistic be included? }
