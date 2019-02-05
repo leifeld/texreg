@@ -439,7 +439,7 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 100 supported model types (version 1.36.24).]{\label{tab:types} List of 100 supported model types (version 1.36.24).} \\ \\
+\caption[List of 103 supported model types (version 1.36.24).]{\label{tab:types} List of 103 supported model types (version 1.36.24).} \\ \\
 \endlastfoot
 
 `\code{aftreg}'         & \pkg{eha}	            & Accelerated failure time regression \\
@@ -510,6 +510,7 @@ Class			& Package			& Description \\
 `\code{nlme}'           & \pkg{nlme}            & Nonlinear mixed-effects models \\
 `\code{oglmx}'          & \pkg{oglmx}           & Ordered Generalized Linear Model \\
 `\code{ols}'            & \pkg{rms}             & Ordinary least squares linear models \\
+`\code{panelAR}'        & \pkg{panelAR}         & Linear models on panel data structures in the presence of AR(1)-type autocorrelation \\
 `\code{pglm}'           & \pkg{pglm}            & Estimation by maximum likelihood of glm \\
 `\code{pgmm}'           & \pkg{plm}             & GMM estimation for panel data \\
 `\code{phreg}'          & \pkg{eha}             & Parametric proportional hazards regression \\

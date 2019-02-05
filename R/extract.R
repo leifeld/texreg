@@ -33,6 +33,7 @@ extract.broom <- function(model, ...) {
 setMethod("extract", signature = className("ANY"),
           definition = extract.broom)
 
+
 # extension for Arima objects (stats package)
 extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE,
     include.loglik = TRUE, ...) {
@@ -331,6 +332,107 @@ extract.betareg <- function(model, include.precision = TRUE,
 
 setMethod("extract", signature = className("betareg", "betareg"),
     definition = extract.betareg)
+
+
+# extension for bife objects (bife package)
+extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE, 
+                         include.bic = TRUE, include.nobs = TRUE, ...) {
+    s <- summary(model)
+    coefficient.names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 4]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    
+    if (include.loglik == TRUE) {
+        lik	<- s$loglik
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.aic == TRUE) {
+        aic <- s$AIC
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+        bic <- s$BIC
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        n <- s$nobs
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+setMethod("extract", signature = className("bife", "bife"), 
+          definition = extract.bife)
+
+
+#extension for biglm objects (biglm package)
+extract.biglm <- function(model, include.nobs = TRUE, include.aic = TRUE, use.ci = FALSE, ...) {
+    
+    tab <-summary(model)$mat
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.nobs == TRUE) {
+        gof <- c(gof, model$n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.aic == TRUE) {
+        gof <- c(gof, AIC(model))
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    if (use.ci == TRUE) {
+        tr <- createTexreg(
+            coef.names = rownames(tab),
+            coef = tab[, 1],
+            ci.low = tab[, 2],
+            ci.up = tab[, 3],
+            gof.names = gof.names,
+            gof = gof,
+            gof.decimal = gof.decimal
+        )
+        
+    } else {
+        tr <- createTexreg(
+            coef.names = rownames(tab),
+            coef = tab[, 1],
+            se = tab[, 4],
+            pvalues = tab[, 5],
+            gof.names = gof.names,
+            gof = gof,
+            gof.decimal = gof.decimal
+        )
+    } 
+    return(tr)
+}
+
+setMethod("extract", signature = className("biglm", "biglm"),
+          definition = extract.biglm)
 
 
 # extension for btergm objects
@@ -942,6 +1044,53 @@ setMethod("extract", signature = className("ets", "forecast"),
     definition = extract.ets)
 
 
+# extension for feglm objects (alpaca package)
+extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE, 
+                          include.groups = TRUE, ...) {
+    s <- summary(model, ...)
+    coefficient.names <- rownames(s$cm)
+    co <- s$cm[, 1]
+    se <- s$cm[, 2]
+    pval <- s$cm[, 4]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    
+    if (include.deviance == TRUE) {
+        dev <- s$deviance
+        gof <- c(gof, dev)
+        gof.names <- c(gof.names, "Deviance")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        n <- s$nobs
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.groups == TRUE) {
+        grp <- s$lvls.k
+        grp.names <- paste0("Num groups:", names(grp))
+        gof <- c(gof, grp)
+        gof.names <- c(gof.names, grp.names)
+        gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+setMethod("extract", signature = className("feglm", "alpaca"), definition = extract.feglm)
+
+
 # extension for ergmm objects (latentnet package)
 extract.ergmm <- function(model, include.bic = TRUE, ...) {
   s <- summary(model)
@@ -1355,66 +1504,66 @@ setMethod("extract", signature = className("geeglm", "geepack"),
 
 # extension for glm objects
 extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
-    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, ...) {
-  s <- summary(model, ...)
-
-  coefficient.names <- rownames(s$coef)
-  coefficients <- s$coef[, 1]
-  standard.errors <- s$coef[, 2]
-  significance <- s$coef[, 4]
-
-  aic <- AIC(model)
-  bic <- BIC(model)
-  lik <- logLik(model)[1]
-  dev <- deviance(model)
-  n <- nobs(model)
-  df.res <- df.residual(model)
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance == TRUE) {
-    gof <- c(gof, dev)
-    gof.names <- c(gof.names, "Deviance")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-  tr <- createTexreg(
-      coef.names = coefficient.names,
-      coef = coefficients,
-      se = standard.errors,
-      pvalues = significance,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal,
-      Df.res = df.res
-
-  )
-  return(tr)
+                        include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    coefficient.names <- rownames(s$coef)
+    coefficients <- s$coef[, 1]
+    standard.errors <- s$coef[, 2]
+    significance <- s$coef[, 4]
+    
+    aic <- AIC(model)
+    bic <- BIC(model)
+    lik <- logLik(model)[1]
+    dev <- deviance(model)
+    n <- nobs(model)
+    df.res <- df.residual(model)
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.deviance == TRUE) {
+        gof <- c(gof, dev)
+        gof.names <- c(gof.names, "Deviance")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = coefficients,
+        se = standard.errors,
+        pvalues = significance,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal,
+        Df.res = df.res
+        
+    )
+    return(tr)
 }
 
 setMethod("extract", signature = className("glm", "stats"),
-    definition = extract.glm)
+          definition = extract.glm)
 
 extract.brglm <- extract.glm
 setMethod("extract", signature = className("brglm", "brglm"),
@@ -1423,6 +1572,7 @@ setMethod("extract", signature = className("brglm", "brglm"),
 extract.negbin <- extract.glm
 setMethod("extract", signature = className("negbin", "MASS"),
     definition = extract.negbin)
+
 
 #extension for speedglm objects 
 extract.speedglm <- extract.glm
@@ -1583,10 +1733,10 @@ extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
 setMethod("extract", signature = className("gls", "nlme"),
     definition = extract.gls)
 
-
 extract.gnls <- extract.gls
 setMethod("extract", signature = className("gnls", "nlme"),
           definition = extract.gnls)
+
 
 # extension for gel objects (gmm package)
 extract.gel <- function (model, include.obj.fcn = TRUE,
@@ -1691,6 +1841,95 @@ setMethod("extract", signature = className("gmm", "gmm"),
     definition = extract.gmm)
 
 
+# extension for gnm objects (gnm package)
+extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
+                        include.loglik = TRUE, include.deviance = TRUE, 
+                        include.nobs = TRUE, include.df = FALSE, 
+                        include.chisq = FALSE, include.delta = FALSE, ...) {
+    
+    s <- summary(model)
+    coefficients.names <- names(model$coefficients)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 3]
+    
+    table <- as.data.frame(cbind(coefficients.names, co, se, pval))
+    table <- table[!is.na(table$se), ]
+    coefficients.names <- as.character(table$coefficients.names)
+    co <- as.numeric(as.character(table$co))
+    se <- as.numeric(as.character(table$se))
+    pval <- as.numeric(as.character(table$pval))
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    
+    if (include.df == TRUE) {
+        df <- model$df.residual
+        gof <- c(gof, df)
+        gof.names <- c(gof.names, "df.\ residuals")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.loglik == TRUE) {
+        lik <- logLik(model)[1]
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.deviance == TRUE) {
+        dev <- deviance(model)
+        gof <- c(gof, dev)
+        gof.names <- c(gof.names, "Deviance")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.chisq == TRUE) {
+        chisq <- sum(na.omit(c(residuals(model, "pearson")^2)))
+        gof <- c(gof, chisq)
+        gof.names <- c(gof.names, "Pearson chi-squared")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.aic == TRUE) {
+        aic <- AIC(model)[1]
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+        bic <- BIC(model)[1]
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.delta == TRUE) {
+        delta <- sum(na.omit(c(abs(residuals(model,"response"))))) / 
+            sum(na.omit(c(abs(fitted(model))))) / 2 * 100 # Dissimilarity index
+        gof <- c(gof, delta)
+        gof.names <- c(gof.names, "Dissim.\ Index")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        nobs <- length(model$y)
+        gof <- c(gof, nobs)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficients.names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract", signature = className("gnm", "gnm"),
+          definition = extract.gnm)
+
+
 # extension for H2OBinomialModel objects (h2o package)
 extract.H2OBinomialModel <- function(model, standardized = FALSE,
       include.mse = TRUE, include.rsquared = TRUE, include.logloss = TRUE,
@@ -1776,75 +2015,75 @@ setMethod("extract", signature = className("H2OBinomialModel", "h2o"),
 
 # extension for lm objects
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
-    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {
-  s <- summary(model, ...)
-
-  names <- rownames(s$coefficients)
-  co <- s$coefficients[, 1]
-  se <- s$coefficients[, 2]
-  pval <- s$coefficients[, 4]
-
-  rs <- s$r.squared  #extract R-squared
-  adj <- s$adj.r.squared  #extract adjusted R-squared
-  n <- nobs(model)  #extract number of observations
-  df.res <- df.residual(model) #extract residuals degrees of freedom 
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.rsquared == TRUE) {
-    gof <- c(gof, rs)
-    gof.names <- c(gof.names, "R$^2$")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.adjrs == TRUE) {
-    gof <- c(gof, adj)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-
-  if (include.nobs == TRUE) {
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-  if (include.fstatistic == TRUE) {
-    fstat <- s$fstatistic[[1]]
-    gof <- c(gof, fstat)
-    gof.names <- c(gof.names, "F statistic")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
-    rmse <- s$sigma[[1]]
-    gof <- c(gof, rmse)
-    gof.names <- c(gof.names, "RMSE")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-
-  if (include.nobs == TRUE) {
-      gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\ obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-
-  tr <- createTexreg(
-      coef.names = names,
-      coef = co,
-      se = se,
-      pvalues = pval,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal,
-      Df.res = df.res,
-      gof.decimal = gof.decimal
-  )
-  return(tr)
+                       include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    names <- rownames(s$coefficients)
+    co <- s$coefficients[, 1]
+    se <- s$coefficients[, 2]
+    pval <- s$coefficients[, 4]
+    
+    rs <- s$r.squared  #extract R-squared
+    adj <- s$adj.r.squared  #extract adjusted R-squared
+    n <- nobs(model)  #extract number of observations
+    df.res <- df.residual(model) #extract residuals degrees of freedom 
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.rsquared == TRUE) {
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.adjrs == TRUE) {
+        gof <- c(gof, adj)
+        gof.names <- c(gof.names, "Adj.\ R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    if (include.fstatistic == TRUE) {
+        fstat <- s$fstatistic[[1]]
+        gof <- c(gof, fstat)
+        gof.names <- c(gof.names, "F statistic")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
+        rmse <- s$sigma[[1]]
+        gof <- c(gof, rmse)
+        gof.names <- c(gof.names, "RMSE")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    
+    tr <- createTexreg(
+        coef.names = names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal,
+        Df.res = df.res,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
 }
 
 setMethod("extract", signature = className("lm", "stats"),
-    definition = extract.lm)
+          definition = extract.lm)
 
 extract.dynlm <- extract.lm
 setMethod("extract", signature = className("dynlm", "dynlm"),
@@ -2178,6 +2417,55 @@ setMethod("extract", signature = className("glmrob", "robustbase"),
     definition = extract.glmrob)
 
 
+#extension for lmRob objects (robust package)
+extract.lmRob <- function(model, include.rsquared = TRUE,
+                          include.nobs = TRUE, include.rmse = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    names <- rownames(s$coefficients)
+    co <- s$coefficients[, 1]
+    se <- s$coefficients[, 2]
+    pval <- s$coefficients[, 4]
+    
+    rs <- s$r.squared  #extract R-squared
+    n <- length(model$residuals)  #extract number of observations
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.rsquared == TRUE) {
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.rmse == TRUE && !is.null(s$sigma)) {
+        rmse <- s$sigma[[1]]
+        gof <- c(gof, rmse)
+        gof.names <- c(gof.names, "RMSE")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract", signature = className("lmRob", "robust"),
+          definition = extract.lmRob)
+
+
 # extension for lnam objects (sna package)
 extract.lnam <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     include.aic = TRUE, include.bic = TRUE, include.loglik = TRUE, ...) {
@@ -2295,7 +2583,6 @@ extract.logitmfx <- function(model, include.nobs = TRUE, include.loglik = TRUE,
 
 setMethod("extract", signature = className("logitmfx", "mfx"),
     definition = extract.logitmfx)
-
 
 # extension for probitmfx objects (mfx package)
 extract.probitmfx <- extract.logitmfx
@@ -2525,7 +2812,6 @@ setMethod("extract", signature = className("lqmm", "lqmm"),
     definition = extract.lqmm)
 
 
-
 # extension for lrm objects (Design or rms package); submitted by Fabrice Le Lec
 extract.lrm <- function(model, include.pseudors = TRUE, include.lr = TRUE,
     include.nobs = TRUE, ...) {
@@ -2752,6 +3038,45 @@ extract.mnlogit <- function(model, include.aic = TRUE, include.loglik = TRUE,
 
 setMethod("extract", signature = className("mnlogit", "mnlogit"),
     definition = extract.mnlogit)
+
+
+# extension for mhurdle objects (mhurdle package)
+extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...) {
+    
+    s <- summary(model, ...)
+    names <- rownames(s$coefficients)
+    class(names) <- "character"
+    co <- s$coefficients[, 1]
+    se <- s$coefficients[, 2]
+    pval <- s$coefficients[, 4]
+    class(co) <- class(se) <- class(pval) <- "numeric"
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.loglik == TRUE) {
+        gof <- c(gof, as.numeric(s$naive$logLik))
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, length(s$model[, 1]))
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(coef.names = names, 
+                       coef = co, 
+                       se = se, 
+                       pvalues = pval,
+                       gof.names = gof.names, 
+                       gof = gof, 
+                       gof.decimal = gof.decimal)
+    return(tr)
+}
+
+setMethod("extract", signature = className("mhurdle", "mhurdle"), 
+          definition = extract.mhurdle)
 
 
 # extension for model.selection objects (MuMIn package)
@@ -3026,6 +3351,69 @@ extract.negbinirr <- function(model, include.nobs = TRUE,
 setMethod("extract", signature = className("negbinirr", "mfx"),
     definition = extract.negbinirr)
 
+
+# extension for oglmx objects (oglmx package)
+extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
+                          include.loglik = TRUE, include.nobs = TRUE, include.rsquared = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    coefficient.names <- names(s$coefficients)
+    coefficients <- s$estimate[,1]
+    standard.errors <- s$estimate[,2]
+    significance <- s$estimate[,4]
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        aic <- s$AIC[1]
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        lik <- s$loglikelihood[1]
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    if (include.nobs == TRUE) {
+        n <- length(results.oprob$modelframes$Z)
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    if (include.iterations == TRUE) {
+        it <- s$no.iterations
+        gof <- c(gof, it)
+        gof.names <- c(gof.names, "Iterations")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    if (include.rsquared == TRUE) {
+        r2 <- s$McFaddensR2[1]
+        gof <- c(gof, r2)
+        gof.names <- c(gof.names, "McFadden's R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = coefficients,
+        se = standard.errors,
+        pvalues = significance,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract", signature = className("oglmx", "oglmx"),
+          definition = extract.oglmx)
+
 # extension for poissonirr objects (mfx package)
 extract.poissonirr <- extract.negbinirr
 setMethod("extract", signature = className("poissonirr", "mfx"),
@@ -3092,7 +3480,6 @@ extract.negbinmfx <- function(model, include.nobs = TRUE,
 
 setMethod("extract", signature = className("negbinmfx", "mfx"),
     definition = extract.negbinmfx)
-
 
 # extension for poissonmfx objects (mfx package)
 extract.poissonmfx <- extract.negbinmfx
@@ -3210,6 +3597,100 @@ extract.ols <- function (model, include.nobs = TRUE, include.rsquared = TRUE,
 
 setMethod("extract", signature = className("ols", "rms"),
     definition = extract.ols)
+
+
+# extention for panelAR objects (panelAR package)					 
+extract.panelAR <- function(model, include.rsquared = TRUE, include.nobs = TRUE, include.groups = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    coefficient.names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 4]	
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()	
+    
+    if (include.rsquared == TRUE){
+        rs <- s$r2
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE){
+        nobs <- length(s$residuals)
+        gof <- c(gof, nobs)
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }	
+    if (include.groups == TRUE){
+        ngroups <- sqrt(length(s$Sigma))
+        gof <- c(gof, ngroups)
+        gof.names <- c(gof.names, "Num.\\ panels")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(coef.names = coefficient.names,
+                       coef = co,
+                       se = se,
+                       pvalues = pval,
+                       gof.names = gof.names,
+                       gof = gof
+    )
+    return(tr)
+}
+setMethod("extract", signature = className("panelAR", "panelAR"),
+          definition = extract.panelAR)
+
+
+#extension for pglm objects (pglm package)
+extract.pglm <- function(model, include.aic = TRUE,
+                         include.loglik = TRUE, include.nobs = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    coefficient.names <- rownames(s$estimate)
+    coefficients <- s$estimate[, 1]
+    standard.errors <- s$estimate[, 2]
+    significance <- s$estimate[, 4]
+    
+    aic <- AIC(model)
+    lik <- logLik(model)[1]
+    n <- length(model$gradientObs[,1])
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = coefficient.names,
+        coef = coefficients,
+        se = standard.errors,
+        pvalues = significance,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract", signature = className("pglm", "pglm"),
+          definition = extract.pglm)
 
 
 # extension for pgmm objects (from the plm package)
@@ -4070,6 +4551,67 @@ extract.stergm <- function(model, beside = FALSE, include.formation = TRUE,
 
 setMethod("extract", signature = className("stergm", "tergm"),
     definition = extract.stergm)
+
+
+# extension for summary.lm objects (stats)
+extract.summary.lm <- function (model, include.rsquared = TRUE, include.adjrs = TRUE, 
+                                include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, 
+                                ...) {
+    s <- model
+    names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- s$coef[, 4]
+    
+    rs <- s$r.squared
+    adj <- s$adj.r.squared
+    n <- length(s$residuals)
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.rsquared == TRUE) {
+        gof <- c(gof, rs)
+        gof.names <- c(gof.names, "R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.adjrs == TRUE) {
+        gof <- c(gof, adj)
+        gof.names <- c(gof.names, "Adj. R$^2$")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num. obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.fstatistic == TRUE) {
+        fstat <- s$fstatistic[[1]]
+        gof <- c(gof, fstat)
+        gof.names <- c(gof.names, "F statistic")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
+        rmse <- s$sigma[[1]]
+        gof <- c(gof, rmse)
+        gof.names <- c(gof.names, "RMSE")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names, 
+        coef = co, 
+        se = se, 
+        pvalues = pval, 
+        gof.names = gof.names, 
+        gof = gof, 
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+setMethod("extract",  signature = className("summary.lm", "stats"), 
+          definition = extract.summary.lm)
 
 
 # extension for survreg objects (survival package)
@@ -4966,494 +5508,3 @@ extract.hurdle <- extract.zeroinfl
 setMethod("extract", signature = className("hurdle", "pscl"),
     definition = extract.hurdle)
 
-
-#extension for summary.lm objects
-extract.summary.lm <- function (model, include.rsquared = TRUE, include.adjrs = TRUE, 
-                                include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, 
-                                ...) {
-    s <- model
-    names <- rownames(s$coef)
-    co <- s$coef[, 1]
-    se <- s$coef[, 2]
-    pval <- s$coef[, 4]
-    
-    rs <- s$r.squared
-    adj <- s$adj.r.squared
-    n <- length(s$residuals)
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.rsquared == TRUE) {
-        gof <- c(gof, rs)
-        gof.names <- c(gof.names, "R$^2$")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.adjrs == TRUE) {
-        gof <- c(gof, adj)
-        gof.names <- c(gof.names, "Adj. R$^2$")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num. obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    if (include.fstatistic == TRUE) {
-        fstat <- s$fstatistic[[1]]
-        gof <- c(gof, fstat)
-        gof.names <- c(gof.names, "F statistic")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
-        rmse <- s$sigma[[1]]
-        gof <- c(gof, rmse)
-        gof.names <- c(gof.names, "RMSE")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    
-    tr <- createTexreg(
-        coef.names = names, 
-        coef = co, 
-        se = se, 
-        pvalues = pval, 
-        gof.names = gof.names, 
-        gof = gof, 
-        gof.decimal = gof.decimal
-    )
-    return(tr)
-}
-
-setMethod("extract",  signature = className("summary.lm", "stats"), 
-          definition = extract.summary.lm)
-
-extract.biglm <- function(model, include.nobs = TRUE, include.aic = TRUE, use.ci = FALSE, ...) {
-    
-    tab <-summary(model)$mat
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.nobs == TRUE) {
-        gof <- c(gof, model$n)
-        gof.names <- c(gof.names, "Num.\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    if (include.aic == TRUE) {
-        gof <- c(gof, AIC(model))
-        gof.names <- c(gof.names, "AIC")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    
-    if (use.ci == TRUE) {
-        tr <- createTexreg(
-            coef.names = rownames(tab),
-            coef = tab[, 1],
-            ci.low = tab[, 2],
-            ci.up = tab[, 3],
-            gof.names = gof.names,
-            gof = gof,
-            gof.decimal = gof.decimal
-        )
-        
-    } else {
-        tr <- createTexreg(
-            coef.names = rownames(tab),
-            coef = tab[, 1],
-            se = tab[, 4],
-            pvalues = tab[, 5],
-            gof.names = gof.names,
-            gof = gof,
-            gof.decimal = gof.decimal
-        )
-    } 
-    return(tr)
-}
-
-setMethod("extract", signature = className("biglm", "biglm"),
-          definition = extract.biglm)
-
-#extension for lmRob objects (robust package)
-
-extract.lmRob <- function(model, include.rsquared = TRUE,
-                          include.nobs = TRUE, include.rmse = TRUE, ...) {
-    s <- summary(model, ...)
-    
-    names <- rownames(s$coefficients)
-    co <- s$coefficients[, 1]
-    se <- s$coefficients[, 2]
-    pval <- s$coefficients[, 4]
-    
-    rs <- s$r.squared  #extract R-squared
-    n <- length(model$residuals)  #extract number of observations
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.rsquared == TRUE) {
-        gof <- c(gof, rs)
-        gof.names <- c(gof.names, "R$^2$")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num.\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    if (include.rmse == TRUE && !is.null(s$sigma)) {
-        rmse <- s$sigma[[1]]
-        gof <- c(gof, rmse)
-        gof.names <- c(gof.names, "RMSE")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    
-    tr <- createTexreg(
-        coef.names = names,
-        coef = co,
-        se = se,
-        pvalues = pval,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-    return(tr)
-}
-
-setMethod("extract", signature = className("lmRob", "robust"),
-          definition = extract.lmRob)
-
-#extension for pglm objects (pglm package)
-extract.pglm <- function(model, include.aic = TRUE,
-                         include.loglik = TRUE, include.nobs = TRUE, ...) {
-    s <- summary(model, ...)
-    
-    coefficient.names <- rownames(s$estimate)
-    coefficients <- s$estimate[, 1]
-    standard.errors <- s$estimate[, 2]
-    significance <- s$estimate[, 4]
-    
-    aic <- AIC(model)
-    lik <- logLik(model)[1]
-    n <- length(model$gradientObs[,1])
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.aic == TRUE) {
-        gof <- c(gof, aic)
-        gof.names <- c(gof.names, "AIC")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.loglik == TRUE) {
-        gof <- c(gof, lik)
-        gof.names <- c(gof.names, "Log Likelihood")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num.\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
-    tr <- createTexreg(
-        coef.names = coefficient.names,
-        coef = coefficients,
-        se = standard.errors,
-        pvalues = significance,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-    return(tr)
-}
-
-setMethod("extract", signature = className("pglm", "pglm"),
-          definition = extract.pglm)
-
-# extension for mhurdle objects (mhurdle package)
-extract.mhurdle <- function (model, include.nobs = TRUE, include.loglik = TRUE, ...)
-    {
-    
-    s <- summary(model, ...)
-    names <- rownames(s$coefficients)
-    class(names) <- "character"
-    co <- s$coefficients[, 1]
-    se <- s$coefficients[, 2]
-    pval <- s$coefficients[, 4]
-    class(co) <- class(se) <- class(pval) <- "numeric"
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.loglik == TRUE) {
-        gof <- c(gof, as.numeric(s$naive$logLik))
-        gof.names <- c(gof.names, "Log Likelihood")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-        gof <- c(gof, length(s$model[ ,1]))
-        gof.names <- c(gof.names, "Num.\\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
-    tr <- createTexreg(coef.names = names, 
-                       coef = co, 
-                       se = se, 
-                       pvalues = pval,
-                       gof.names = gof.names, 
-                       gof = gof, 
-                       gof.decimal = gof.decimal)
-    return(tr)
-}
-
-setMethod("extract", signature = className("mhurdle", "mhurdle"), 
-          definition = extract.mhurdle)
-
-# extension for oglmx objects (oglmx package)
-extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
-                          include.loglik = TRUE, include.nobs = TRUE, include.rsquared = TRUE, ...) {
-    s <- summary(model, ...)
-    
-    coefficient.names <- names(s$coefficients)
-    coefficients <- s$estimate[,1]
-    standard.errors <- s$estimate[,2]
-    significance <- s$estimate[,4]
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.aic == TRUE) {
-        aic <- s$AIC[1]
-        gof <- c(gof, aic)
-        gof.names <- c(gof.names, "AIC")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.loglik == TRUE) {
-        lik <- s$loglikelihood[1]
-        gof <- c(gof, lik)
-        gof.names <- c(gof.names, "Log Likelihood")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    
-    if (include.nobs == TRUE) {
-        n <- length(results.oprob$modelframes$Z)
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num.\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
-    if (include.iterations == TRUE) {
-        it <- s$no.iterations
-        gof <- c(gof, it)
-        gof.names <- c(gof.names, "Iterations")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
-    if (include.rsquared == TRUE) {
-        r2 <- s$McFaddensR2[1]
-        gof <- c(gof, r2)
-        gof.names <- c(gof.names, "McFadden's R$^2$")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    
-    tr <- createTexreg(
-        coef.names = coefficient.names,
-        coef = coefficients,
-        se = standard.errors,
-        pvalues = significance,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-    return(tr)
-}
-
-setMethod("extract", signature = className("oglmx", "oglmx"),
-          definition = extract.oglmx)
-                                         
-# extension for bife objects (bife package)
-extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE, 
-                         include.bic = TRUE, include.nobs = TRUE, ...) {
-    s <- summary(model)
-    coefficient.names <- rownames(s$coef)
-    co <- s$coef[, 1]
-    se <- s$coef[, 2]
-    pval <- s$coef[, 4]
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    
-    if (include.loglik == TRUE) {
-        lik	<- s$loglik
-        gof <- c(gof, lik)
-        gof.names <- c(gof.names, "Log Likelihood")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.aic == TRUE) {
-        aic <- s$AIC
-        gof <- c(gof, aic)
-        gof.names <- c(gof.names, "AIC")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.bic == TRUE) {
-        bic <- s$BIC
-        gof <- c(gof, bic)
-        gof.names <- c(gof.names, "BIC")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-        n <- s$nobs
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num.\\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
-    tr <- createTexreg(
-        coef.names = coefficient.names,
-        coef = co,
-        se = se,
-        pvalues = pval,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-    return(tr)
-}
-setMethod("extract", signature = className("bife", "bife"), 
-          definition = extract.bife)
-
-
-# extension for feglm objects (alpaca package)
-extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE, 
-                          include.groups = TRUE, ...) {
-    s <- summary(model, ...)
-    coefficient.names <- rownames(s$cm)
-    co <- s$cm[, 1]
-    se <- s$cm[, 2]
-    pval <- s$cm[, 4]
-    
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    
-    if (include.deviance == TRUE) {
-        dev <- s$deviance
-        gof <- c(gof, dev)
-        gof.names <- c(gof.names, "Deviance")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-        n <- s$nobs
-        gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num.\\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    if (include.groups == TRUE) {
-        grp <- s$lvls.k
-        grp.names <- paste0("Num groups:", names(grp))
-        gof <- c(gof, grp)
-        gof.names <- c(gof.names, grp.names)
-        gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
-    }
-    
-    tr <- createTexreg(
-        coef.names = coefficient.names,
-        coef = co,
-        se = se,
-        pvalues = pval,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-    return(tr)
-}
-setMethod("extract", signature = className("feglm", "alpaca"), definition = extract.feglm)
-                                         
-# extension for gnm objects (gnm package)
-extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
-                        include.loglik = TRUE, include.deviance = TRUE, 
-                        include.nobs = TRUE, include.df = FALSE, 
-                        include.chisq = FALSE, include.delta = FALSE, ...) {
-    
-    s <- summary(model)
-    coefficients.names <- names(model$coefficients)
-    co <- s$coef[, 1]
-    se <- s$coef[, 2]
-    pval <- s$coef[, 3]
-
-    table <- as.data.frame(cbind(coefficients.names, co, se, pval))
-    table <- table[!is.na(table$se), ]
-    coefficients.names <- as.character(table$coefficients.names)
-    co <- as.numeric(as.character(table$co))
-    se <- as.numeric(as.character(table$se))
-    pval <- as.numeric(as.character(table$pval))
-
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    
-    if (include.df == TRUE) {
-        df <- model$df.residual
-        gof <- c(gof, df)
-        gof.names <- c(gof.names, "df.\ residuals")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    if (include.loglik == TRUE) {
-        lik <- logLik(model)[1]
-        gof <- c(gof, lik)
-        gof.names <- c(gof.names, "Log Likelihood")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.deviance == TRUE) {
-        dev <- deviance(model)
-        gof <- c(gof, dev)
-        gof.names <- c(gof.names, "Deviance")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.chisq == TRUE) {
-        chisq <- sum(na.omit(c(residuals(model, "pearson")^2)))
-        gof <- c(gof, chisq)
-        gof.names <- c(gof.names, "Pearson chi-squared")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.aic == TRUE) {
-        aic <- AIC(model)[1]
-        gof <- c(gof, aic)
-        gof.names <- c(gof.names, "AIC")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.bic == TRUE) {
-        bic <- BIC(model)[1]
-        gof <- c(gof, bic)
-        gof.names <- c(gof.names, "BIC")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.delta == TRUE) {
-        delta <- sum(na.omit(c(abs(residuals(model,"response"))))) / 
-            sum(na.omit(c(abs(fitted(model))))) / 2 * 100 # Dissimilarity index
-        gof <- c(gof, delta)
-        gof.names <- c(gof.names, "Dissim.\ Index")
-        gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-        nobs <- length(model$y)
-        gof <- c(gof, nobs)
-        gof.names <- c(gof.names, "Num.\ obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
-    }
-    
-    tr <- createTexreg(
-        coef.names = coefficients.names,
-        coef = co,
-        se = se,
-        pvalues = pval,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-    return(tr)
-}
-
-setMethod("extract", signature = className("gnm", "gnm"),
-          definition = extract.gnm)
