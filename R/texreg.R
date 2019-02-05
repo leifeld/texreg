@@ -1307,7 +1307,7 @@ htmlreg <- function(l,
         nameheader <- paste0("<tr>\n", nameheader)
         nameheader <- paste0(nameheader, h.ind, b.ind, ind, "</tr>\n")
         string <- paste0(string, nameheader)
-    }else if (length(tablehead) != 0 & inline.css == FALSE){ 
+    } else if (length(tablehead) != 0 & inline.css == FALSE){ 
         string <- paste0(string, "<th><b></b></th>\n")
         string <- paste0(string, tablehead)
         string <- paste0(string, "</tr>\n")
@@ -1321,7 +1321,7 @@ htmlreg <- function(l,
         nameheader <- paste0(nameheader, h.ind, b.ind, ind, "</tr>\n")
         string <- paste0(string, nameheader)
         
-    }else { 
+    } else { 
         # specify model names (header row)
         for (i in 1:length(mod.names)) {
             string <- paste0(string, 
@@ -1610,6 +1610,7 @@ wordreg <- function(l,
                      custom.columns = custom.columns,
                      custom.col.pos = custom.col.pos,
                      output.type = 'ascii',
+
                      include.attributes = FALSE,
                      ...)
     wd <- getwd()
