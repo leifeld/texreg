@@ -73,7 +73,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         }
     }
     
-    # plot each model
+    # make dataframe
     for (i in 1:length(models)) {
         
         # custom coefficient names
@@ -97,12 +97,6 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
                            "character vectors."))
             }
         }
-        
-        # remove any of the coefficients? apply regex
-        #remove.rows <- grep(omit.coef, models[[i]]@coef.names)
-        #if (is.na(omit.coef)) {
-        #    remove.rows <- length(models[[i]]@coef) + 1
-        #}
         
         coef.names <- models[[i]]@coef.names
         co.names <- append(co.names, coef.names)
@@ -133,6 +127,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     if (length(models[[i]]@se) > 0) {
         dataframe <- cbind(dataframe, se)
     } else {
+        
         #do  nothing
     }
     if (length(models[[i]]@pvalues) > 0) {
@@ -150,15 +145,6 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     } else {
         #do  nothing
     }
-    
-    #reorder 
-    dataframe <- reorder(dataframe, reorder.coef)
-    
-    #omit.coef
-    #if (length(omit.coef)> 0){
-    #    dataframe <- dataframe[grep(omit.coef, dataframe$co.names, invert = TRUE), ]
-    #}
-    #cat("\ndataframe: ", deparse(dataframe))
     
     dataframe$co <- as.numeric(as.character(dataframe$co))
     
@@ -182,7 +168,6 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     } else {
         #do  nothing
     }
-    #cat("\ndataframe: ", deparse(dataframe))
     
     # aggregate confidence intervals or SEs
     if (use.se[i] == TRUE && length(models[[i]]@se) > 0) {
@@ -190,19 +175,6 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         upper.inner <- dataframe$co + dataframe$se
         lower.outer <- dataframe$co - 2 * dataframe$se
         upper.outer <- dataframe$co + 2 * dataframe$se
-        # if (length(models[[i]]@pvalues) > 0) {
-        #     dataframe$pv <- dataframe$pv[-remove.rows]
-        #     dataframe$signif.outer <- dataframe$pv < (1 - ci.level)
-        
-        # sort according to reorder.coef argument
-        #     dataframe <- data.frame(co.names, co, se, pv)
-        #     dataframe <- reorder(dataframe, reorder.coef)
-        #     pv <- dataframe[, 4]
-        #} else {
-        # sort according to reorder.coef argument
-        #    dataframe <- data.frame(co.names, co, se)
-        #    dataframe <- reorder(dataframe, reorder.coef)
-        #}
         
     } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
         z.inner <- qnorm(1 - ((1 - 0.5) / 2))
@@ -211,11 +183,10 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         z.outer <- qnorm(1 - ((1 - ci.level) / 2))
         lower.outer <- dataframe$co - (z.outer * dataframe$se)
         upper.outer <- dataframe$co + (z.outer * dataframe$se)
-        #signif.outer <- TRUE
+
     } else if (length(models[[i]]@se) == 0 && length(models[[i]]@pvalues) > 0) {
         stop("Model has p-values but no SEs. SEs or CIs are required for plotting.")
     } else {
-        #si può eliminare assegnando al data frame sopra direttamente lower.outer upper.outer
         lower.outer <- dataframe$ci.low
         upper.outer <- dataframe$ci.up
         lower.inner <- rep(0, length(dataframe))
@@ -234,11 +205,11 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         dataframe <- cbind(dataframe, upper.inner)     
     }
     
-    if (length(dataframe$pv)> 0) {
+    if (length(dataframe$pv) > 0) {
         signif.outer <- dataframe$pv < (1 - ci.level)
     } 
     
-    if(length(dataframe$ci.low) >0) {
+    if(length(dataframe$ci.low) > 0) {
         signif.outer <- ((dataframe$ci.low > 0 & dataframe$ci.up) > 0 | (dataframe$ci.low < 0 & dataframe$ci.up) < 0)
     }
     
@@ -258,10 +229,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     signif <- signif == FALSE
     
     dataframe <- cbind(dataframe, signif)
-    cat("\ndataframe$co.names1: ", dataframe$signif)
-    rownames(dataframe) <- factor(rownames(dataframe))
-    cat("\ndataframe$co.names2: ", dataframe$signif)
-    #dataframe <- dataframe[order(rownames(dataframe)), , drop = TRUE]
+    
     if (length(co) == 0) {
         stop(paste("No coefficients available. Was the 'omit.coef' argument", 
                    "misspecified? If coefficients were renamed using the",
@@ -269,15 +237,23 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
                    "coefficients."))
     }
     
+    # reorder 
+    #dataframe <- reorder(dataframe, reorder.coef)
+    
+    # omit.coef
+    if (!is.na(omit.coef)) {
+        dataframe <- dataframe[!grepl(omit.coef, dataframe$co.names), ]
+    }
+    
     # ggplot functions   
     if (type == "facet") {
         p <- ggplot(dataframe, aes(co.names, co)) + 
             geom_hline(yintercept=0, lty=2, lwd=1, colour="grey50") +
             geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
-                          lwd=1, colour = ifelse(signif == TRUE , signif.light, insignif.light), width=0) +
+                          lwd=1, colour = ifelse(dataframe$signif == TRUE , signif.light, insignif.light), width=0) +
             geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), lwd=2.5, 
-                          colour = ifelse(signif == TRUE, signif.medium, insignif.medium), width=0) +
-            geom_point(size=3, pch = ifelse(signif == TRUE, 21, 22), fill = ifelse(signif == TRUE, signif.dark, insignif.dark)) +
+                          colour = ifelse(dataframe$signif == TRUE, signif.medium, insignif.medium), width=0) +
+            geom_point(alpha = 1, size=3, pch = ifelse(dataframe$signif == TRUE, 21, 22), fill = ifelse(dataframe$signif == TRUE, signif.dark, insignif.dark)) +
             coord_flip() + 
             theme_bw() +
             xlab(" ")
@@ -290,16 +266,20 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         
     } else if (type == "forest") {
         
-        cat("\ndataframeforest: ", deparse(dataframe))
+        #cat("\ndataframeforest: ", deparse(dataframe))
         #dataframe <- dataframe[order(rownames(dataframe)), ]
         #dataframe$signif <- as.factor(dataframe$signif)
             p <- ggplot(dataframe, aes(lab, co)) + 
                 geom_hline(yintercept=0, lty=2, lwd=1, colour="grey50") +
                 geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
-                              lwd=1, colour = ifelse(dataframe[order(rownames(dataframe)) ,]$signif == TRUE , signif.light, insignif.light), width=0) +
-                geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), lwd=2.5, 
-                              colour = ifelse(dataframe[order(rownames(dataframe)) ,]$signif == TRUE, signif.medium, insignif.medium), width=0) +
-                geom_point(size=3, pch = ifelse(dataframe[order(rownames(dataframe)) ,]$signif == TRUE, 21, 22), fill = ifelse(dataframe[order(rownames(dataframe)) ,]$signif == TRUE, signif.dark, insignif.dark)) +
+                              lwd=1, 
+                              colour = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE , signif.light, insignif.light), width=0) +
+                geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), 
+                              lwd=2.5, 
+                              colour = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, signif.medium, insignif.medium), width=0) +
+                geom_point(size=3, 
+                           pch = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, 21, 22), 
+                           fill = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, signif.dark, insignif.dark)) +
                 coord_flip() + 
                 theme_bw() +
                 xlab(" ") +
@@ -310,31 +290,24 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
                 p <- p +  
                     ggtitle("Models")
             }
-            
-    cat("\ndataframe$co.names2: ", dataframe$signif)   
     } 
-    # else if (type == "forest" && length(models == 1)) {
-    # stop(message("Forest plot can be specified for two or more models only."))
-    # }
     
     # adds message to p as ylab; adds output meassages to paste that comes as R output (not in plot)
     if (use.se[i] == TRUE && length(models[[i]]@se) > 0) {
-        p <- p + ylab("Bars denote SEs.")
+        p <- p + ylab("Bars denote SEs.\n Circle points and red color \n denote significance.")
         message(paste0("Model ", i, 
                        ": bars denote one (inner) resp. two (outer) standard errors."))
     } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
-        p <- p + ylab("Bars denote CIs.")
+        p <- p + ylab("Bars denote CIs.\n Circle points and red color \n denote significance.")
          message(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
                         " (outer) confidence intervals (computed from standard errors)."))
     } else {
-        p <- p + ylab("Bars denote CIs.")
+        p <- p + ylab("Bars denote CIs.\n Circle points and red color \n denote significance.")
         message(paste0("Model ", i, ": bars denote  ", ci.level, 
                        " confidence intervals."))
     }
     
     print(p)
-    
-    
     
     if (!is.null(file) && !is.na(file)) {
         dev.off()
