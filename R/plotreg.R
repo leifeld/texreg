@@ -9,8 +9,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
                     lwd.outer = 5, ylab.cex = 1.0, signif.light = "#fbc9b9", 
                     signif.medium = "#f7523a", signif.dark = "#bd0017", 
                     insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
-                    insignif.dark = "#1c5ba6", type = "facet", co = NULL, se = NULL,
-                    co.names = NULL, pv = NULL, lab = NULL, ci.low = NULL, ci.up = NULL, ...) {
+                    insignif.dark = "#1c5ba6", type = "facet", ...) {
     
     if (!is.null(omit.coef) && !is.na(omit.coef) && !is.character(omit.coef)) {
         stop("omit.coef must be a character string!")
@@ -73,6 +72,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         }
     }
     
+    co <- se <- co.names <- pv <- lab <- ci.low <- ci.up <- NULL
     # make dataframe
     for (i in 1:length(models)) {
         
@@ -256,12 +256,12 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
             geom_point(alpha = 1, size=3, pch = ifelse(dataframe$signif == TRUE, 21, 22), fill = ifelse(dataframe$signif == TRUE, signif.dark, insignif.dark)) +
             coord_flip() + 
             theme_bw() +
-            xlab(" ")
+            xlab(" ") +
+            facet_wrap(~lab, strip.position="left", nrow=length(dataframe), scales = "free_y")
         if (length(models) == 1) {
             p <- p +   ggtitle("Model")
         } else if (length(models) > 1) {
-            p <- p +  facet_wrap(~lab, strip.position="left", nrow=length(dataframe), scales = "free_y") +
-                ggtitle("Models")
+            p <- p +  ggtitle("Models")
         }
         
     } else if (type == "forest") {
