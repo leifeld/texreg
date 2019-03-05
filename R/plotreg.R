@@ -126,48 +126,37 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     
     if (length(models[[i]]@se) > 0) {
         dataframe <- cbind(dataframe, se)
-    } else {
-        
-        #do  nothing
-    }
+    } 
+    
     if (length(models[[i]]@pvalues) > 0) {
         dataframe <- cbind(dataframe, pv)
-    } else {
-        #do  nothing
-    }
+    } 
+    
     if (length(models[[i]]@ci.low) > 0) {
         dataframe <- cbind(dataframe, ci.low)
-    } else {
-        #do  nothing
-    }
+    } 
+    
     if (length(models[[i]]@ci.up) > 0) {
         dataframe <- cbind(dataframe, ci.up)
-    } else {
-        #do  nothing
-    }
+    } 
     
     dataframe$co <- as.numeric(as.character(dataframe$co))
     
     if (length(dataframe$se) > 0) {
         dataframe$se <- as.numeric(as.character(dataframe$se))
-    } else {
-        #do  nothing
-    }
+    } 
+    
     if (length(dataframe$pv) > 0) {
         dataframe$pv <- as.numeric(as.character(dataframe$pv))
-    } else {
-        #do  nothing
-    }
+    } 
+    
     if (length(dataframe$ci.low) > 0) {
         dataframe$ci.low <- as.numeric(as.character(dataframe$ci.low))
-    } else {
-        #do  nothing
-    }
+    } 
+    
     if (length(dataframe$ci.up) > 0) {
         dataframe$ci.up <- as.numeric(as.character(dataframe$ci.up))
-    } else {
-        #do  nothing
-    }
+    } 
     
     # aggregate confidence intervals or SEs
     if (use.se[i] == TRUE && length(models[[i]]@se) > 0) {
@@ -237,16 +226,41 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
                    "coefficients."))
     }
     
-    # reorder 
-    #dataframe <- reorder(dataframe, reorder.coef)
+    
     
     # omit.coef
     if (!is.na(omit.coef)) {
         dataframe <- dataframe[!grepl(omit.coef, dataframe$co.names), ]
     }
     
+    #custom coef. name
+    if (length(custom.coef.names)> 0) {
+        levels(dataframe$co.names) <- custom.coef.names
+    }
+    
+    #custom model name
+    if (length(custom.model.names)> 0) {
+        levels(dataframe$lab) <- custom.model.names
+    }
+    
+    
     # ggplot functions   
     if (type == "facet") {
+
+         if (length(reorder.coef) > 0) {
+             #reorder levels 
+             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+             #reorder coef
+             reorder.coef<- rev(reorder.coef)
+             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
+         } else {
+             #reorder levels 
+             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+             #reorder coef in original order
+             startlevel<- c(length(dataframe$co.names):1)
+             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
+              }
+        
         p <- ggplot(dataframe, aes(co.names, co)) + 
             geom_hline(yintercept=0, lty=2, lwd=1, colour="grey50") +
             geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
@@ -266,9 +280,19 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         
     } else if (type == "forest") {
         
-        #cat("\ndataframeforest: ", deparse(dataframe))
-        #dataframe <- dataframe[order(rownames(dataframe)), ]
-        #dataframe$signif <- as.factor(dataframe$signif)
+         if (length(reorder.coef) > 0) {
+             #reorder levels 
+             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+             #reorder coef
+             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
+        } else {
+            #reorder levels 
+            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            #reorder coef in original order
+            startlevel<- c(1:length(dataframe$co.names))
+            dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
+    }
+        
             p <- ggplot(dataframe, aes(lab, co)) + 
                 geom_hline(yintercept=0, lty=2, lwd=1, colour="grey50") +
                 geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
@@ -295,14 +319,23 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     # adds message to p as ylab; adds output meassages to paste that comes as R output (not in plot)
     if (use.se[i] == TRUE && length(models[[i]]@se) > 0) {
         p <- p + ylab("Bars denote SEs.\n Circle points and red color \n denote significance.")
+        if (length(custom.note) > 0) {
+            p <- p + ylab(custom.note)
+        }
         message(paste0("Model ", i, 
                        ": bars denote one (inner) resp. two (outer) standard errors."))
     } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
         p <- p + ylab("Bars denote CIs.\n Circle points and red color \n denote significance.")
-         message(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
+         if (length(custom.note) > 0) {
+             p <- p + ylab(custom.note)
+         }
+        message(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
                         " (outer) confidence intervals (computed from standard errors)."))
     } else {
         p <- p + ylab("Bars denote CIs.\n Circle points and red color \n denote significance.")
+        if (length(custom.note) > 0) {
+            p <- p + ylab(custom.note)
+        }
         message(paste0("Model ", i, ": bars denote  ", ci.level, 
                        " confidence intervals."))
     }
