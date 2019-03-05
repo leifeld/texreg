@@ -172,7 +172,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         z.outer <- qnorm(1 - ((1 - ci.level) / 2))
         lower.outer <- dataframe$co - (z.outer * dataframe$se)
         upper.outer <- dataframe$co + (z.outer * dataframe$se)
-
+        
     } else if (length(models[[i]]@se) == 0 && length(models[[i]]@pvalues) > 0) {
         stop("Model has p-values but no SEs. SEs or CIs are required for plotting.")
     } else {
@@ -246,32 +246,43 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     
     # ggplot functions   
     if (type == "facet") {
-
-         if (length(reorder.coef) > 0) {
-             #reorder levels 
-             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-             #reorder coef
-             reorder.coef<- rev(reorder.coef)
-             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
-         } else {
-             #reorder levels 
-             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-             #reorder coef in original order
-             startlevel<- c(length(dataframe$co.names):1)
-             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
-              }
+        
+        if (length(reorder.coef) > 0) {
+            #reorder levels 
+            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            #reorder coef
+            reorder.coef<- rev(reorder.coef)
+            dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
+        } else {
+            #reorder levels 
+            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            #reorder coef in original order
+            startlevel<- c(length(dataframe$co.names):1)
+            dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
+        }
         
         p <- ggplot(dataframe, aes(co.names, co)) + 
-            geom_hline(yintercept=0, lty=2, lwd=1, colour="grey50") +
+            geom_hline(yintercept=0, 
+                       lty=2, lwd=1, 
+                       colour="grey50") +
             geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
-                          lwd=1, colour = ifelse(dataframe$signif == TRUE , signif.light, insignif.light), width=0) +
-            geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), lwd=2.5, 
-                          colour = ifelse(dataframe$signif == TRUE, signif.medium, insignif.medium), width=0) +
-            geom_point(alpha = 1, size=3, pch = ifelse(dataframe$signif == TRUE, 21, 22), fill = ifelse(dataframe$signif == TRUE, signif.dark, insignif.dark)) +
+                          lwd=1, 
+                          colour = ifelse(dataframe$signif == TRUE , signif.light, insignif.light), 
+                          width=0) +
+            geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), 
+                          lwd=2.5, 
+                          colour = ifelse(dataframe$signif == TRUE, signif.medium, insignif.medium), 
+                          width=0) +
+            geom_point(size=3, 
+                       pch = ifelse(dataframe$signif == TRUE, 21, 22), 
+                       fill = ifelse(dataframe$signif == TRUE, signif.dark, insignif.dark)) +
             coord_flip() + 
             theme_bw() +
             xlab(" ") +
-            facet_wrap(~lab, strip.position="left", nrow=length(dataframe), scales = "free_y")
+            facet_wrap(~lab, 
+                       strip.position="left", 
+                       nrow=length(dataframe), 
+                       scales = "free_y")
         if (length(models) == 1) {
             p <- p +   ggtitle("Model")
         } else if (length(models) > 1) {
@@ -280,40 +291,48 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         
     } else if (type == "forest") {
         
-         if (length(reorder.coef) > 0) {
-             #reorder levels 
-             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-             #reorder coef
-             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
+        if (length(reorder.coef) > 0) {
+            #reorder levels 
+            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            #reorder coef
+            dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
         } else {
             #reorder levels 
             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
             #reorder coef in original order
             startlevel<- c(1:length(dataframe$co.names))
             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
-    }
+        }
         
-            p <- ggplot(dataframe, aes(lab, co)) + 
-                geom_hline(yintercept=0, lty=2, lwd=1, colour="grey50") +
-                geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
-                              lwd=1, 
-                              colour = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE , signif.light, insignif.light), width=0) +
-                geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), 
-                              lwd=2.5, 
-                              colour = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, signif.medium, insignif.medium), width=0) +
-                geom_point(size=3, 
-                           pch = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, 21, 22), 
-                           fill = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, signif.dark, insignif.dark)) +
-                coord_flip() + 
-                theme_bw() +
-                xlab(" ") +
-                facet_wrap(~co.names, strip.position="left", nrow=length(dataframe), scales = "free_y")
-            if (length(models) == 1) {
-                p <- p +   ggtitle("Model")
-            } else if (length(models) > 1) {
-                p <- p +  
-                    ggtitle("Models")
-            }
+        p <- ggplot(dataframe, aes(lab, co)) + 
+            geom_hline(yintercept=0, 
+                       lty=2, 
+                       lwd=1, 
+                       colour="grey50") +
+            geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
+                          lwd=1, 
+                          colour = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE , signif.light, insignif.light), 
+                          width=0) +
+            geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), 
+                          lwd=2.5, 
+                          colour = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, signif.medium, insignif.medium),
+                          width=0) +
+            geom_point(size=3, 
+                       pch = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, 21, 22), 
+                       fill = ifelse(dataframe[order(dataframe$co.names, dataframe$co), ]$signif == TRUE, signif.dark, insignif.dark)) +
+            coord_flip() + 
+            theme_bw() +
+            xlab(" ") +
+            facet_wrap(~co.names, 
+                       strip.position="left", 
+                       nrow=length(dataframe), 
+                       scales = "free_y")
+        if (length(models) == 1) {
+            p <- p +   ggtitle("Model")
+        } else if (length(models) > 1) {
+            p <- p +  
+                ggtitle("Models")
+        }
     } 
     
     # adds message to p as ylab; adds output meassages to paste that comes as R output (not in plot)
@@ -322,22 +341,36 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         if (length(custom.note) > 0) {
             p <- p + ylab(custom.note)
         }
-        message(paste0("Model ", i, 
-                       ": bars denote one (inner) resp. two (outer) standard errors."))
+        if (length(models) == 1) {
+            message(paste0("Model: bars denote one (inner) resp. two (outer) standard errors."))
+            
+        } else if (length(models) > 1) {
+            message(paste0("Models: bars denote one (inner) resp. two (outer) standard errors."))
+        }   
     } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
         p <- p + ylab("Bars denote CIs.\n Circle points and red color \n denote significance.")
-         if (length(custom.note) > 0) {
-             p <- p + ylab(custom.note)
-         }
-        message(paste0("Model ", i, ": bars denote 0.5 (inner) resp. ", ci.level, 
-                        " (outer) confidence intervals (computed from standard errors)."))
+        if (length(custom.note) > 0) {
+            p <- p + ylab(custom.note)
+        }
+        if (length(models) == 1) {
+            message(paste0("Model: bars denote 0.5 (inner) resp. ", ci.level, 
+                           " (outer) confidence intervals (computed from standard errors)."))
+        } else if (length(models) > 1) {
+            message(paste0("Models: bars denote 0.5 (inner) resp. ", ci.level, 
+                           " (outer) confidence intervals (computed from standard errors)."))
+        }
     } else {
         p <- p + ylab("Bars denote CIs.\n Circle points and red color \n denote significance.")
         if (length(custom.note) > 0) {
             p <- p + ylab(custom.note)
         }
-        message(paste0("Model ", i, ": bars denote  ", ci.level, 
-                       " confidence intervals."))
+        if (length(models) == 1) {
+            message(paste0("Model: bars denote  ", ci.level, 
+                           " confidence intervals."))
+        } else if (length(models) > 1) {
+            message(paste0("Models: bars denote  ", ci.level, 
+                           " confidence intervals."))
+        }  
     }
     
     print(p)
