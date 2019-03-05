@@ -1,15 +1,13 @@
 
 # plotreg function
-plotreg <- function(l, file = NULL, custom.model.names = NULL, 
+plotreg <- function(l, file = NULL, custom.model.names = NULL, custom.title = NULL,
                     custom.coef.names = NULL, custom.note = NULL, override.coef = 0, 
                     override.se = 0, override.pval = 0, override.ci.low = 0, 
                     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-                    ci.level = 0.95, use.se = FALSE, mfrow = TRUE, xlim = NULL, 
-                    cex = 2.5, lwd.zerobar = 4, lwd.vbars = 1, lwd.inner = 7, 
-                    lwd.outer = 5, ylab.cex = 1.0, signif.light = "#fbc9b9", 
+                    ci.level = 0.95, use.se = FALSE, type = "facet", signif.light = "#fbc9b9", 
                     signif.medium = "#f7523a", signif.dark = "#bd0017", 
                     insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
-                    insignif.dark = "#1c5ba6", type = "facet", ...) {
+                    insignif.dark = "#1c5ba6",  ...) {
     
     if (!is.null(omit.coef) && !is.na(omit.coef) && !is.character(omit.coef)) {
         stop("omit.coef must be a character string!")
@@ -55,20 +53,6 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
             postscript(file, ...)
         } else {
             stop("File extension not recognized.")
-        }
-    }
-    
-    # mfrow argument: arrange multiple plots on a page
-    if (mfrow == TRUE) {
-        if (length(models) == 1) {
-            par(mfrow = c(1, 1))
-        } else if (length(models) == 2) {
-            par(mfrow = c(2, 1))
-        } else if (length(models) == 3 || length(models) == 4 || 
-                   length(models) > 6) {
-            par(mfrow = c(2, 2))
-        } else if (length(models) == 5 || length(models) == 6) {
-            par(mfrow = c(3, 2))
         }
     }
     
@@ -120,7 +104,6 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
             ci.upper <- models[[i]]@ci.up
             ci.up <- append(ci.up, ci.upper)
         }
-        
     }    
     dataframe <- data.frame(cbind(co.names, co, lab ))
     
@@ -178,9 +161,10 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     } else {
         lower.outer <- dataframe$ci.low
         upper.outer <- dataframe$ci.up
-        lower.inner <- rep(0, length(dataframe))
-        upper.inner <- rep(0, length(dataframe))
+        lower.inner <- rep(0, length(dataframe$co.names))
+        upper.inner <- rep(0, length(dataframe$co.names))
     }
+    
     if (length(lower.outer) > 0) {
         dataframe <- cbind(dataframe, lower.outer)     
     }
@@ -193,16 +177,15 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
     if (length(upper.inner) > 0) {
         dataframe <- cbind(dataframe, upper.inner)     
     }
-    
     if (length(dataframe$pv) > 0) {
         signif.outer <- dataframe$pv < (1 - ci.level)
     } 
     
+    # which terms are significant?
     if(length(dataframe$ci.low) > 0) {
-        signif.outer <- ((dataframe$ci.low > 0 & dataframe$ci.up) > 0 | (dataframe$ci.low < 0 & dataframe$ci.up) < 0)
+        signif.outer <- ((dataframe$ci.low) > 0 & (dataframe$ci.up) > 0 | (dataframe$ci.low) < 0 & (dataframe$ci.up) < 0)
     }
     
-    # which terms are significant?
     if (class(signif.outer) == "logical" &&
         length(signif.outer) == length(dataframe$co)) {
         signif <- signif.outer == FALSE
@@ -216,6 +199,7 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
         stop("signif.outer does not correspond to the intervals provided.")
     }
     signif <- signif == FALSE
+    
     
     dataframe <- cbind(dataframe, signif)
     
@@ -283,7 +267,10 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
                        strip.position="left", 
                        nrow=length(dataframe), 
                        scales = "free_y")
-        if (length(models) == 1) {
+        
+        if (length(custom.title) > 0) {
+            p <- p +   ggtitle(custom.title)
+        } else if (length(models) == 1) {
             p <- p +   ggtitle("Model")
         } else if (length(models) > 1) {
             p <- p +  ggtitle("Models")
@@ -327,7 +314,10 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL,
                        strip.position="left", 
                        nrow=length(dataframe), 
                        scales = "free_y")
-        if (length(models) == 1) {
+        
+        if (length(custom.title) > 0) {
+            p <- p +   ggtitle(custom.title)
+        } else if (length(models) == 1) {
             p <- p +   ggtitle("Model")
         } else if (length(models) > 1) {
             p <- p +  
