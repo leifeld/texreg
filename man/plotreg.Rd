@@ -33,29 +33,13 @@ The \code{plotreg} function produces coefficient plots (i.e., forest plots appli
 \item{reorder.coef}{Reorder the rows of the coefficient block of the resulting table in a custom way. The argument takes a vector of the same length as the number of coefficients. For example, if there are three coefficients, \code{reorder.coef = c(3, 2, 1)} will put the third coefficient in the first row and the first coefficient in the third row. Reordering can be sensible because interaction effects are often added to the end of the model output although they were specified earlier in the model formula. Note: Reordering takes place after processing custom coefficient names and after omitting coefficients, so the \code{custom.coef.names} and \code{omit.coef} arguments should follow the original order.}
 \item{ci.level}{If standard errors are converted to confidence intervals (because a model does not natively support CIs), what confidence level should be used for the outer confidence interval? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 \item{use.se}{Use one standard error for the inner horizontal bar and two standard errors from the estimate for the outer horizontal bar (instead of confidence intervals). Only available if standard errors can be extracted from the model using the respective \code{\link{extract}} function.}
-
-
-%check all of these
-\item{estimates}{The coefficients (point estimates) of the model terms. They are depicted as bold dots in the coefficient plot.}
-\item{lower.inner}{The lower bounds of the inner confidence intervals, provided as a vector. Inner CI means more relaxed (lower confidence level, higher alpha) because fewer observations have to fall into the CI, therefore the CI gets smaller.}
-\item{upper.inner}{The upper bounds of the inner confidence intervals, provided as a vector. Inner CI means more relaxed (lower confidence level, higher alpha) because fewer observations have to fall into the CI, therefore the CI gets smaller.}
-\item{lower.outer}{The lower bounds of the outer confidence intervals, provided as a vector. Outer CI means stricter or narrower (higher confidence level, lower alpha) because more observations have to fall into the CI, therefore the CI gets larger.}
-\item{upper.outer}{The upper bounds of the outer confidence intervals, provided as a vector. Outer CI means stricter or narrower (higher confidence level, lower alpha) because more observations have to fall into the CI, therefore the CI gets larger.}
-
-\item{signif.outer}{Different colors are used for significant estimates and confidence intervals. If \code{signif.outer = TRUE}, the outer CIs are used to evaluate significance, otherwise the inner CIs are used.}
-\item{xlab}{The label of the x axis.}
-\item{main}{The main title or heading of the plot.}
-\item{cex}{Size of the point representing the estimate.}
-\item{lwd.inner}{Line width of the inner confidence interval.}
-\item{lwd.outer}{Line width of the outer confidence interval.}
-\item{ylab.cex}{Size of the coefficient labels. The size of the x axis labels can be adjusted by using argument \code{cex.axis = 1.0}.}
+\item{type}{The default option is "facet". If one model only is specified, it will print one forest plot applied to point estimates and confidence intervals. If more than one model is specified, it will print as many plots as the number of models in a column of plots. Alternatively, if "forest" is specified, coefficients from one or more models will be grouped together and displayed as a forest plot.}
 \item{signif.light}{Color of outer confidence intervals for significant model terms.}
 \item{signif.medium}{Color of inner confidence intervals for significant model terms.}
 \item{signif.dark}{Color of point estimates and labels for significant model terms.}
 \item{insignif.light}{Color of outer confidence intervals for insignificant model terms.}
 \item{insignif.medium}{Color of inner confidence intervals for insignificant model terms.}
 \item{insignif.dark}{Color of point estimates and labels for insignificant model terms.}
-
 \item{...}{Custom options to be passed on to the extract function or the graphics device. See the help entries of \link{extract} and \link{extract-methods} for more information.}
 }
 \seealso{
