@@ -7,7 +7,8 @@ importFrom("stats", "AIC", "BIC", "coef", "confint", "deviance", "extractAIC",
     "logLik", "model.frame", "nobs", "pchisq", "pnorm", "pt", "qnorm", 
     "residuals", "summary.lm", "vcov", "na.omit")
 importFrom("stats", "fitted")
-importFrom("ggplot2", "ggplot")
+importFrom("ggplot2", "ggplot", "aes", "geom_hline", "geom_errorbar", "geom_point", 
+           "coord_flip", "theme_bw", "xlab", "facet_wrap", "ggtitle")
 import("methods")
 export("texreg")
 export("htmlreg")
