@@ -189,10 +189,10 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL, custom.title = NU
     if (class(signif.outer) == "logical" &&
         length(signif.outer) == length(dataframe$co)) {
         signif <- signif.outer == FALSE
-    } else if (outer == TRUE && signif.outer == TRUE) {
+    } else if (signif.outer == TRUE) {
         signif <- apply(cbind(lower.outer, upper.outer), 1,
                         function(x) x[1] <= 0 && x[2] >= 0)
-    } else if (inner == TRUE && signif.outer == FALSE) {
+    } else if (signif.outer == FALSE) {
         signif <- apply(cbind(lower.inner, upper.inner), 1,
                         function(x) x[1] <= 0 && x[2] >= 0)
     } else {

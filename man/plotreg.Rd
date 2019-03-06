@@ -7,10 +7,10 @@ plotreg(l, file = NULL, custom.model.names = NULL, custom.title = NULL,
                     custom.coef.names = NULL, custom.note = NULL, override.coef = 0, 
                     override.se = 0, override.pval = 0, override.ci.low = 0, 
                     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-                    ci.level = 0.95, use.se = FALSE, type = "facet", signif.light = "#fbc9b9", 
-                    signif.medium = "#f7523a", signif.dark = "#bd0017", 
-                    insignif.light = "#c5dbe9", insignif.medium = "#5a9ecc", 
-                    insignif.dark = "#1c5ba6",  ...)
+                    ci.level = 0.95, use.se = FALSE, type = "facet", 
+                    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
+                    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
+                    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6",  ...)
 }
 \details{
 The \code{coefplot} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals). It accepts raw data (the lower and upper bounds of inner and outer confidence intervals as well as the point estimates and their names) as input data. Significant coefficients and intervals can be plotted in a different color.
