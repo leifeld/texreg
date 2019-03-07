@@ -9,6 +9,6 @@ URL: http://github.com/leifeld/texreg/
 BugReports: https://github.com/leifeld/texreg/issues
 Suggests: nlme, survival, network, ergm, lme4 (>= 1.0), btergm, broom (>= 0.4.2), Zelig (>= 5.0-16), plm (>= 1.4.0), rmarkdown (>= 1.5)
 Depends: R (>= 2.15.0)
-Imports: methods, grDevices, stats, ggplot2
+Imports: methods, grDevices, stats, ggplot2, graphics
 Enhances: AER, betareg, brglm, censReg, dynlm, eha, erer, fGarch, gamlss, gee, geepack, gmm, h2o, latentnet, lmtest, lqmm, MASS, mfx, mgcv, mlogit, mnlogit, MuMIn, nnet, ordinal, panelAR, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, survey, systemfit, tergm, VGAM, xergm
 License: GPL-2 | GPL-3
