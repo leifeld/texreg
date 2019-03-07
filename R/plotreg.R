@@ -105,7 +105,6 @@ plotreg <- function(l, file = NULL, custom.model.names = NULL, custom.title = NU
             ci.up <- append(ci.up, ci.upper)
         }
     }    
-    
     dataframe <- data.frame(cbind(co.names, co, lab ))
     
     if (length(models[[i]]@se) > 0) {
