@@ -158,7 +158,7 @@ matrixreg <- function(l,
   }
   
   # combine the coefficient and gof matrices vertically
-  coef.names <- row.names(output.matrix)
+  coef.names <- output.matrix[output.matrix[, 1] != "", 1]
   output.matrix <- rbind(output.matrix, gof.matrix)
   
   # reformat output matrix
@@ -1352,6 +1352,7 @@ huxtablereg <- function(l,
                         custom.coef.names = NULL,
                         custom.coef.map = NULL,
                         custom.gof.names = NULL,
+                        custom.gof.rows = NULL,
                         digits = 2,
                         leading.zero = TRUE,
                         star.symbol = star.symbol,
@@ -1371,26 +1372,26 @@ huxtablereg <- function(l,
                         custom.columns = NULL,
                         custom.col.pos = NULL,
                         ...)  {
-  if (! requireNamespace("huxtable", quietly = TRUE)) {
-    stop("huxtablereg requires the \"huxtable\" package to be installed.\n", 
-         "To do this, enter `install.packages(\"huxtable\")`.")
+  if (!requireNamespace("huxtable", quietly = TRUE)) {
+    stop("huxtablereg requires the 'huxtable' package to be installed.\n",
+         "To do this, enter 'install.packages(\"huxtable\")'.")
   }
   
   mr.call <- match.call(expand.dots = FALSE)
   mr.call[[1L]] <- quote(texreg::matrixreg)
-  mr.call$include.attributes = TRUE
+  mr.call$include.attributes <- TRUE
   mx <- eval(mr.call)
   
-  gof.names <- attr(mx, 'gof.names')
-  coef.names <- attr(mx, 'coef.names') # currently returns NULL
-  ci <- attr(mx, 'ci')
+  gof.names <- attr(mx, "gof.names")
+  coef.names <- attr(mx, "coef.names")
+  ci <- attr(mx, "ci")
   
   hx <- huxtable::as_hux(mx, add_colnames = FALSE, autoformat = TRUE)
-  huxtable::align(hx)[-1, -1] <- 'right'
+  huxtable::align(hx)[-1, -1] <- "right"
   coef.rows <- which(as.matrix(hx[, 1]) %in% coef.names)
   hx <- huxtable::set_align(hx, coef.rows, -1, ".")
-  if (! single.row) {
-    hx <- huxtable::set_align(hx, coef.rows + 1, c(FALSE, ! ci), ".")  
+  if (!single.row) {
+    hx <- huxtable::set_align(hx, coef.rows + 1, c(FALSE, !ci), ".")  
   }
   gof.rows <- as.matrix(hx[, 1]) %in% gof.names
   hx <- huxtable::set_align(hx, gof.rows, -1, ".")
