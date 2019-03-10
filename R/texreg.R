@@ -1350,7 +1350,6 @@ wordreg <- function(l,
 
 
 huxtablereg <- function(l,
-                        file = NULL,
                         single.row = FALSE,
                         stars = c(0.001, 0.01, 0.05),
                         custom.model.names = NULL,
@@ -1398,8 +1397,10 @@ huxtablereg <- function(l,
   if (!single.row) {
     hx <- huxtable::set_align(hx, coef.rows + 1, c(FALSE, !ci), ".")  
   }
+  hx <- huxtable::set_number_format(hx, coef.rows, -1, digits)
+  
   gof.rows <- as.matrix(hx[, 1]) %in% gof.names
   hx <- huxtable::set_align(hx, gof.rows, -1, ".")
-  
+
   return(hx)
 }
