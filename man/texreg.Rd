@@ -13,8 +13,8 @@
 texreg(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL,
-    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
-    leading.zero = TRUE, symbol = "\\\\cdot", override.coef = 0, 
+    custom.gof.names = NULL, custom.gof.rows = NULL, custom.note = NULL, 
+    digits = 2, leading.zero = TRUE, symbol = "\\\\cdot", override.coef = 0, 
     override.se = 0, override.pvalues = 0, override.ci.low = 0, 
     override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
     reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
@@ -27,11 +27,11 @@ texreg(l, file = NULL, single.row = FALSE,
 htmlreg(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*', 
-    symbol = "&middot;", override.coef = 0, override.se = 0, override.pvalues = 0, 
-    override.ci.low = 0, override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, 
+    custom.gof.rows = NULL, custom.note = NULL, digits = 2, leading.zero = TRUE,
+    star.symbol = '*', symbol = "&middot;", override.coef = 0, override.se = 0, 
+    override.pvalues = 0, override.ci.low = 0, override.ci.up = 0, 
+    omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, custom.columns = NULL, 
     custom.col.pos = NULL, bold = 0.00, center = TRUE, 
     caption = "Statistical models", caption.above = FALSE, 
     inline.css = TRUE, doctype = TRUE, html.tag = FALSE, 
@@ -41,43 +41,44 @@ htmlreg(l, file = NULL, single.row = FALSE,
 screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL,
-    custom.gof.names = NULL, custom.note = NULL, digits = 2, 
-    leading.zero = TRUE, star.symbol = '*', symbol = ".", override.coef = 0, 
-    override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, 
-    ci.test = 0, groups = NULL, custom.columns = NULL, 
+    custom.gof.names = NULL, custom.gof.rows = NULL, custom.note = NULL,
+    digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
+    override.coef = 0, override.se = 0, override.pvalues = 0,
+    override.ci.low = 0, override.ci.up = 0, omit.coef = NULL,
+    reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, custom.columns = NULL, 
     custom.col.pos = NULL, column.spacing = 2, outer.rule = "=", 
     inner.rule = "-", ...)
 
 matrixreg(l, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, bold = 0,
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    dcolumn = TRUE, ...) 
+    custom.gof.rows = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*',
+    symbol = ".", override.coef = 0, override.se = 0, override.pvalues = 0,
+    override.ci.low = 0, override.ci.up = 0, omit.coef = NULL,
+    reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
+    ci.force.level = 0.95, ci.test = 0, bold = 0, groups = NULL,
+    custom.columns = NULL, custom.col.pos = NULL, dcolumn = TRUE, ...) 
 
 csvreg(l, file,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    custom.note = NULL, digits = 2, leading.zero = TRUE, star.symbol = '*', symbol = ".", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, 
-    caption = 'Statistical Models', ...)
+    custom.gof.rows = NULL, custom.note = NULL, digits = 2, leading.zero = TRUE,
+    star.symbol = '*', symbol = ".", override.coef = 0, override.se = 0,
+    override.pvalues = 0, override.ci.low = 0, override.ci.up = 0,
+    omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, custom.columns = NULL,
+    custom.col.pos = NULL, caption = 'Statistical Models', ...)
  
 wordreg(l, file = NULL, single.row = FALSE, 
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
     custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL, 
-    digits = 2, leading.zero = TRUE, star.symbol = star.symbol, symbol = ".", 
-    override.coef = 0, override.se = 0, override.pvalues = 0, override.ci.low = 0, 
-    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-    reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95, ci.test = 0, 
-    groups = NULL, custom.columns = NULL, custom.col.pos = NULL, ...)
+    custom.gof.rows = NULL, digits = 2, leading.zero = TRUE,
+    star.symbol = star.symbol, symbol = ".", override.coef = 0, override.se = 0,
+    override.pvalues = 0, override.ci.low = 0, override.ci.up = 0,
+    omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, custom.columns = NULL,
+    custom.col.pos = NULL, ...)
 
 huxtablereg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, custom.coef.names = NULL, 
@@ -96,7 +97,7 @@ tables or HTML tables or into nicely formatted screen output for
 the R console. A list of several models can be combined in a 
 single table. The output is customizable. New model types can be 
 easily implemented. Confidence intervals can be used instead of 
-standard errors and p values.
+standard errors and p-values.
 
 The \code{texreg()} function creates LaTeX code for inclusion 
 in a LaTeX document or for usage with \pkg{Sweave} or \pkg{knitr}.
@@ -155,6 +156,7 @@ Users must supply a named list of this form: \code{list('x' = 'First variable', 
 
 3. all variables not named "x", "y", or "z" will be omitted from the table.}
 \item{custom.gof.names}{A character vector which is used to replace the names of the goodness-of-fit statistics at the bottom of the table. The vector must have the same length as the number of GOF statistics in the final table. The argument works like the \code{custom.coef.names} argument, but for the GOF values. \code{NA} values can be included where the original GOF name should be kept.}
+\item{custom.gof.rows}{A named list of vectors for new lines at the beginning of the GOF block of the table. For example, \code{list("Random effects" = c("YES", "YES", "NO"), Observations = c(25, 25, 26))} would insert two new rows into the table, at the beginning of the GOF block (i.e., after the coefficients). The rows can contain integer, numeric, or character objects. Note that this argument is processed after the \code{custom.gof.names} argument (meaning \code{custom.gof.names} should not include any of the new GOF rows) and before the \code{reorder.gof} argument (meaning that the new GOF order specified there should contain values for the new custom GOF rows). Arguments for custom columns are not affected because they only insert columns into the coefficient block.}
 \item{custom.note}{With this argument, a replacement text for the significance note below the table can be provided. If an empty character object is provided (\code{custom.note = ""}), the note will be omitted completely. If some character string is provided (e.g., \code{custom.note = "My note"}), the significance legend is replaced by \code{My note}. The original significance legend can be included by inserting the \code{\%stars} wildcard. For example, a custom note can be added right after the significance legend by providing \code{custom.note = "\%stars. My note"}.}
 \item{digits}{Set the number of decimal places for coefficients, standard errors and goodness-of-fit statistics. Do not use negative values! The argument works like the \code{digits} argument in the \code{round} function of the \pkg{base} package.}
 \item{leading.zero}{Most journals require leading zeros of coefficients and standard errors (for example, \code{0.35}). This is also the default texreg behavior. Some journals, however, require omission of leading zeros (for example, \code{.35}). This can be achieved by setting \code{leading.zero = FALSE}.}
@@ -166,7 +168,7 @@ Users must supply a named list of this form: \code{list('x' = 'First variable', 
 \item{override.ci.up}{Set custom upper confidence interval bounds. This works like the other override arguments, with one exception: if confidence intervals are provided here and in the \code{override.ci.low} argument, the standard errors and p values as well as the \code{ci.force} argument are ignored.}
 \item{omit.coef}{A character string which is used as a regular expression to remove coefficient rows from the table. For example, \code{omit.coef = "group"} deletes all coefficient rows from the table where the name of the coefficient contains the character sequence "group". More complex regular expressions can be used to filter out several kinds of model terms, for example \code{omit.coef = "(thresh)|(ranef)"} to remove all model terms matching either "thresh" or "ranef".The \code{omit.coef} argument is processed after the \code{custom.coef.names} argument, so the regular expression should refer to the custom coefficient names. To omit GOF entries instead of coefficient entries, use the custom arguments of the extract functions instead (see the help entry of the \link{extract} function or \link{extract-methods}.}
 \item{reorder.coef}{Reorder the rows of the coefficient block of the resulting table in a custom way. The argument takes a vector of the same length as the number of coefficients. For example, if there are three coefficients, \code{reorder.coef = c(3, 2, 1)} will put the third coefficient in the first row and the first coefficient in the third row. Reordering can be sensible because interaction effects are often added to the end of the model output although they were specified earlier in the model formula. Note: Reordering takes place after processing custom coefficient names and after omitting coefficients, so the \code{custom.coef.names} and \code{omit.coef} arguments should follow the original order.}
-\item{reorder.gof}{Reorder the rows of the goodness-of-fit block of the resulting table in a custom way. The argument takes a vector of the same length as the number of GOF statistics. For example, if there are three goodness-of-fit rows, \code{reorder.gof = c(3, 2, 1)} will exchange the first and the third row. Note: Reordering takes place after processing custom GOF names, so the \code{custom.gof.names} argument should follow the original order.}
+\item{reorder.gof}{Reorder the rows of the goodness-of-fit block of the resulting table in a custom way. The argument takes a vector of the same length as the number of GOF statistics. For example, if there are three goodness-of-fit rows, \code{reorder.gof = c(3, 2, 1)} will exchange the first and the third row. Note: Reordering takes place after processing custom GOF names and after adding new custom GOF rows, so the \code{custom.gof.names} and \code{custom.gof.rows} arguments should follow the original order, and the \code{reorder.gof} argument should contain values for any rows that are added through the \code{custom.gof.rows} argument.}
 \item{ci.force}{Should confidence intervals be used instead of the default standard errors and p values? Most models implemented in the \pkg{texreg} package report standard errors and p values by default while few models report confidence intervals. However, the functions in the \pkg{texreg} package can convert standard errors and into confidence intervals if desired. To enforce confidence intervals instead of standard errors, the \code{ci.force} argument accepts either a logical value indicating whether all models or none of the models should be forced to report confidence intervals (\code{ci.force = TRUE} for all and \code{ci.force = FALSE} for none) or a vector of logical values indicating for each model separately whether the model should be forced to report confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}). Confidence intervals are computed using the standard normal distribution (z values based on the \code{qnorm} function).}
 \item{ci.force.level}{If the \code{ci.force} argument is used to convert standard errors to confidence intervals, what confidence level should be used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 \item{ci.test}{If confidence intervals are reported, the \code{ci.test} argument specifies the reference value to establish whether a coefficient/CI is significant. The default value \code{ci.test = 0}, for example, will attach a significance star to coefficients if the confidence interval does not contain \code{0}. If no star should be printed at all, \code{ci.test = NULL} can be used. The \code{ci.test} argument works both for models with native support for confidence intervals and in cases where the \code{ci.force} argument is used.}

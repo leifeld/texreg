@@ -1,6 +1,6 @@
 Package: texreg
 Version: 1.36.24
-Date: 2018-09-07
+Date: 2019-03-09
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Author: Philip Leifeld
 Maintainer: Philip Leifeld <philip.leifeld@glasgow.ac.uk>
@@ -10,5 +10,6 @@ BugReports: https://github.com/leifeld/texreg/issues
 Suggests: nlme, survival, network, ergm, lme4 (>= 1.0), btergm, broom (>= 0.4.2), Zelig (>= 5.0-16), plm (>= 1.4.0), rmarkdown (>= 1.5), huxtable (>= 4.2.0)
 Depends: R (>= 2.15.0)
 Imports: methods, grDevices, graphics, stats
-Enhances: AER, betareg, brglm, censReg, dynlm, eha, erer, fGarch, gamlss, gee, geepack, gmm, h2o, latentnet, lmtest, lqmm, MASS, mfx, mgcv, mlogit, mnlogit, MuMIn, nnet, ordinal, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, survey, systemfit, tergm, VGAM, xergm
+Enhances: AER, betareg, brglm, censReg, dynlm, eha, erer, fGarch, gamlss, gee, geepack, gmm, h2o, latentnet, lmtest, lqmm, MASS, mfx, mgcv, mlogit, MuMIn, nnet, ordinal, panelAR, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, survey, systemfit, tergm, VGAM, xergm
+Additional_repositories: 
 License: GPL-2 | GPL-3
