@@ -266,8 +266,13 @@ screenreg <- function(l,
   ci.test <- attr(output.matrix, 'ci.test')
   
   # add spaces
-  for (i in 1:ncol(output.matrix)) {
-    output.matrix[, i] <- fill.spaces(output.matrix[, i])
+  for (j in 1:ncol(output.matrix)) {
+    nc <- nchar(output.matrix[, j])
+    width <- max(nc)
+    for (i in 1:nrow(output.matrix)) {
+      spaces <- paste(rep(" ", width - nc[i]), collapse = "")
+      output.matrix[i, j] <- paste0(output.matrix[i, j], spaces)
+    }
   }
   
   string <- "\n"
