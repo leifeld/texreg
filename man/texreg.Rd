@@ -82,7 +82,7 @@ wordreg(l, file = NULL, single.row = FALSE,
 
 huxtablereg(l, file = NULL, single.row = FALSE, stars = c(0.001, 
     0.01, 0.05), custom.model.names = NULL, custom.coef.names = NULL, 
-    custom.gof.rows = NULL, custom.coef.map = NULL, custom.gof.names = NULL,
+    custom.coef.map = NULL, custom.gof.names = NULL, custom.gof.rows = NULL,
     digits = 2, leading.zero = TRUE, star.symbol = star.symbol, symbol = "+", 
     override.coef = 0, override.se = 0, override.pvalues = 0, 
     override.ci.low = 0, override.ci.up = 0, omit.coef = NULL, 
