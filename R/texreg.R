@@ -1386,6 +1386,8 @@ huxtablereg <- function(l,
   mr.call$include.attributes <- TRUE
   mx <- eval(mr.call)
   
+  mx <- trimws(mx)
+  
   gof.names <- attr(mx, "gof.names")
   coef.names <- attr(mx, "coef.names")
   ci <- attr(mx, "ci")
