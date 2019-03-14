@@ -3,19 +3,34 @@
 \title{Create coefficient plots from statistical model output using ggplot2}
 \description{Create coefficient plots from statistical model output using ggplot2.}
 \usage{
-plotreg(l, file = NULL, custom.model.names = NULL, custom.title = NULL,
-                    custom.coef.names = NULL, custom.note = NULL, override.coef = 0, 
-                    override.se = 0, override.pval = 0, override.ci.low = 0, 
-                    override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
-                    ci.level = 0.95, use.se = FALSE, type = "facet", 
-                    signif.light = "#fbc9b9", signif.medium = "#f7523a", 
-                    signif.dark = "#bd0017", insignif.light = "#c5dbe9", 
-                    insignif.medium = "#5a9ecc", insignif.dark = "#1c5ba6",  ...)
+plotreg(l,
+                    file = NULL,
+                    custom.model.names = NULL,
+                    custom.title = NULL,
+                    custom.coef.names = NULL,
+                    custom.note = NULL,
+                    override.coef = 0,
+                    override.se = 0,
+                    override.pval = 0,
+                    override.ci.low = 0,
+                    override.ci.up = 0,
+                    omit.coef = NULL,
+                    reorder.coef = NULL,
+                    ci.level = 0.95,
+                    use.se = FALSE,
+                    type = "facet",
+                    signif.light = "#FBC9B9",
+                    signif.medium = "#F7523A",
+                    signif.dark = "#BD0017",
+                    insignif.light = "#C5DBE9",
+                    insignif.medium = "#5A9ECC",
+                    insignif.dark = "#1C5BA6",
+                    ...)
 }
 \details{
 The \code{coefplot} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals). It accepts raw data (the lower and upper bounds of inner and outer confidence intervals as well as the point estimates and their names) as input data. Significant coefficients and intervals can be plotted in a different color.
 
-The \code{plotreg} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals) and works much like the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, \code{\link{matrixreg}}, \code{\link{csvreg}} and \code{\link{wordreg}} functions. It accepts a single or multiple statistical models as input and internally extracts the relevant data from the models. If confidence intervals are not defined in the extract method of a statistical model (see \link{extract} and \link{extract-methods}), the default standard errors are converted to confidence intervals. Most of the arguments work either like in the \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} \code{\link{matrixreg}}, \code{\link{csvreg}} and \code{\link{wordreg}} functions.It is possible to display the plots in two ways: using the "facet" option, one forest plot applied to point estimates and confidence intervals will be visualised in case there is only one model.  If there is more than one model each one will be plotted next to the other; using the "forest" option, coefficients from one or more models will be grouped together and displayed as a forest plot. 
+The \code{plotreg} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals) and works much like the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, \code{\link{matrixreg}}, \code{\link{csvreg}} and \code{\link{wordreg}} functions. It accepts a single or multiple statistical models as input and internally extracts the relevant data from the models. If confidence intervals are not defined in the extract method of a statistical model (see \link{extract} and \link{extract-methods}), the default standard errors are converted to confidence intervals. Most of the arguments work either like in the \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} \code{\link{matrixreg}}, \code{\link{csvreg}} and \code{\link{wordreg}} functions.It is possible to display the plots in two ways: using the \code{\link{facet}} option, one forest plot applied to point estimates and confidence intervals will be visualised in case there is only one model.  If there is more than one model each one will be plotted next to the other; using the \code{\link{forest}} option, coefficients from one or more models will be grouped together and displayed as a forest plot. 
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of models can be specified as \code{l = list(model.1, model.2, ...)}. Different object types can also be mixed.}
@@ -33,7 +48,7 @@ The \code{plotreg} function produces coefficient plots (i.e., forest plots appli
 \item{reorder.coef}{Reorder the rows of the coefficient block of the resulting table in a custom way. The argument takes a vector of the same length as the number of coefficients. For example, if there are three coefficients, \code{reorder.coef = c(3, 2, 1)} will put the third coefficient in the first row and the first coefficient in the third row. Reordering can be sensible because interaction effects are often added to the end of the model output although they were specified earlier in the model formula. Note: Reordering takes place after processing custom coefficient names and after omitting coefficients, so the \code{custom.coef.names} and \code{omit.coef} arguments should follow the original order.}
 \item{ci.level}{If standard errors are converted to confidence intervals (because a model does not natively support CIs), what confidence level should be used for the outer confidence interval? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 \item{use.se}{Use one standard error for the inner horizontal bar and two standard errors from the estimate for the outer horizontal bar (instead of confidence intervals). Only available if standard errors can be extracted from the model using the respective \code{\link{extract}} function.}
-\item{type}{The default option is "facet". If one model only is specified, it will print one forest plot applied to point estimates and confidence intervals. If more than one model is specified, it will print as many plots as the number of models in a column of plots. Alternatively, if "forest" is specified, coefficients from one or more models will be grouped together and displayed as a forest plot.}
+\item{type}{The default option is \code{\link{facet}}. If one model only is specified, it will print one forest plot applied to point estimates and confidence intervals. If more than one model is specified, it will print as many plots as the number of models in a column of plots. Alternatively, if \code{\link{forest}} is specified, coefficients from one or more models will be grouped together and displayed as a forest plot.}
 \item{signif.light}{Color of outer confidence intervals for significant model terms.}
 \item{signif.medium}{Color of inner confidence intervals for significant model terms.}
 \item{signif.dark}{Color of point estimates and labels for significant model terms.}
