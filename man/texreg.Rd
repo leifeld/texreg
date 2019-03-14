@@ -5,6 +5,7 @@
 \alias{matrixreg}
 \alias{csvreg}
 \alias{wordreg}
+\alias{huxtablereg}
 \title{Convert regression output to LaTeX or HTML tables}
 \description{Conversion of R regression output to LaTeX or HTML tables.}
 \usage{
@@ -79,6 +80,15 @@ wordreg(l, file = NULL, single.row = FALSE,
     ci.force.level = 0.95, ci.test = 0, groups = NULL, custom.columns = NULL,
     custom.col.pos = NULL, ...)
 
+huxtablereg(l, single.row = FALSE, stars = c(0.001, 0.01, 0.05),
+    custom.model.names = NULL, custom.coef.names = NULL, 
+    custom.coef.map = NULL, custom.gof.names = NULL, custom.gof.rows = NULL,
+    digits = 2, leading.zero = TRUE, star.symbol = star.symbol, symbol = "+", 
+    override.coef = 0, override.se = 0, override.pvalues = 0, 
+    override.ci.low = 0, override.ci.up = 0, omit.coef = NULL, 
+    reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE, 
+    ci.force.level = 0.95, ci.test = 0, groups = NULL, custom.columns = NULL, 
+    custom.col.pos = NULL, ...) 
 }
 \details{
 texreg converts coefficients, standard errors, significance stars, 
@@ -119,6 +129,11 @@ tables and prints them to the R console.
 The \code{csvreg()} function creates a spreadsheet in CSV containing the
 information in the tables. 
 
+The \code{huxtablereg()} function creates a 
+\code{\link[huxtable]{huxtable}} object using the \sQuote{huxtable} 
+package. This allows output to HTML, LaTeX, Word, Excel, Powerpoint, and 
+RTF. The object can be formatted using huxtable package functions. See also
+\code{\link[huxtable]{huxreg}}.
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of models can be specified as \code{l = list(model.1, model.2, ...)}. Different object types can also be mixed.}
@@ -225,6 +240,21 @@ htmlreg(list(model.1, model.2), file = "texreg.doc",
     inline.css = FALSE, doctype = TRUE, html.tag = TRUE, 
     head.tag = TRUE, body.tag = TRUE)
 unlink("texreg.doc")
+
+if (requireNamespace('huxtable')) {
+  hr <- huxtablereg(list(model.1, model.2))
+  hr <- huxtable::set_bottom_border(hr, 1, -1, 0.4)
+  hr <- huxtable::set_bold(hr, 1:nrow(hr), 1, TRUE)
+  hr <- huxtable::set_bold(hr, 1, -1, TRUE)
+  hr <- huxtable::set_all_borders(hr, 4, 2, 0.4)
+  hr <- huxtable::set_all_border_colors(hr, 4, 2, "red")
+  hr
+  \dontrun{
+  huxtable::quick_pdf(hr)
+  huxtable::quick_docx(hr)
+  # or use in a knitr document
+  }
+}
 }
 \keyword{print}
 \keyword{misc}
