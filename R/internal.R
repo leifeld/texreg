@@ -2,6 +2,13 @@
 # Please use the issue tracker at http://github.com/leifeld/texreg
 # for bug reports, help or feature requests.
 
+
+#' Internal functions for the \pkg{texreg} package
+#'
+#' @name internal
+NULL
+
+
 # display version number and date when the package is loaded
 .onAttach <- function(libname, pkgname) {
   desc  <- packageDescription(pkgname, libname)
@@ -15,25 +22,28 @@
 }
 
 
-# function which reformats a coefficient with two decimal places
+# function which reformats a coefficient with a certain number of decimal places
 coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
-    if (!is.finite(x)) {
-        return("")
-    }
-    if (digits < 0) {
-        stop("The number of digits must be 0 or higher.")
-    }
-    
-    y <- format(round(x, digits), nsmall = digits, scientific = FALSE)
-    
-    if (lead.zero == FALSE && (grepl("^0", y) == TRUE ||  # leading zero
-                               grepl("^-0", y) == TRUE)) {
-        y <- gsub("0\\.", "\\.", y)
-    }
-    if (x < 0 && grepl("^-", y) == FALSE) {  # very small negative numbers
-        y <- paste0("-", y)
-    }
-    return(y)
+  if (is.na(digits)) {
+    return(x)
+  }
+  if (!is.finite(x)) {
+    return("")
+  }
+  if (digits < 0) {
+    stop("The number of digits must be 0 or higher.")
+  }
+  
+  y <- format(round(x, digits), nsmall = digits, scientific = FALSE)
+  
+  if (lead.zero == FALSE && (grepl("^0", y) == TRUE ||  # leading zero
+                             grepl("^-0", y) == TRUE)) {
+    y <- gsub("0\\.", "\\.", y)
+  }
+  if (x < 0 && grepl("^-", y) == FALSE) {  # very small negative numbers
+    y <- paste0("-", y)
+  }
+  return(y)
 }
 
 # function which conflates a matrix with duplicate row names
@@ -374,8 +384,66 @@ correctDuplicateCoefNames <- function(models) {
 }
 
 
-# put models and GOFs into a common matrix
-aggregate.matrix <- function(models, gof.names, custom.gof.names, digits, 
+#' Aggregate models and GOFs into a common matrix
+#'
+#' Aggregate models and GOFs from \code{texreg} objects into a common matrix.
+#'
+#' This function takes a list of \code{texreg} objects, as produced by the
+#' \code{\link{extract}} function, and produces a matrix, either for the
+#' coefficient block (\code{returnobject = "m"}) (in numeric form) or for the
+#' goodness-of-fit (GOF) block of the table that is to be created
+#' (\code{returnobject = "gof"}; in formatted character form). On the way, also
+#' replace GOF names by custom GOF labels, then insert custom GOF rows if
+#' necessary, and then reorder the GOF block if necessary.
+#'
+#' @param models A list of \code{texreg} objects, as created by the
+#'   \link{get.data} function.
+#' @param gof.names A character vector of names for the GOF statistics, as
+#'   created by the \code{\link{get.gof}} function. This is needed to attach row
+#'   names to the GOF block or decimal matrix.
+#' @param custom.gof.names A character vector of replacement names for the GOF
+#'   statistics. Must have the same length as \code{gof.names}. Can be
+#'   \code{NULL} if the original GOF names should be kept.
+#' @param custom.gof.rows A named list of integer, numeric, or character vectors
+#'   that represent new rows to be inserted at the beginning of the GOF block.
+#' @param reorder.gof A numeric vector with the desired reordered positions of
+#'   the GOF entries, for example \code{c(1, 2, 4, 3)} for swapping the last two
+#'   entries.
+#' @param digits Number of decimal points (for formatting GOF values).
+#' @param leading.zero Logical indicating whether leading zeroes should be used.
+#' @param latex Is the output a LaTeX table? Needed for cell formatting.
+#' @param dcolumn Is the \pkg{dcolumn} LaTeX package used for cell formatting?
+#' @param returnobject This can be:
+#'   \describe{
+#'     \item{\code{"m"}}{for creating the coefficient block}
+#'     \item{\code{"gof.matrix"}}{for creating the GOF block}
+#'   }
+#'
+#' @return A \code{matrix} object representing...
+#'   \itemize{
+#'     \item the coefficient block with all decimal places and with separate
+#'       columns for coefficients, standard errors and p-values, or confidence
+#'       intervals (for example, six columns for two models) or
+#'     \item the GOF block with one column per model with the first column
+#'       representing the GOF names and the remaining columns the formatted GOF
+#'       statistics as character objects.
+#'   }
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{extract}}, \code{\link{get.data}},
+#'   \code{\link{get.gof}}, \code{\link{coeftostring}},
+#'   \code{\link{replaceSymbols}}
+aggregate.matrix <- function(models,
+                             gof.names,
+                             custom.gof.names = NULL,
+                             custom.gof.rows = NULL,
+                             reorder.gof = NULL,
+                             digits = 2,
+                             leading.zero = TRUE,
+                             latex = FALSE,
+                             dcolumn = TRUE,
                              returnobject = "m") {
     
     # aggregate GOF statistics in a matrix and create list of coef blocks
@@ -395,7 +463,7 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
             if (length(se) > 0 && length(pv) > 0) {
                 coef <- cbind(cf, se, pv)
             } else if (length(se) > 0 && length(pv) == 0) {
-                #p-values not provided -> use p-values of 0.99
+                # p-values not provided -> use p-values of 0.99
                 coef <- cbind(cf, se, rep(0.99, length(cf)))
             } else if (length(se) == 0 && length(pv) > 0) {
                 coef <- cbind(cf, rep(NA, length(cf)), pv)
@@ -461,29 +529,88 @@ aggregate.matrix <- function(models, gof.names, custom.gof.names, digits,
     colnames(m.temp) <- colnames(m)
     m <- m.temp
     
+    # replace GOF names by custom names
+    if (returnobject == "gof.matrix") {
+      if (is.null(custom.gof.names)) {
+        # do nothing
+      } else if (class(custom.gof.names) != "character") {
+        stop("Custom GOF names must be provided as a vector of strings.")
+      } else if (length(custom.gof.names) != length(gof.names)) {
+        stop(paste("There are", length(gof.names), 
+                   "GOF statistics, but you provided", length(custom.gof.names), 
+                   "custom names for them."))
+      } else {
+        custom.gof.names[is.na(custom.gof.names)] <- rownames(gofs)[is.na(custom.gof.names)]
+        rownames(gofs) <- custom.gof.names
+      }
+    }
+    
+    if (dcolumn == FALSE && isTRUE(latex)) {
+      dollar <- "$"
+    } else {
+      dollar <- ""
+    }
+    
+    # add row names as first column to GOF block and format values as character strings
+    if (returnobject == "gof.matrix") {
+      gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  # including labels
+      if (nrow(gof.matrix) > 0) {
+        for (i in 1:nrow(gofs)) {
+          # replace symbols in latex
+          if (isTRUE(latex)) {
+            gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
+          } else {
+            gof.matrix[i, 1] <- rownames(gofs)[i]
+          }
+          for (j in 1:length(gofs[1, ])) {
+            strg <- coeftostring(gofs[i, j], leading.zero, digits = decimal.matrix[i, j])
+            gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
+          }
+        }
+      }
+    }
+    
+    # add custom GOF rows
+    if (returnobject == "gof.matrix") {
+      if (!is.null(custom.gof.rows) && !is.na(custom.gof.rows)) {
+        if (class(custom.gof.rows) != "list") {
+          stop("The 'custom.gof.rows' argument is ignored because it is not a list.")
+        }
+        for (i in length(custom.gof.rows):1) {
+          if (length(custom.gof.rows[[i]]) != ncol(gofs)) {
+            stop("Custom GOF row ", i, " has a different number of values than there are models.")
+          } else {
+            if (!is.numeric(custom.gof.rows[[i]]) && !is.character(custom.gof.rows[[i]])) {
+              custom.gof.rows[[i]] <- as.character(custom.gof.rows[[i]]) # cast into character if unknown class, such as factor or logical
+            }
+            # auto-detect decimal setting
+            if (!is.numeric(custom.gof.rows)) { # put NA for character objects, for example fixed effects
+              dec <- NA
+            } else if (all(custom.gof.rows %% 1 == 0)) { # put 0 for integers
+              dec <- 0
+            } else { # put the respective decimal places if numeric but not integer
+              dec <- digits
+            }
+            newValues <- sapply(custom.gof.rows[[i]], function(x) { # format the different values of the new row
+              if (is.character(x) && isTRUE(latex) && isTRUE(dcolumn)) {
+                paste0("\\multicolumn{1}{c}{", x, "}")
+              } else {
+                paste0(dollar, coeftostring(x, leading.zero, digits = dec), dollar)
+              }
+            })
+            gof.matrix <- rbind(c(names(custom.gof.rows)[i], newValues), gof.matrix) # insert GOF name and GOF values as new row
+          }
+        }
+      }
+      
+      # reorder GOF block using reorder.gof argument
+      gof.matrix <- reorder(gof.matrix, reorder.gof)
+    }
+    
     if (returnobject == "m") {
         return(m)
-    } else if (returnobject == "gofs") {
-        
-        #replace GOF names by custom names
-        if (is.null(custom.gof.names)) {
-            #do nothing
-        } else if (class(custom.gof.names) != "character") {
-            stop("Custom GOF names must be provided as a vector of strings.")
-        } else if (length(custom.gof.names) != length(gof.names)) {
-            stop(paste("There are", length(gof.names), 
-                       "GOF statistics, but you provided", length(custom.gof.names), 
-                       "custom names for them."))
-        } else {
-            custom.gof.names[is.na(custom.gof.names)] <- 
-                rownames(gofs)[is.na(custom.gof.names)]
-            rownames(gofs) <- custom.gof.names
-        }
-        
-        return(gofs)
-        
-    } else if (returnobject == "decimal.matrix") {
-        return(decimal.matrix)
+    } else if (returnobject == "gof.matrix") {
+        return(gof.matrix)
     }
 }
 
@@ -844,145 +971,145 @@ outputmatrix <- function(m, single.row, neginfstring, posinfstring,
 }
 
 
-# Format a column (given as vector) of the output matrix nicely by adding spaces
+#' Format a column vector nicely using spaces
+#'
+#' Format a column (given as vector) of the output matrix by adding spaces.
+#'
+#' This function accepts a vector of coefficients and either standard errors
+#' (in parentheses) or confidence intervals (in square brackets, where the lower
+#' and upper confidence interval are separated by a semicolon) and formats the
+#' values nicely by aligning them at the decimal point. To do this, the function
+#' adds necessary spaces both at the beginning and at the end. The vector to be
+#' formatted by the function is usually a column from an output matrix as
+#' generated by the \code{\link{outputmatrix}} function.
+#'
+#' @param x A character vector with coefficients (e.g., \code{"5.03 ***"}) and
+#'   either standard errors (e.g., \code{"(0.22)"}) or confidence intervals
+#'   (e.g., \code{"[-0.98; 0.24]"}).
+#' @param single.row Are both the coefficient and the uncertainty measure in the
+#'   same row, as per the \code{single.row} argument of the table creation
+#'   functions?
+#' @param digits The number of decimal places used to generate the table.
+#'
+#' @return A character vector of the same size as the input vector, but with
+#'   decimal-aligned values and equal character length of each entry.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{outputmatrix}}, \code{\link{matrixreg}}
 format.column <- function(x, single.row = FALSE, digits = 2) {
+  
+  # create first.dot: max length before first dot; and create paren.length: max
+  # length of parentheses, including opening and closing parentheses
+  dots <- gregexpr("\\.", x)
+  parentheses <- regexpr("\\(.+\\)", x)
+  first.length <- 0
+  paren.length <- 0
+  for (i in 1:length(x)) {
+    first.dot <- dots[[i]][1]
+    paren <- attributes(parentheses)$match.length[i]
+    if (x[i] %in% c("-Inf", "Inf")) {
+      first.dot <- nchar(x[i]) - digits
+    } else if (first.dot == -1) {
+      temp <- nchar(x[i]) + 1
+      if (temp > first.length) {
+        first.length <- temp
+      }
+    } else if (first.dot > first.length) {
+      first.length <- first.dot
+    }
+    if (paren > paren.length) {
+      paren.length <- paren
+    }
+  }
+  
+  for (i in 1:length(x)) {
     
-    # max length before first dot and max length of parentheses
-    dots <- nchar(as.vector(x))
-    parentheses <- regexpr("\\(.+\\)", x)
-    first.length <- 0
-    paren.length <- 0
-    for (i in 1:length(x)) {
-        first.dot <- dots[[i]][1]
-        paren <- attributes(parentheses)$match.length[i]
-        if (x[i] %in% c("-Inf", "Inf")) {
-            first.dot <- nchar(x[i]) - digits
-        } else if (first.dot == -1) {
-            temp <- nchar(x[i]) + 1
-            if (temp > first.length) {
-                first.length <- temp
-            }
-        } else if (first.dot > first.length) {
-            first.length <- first.dot
-        }
-        if (paren > paren.length) {
-            paren.length <- paren
-        }
+    # fill with spaces at the beginning
+    first.dot <- dots[[i]][1]
+    if (x[i] %in% c("-Inf", "Inf")) {
+      first.dot <- nchar(x[i]) - digits
+    } else if (first.dot == -1) {
+      first.dot <- nchar(x[i]) + 1
     }
-    
-    for (i in 1:length(x)) {
-        
-        #fill with spaces at the beginning
-        first.dot <- dots[[i]][1]
-        if (x[i] %in% c("-Inf", "Inf")) {
-            first.dot <- nchar(x[i]) - digits
-        } else if (first.dot == -1) {
-            first.dot <- nchar(x[i]) + 1
-        }
-        if (nchar(x[i]) == 0) {
-            difference <- 0
-        } else {
-            difference <- first.length - first.dot
-        }
-        x[i] <- paste0(x[i])
-        
-        #adjust indentation for SEs
-        if (single.row == TRUE) {
-            paren <- attributes(parentheses)$match.length[i]
-            if (paren < 0) {
-                paren <- 0
-            }
-            difference <- paren.length - paren + 1  #+1 because strsplit takes 1 away
-            spaces <- paste(rep(" ", difference), collapse = "")
-            components <- strsplit(x[i], " \\(")[[1]]
-            if (length(components) == 2) {
-                x[i] <- paste(components[1], spaces, "(", components[2], sep = "")
-            }
-        }
-    }
-    
-    #make all CIs have equal length
-    ci.lower.length <- 0
-    ci.upper.length <- 0
-    for (i in 1:length(x)) {
-        if (grepl("\\[.+\\]", x[i])) {
-            regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
-            first <- sub(regex, "\\1", x[i])
-            first <- nchar(first)
-            if (first > ci.lower.length) {
-                ci.lower.length <- first
-            }
-            last <- sub(regex, "\\2", x[i])
-            last <- nchar(last)
-            if (last > ci.upper.length) {
-                ci.upper.length <- last
-            }
-        }
-    }
-    for (i in 1:length(x)) {
-        if (grepl("\\[.+\\]", x[i])) {
-            regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
-            whitespace1 <- sub(regex, "\\1", x[i])
-            whitespace1 <- sub("\\s+$", "", whitespace1)
-            whitespace2 <- sub(regex, "\\4", x[i])
-            first <- sub(regex, "\\2", x[i])
-            last <- sub(regex, "\\3", x[i])
-            x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
-        }
-    }
-    
-    #fill with spaces at the end to make them all equally long
-    max.x <- max(nchar(x))
-    for (i in 1:length(x)) {
-        difference <- max.x - nchar(x[i])
-        spaces <- paste(rep(" ", difference), collapse = "")
-        x[i] <- paste(x[i], spaces, sep = "")
-    }
-    
-    return(x)
-}
-
-
-# fill a column/vector with spaces at the end
-fill.spaces <- function(x) {
-    nc <- nchar(x)
-    width <- max(nc)
-    for (i in 1:length(x)) {
-        spaces <- paste(rep(" ", width - nc[i]), collapse = "")
-        x[i] <- paste(x[i], spaces, sep = "")
-    }
-    return(x)
-}
-
-
-# Return the goodness-of-fit matrix (i.e., the lower block of the final matrix)
-gofmatrix <- function(gofs, decimal.matrix, dcolumn = TRUE, leading.zero, 
-                      digits, rowLabelType = 'text') {
-    if (dcolumn == TRUE) {
-        dollar <- ""
+    if (nchar(x[i]) == 0) {
+      difference <- 0
     } else {
-        dollar <- "$"
+      difference <- first.length - first.dot
     }
+    spaces <- paste(rep(" ", difference), collapse = "")
+    x[i] <- paste(spaces, x[i], sep = "")
     
-    gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  #incl. labels
-    if (length(gof.matrix) > 0) {
-        for (i in 1:length(rownames(gofs))) {
-            
-            # replace symbols in latex  
-            if (rowLabelType == 'latex') {
-                gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
-            } else {
-                gof.matrix[i, 1] <- rownames(gofs)[i]
-            }
-            for (j in 1:length(gofs[1, ])) {
-                strg <- coeftostring(gofs[i, j], leading.zero, 
-                                     digits = decimal.matrix[i, j])
-                gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
-            }
-        }
+    # adjust indentation for SEs
+    if (single.row == TRUE) {
+      paren <- attributes(parentheses)$match.length[i]
+      if (paren < 0) {
+        paren <- 0
+      }
+      difference <- paren.length - paren + 1  # +1 because strsplit takes 1 away
+      spaces <- paste(rep(" ", difference), collapse = "")
+      components <- strsplit(x[i], " \\(")[[1]]
+      if (length(components) == 2) {
+        x[i] <- paste(components[1], spaces, "(", components[2], sep = "")
+      }
     }
-    return(gof.matrix)
+  }
+  
+  # make all CIs have equal length
+  ci.lower.length <- 0
+  ci.upper.length <- 0
+  for (i in 1:length(x)) {
+    if (grepl("\\[.+\\]", x[i])) {
+      regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
+      first <- sub(regex, "\\1", x[i])
+      first <- nchar(first)
+      if (first > ci.lower.length) {
+        ci.lower.length <- first
+      }
+      last <- sub(regex, "\\2", x[i])
+      last <- nchar(last)
+      if (last > ci.upper.length) {
+        ci.upper.length <- last
+      }
+    }
+  }
+  for (i in 1:length(x)) {
+    if (grepl("\\[.+\\]", x[i])) {
+      regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
+      
+      whitespace1 <- sub(regex, "\\1", x[i])
+      whitespace1 <- sub("\\s+$", "", whitespace1)
+      if (nchar(whitespace1) > 0) {
+        whitespace1 <- paste0(whitespace1, " ")
+      }
+      whitespace2 <- sub(regex, "\\4", x[i])
+      
+      first <- sub(regex, "\\2", x[i])
+      difference <- ci.lower.length - nchar(first)
+      zeros <- paste(rep(" ", difference), collapse = "")
+      first <- paste0(zeros, first)
+      
+      last <- sub(regex, "\\3", x[i])
+      difference <- ci.upper.length - nchar(last)
+      zeros <- paste(rep(" ", difference), collapse = "")
+      last <- paste0(zeros, last)
+      
+      x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
+    }
+  }
+  
+  # fill with spaces at the end to make them all equally long
+  max.x <- max(nchar(x))
+  for (i in 1:length(x)) {
+    difference <- max.x - nchar(x[i])
+    spaces <- paste(rep(" ", difference), collapse = "")
+    x[i] <- paste0(x[i], spaces)
+  }
+  
+  return(x)
 }
+
 
 # reorder a matrix according to a vector of new positions
 reorder <- function(mat, new.order) {
@@ -1425,32 +1552,32 @@ get_stars <- function(pval = NULL, # test statistics;
     # p_note
     if (p_note_flag && !is.null(stars)) {  # stars supplied = build note
         st <- sort(stars)
-        if (output == 'ascii') {
+        if (output == "ascii") {
             p_note <- paste0(star.prefix,
                              symbols, 
                              star.suffix,
-                             ' p < ', st)
-        } else if (output == 'latex') {
-            p_note <- paste0('$^{', 
+                             " p < ", st)
+        } else if (output == "latex") {
+            p_note <- paste0("$^{", 
                              star.prefix,
                              symbols, 
                              star.suffix,
-                             '} p <', 
+                             "}p<", 
                              st, 
-                             '$')
-        } else if (output == 'html') {
-            p_note <- paste0('<sup', 
+                             "$")
+        } else if (output == "html") {
+            p_note <- paste0("<sup", 
                              css.sup, 
-                             '>', 
+                             ">", 
                              star.prefix,
                              symbols, 
                              star.suffix,
-                             '</sup> p &lt; ', 
+                             "</sup>p &lt; ", 
                              st)
         }
-        p_note <- paste(p_note, collapse = '; ')
+        p_note <- paste(p_note, collapse = "; ")
     } else { # no stars supplied = empty note
-        p_note <- ''
+        p_note <- ""
     }
     
     # ci_note

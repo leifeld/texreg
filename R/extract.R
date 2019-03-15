@@ -3364,7 +3364,7 @@ extract.oglmx <- function(model, include.aic = TRUE, include.iterations = TRUE,
     }
     
     if (include.nobs == TRUE) {
-        n <- length(model$modelframes$Z)
+        n <- nobs(model)
         gof <- c(gof, n)
         gof.names <- c(gof.names, "Num.\ obs.")
         gof.decimal <- c(gof.decimal, FALSE)

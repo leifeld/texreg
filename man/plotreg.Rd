@@ -3,33 +3,13 @@
 \title{Create coefficient plots from statistical model output using ggplot2}
 \description{Create coefficient plots from statistical model output using ggplot2.}
 \usage{
-plotreg(l,
-                    file = NULL,
-                    custom.model.names = NULL,
-                    custom.title = NULL,
-                    custom.coef.names = NULL,
-                    custom.note = NULL,
-                    override.coef = 0,
-                    override.se = 0,
-                    override.pval = 0,
-                    override.ci.low = 0,
-                    override.ci.up = 0,
-                    omit.coef = NULL,
-                    reorder.coef = NULL,
-                    ci.level = 0.95,
-                    use.se = FALSE,
-                    type = "facet",
-                    signif.light = "#FBC9B9",
-                    signif.medium = "#F7523A",
-                    signif.dark = "#BD0017",
-                    insignif.light = "#C5DBE9",
-                    insignif.medium = "#5A9ECC",
-                    insignif.dark = "#1C5BA6",
-                    ...)
+plotreg(l,file = NULL, custom.model.names = NULL, custom.title = NULL, custom.coef.names = NULL,            custom.note = NULL, override.coef = 0, override.se = 0, override.pval = 0, 
+        override.ci.low = 0, override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL, 
+        ci.level = 0.95, use.se = FALSE, type = "facet", signif.light = "#FBC9B9",
+        signif.medium = "#F7523A", signif.dark = "#BD0017", insignif.light = "#C5DBE9",
+        insignif.medium = "#5A9ECC", insignif.dark = "#1C5BA6", ...)
 }
 \details{
-The \code{coefplot} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals). It accepts raw data (the lower and upper bounds of inner and outer confidence intervals as well as the point estimates and their names) as input data. Significant coefficients and intervals can be plotted in a different color.
-
 The \code{plotreg} function produces coefficient plots (i.e., forest plots applied to point estimates and confidence intervals) and works much like the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, \code{\link{matrixreg}}, \code{\link{csvreg}} and \code{\link{wordreg}} functions. It accepts a single or multiple statistical models as input and internally extracts the relevant data from the models. If confidence intervals are not defined in the extract method of a statistical model (see \link{extract} and \link{extract-methods}), the default standard errors are converted to confidence intervals. Most of the arguments work either like in the \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} \code{\link{matrixreg}}, \code{\link{csvreg}} and \code{\link{wordreg}} functions.It is possible to display the plots in two ways: using the \code{\link{facet}} option, one forest plot applied to point estimates and confidence intervals will be visualised in case there is only one model.  If there is more than one model each one will be plotted next to the other; using the \code{\link{forest}} option, coefficients from one or more models will be grouped together and displayed as a forest plot. 
 }
 \arguments{
