@@ -233,7 +233,7 @@ plotreg <- function(l,
         }
         
         if (length(custom.coef.map) > 0) {
-            dataframe <- custommap(dataframe, custom.coef.map)
+            #dataframe <- custommap(dataframe, custom.coef.map)
         }
         
         # plot
@@ -278,55 +278,34 @@ plotreg <- function(l,
             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
         }
         
-        if (length(custom.coef.map) > 0) {
-            #cat("\ndataframe1: ", deparse(dataframe))
-            #dataframe <- custommap(dataframe, custom.coef.map)
-            #cat("\ndataframe2: ", rownames(dataframe))
-            
-            # separate data frame by model
-            rownames(dataframe) <- dataframe$co.names
-            dataframes <- split(dataframe, dataframe$lab)
-            
-            # apply custommap to each model
-            rownames(dataframe) <- dataframe$co.names
-            lapply(dataframes, function x rownames())
-            dataframes <- lapply(dataframes, custommap)
-            cat("\ndataframes", deparse(dataframes))
-            
-            # putting them together again
-            dataframes <- Reduce(rbind, dataframes)
-            
-            # when user supplies NA as destination, replace with origin
-           # idx <- is.na(custom.coef.map)
-           # custom.coef.map[idx] <- names(custom.coef.map)[idx]
-            
-            # subset of coefficients to keep
-            # origins <- NULL
-            # for (i in 1:length(dataframes)) {
-            #     origin <- names(custom.coef.map)[names(custom.coef.map) %in% dataframe$co.names[i]]
-            #     origins <- append(origins, rbind(origin))
-            # }
-            # cat("\norigins: ", origins)
-            # destination <- unlist(custom.coef.map[origins])
-            # # otherwise R converts to numeric if a single coefficient is passed
-            # out <- m[origin, , drop = FALSE]
-            # 
-            # # rename
-            # row.names(out) <- destination
-            # 
-            # # output
-            # return(out)
-            
-            
-            #dataframes <- lapply(dataframes, function(x) custommap(x, custom.coef.map))
-            #cat("\nlength(dataframes): ", length(dataframes))
-            #cat("\ndataframe1: ", deparse(dataframes))
-        }
-        
+        # if (length(custom.coef.map) > 0) {
+        #     cat("\ncustommapploreg", deparse(custom.coef.map))
+        #     # separate data frame by model
+        #     dataframes <- split(dataframe, dataframe$lab)
+        #     # rename rows in order to use custommap
+        #     dataframes <- lapply(dataframes,function(DF) {rownames(DF) <- DF$co.names; DF})
+        #     # apply custommap to each model
+        #     dataframes <- lapply(dataframes, function(x) custommap(x, custom.coef.map))
+        #     cat("\ndataframes2", deparse(dataframes))
+        #     # rename levels of co.names (factor)
+        #     cat("\nco.namesLevels: ", levels(dataframes[[1]]$co.names))
+        #     #co.names ha ancora 4 livelli
+        #     #QUI#dataframes <- lapply(dataframes, function(DF) {droplevels(DF$co.names); DF})
+        #     #droplevel non va 
+        #     cat("\nco.namesLevels2: ", levels(dataframes[[1]]$co.names))
+        #     dataframes <- lapply(dataframes, function(DF) {levels(DF$co.names) <- as.character(rownames(DF)); DF})
+        #     cat("\ndataframes3", deparse(dataframes))
+        #     
+        #     # putting them together again
+        #     dataframes <- Reduce(rbind, dataframes)
+        #     cat("\ndataframes4", deparse(dataframes))
+        #     
+        # }
+        # 
         # put models in the right order
         laborder<- c(length(dataframe$lab):1)
         dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[laborder])
-        
+        cat("\ndataframes5", deparse(dataframes))
         # plot
         p <- ggplot(dataframe, aes(lab, co)) + 
             geom_hline(yintercept = 0, 

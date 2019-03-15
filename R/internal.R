@@ -668,7 +668,6 @@ omit_rename <- function(m, omit.coef, custom.coef.names) {
 
 # function to select, omit, reorder, and rename coefficients
 custommap <- function(m, custom.coef.map) {
-    
     # sanity checks
     if (class(custom.coef.map) != 'list') {
         stop('custom.coef.map must be a named list.') 
