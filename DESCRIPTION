@@ -14,3 +14,5 @@ Enhances: AER, betareg, brglm, censReg, dynlm, eha, erer, fGarch, gamlss, gee, g
 Additional_repositories: 
 License: GPL-2 | GPL-3
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1

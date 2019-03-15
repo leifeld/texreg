@@ -3,6 +3,320 @@
 # for bug reports, help, or feature requests.
 
 # matrixreg function
+
+#' Convert regression output to LaTeX or HTML tables
+#' 
+#' Conversion of R regression output to LaTeX or HTML tables.
+#'
+#' @param l A statistical model or a list of statistical models. Lists of
+#'  models can be specified as `l = list(model.1, model.2, ...)`.
+#'  Different object types can also be mixed.
+#' @param single.row By default, a model parameter takes up two lines of the
+#'   table: the standard error is listed in parentheses under the coefficient.
+#'   This saves a lot of horizontal space on the page and is the default table
+#'   format in most academic journals. If `single.row = TRUE` is activated,
+#'   however, both coefficient and standard error are placed in a single table
+#'   cell in the same line.
+#' @param stars The significance levels to be used to draw stars. Between 0 and
+#'   4 threshold values can be provided as a numeric vector. For example,
+#'   `stars = numeric(0)` will not print any stars and will not print any
+#'   note about significance levels below the table. `stars = 0.05` will
+#'   attach one single star to all coefficients where the p value is below 0.05.
+#'   `stars = c(0.001, 0.01, 0.05, 0.1)` will print one, two, or three
+#'   stars, or a symbol as specified by the `symbol` argument depending on
+#'   the p values.
+#' @param custom.model.names A character vector of labels for the models. By
+#'   default, the models are named Model 1, Model 2, etc. Specifying
+#'   `model.names = c("My name 1", "My name 2")` etc. overrides the default
+#'   behavior.
+#' @param custom.coef.names By default, \pkg{texreg} uses the coefficient names
+#'   which are stored in the models. The `custom.coef.names` argument can
+#'   be used to replace them by other character strings in the order of
+#'   appearance. For example, if a table shows a total of three different
+#'   coefficients (including the intercept), the argument
+#'   `custom.coef.names = c("Intercept", "variable 1", "variable 2")` will
+#'   replace their names in this order. 
+#'   
+#'   Sometimes it happens that the same
+#'   variable has a different name in different models. In this case, the user
+#'   can use this function to assign identical names. If possible, the rows will
+#'   then be merged into a single row unless both rows contain values in the
+#'   same column. 
+#'   
+#'   Where the argument contains an `NA` value, the original
+#'   name of the coefficient is kept. For example, 
+#'   `custom.coef.names = c(NA, "age", NA)` will only replace the second coef 
+#'   name and leave the first and third name as they are in the original model.
+#' @param custom.coef.map The `custom.coef.map` argument can be used to
+#'   select, omit, rename, and reorder coefficients. Users must supply a named
+#'   list of this form: 
+#'   `list('x' = 'First variable', 'y' = NA, 'z' = Third variable')`. 
+#'   With that particular example of `custom.coef.map`:
+#'   
+#'   1. coefficients will presented in order: x, y, z. 
+#'   2. variable x will appear as "First variable", variable y will appear as 
+#'     "y",and variable "z" will appear as "Third variable".
+#'   3. all variables not named "x", "y", or "z" will be omitted from the table.
+#' @param custom.gof.names A character vector which is used to replace the names
+#'   of the goodness-of-fit statistics at the bottom of the table. The vector
+#'   must have the same length as the number of GOF statistics in the final
+#'   table. The argument works like the `custom.coef.names` argument, but
+#'   for the GOF values. `NA` values can be included where the original GOF
+#'   name should be kept.
+#' @param custom.gof.rows A named list of vectors for new lines at the beginning
+#'   of the GOF block of the table. For example, 
+#'   `list("Random effects" = c("YES", "YES", "NO"), Observations = c(25, 25, 26))` 
+#'   would insert two new
+#'   rows into the table, at the beginning of the GOF block (i.e., after the
+#'   coefficients). The rows can contain integer, numeric, or character objects.
+#'   Note that this argument is processed after the `custom.gof.names`
+#'   argument (meaning `custom.gof.names` should not include any of the new
+#'   GOF rows) and before the `reorder.gof` argument (meaning that the new
+#'   GOF order specified there should contain values for the new custom GOF
+#'   rows). Arguments for custom columns are not affected because they only
+#'   insert columns into the coefficient block.
+#' @param digits Set the number of decimal places for coefficients, standard
+#'   errors and goodness-of-fit statistics. Do not use negative values! The
+#'   argument works like the `digits` argument in the `round` function
+#'   of the \pkg{base} package.
+#' @param leading.zero Most journals require leading zeros of coefficients and
+#'   standard errors (for example, `0.35`). This is also the default texreg
+#'   behavior. Some journals, however, require omission of leading zeros (for
+#'   example, `.35`). This can be achieved by setting `leading.zero =
+#'   FALSE`.
+#' @param star.symbol 
+#' @param symbol If four threshold values are handed over to the `stars`
+#'   argument, p values smaller than the largest threshold value but larger than
+#'   the second-largest threshold value are denoted by this symbol. The default
+#'   symbol is `"\\\\cdot"` for the LaTeX dot, `"&middot;"` for the
+#'   HTML dot, or simply `"."` for the ASCII dot. If the `texreg`
+#'   function is used, any other mathematical LaTeX symbol or plain text symbol
+#'   can be used, for example `symbol = "\\\\circ"` for a small circle
+#'   (note that backslashes must be escaped). If the `htmlreg` function is
+#'   used, any other HTML character or symbol can be used. For the
+#'   `screenreg` function, only plain text characters can be used.
+#' @param override.coef Set custom values for the coefficients. New coefficients
+#'   are provided as a list of numeric vectors. The list contains vectors of
+#'   coefficients for each model. There must be as many vectors of coefficients
+#'   as there are models. For example, if there are two models with three model
+#'   terms each, the argument could be specified as 
+#'   `override.coef = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))`. If there is 
+#'   only one model,
+#'   custom values can be provided as a plain vector (not embedded in a list).
+#'   For example: `override.coef = c(0.05, 0.06, 0.07)`.
+#' @param override.se Set custom values for the standard errors. New standard
+#'   errors are provided as a list of numeric vectors. The list contains vectors
+#'   of standard errors for each model. There must be as many vectors of
+#'   standard errors as there are models. For example, if there are two models
+#'   with three coefficients each, the argument could be specified as
+#'   `override.se = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))`. If there
+#'   is only one model, custom values can be provided as a plain vector (not
+#'   embedded in a list). For example: `override.se = c(0.05, 0.06, 0.07)`.
+#'   Overriding standard errors can be useful for the implementation of robust
+#'   SEs, for example.
+#' @param override.pvalues Set custom values for the p values. New p values are
+#'   provided as a list of numeric vectors. The list contains vectors of p
+#'   values for each model. There must be as many vectors of p values as there
+#'   are models. For example, if there are two models with three coefficients
+#'   each, the argument could be specified as `override.pvalues =
+#'   list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))`. If there is only one model,
+#'   custom values can be provided as a plain vector (not embedded in a list).
+#'   For example: `override.pvalues = c(0.05, 0.06, 0.07)`. Overriding p
+#'   values can be useful for the implementation of robust SEs and p values, for
+#'   example.
+#' @param override.ci.low Set custom lower confidence interval bounds. This
+#'   works like the other override arguments, with one exception: if confidence
+#'   intervals are provided here and in the `override.ci.up` argument, the
+#'   standard errors and p values as well as the `ci.force` argument are
+#'   ignored.
+#' @param override.ci.up Set custom upper confidence interval bounds. This works
+#'   like the other override arguments, with one exception: if confidence
+#'   intervals are provided here and in the `override.ci.low` argument, the
+#'   standard errors and p values as well as the `ci.force` argument are
+#'   ignored.
+#' @param omit.coef A character string which is used as a regular expression to
+#'   remove coefficient rows from the table. For example, `omit.coef =
+#'   "group"` deletes all coefficient rows from the table where the name of the
+#'   coefficient contains the character sequence "group". More complex regular
+#'   expressions can be used to filter out several kinds of model terms, for
+#'   example `omit.coef = "(thresh)|(ranef)"` to remove all model terms
+#'   matching either "thresh" or "ranef".The `omit.coef` argument is
+#'   processed after the `custom.coef.names` argument, so the regular
+#'   expression should refer to the custom coefficient names. To omit GOF
+#'   entries instead of coefficient entries, use the custom arguments of the
+#'   extract functions instead (see the help entry of the \link{extract}
+#'   function or \link{extract-methods}.
+#' @param reorder.coef Reorder the rows of the coefficient block of the
+#'   resulting table in a custom way. The argument takes a vector of the same
+#'   length as the number of coefficients. For example, if there are three
+#'   coefficients, `reorder.coef = c(3, 2, 1)` will put the third
+#'   coefficient in the first row and the first coefficient in the third row.
+#'   Reordering can be sensible because interaction effects are often added to
+#'   the end of the model output although they were specified earlier in the
+#'   model formula. Note: Reordering takes place after processing custom
+#'   coefficient names and after omitting coefficients, so the
+#'   `custom.coef.names` and `omit.coef` arguments should follow the
+#'   original order.
+#' @param reorder.gof Reorder the rows of the goodness-of-fit block of the
+#'   resulting table in a custom way. The argument takes a vector of the same
+#'   length as the number of GOF statistics. For example, if there are three
+#'   goodness-of-fit rows, `reorder.gof = c(3, 2, 1)` will exchange the
+#'   first and the third row. Note: Reordering takes place after processing
+#'   custom GOF names and after adding new custom GOF rows, so the
+#'   `custom.gof.names` and `custom.gof.rows` arguments should follow
+#'   the original order, and the `reorder.gof` argument should contain
+#'   values for any rows that are added through the `custom.gof.rows`
+#'   argument.
+#' @param ci.force Should confidence intervals be used instead of the default
+#'   standard errors and p values? Most models implemented in the \pkg{texreg}
+#'   package report standard errors and p values by default while few models
+#'   report confidence intervals. However, the functions in the \pkg{texreg}
+#'   package can convert standard errors and into confidence intervals if
+#'   desired. To enforce confidence intervals instead of standard errors, the
+#'   `ci.force` argument accepts either a logical value indicating whether
+#'   all models or none of the models should be forced to report confidence
+#'   intervals (`ci.force = TRUE` for all and `ci.force = FALSE` for
+#'   none) or a vector of logical values indicating for each model separately
+#'   whether the model should be forced to report confidence intervals (e.g.,
+#'   `ci.force = c(FALSE, TRUE, FALSE)`). Confidence intervals are computed
+#'   using the standard normal distribution (z values based on the `qnorm`
+#'   function).
+#' @param ci.force.level If the `ci.force` argument is used to convert
+#'   standard errors to confidence intervals, what confidence level should be
+#'   used? By default, `0.95` is used (i.e., an alpha value of 0.05).
+#' @param ci.test If confidence intervals are reported, the `ci.test`
+#'   argument specifies the reference value to establish whether a
+#'   coefficient/CI is significant. The default value `ci.test = 0`, for
+#'   example, will attach a significance star to coefficients if the confidence
+#'   interval does not contain `0`. If no star should be printed at all,
+#'   `ci.test = NULL` can be used. The `ci.test` argument works both
+#'   for models with native support for confidence intervals and in cases where
+#'   the `ci.force` argument is used.
+#' @param bold [only in the `texreg` and `htmlreg` functions] The p
+#'   value threshold below which the coefficient shall be formatted in a bold
+#'   font. For example, `bold = 0.05` will cause all coefficients which are
+#'   significant at the 95\% level to be formatted in bold. Note that this is
+#'   not compatible with the dcolumn argument in the `texreg` function. If
+#'   both are `TRUE`, dcolumn is switched off and a warning message
+#'   appears. Note also that it is advisable to use `stars = FALSE`
+#'   together with the `bold` argument because having both bolded
+#'   coefficients and significance stars usually does not make any sense.
+#' @param groups This argument can be used to group the rows of the table into
+#'   blocks. For example, there could be one block for hypotheses and another
+#'   block for control variables. Each group has a heading, and the row labels
+#'   within a group are indented. The partitions must be handed over as a list
+#'   of named numeric vectors, where each number is a row index and each name is
+#'   the heading of the group. Example: `groups = list("first group" = 1:4,
+#'   "second group" = 7:8)`.
+#' @param custom.columns An optional list of additional text columns to be
+#'   inserted into the table, for example coefficient types. The list should
+#'   contain one or more character vectors with as many character or numeric
+#'   elements as there are rows. If the vectors in the list are named, the names
+#'   are used as labels in the table header. For example, `custom.columns =
+#'   list(type = c("a", "b", "c"), 1:3)` will add two columns; the first one is
+#'   labeled while the second one is not. Note that the numeric elements of the
+#'   second column will be converted to character objects in this example. The
+#'   consequence is that decimal alignment with the \pkg{dcolumn} package is
+#'   switched off in these columns. Note that this argument is processed after
+#'   any arguments that affect the number of rows.
+#' @param custom.col.pos An optional integer vector of positions for the columns
+#'   given in the `custom columns` argument. For example, if there are
+#'   three custom columns, `custom.col.pos = c(1, 3, 3)` will insert the
+#'   first custom column before the first column of the original table and the
+#'   remaining two custom columns after the second column of the original table.
+#'   By default, all custom columns are placed after the first column, which
+#'   usually contains the coefficient names.
+#' @param dcolumn only in the `texreg` function] Use the `dcolumn` 
+#'   LaTeX package to get a nice alignment of the coefficients (recommended).
+#' @param ... Custom options to be passed on to the extract function. For
+#'   example, most extract methods provide custom options for the inclusion or
+#'   exclusion of specific goodness-of-fit statistics. See the help entries of
+#'   [extract()] and [extract-methods] for more information.
+#'  
+#' @details
+#' texreg converts coefficients, standard errors, significance stars, 
+#' and goodness-of-fit statistics of statistical models into LaTeX 
+#' tables or HTML tables or into nicely formatted screen output for 
+#' the R console. A list of several models can be combined in a 
+#' single table. The output is customizable. New model types can be 
+#' easily implemented. Confidence intervals can be used instead of 
+#' standard errors and p-values.
+#' 
+#' The `texreg()` function creates LaTeX code for inclusion 
+#' in a LaTeX document or for usage with \pkg{Sweave} or \pkg{knitr}.
+#' 
+#' The `htmlreg()` function creates HTML code. Tables in HTML 
+#' The `htmlreg()` function creates HTML code. Tables in HTML 
+#' format can be saved with a ".html" extension and displayed in 
+#' a web browser. Alternatively, they can be saved with a ".doc" 
+#' extension and opened in MS Word for inclusion in office 
+#' documents. `htmlreg()`` also works with \pkg{knitr} and HTML 
+#' or Markdown. Note that the `inline.css`, `doctype`, 
+#' `html.tag`, `head.tag`, and `body.tag` arguments 
+#' must be adjusted for the different purposes (see the description 
+#'   of the arguments).
+#' 
+#' The `screenreg()` function creates text representations of 
+#' tables and prints them to the R console. This is an alternative 
+#' to the `summary` method and serves easy model comparison. 
+#' Moreover, once a table has been prepared in the R console, it 
+#' can be later exported to LaTeX or HTML with little extra effort 
+#' because the majority of arguments of the three functions is 
+#' identical.
+#' 
+#' The `wordreg()` function creates a Microsoft Word document with the
+#' requested table. 
+#' 
+#' The `matrixreg()` function creates text representations of 
+#' tables and prints them to the R console. 
+#' 
+#' The `csvreg()` function creates a spreadsheet in CSV containing the
+#' information in the tables. 
+#' 
+#' The `huxtablereg()` function creates a 
+#' [huxtable::huxtable()] object using the 'huxtable'
+#' package. This allows output to HTML, LaTeX, Word, Excel, Powerpoint, and 
+#' RTF. The object can be formatted using huxtable package functions. See also
+#' [huxtable::huxreg()].
+#' 
+#' @export
+#'
+#' @examples
+#' # Linear mixed-effects models
+#' library(nlme)
+#' model.1 <- lme(distance ~ age, data = Orthodont, random = ~ 1)
+#' model.2 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
+#' texreg(list(model.1, model.2), booktabs = TRUE, dcolumn = TRUE)
+#' 
+#' # Ordinary least squares model (example from the 'lm' help file)
+#' ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
+#' trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
+#' group <- gl(2,10,20, labels = c("Ctl","Trt"))
+#' weight <- c(ctl, trt)
+#' lm.D9 <- lm(weight ~ group)
+#' table.string <- texreg(lm.D9, return.string = TRUE)
+#' cat(table.string)
+#' 
+#' # Create a 'fake' Office document containing a regression table
+#' htmlreg(list(model.1, model.2), file = "texreg.doc", 
+#'   inline.css = FALSE, doctype = TRUE, html.tag = TRUE, 
+#'   head.tag = TRUE, body.tag = TRUE)
+#' unlink("texreg.doc")
+#' 
+#' if (requireNamespace('huxtable')) {
+#'   hr <- huxtablereg(list(model.1, model.2))
+#'   hr <- huxtable::set_bottom_border(hr, 1, -1, 0.4)
+#'   hr <- huxtable::set_bold(hr, 1:nrow(hr), 1, TRUE)
+#'   hr <- huxtable::set_bold(hr, 1, -1, TRUE)
+#'   hr <- huxtable::set_all_borders(hr, 4, 2, 0.4)
+#'   hr <- huxtable::set_all_border_colors(hr, 4, 2, "red")
+#'   hr
+#'   \dontrun{
+#'     huxtable::quick_pdf(hr)
+#'     huxtable::quick_docx(hr)
+#'     # or use in a knitr document
+#'   }
+#' }
 matrixreg <- function(l,
                       single.row = FALSE,
                       stars = c(0.001, 0.01, 0.05),
@@ -196,6 +510,16 @@ matrixreg <- function(l,
 } 
 
 # screenreg function
+#' @rdname matrixreg
+#' @param file Using this argument, the resulting table is written to a file rather than to
+#' the R prompt. The file name can be specified as a character string. Writing a table to a
+#' file can be useful for working with MS Office or LibreOffice. For example, using the
+#' `htmlreg()` function, an HTML table can be written to a file with the extension 
+#' `.doc` and opened with MS Word. The table can then be simply copied into any Word
+#' document, retaining the formatting of the table. Note that LibreOffice can import only
+#' plain HTML; CSS decorations are not supported; the resulting tables do not retain the
+#' full formatting in LibreOffice.
+#' @export
 screenreg <- function(l,
                       file = NULL,
                       single.row = FALSE,
@@ -384,6 +708,8 @@ screenreg <- function(l,
 
 
 # texreg function
+#' @rdname matrixreg
+#' @export
 texreg <- function(l,
                    file = NULL,
                    single.row = FALSE,
@@ -837,6 +1163,8 @@ texreg <- function(l,
 
 
 # htmlreg function
+#' @rdname matrixreg
+#' @export
 htmlreg <- function(l,
                     file = NULL,
                     single.row = FALSE,
@@ -1178,6 +1506,8 @@ htmlreg <- function(l,
 }
 
 # csvreg function
+#' @rdname matrixreg
+#' @export
 csvreg <- function(l,
                    file,
                    stars = c(0.001, 0.01, 0.05),
@@ -1275,6 +1605,8 @@ csvreg <- function(l,
 }
 
 # Microsoft Word function
+#' @rdname matrixreg
+#' @export
 wordreg <- function(l,
                     file = NULL,
                     single.row = FALSE,
@@ -1348,7 +1680,9 @@ wordreg <- function(l,
   rmarkdown::render(f, output_file = paste0(wd, "/", file))
 }
 
-
+# huxtablereg function
+#' @rdname matrixreg
+#' @export
 huxtablereg <- function(l,
                         single.row = FALSE,
                         stars = c(0.001, 0.01, 0.05),
