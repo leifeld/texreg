@@ -1552,32 +1552,32 @@ get_stars <- function(pval = NULL, # test statistics;
     # p_note
     if (p_note_flag && !is.null(stars)) {  # stars supplied = build note
         st <- sort(stars)
-        if (output == 'ascii') {
+        if (output == "ascii") {
             p_note <- paste0(star.prefix,
                              symbols, 
                              star.suffix,
-                             ' p < ', st)
-        } else if (output == 'latex') {
-            p_note <- paste0('$^{', 
+                             " p < ", st)
+        } else if (output == "latex") {
+            p_note <- paste0("$^{", 
                              star.prefix,
                              symbols, 
                              star.suffix,
-                             '} p <', 
+                             "}p<", 
                              st, 
-                             '$')
-        } else if (output == 'html') {
-            p_note <- paste0('<sup', 
+                             "$")
+        } else if (output == "html") {
+            p_note <- paste0("<sup", 
                              css.sup, 
-                             '>', 
+                             ">", 
                              star.prefix,
                              symbols, 
                              star.suffix,
-                             '</sup> p &lt; ', 
+                             "</sup>p &lt; ", 
                              st)
         }
-        p_note <- paste(p_note, collapse = '; ')
+        p_note <- paste(p_note, collapse = "; ")
     } else { # no stars supplied = empty note
-        p_note <- ''
+        p_note <- ""
     }
     
     # ci_note
