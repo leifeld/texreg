@@ -50,7 +50,7 @@
 #' @param custom.coef.map The `custom.coef.map` argument can be used to
 #'   select, omit, rename, and reorder coefficients. Users must supply a named
 #'   list of this form: 
-#'   `list('x' = 'First variable', 'y' = NA, 'z' = Third variable')`. 
+#'   `list('x' = 'First variable', 'y' = NA, 'z' = 'Third variable')`. 
 #'   With that particular example of `custom.coef.map`:
 #'   
 #'   1. coefficients will presented in order: x, y, z. 
@@ -192,7 +192,7 @@
 #'   `ci.test = NULL` can be used. The `ci.test` argument works both
 #'   for models with native support for confidence intervals and in cases where
 #'   the `ci.force` argument is used.
-#' @param bold [only in the `texreg` and `htmlreg` functions] The p
+#' @param bold (only in the `texreg` and `htmlreg` functions) The p
 #'   value threshold below which the coefficient shall be formatted in a bold
 #'   font. For example, `bold = 0.05` will cause all coefficients which are
 #'   significant at the 95\% level to be formatted in bold. Note that this is
@@ -226,7 +226,7 @@
 #'   remaining two custom columns after the second column of the original table.
 #'   By default, all custom columns are placed after the first column, which
 #'   usually contains the coefficient names.
-#' @param dcolumn only in the `texreg` function] Use the `dcolumn` 
+#' @param dcolumn (only in the `texreg` function) Use the `dcolumn` 
 #'   LaTeX package to get a nice alignment of the coefficients (recommended).
 #' @param ... Custom options to be passed on to the extract function. For
 #'   example, most extract methods provide custom options for the inclusion or
@@ -511,14 +511,29 @@ matrixreg <- function(l,
 
 # screenreg function
 #' @rdname matrixreg
-#' @param file Using this argument, the resulting table is written to a file rather than to
-#' the R prompt. The file name can be specified as a character string. Writing a table to a
-#' file can be useful for working with MS Office or LibreOffice. For example, using the
-#' `htmlreg()` function, an HTML table can be written to a file with the extension 
-#' `.doc` and opened with MS Word. The table can then be simply copied into any Word
-#' document, retaining the formatting of the table. Note that LibreOffice can import only
-#' plain HTML; CSS decorations are not supported; the resulting tables do not retain the
-#' full formatting in LibreOffice.
+#' @param file Using this argument, the resulting table is written to a file
+#'   rather than to the R prompt. The file name can be specified as a character
+#'   string. Writing a table to a file can be useful for working with MS Office
+#'   or LibreOffice. For example, using the `htmlreg()` function, an HTML table
+#'   can be written to a file with the extension `.doc` and opened with MS Word.
+#'   The table can then be simply copied into any Word document, retaining the
+#'   formatting of the table. Note that LibreOffice can import only plain HTML;
+#'   CSS decorations are not supported; the resulting tables do not retain the
+#'   full formatting in LibreOffice.
+#' @param column.spacing (only in the `screenreg` function) The amount of
+#'   space between any two columns of a table. By default, two spaces are used.
+#'   If the tables do not fit on a single page horizontally, the value can be
+#'   set to `1` or `0`.
+#' @param outer.rule (only in the `screenreg` function) The character which
+#'   is used to draw the outer horizontal line above and below a table. If an
+#'   empty character object is provided (i.e., `outer.rule = ""`), there
+#'   will be no outer horizontal lines. Recommended values are `""`,
+#'   `"="`, `"-"`, `"_"`, or `"#"`.
+#' @param inner.rule (only in the `screenreg` function) The character which
+#'   is used to draw the inner horizontal line above and below a table. If an
+#'   empty character object is provided (i.e., `outer.rule = ""`), there
+#'   will be no inner horizontal lines. Recommended values are `""`,
+#'   `"-"`, or `"_"`.
 #' @export
 screenreg <- function(l,
                       file = NULL,
@@ -709,6 +724,72 @@ screenreg <- function(l,
 
 # texreg function
 #' @rdname matrixreg
+#' 
+#' @param label (only in the `texreg` function) Set the label of the 
+#'  `table` environment.
+#' @param booktabs (only in the `texreg` function) Use the `booktabs`
+#'  LaTeX package to get thick horizontal rules in the output table (recommended).
+#' @param lyx (only in the `texreg` function) `logical`; if
+#'   `TRUE`, each newline in the output is doubled, which facilitates
+#'   transferring the output into the LyX document processor. 
+#' @param sideways (only in the `texreg` function) If `sideways =
+#'   TRUE` is set, the `table` floating environment is replaced by a
+#'   `sidewaystable` float, and the `rotating` package is loaded in
+#'   the preamble. The argument only has an effect if `table = TRUE` is
+#'   also set.
+#' @param longtable (only in the `texreg` function) If `longtable =
+#'   TRUE` is set, the `longtable` environment from the `longtable`
+#'   LaTeX package is used to set tables across multiple pages. Note that this
+#'   argument is not compatible with the `sideways` and `scalebox`
+#'   arguments. These arguments will be automatically switched off when
+#'   `longtable = TRUE` is set. 
+#' @param use.packages (only in the `texreg` function) If this argument is
+#'   set to `TRUE` (= the default behavior), the required LaTeX packages
+#'   are loaded in the beginning. If set to `FALSE`, the use package
+#'   statements are omitted from the output.
+#' @param table (only in the `texreg` function) By default, texreg puts the
+#'   actual `tabular` object in a `table` floating environment. To get
+#'   only the `tabular` object without the whole table header, set
+#'   `table = FALSE`.
+#' @param no.margin (only in the `texreg` function) In order to save space,
+#'   inner margins of tables can be switched off.
+#' @param fontsize (only in the `texreg` function) The `fontsize`
+#'   argument serves to change the font size used in the table. Valid values are
+#'   `"tiny"`, `"scriptsize"`, `"footnotesize"`, `"small"`,
+#'   `"normalsize"`, `"large"`, `"Large"`, `"LARGE"`,
+#'   `"huge"`, and `"Huge"`. Note that the `scalebox` argument
+#'   often achieves better results when the goal is to change the size of the
+#'   table. 
+#' @param scalebox (only in the `texreg` function) The `scalebox`
+#'   argument serves to resize the table. For example, `scalebox = 1.0` is
+#'   equivalent to the normal size, `scalebox = 0.5` decreases the size of
+#'   the table by one half, and `scalebox = 2.0` doubles the space occupied
+#'   by the table. Note that the `scalebox` argument does not work when the
+#'   `longtable` argument is used. 
+#' @param float.pos (only in the `texreg` function) This argument specifies
+#'   where the table should be located on the page or in the document. By
+#'   default, no floating position is specified, and LaTeX takes care of the
+#'   position automatically. Possible values include `h` (here), `p`
+#'   (page), `t` (top), `b` (bottom), any combination thereof, e.g.
+#'   `tb`, or any of these values followed by an exclamation mark, e.g.
+#'   `t!`, in order to enforce this position. The square brackets do not
+#'   have to be specified.
+#' @param bold (only in the `texreg` and `htmlreg` functions) The p
+#'   value threshold below which the coefficient shall be formatted in a bold
+#'   font. For example, `bold = 0.05` will cause all coefficients which
+#'   are significant at the 95\% level to be formatted in bold. Note that this
+#'   is not compatible with the dcolumn argument in the `texreg`
+#'   function. If both are `TRUE`, dcolumn is switched off and a warning
+#'   message appears. Note also that it is advisable to use `stars =
+#'   FALSE` together with the `bold` argument because having both bolded
+#'   coefficients and significance stars usually does not make any sense.
+#'  @param center (only in the `texreg` and `htmlreg` functions) Should
+#'    the table be horizontally aligned at the center of the page?
+#'  @param caption (only in the `texreg` and `htmlreg` functions) 
+#'    Set the caption of the table.
+#'  @param caption.above (only in the `texreg` and `htmlreg` functions)
+#'   Should the caption of the table be placed above the table? By default, it 
+#'   is placed below the table.
 #' @export
 texreg <- function(l,
                    file = NULL,
@@ -1164,6 +1245,53 @@ texreg <- function(l,
 
 # htmlreg function
 #' @rdname matrixreg
+#' @param star.symbol (only in the `htmlreg` function) Alternative
+#'   characters for the significance stars can be specified. This is useful if
+#'   \pkg{knitr} and Markdown are used for HTML report generation. In Markdown,
+#'   asterisks or stars are interpreted as special characters, so they have to
+#'   be escaped. To make `htmlreg` compatible with Markdown, specify
+#'   `star.symbol = "\\*"`. Note that some other modifications are
+#'   recommended for usage with \pkg{knitr} in combination with Markdown or HTML
+#'   (see the `inline.css`, `doctype`, `html.tag`,
+#'   `head.tag`, and `body.tag` arguments).
+#' @param inline.css (only in the `htmlreg` function) Should the CSS stylesheets be embedded directly in the code of the table (`inline.css = TRUE`), or should the CSS stylesheets be enclosed in the <head> tag, that is, separated from the table code (`inline.css = FALSE`)? Having inline CSS code makes the code of the table more complex, but sometimes it may be helpful when only the table shall be printed, without the head of the HTML file (for example when the table is embedded in a \pkg{knitr} report). As a rule of thumb: use inline CSS if the table is not saved to a file.
+#' @param doctype (only in the `htmlreg` function) Should the first line of
+#'   the HTML code contain the DOCTYPE definition? If `TRUE`, the HTML 4
+#'   TRANSITIONAL version is used. If `FALSE`, no DOCTYPE will be included.
+#'   Omitting the DOCTYPE can be helpful when the \pkg{knitr} package is used to
+#'   generate HTML code because \pkg{knitr} requires only the plain table, not
+#'   the whole HTML document including the document type declaration. Including
+#'   the DOCTYPE can be helpful when the code is saved to a file, for example as
+#'   an MS Word document.
+#' @param html.tag (only in the `htmlreg` function) Should the table code
+#'   (and possibly the <body> and <head> tags) be enclosed in an <html> tag?
+#'   Suppressing this tag is recommended when \pkg{knitr} is used for dynamic
+#'   HTML or Markdown report generation. Including this tag is recommended when
+#'   the code is saved to a file, for example as an MS Word document.
+#' @param head.tag (only in the `htmlreg` function) Should the <head> tag
+#'   (including CSS definitions and title/caption) be included in the HTML code?
+#'   Suppressing this tag is recommended when \pkg{knitr} is used for dynamic
+#'   HTML or Markdown report generation. Including this tag is recommended when
+#'   the code is saved to a file, for example as an MS Word document.
+#' @param body.tag (only in the `htmlreg` function) Should the table code
+#'   be enclosed in a <body> HTML tag? Suppressing this tag is recommended when
+#'   \pkg{knitr} is used for dynamic HTML or Markdown report generation.
+#'   Including this tag is recommended when the code is saved to a file, for
+#'   example as an MS Word document.
+#' @param indentation (only in the `htmlreg` function) Characters used for
+#'   indentation of the HTML code. By default, `indentation = ""` uses no
+#'   indentation. Any number of spaces or characters can be used instead. For
+#'   example, `indentation = "  "` uses two spaces of (additional)
+#'   indentation for each subelement.
+#' @param vertical.align.px (only in the `htmlreg` function) Vertical
+#'   alignment of significance stars. Browsers differ in their ways of
+#'   displaying superscripted significance stars; in some browsers the stars are
+#'   elevated by default, and in other browsers the stars are aligned vertically
+#'   with the text, without any actual superscripting. This argument controls by
+#'   how many additional pixels the stars are elevated. The default setting of 0
+#'   uses the defaults of the browser. In RStudio's internal browser, this looks
+#'   OK, but in Firefox, this looks too low. A value of 4 looks OK in Firefox,
+#'   for example, but is above the line in RStudio's internal browser.
 #' @export
 htmlreg <- function(l,
                     file = NULL,
