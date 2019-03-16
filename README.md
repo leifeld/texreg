@@ -9,6 +9,7 @@ Converts coefficients, standard errors, significance stars, and goodness-of-fit 
 [![downloads](http://cranlogs.r-pkg.org/badges/texreg)](http://cranlogs.r-pkg.org/badges/texreg)
 [![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/texreg)](http://cranlogs.r-pkg.org/badges/grand-total/texreg)
 [![Research software impact](http://depsy.org/api/package/cran/texreg/badge.svg)](http://depsy.org/package/r/texreg)
+[![Coverage status](https://codecov.io/gh/leifeld/texreg/branch/master/graph/badge.svg)](https://codecov.io/github/leifeld/texreg?branch=master)
 
 ## Documentation
 
