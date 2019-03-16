@@ -31,15 +31,11 @@ matrixreg <- function(l,
                       custom.columns = NULL,
                       custom.col.pos = NULL,
                       dcolumn = TRUE,
+                      output.type = c("ascii", "latex", "html"),
                       ...) {
   
   # unnamed arguments to environment
   dots <- list(...)
-  
-  # argument for internal use
-  if (!"output.type" %in% names(dots)) {
-    dots[["output.type"]] <- "ascii"
-  }
   
   # if a single model is handed over, put model inside a list
   if (!"list" %in% class(l)[1]) {
@@ -217,16 +213,37 @@ matrixreg <- function(l,
     }
   }
   
-  # convert TeX code to text
-  if (dots$output.type != "latex") {
-    models <- tex.replace(models, type = "screen")
+  # convert LaTeX markup to text
+  if (output.type[1] != "latex") {
+    for (i in 1:length(models)) {
+      # replace markup in GOF names
+      if (output.type[1] == "html") {
+        r <- paste0("<sup>2</sup>")
+      } else if (output.type[1] == "ascii") {
+        r <- "^2"
+      } else {
+        stop("'output.type' must be 'latex', 'html', or 'ascii'.")
+      }
+      models[[i]]@gof.names <- gsub("\\$\\^2\\$", r, models[[i]]@gof.names)
+      models[[i]]@gof.names <- gsub("\\\\ ", " ", models[[i]]@gof.names)
+      models[[i]]@gof.names <- gsub("\\ ", " ", models[[i]]@gof.names)
+      
+      # replace Greek letters in coefficient names
+      models[[i]]@coef.names <- gsub("\\$\\\\rho\\$", "rho", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\lambda\\$", "lambda", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\mu\\$", "mu", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\nu\\$", "nu", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\tau\\$", "tau", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\sigma\\$", "sigma", models[[i]]@coef.names)
+    }
   }
+  
   models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
   gof.names <- get.gof(models)  # extract names of GOFs (before adding any GOF rows)
   models <- correctDuplicateCoefNames(models)
   
   # arrange coefficients and GOFs nicely in a matrix
-  if (dots$output.type == "latex") {
+  if (output.type[1] == "latex") {
     gof.matrix <- aggregate.matrix(models = models,
                                    gof.names = gof.names,
                                    custom.gof.names = custom.gof.names,
@@ -296,14 +313,14 @@ matrixreg <- function(l,
   }
   
   # output matrix
-  if (dots$output.type == "ascii") {
+  if (output.type[1] == "ascii") {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
                                   posinfstring = "Inf", leading.zero, digits, 
                                   se.prefix = " (", se.suffix = ")", star.prefix = " ", star.suffix = "", 
                                   stars, dcolumn = TRUE, star.symbol = star.symbol, symbol = symbol, 
                                   bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
                                   ci.test = ci.test)
-  } else if (dots$output.type == "latex") {
+  } else if (output.type[1] == "latex") {
     output.matrix <- outputmatrix(m, single.row, 
                                   neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
                                   posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
@@ -311,7 +328,7 @@ matrixreg <- function(l,
                                   star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
                                   symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", 
                                   bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test, rowLabelType = 'latex')
-  } else if (dots$output.type == "html") {
+  } else if (output.type[1] == "html") {
     output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
                                   posinfstring = "Inf", leading.zero, digits, 
                                   se.prefix = " (", se.suffix = ")", star.symbol = star.symbol, 
@@ -322,7 +339,7 @@ matrixreg <- function(l,
   }
   
   # grouping
-  if (dots$output.type == "latex") {
+  if (output.type[1] == "latex") {
     output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
                               single.row = single.row, prefix = "", suffix = "", rowLabelType = "latex")
   } else {
@@ -345,7 +362,7 @@ matrixreg <- function(l,
   output.matrix <- cbind(output.matrix[, 1], temp)
   
   # otherwise we get duplicate model names in latex and html
-  if (dots$output.type == "ascii") {
+  if (output.type[1] == "ascii") {
     output.matrix <- rbind(c("", mod.names), output.matrix)
   }
   
@@ -1102,15 +1119,15 @@ htmlreg <- function(l,
                              custom.col.pos = custom.col.pos,
                              bold = bold,
                              include.attributes = TRUE,
-                             output.type = 'html',
+                             output.type = "html",
                              css.sup = css.sup,
                              ...)
   
-  gof.names <- attr(output.matrix, 'gof.names')
-  coef.names <- attr(output.matrix, 'coef.names')
-  mod.names <- attr(output.matrix, 'mod.names')
-  ci <- attr(output.matrix, 'ci')
-  ci.test <- attr(output.matrix, 'ci.test')
+  gof.names <- attr(output.matrix, "gof.names")
+  coef.names <- attr(output.matrix, "coef.names")
+  mod.names <- attr(output.matrix, "mod.names")
+  ci <- attr(output.matrix, "ci")
+  ci.test <- attr(output.matrix, "ci.test")
   
   coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos, 
                                 types = TRUE)
@@ -1510,14 +1527,14 @@ wordreg <- function(l,
                    groups = groups,
                    custom.columns = custom.columns,
                    custom.col.pos = custom.col.pos,
-                   output.type = 'ascii',
+                   output.type = "ascii",
                    include.attributes = FALSE
   )
   wd <- getwd()
-  f = tempfile(fileext = '.Rmd')
-  cat(file = f, '```{r, echo = FALSE}
+  f = tempfile(fileext = ".Rmd")
+  cat(file = f, "```{r, echo = FALSE}
                     knitr::kable(mat)
-                    ```', append = TRUE)
+                    ```", append = TRUE)
   rmarkdown::render(f, output_file = paste0(wd, "/", file))
 }
 

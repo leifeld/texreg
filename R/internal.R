@@ -110,37 +110,6 @@ get.gof <- function(models) {
 }
 
 
-# function which converts GOF/coef LaTeX code to HTML oder text/screen code
-tex.replace <- function(models, type = "html", style = "") {
-    for (i in 1:length(models)) {
-        # GOF replacement
-        if (type == "html") {
-            r <- paste0("<sup", style, ">2</sup>")
-        } else if (type == "screen") {
-            r <- "^2"
-        }
-        models[[i]]@gof.names <- gsub("\\$\\^2\\$", r, models[[i]]@gof.names)
-        models[[i]]@gof.names <- gsub("\\\\ ", " ", models[[i]]@gof.names)
-        models[[i]]@gof.names <- gsub("\\ ", " ", models[[i]]@gof.names)
-        
-        # extract.sarlm coefficient name replacement
-        models[[i]]@coef.names <- gsub("\\$\\\\rho\\$", "rho", 
-                                       models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\lambda\\$", "lambda", 
-                                       models[[i]]@coef.names)
-        
-        # extract.gamlss coefficient name replacement
-        models[[i]]@coef.names <- gsub("\\$\\\\mu\\$", "mu", models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\nu\\$", "nu", models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\tau\\$", "tau", 
-                                       models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\sigma\\$", "sigma", 
-                                       models[[i]]@coef.names)
-    }
-    return(models)
-}
-
-
 # function which replaces special characters in row names by LaTeX equivalents
 replaceSymbols <- function(m) {
     rn <- rownames(m)
