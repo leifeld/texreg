@@ -454,13 +454,69 @@ matrixreg <- function(l,
   # reorder GOF block using reorder.gof argument
   gof.matrix <- reorder(gof.matrix, reorder.gof)
   
+  # apply custom coefficient map using 'custom.coef.map' argument
   if (!is.null(custom.coef.map)) {
-    m <- custommap(m, custom.coef.map)
-  } else {
-    m <- omit_rename(m,
-                     omit.coef = omit.coef,
-                     custom.coef.names = custom.coef.names)
+    # sanity checks
+    if (class(custom.coef.map) != "list" || is.null(names(custom.coef.map))) {
+      stop("'custom.coef.map' must be a named list.") 
+    }
+    if (!any(names(custom.coef.map) %in% row.names(m))) {
+      stop(paste("None of the coefficient names supplied in 'custom.coef.map'", 
+                 "appear to be in your models."))
+    }
+    
+    # when user supplies NA as destination, replace with origin
+    idx <- is.na(custom.coef.map)
+    custom.coef.map[idx] <- names(custom.coef.map)[idx]
+    
+    # subset of coefficients to keep
+    origin <- names(custom.coef.map)[names(custom.coef.map) %in% row.names(m)]
+    destination <- unlist(custom.coef.map[origin])
+    out <- m[origin, , drop = FALSE] # drop: otherwise R converts to numeric if a single coefficient is passed
+    
+    # rename
+    row.names(out) <- destination
+  } else { # use 'omit.coef' and 'custom.coef.names' if available
+    # omit
+    if (!is.null(omit.coef)) {
+      if (!is.character(omit.coef) || is.na(omit.coef)) {
+        stop("'omit.coef' must be a character object.")
+      }
+      idx <- !grepl(omit.coef, row.names(m), perl = TRUE)
+      if (all(!idx)) {
+        stop("You tried to remove all coefficients using 'omit.coef'.")
+      }
+    } else {
+      idx <- rep(TRUE, nrow(m))
+    }
+    
+    # rename
+    if (!is.null(custom.coef.names)) {
+      if (!is.character(custom.coef.names)) {
+        stop("'custom.coef.names' must be a character vector.")
+      }
+      if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
+        if (nrow(m) == sum(idx)) {
+          stop("'custom.coef.names' must be a character vector of length ", nrow(m), ".")
+        } else {
+          stop("'custom.coef.names' must be a character vector of length ", sum(idx), " or ", nrow(m), ".")
+        }
+      }
+      # user submits number of custom names after omission
+      if (length(custom.coef.names) == sum(idx)) {
+        custom.coef.names <- custom.coef.names 
+      } else { # user submits number of custom names before omission
+        custom.coef.names <- custom.coef.names[idx]
+      } 
+    } else {
+      custom.coef.names <- row.names(m)[idx]
+    }
+    
+    # output
+    m <- m[idx, , drop = FALSE]
+    row.names(m) <- custom.coef.names
   }
+  
   m <- rearrangeMatrix(m)  # resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
   
