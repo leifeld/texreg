@@ -280,7 +280,24 @@ matrixreg <- function(l,
     }
   }
   
-  models <- correctDuplicateCoefNames(models)
+  # correct duplicate coefficient names (add " (1)", " (2)" etc.)
+  for (i in 1:length(models)) {
+    for (j in 1:length(models[[i]]@coef.names)) {
+      if (models[[i]]@coef.names[j] %in% models[[i]]@coef.names[-j]) {
+        indices <- j
+        for (k in 1:length(models[[i]]@coef.names)) {
+          if (models[[i]]@coef.names[j] == models[[i]]@coef.names[k] && j != k) {
+            indices <- c(indices, k)
+          }
+        }
+        count <- 1
+        for (k in indices) {
+          models[[i]]@coef.names[k] <- paste0(models[[i]]@coef.names[k], " (", count, ")")
+          count <- count + 1
+        }
+      }
+    }
+  }
   
   # arrange coefficients and GOFs nicely in a matrix
   if (output.type[1] == "latex") {
