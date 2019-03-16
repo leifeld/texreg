@@ -110,181 +110,6 @@ get.gof <- function(models) {
 }
 
 
-# function which replaces coefs, SEs and p values by custom values if provided
-override <- function(models, override.coef, override.se, override.pval, 
-                     override.ci.low, override.ci.up) {
-    
-    if (class(override.se) == "list" || length(override.se) > 1 || 
-        override.se[1] != 0) {
-        if (length(override.pval) == 1 && class(override.pval) != "list" && 
-            override.pval[1] == 0) {
-            warning(paste("Standard errors were provided using 'override.se',", 
-                          "but p-values were not replaced!"))
-        }
-    }
-    if (class(override.pval) == "list" || length(override.pval) > 1 || 
-        override.pval[1] != 0) {
-        if (length(override.se) == 1 && class(override.se) != "list" && 
-            override.se[1] == 0) {
-            warning(paste("P-values were provided using 'override.pval',", 
-                          "but standard errors were not replaced!"))
-        }
-    }
-    
-    for (i in 1:length(models)) {
-        
-        # coefficients
-        if (class(override.coef) != "list" && length(override.coef) == 1 && 
-            override.coef == 0) {
-            cf <- models[[i]]@coef
-        } else if (class(override.coef) == "numeric" && length(models) == 1 && 
-                   length(override.coef) == length(models[[i]]@coef)) {
-            cf <- override.coef
-        } else if (class(override.coef) != "list") {
-            warning("Coefficients must be provided as a list. Using default values.")
-            cf <- models[[i]]@coef
-        } else if (length(override.coef) != length(models)) {
-            warning(paste("Number of coefficients provided does not match number of", 
-                          "models. Using default values."))
-            cf <- models[[i]]@coef
-        } else if (length(models[[i]]@coef) != length(override.coef[[i]])) {
-            warning(paste("Number of coefficients provided does not match number of ",
-                          "terms in model ", i, ". Using default values.", sep=""))
-            cf <- models[[i]]@coef
-        } else if (class(override.coef[[i]]) != "numeric") {
-            warning(paste("Coefficients provided for model", i, 
-                          "are not numeric. Using default values."))
-            cf <- models[[i]]@coef
-        } else {
-            cf <- override.coef[[i]]
-        }
-        models[[i]]@coef <- cf
-        
-        # standard errors
-        if (class(override.se) != "list" && length(override.se) == 1 && 
-            override.se == 0) {
-            se <- models[[i]]@se
-        } else if (class(override.se) == "numeric" && length(models) == 1 && 
-                   length(override.se) == length(models[[i]]@se)) {
-            se <- override.se
-        } else if (class(override.se) != "list") {
-            warning("SEs must be provided as a list. Using default SEs.")
-            se <- models[[i]]@se
-        } else if (length(override.se) != length(models)) {
-            warning(paste("Number of SEs provided does not match number of models.", 
-                          "Using default SEs."))
-            se <- models[[i]]@se
-        } else if (length(models[[i]]@se) != length(override.se[[i]])) {
-            warning(paste("Number of SEs provided does not match number of ", 
-                          "coefficients in model ", i, ". Using default SEs.", sep = ""))
-            se <- models[[i]]@se
-        } else if (class(override.se[[i]]) != "numeric") {
-            warning(paste("SEs provided for model", i, 
-                          "are not numeric. Using default SEs."))
-            se <- models[[i]]@se
-        } else {
-            se <- override.se[[i]]
-        }
-        models[[i]]@se <- se
-        
-        # p values
-        if (class(override.pval) != "list" && length(override.pval) == 1 && 
-            override.pval == 0) {
-            pval <- models[[i]]@pvalues
-        } else if (class(override.pval) == "numeric" && length(models) == 1 && 
-                   length(override.pval) == length(models[[i]]@pvalues)) {
-            pval <- override.pval
-        } else if (class(override.pval) != "list") {
-            warning("p values must be provided as a list. Using default p values.")
-            pval <- models[[i]]@pvalues
-        } else if (length(override.pval) != length(models)) {
-            warning(paste("Number of p values provided does not match number of", 
-                          "models. Using default p values."))
-            pval <- models[[i]]@pvalues
-        } else if (length(models[[i]]@se) != length(override.pval[[i]])) {
-            # previous line: comparison with se because pvalues can be empty
-            warning(paste("Number of p values provided does not match number of ", 
-                          "coefficients in model ", i, ". Using default p values.", sep = ""))
-            pval <- models[[i]]@pvalues
-        } else if (class(override.pval[[i]]) != "numeric") {
-            warning(paste("p values provided for model", i, 
-                          "are not numeric. Using default p values."))
-            pval <- models[[i]]@pvalues
-        } else {
-            pval <- override.pval[[i]]
-        }
-        models[[i]]@pvalues <- pval
-        
-        # lower bound of confidence intervals
-        if (is.null(override.ci.low)) {
-            # do nothing
-        } else if (class(override.ci.low) != "list" && length(override.ci.low) 
-                   == 1 && override.ci.low == 0) {
-            ci.low <- models[[i]]@ci.low
-        } else if (class(override.ci.low) == "numeric" && length(models) == 1 && 
-                   length(override.ci.low) == length(models[[i]]@coef)) {
-            ci.low <- override.ci.low
-        } else if (class(override.ci.low) != "list") {
-            warning("CIs must be provided as a list. Using default CIs if available.")
-            ci.low <- models[[i]]@ci.low
-        } else if (length(override.ci.low) != length(models)) {
-            warning(paste("Number of lower CIs provided does not match number of", 
-                          "models. Using default CIs if available."))
-            ci.low <- models[[i]]@ci.low
-        } else if (length(models[[i]]@coef) != length(override.ci.low[[i]])) {
-            # previous line: comparison with coef because CIs can be empty
-            warning(paste0("Number of lower CIs provided does not match number of ", 
-                           "coefficients in model ", i, ". Using default CIs if available."))
-            ci.low <- models[[i]]@ci.low
-        } else if (class(override.ci.low[[i]]) != "numeric") {
-            warning(paste("Lower CIs provided for model", i, 
-                          "are not numeric. Using default lower CIs."))
-            ci.low <- models[[i]]@ci.low
-        } else {
-            ci.low <- override.ci.low[[i]]
-        }
-        models[[i]]@ci.low <- ci.low
-        
-        # upper bound of confidence intervals
-        if (is.null(override.ci.up)) {
-            # do nothing
-        } else if (class(override.ci.up) != "list" && length(override.ci.up) 
-                   == 1 && override.ci.up == 0) {
-            ci.up <- models[[i]]@ci.up
-        } else if (class(override.ci.up) == "numeric" && length(models) == 1 && 
-                   length(override.ci.up) == length(models[[i]]@coef)) {
-            ci.up <- override.ci.up
-        } else if (class(override.ci.up) != "list") {
-            warning("CIs must be provided as a list. Using default CIs if available.")
-            ci.up <- models[[i]]@ci.up
-        } else if (length(override.ci.up) != length(models)) {
-            warning(paste("Number of lower CIs provided does not match number of", 
-                          "models. Using default CIs if available."))
-            ci.up <- models[[i]]@ci.up
-        } else if (length(models[[i]]@coef) != length(override.ci.up[[i]])) {
-            # previous line: comparison with coef because CIs can be empty
-            warning(paste0("Number of lower CIs provided does not match number of ", 
-                           "coefficients in model ", i, ". Using default CIs if available."))
-            ci.up <- models[[i]]@ci.up
-        } else if (class(override.ci.up[[i]]) != "numeric") {
-            warning(paste("Lower CIs provided for model", i, 
-                          "are not numeric. Using default lower CIs."))
-            ci.up <- models[[i]]@ci.up
-        } else {
-            ci.up <- override.ci.up[[i]]
-        }
-        models[[i]]@ci.up <- ci.up
-        
-        if (length(models[[i]]@ci.low) > 0 && length(models[[i]]@ci.up) > 0) {
-            models[[i]]@se <- numeric()
-            models[[i]]@pvalues <- numeric()
-        }
-    }
-    
-    return(models)
-}
-
-
 # function which converts GOF/coef LaTeX code to HTML oder text/screen code
 tex.replace <- function(models, type = "html", style = "") {
     for (i in 1:length(models)) {
@@ -373,8 +198,7 @@ correctDuplicateCoefNames <- function(models) {
 #' replace GOF names by custom GOF labels, then insert custom GOF rows if
 #' necessary, and then reorder the GOF block if necessary.
 #'
-#' @param models A list of \code{texreg} objects, as created by the
-#'   \link{get.data} function.
+#' @param models A list of \code{texreg} objects.
 #' @param gof.names A character vector of names for the GOF statistics, as
 #'   created by the \code{\link{get.gof}} function. This is needed to attach row
 #'   names to the GOF block or decimal matrix.
@@ -409,9 +233,8 @@ correctDuplicateCoefNames <- function(models) {
 #' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
-#' @seealso \code{\link{extract}}, \code{\link{get.data}},
-#'   \code{\link{get.gof}}, \code{\link{coeftostring}},
-#'   \code{\link{replaceSymbols}}
+#' @seealso \code{\link{extract}}, \code{\link{get.gof}},
+#'   \code{\link{coeftostring}}, \code{\link{replaceSymbols}}
 aggregate.matrix <- function(models,
                              gof.names,
                              custom.gof.names = NULL,
