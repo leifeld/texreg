@@ -238,7 +238,35 @@ matrixreg <- function(l,
     }
   }
   
-  models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
+  # create confidence intervals using ci.force argument if necessary
+  if (is.logical(ci.force) && length(ci.force) == 1) {
+    ci.force <- rep(ci.force, length(models))
+  }
+  if (is.logical(ci.force)) {
+    stop("The 'ci.force' argument must be a vector of logical values.")
+  }
+  if (length(ci.force) != length(models)) {
+    stop(paste("There are", length(models), "models and", length(ci.force), "ci.force values."))
+  }
+  if (is.null(ci.force.level) ||
+      length(ci.force.level) != 1 ||
+      !is.numeric(ci.force.level) ||
+      ci.force.level > 1 ||
+      ci.force.level < 1) {
+    stop("'ci.force.level' must be a single value between 0 and 1.")
+  }
+  for (i in 1:length(models)) {
+    if (ci.force[i] == TRUE && length(models[[i]]@se) > 0) {
+      z <- qnorm(1 - ((1 - ci.force.level) / 2))
+      upper <- models[[i]]@coef + (z * models[[i]]@se)
+      lower <- models[[i]]@coef - (z * models[[i]]@se)
+      models[[i]]@ci.low <- lower
+      models[[i]]@ci.up <- upper
+      models[[i]]@se <- numeric(0)
+      models[[i]]@pvalues <- numeric(0)
+    }
+  }
+  
   gof.names <- get.gof(models)  # extract names of GOFs (before adding any GOF rows)
   models <- correctDuplicateCoefNames(models)
   
