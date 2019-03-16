@@ -47,6 +47,20 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
 }
 
 
+names2latex <- function(x) {
+  if (!grepl("\\$", x)) {
+    x <- gsub("_", "\\\\_", x)
+    x <- gsub("<", "\\$<\\$", x)
+    x <- gsub(">", "\\$>\\$", x)
+    x <- gsub("%", "\\\\%", x)
+    x <- gsub("\\^2", "\\$^2\\$", x)
+    x <- gsub("\\^3", "\\$^3\\$", x)
+    x <- gsub("\\^4", "\\$^4\\$", x)
+    x <- gsub("\\^5", "\\$^5\\$", x)
+    return(x)
+  }
+}
+
 # function which replaces special characters in row names by LaTeX equivalents
 replaceSymbols <- function(m) {
     rn <- rownames(m)
@@ -64,231 +78,6 @@ replaceSymbols <- function(m) {
     }
     rownames(m) <- rn
     return(m)
-}
-
-
-# return the output matrix with coefficients, SEs and significance stars
-outputmatrix <- function(m, single.row, neginfstring, posinfstring, 
-                         leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
-                         star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
-                         bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
-                         ci.test = 0, rowLabelType = 'text') {
-
-    # write coefficient rows
-    if (single.row == TRUE) {
-        output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
-        
-        # row labels
-        for (i in 1:length(rownames(m))) {
-            if (rowLabelType == 'latex') {
-                output.matrix[i, 1] <- (rownames(replaceSymbols(m))[i])
-            } else {
-                output.matrix[i, 1] <- rownames(m)[i]
-            }
-        }
-        
-        # replace R syntax
-        for (i in 1:length(m[, 1])) {
-            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
-                output.matrix[i, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[i, 1])
-            }
-        }
-        # coefficients and standard errors
-        for (i in 1:length(m[, 1])) { #go through rows
-            j <- 1 #column in the original, merged coef table
-            k <- 2 #second column of output.matrix, i.e., coefficients
-            while (j <= length(m)) {
-                if (is.na(m[i, j])) {
-                    output.matrix[i, k] <- ""
-                } else if (m[i, j] == -Inf) {
-                    output.matrix[i, k] <- neginfstring
-                } else if (m[i, j] == Inf) {
-                    output.matrix[i, k] <- posinfstring
-                } else {
-                    
-                    # in case of CIs, replace brackets by square brackets
-                    se.prefix.current <- se.prefix
-                    se.suffix.current <- se.suffix
-                    if (ci[k - 1] == TRUE) {
-                        se.prefix.current <- gsub("\\(", "[", se.prefix.current)
-                        se.suffix.current <- gsub("\\)", "]", se.suffix.current)
-                    }
-                    if (is.na(m[i, j + 1])) {
-                        se.prefix.current <- ""
-                        se.suffix.current <- ""
-                    }
-                    if (ci[k - 1] == FALSE) {
-                        std <- paste(se.prefix.current, coeftostring(m[i, j + 1], 
-                                                                     leading.zero, digits = digits), se.suffix.current, sep = "")
-                    } else {
-                        std <- paste(se.prefix.current, coeftostring(m[i, j + 1], 
-                                                                     leading.zero, digits = digits), semicolon, 
-                                     coeftostring(m[i, j + 2], leading.zero, digits = digits), 
-                                     se.suffix.current, sep = "")
-                    }
-                    
-                    if (ci[k - 1] == FALSE) {
-                        p <- get_stars(pval = m[i, j + 2], 
-                                       stars = stars, 
-                                       star.symbol = star.symbol,
-                                       symbol = symbol,
-                                       star.prefix = star.prefix,
-                                       star.suffix = star.suffix,
-                                       ci = ci
-                        )$coefficients
-                    } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 && 
-                            (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
-                            p <- paste0(star.prefix, star.symbol, star.suffix)
-                        } else {
-                            p <- ""
-                        }
-                    }
-                    
-                    if (dcolumn == TRUE) {
-                        dollar <- ""
-                    } else {
-                        dollar <- "$"
-                    }
-                    if (is.na(m[i, j + 2])) {
-                        m[i, j + 2] <- 1.0
-                    }
-                    if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
-                               (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else {
-                        bold.pref <- ""
-                        bold.suff <- ""
-                    }
-                    entry <- paste(dollar, bold.pref, coeftostring(m[i, j], leading.zero, 
-                                                                   digits = digits), bold.suff, std, p, dollar, sep = "")
-                    output.matrix[i, k] <- entry
-                    
-                }
-                k <- k + 1
-                j <- j + 3
-            }
-        }
-    } else {
-        output.matrix <- matrix(ncol = (length(m) / 3) + 1, 
-                                nrow = 2 * length(m[, 1]))
-        
-        # row labels
-        for (i in 1:length(rownames(m))) {
-            if (rowLabelType == 'latex'){
-                output.matrix[(i * 2) - 1, 1] <- rownames(replaceSymbols(m))[i]
-                output.matrix[(i * 2), 1] <- ""   
-            } else {
-                output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
-                output.matrix[(i * 2), 1] <- ""
-            }
-        }
-        
-        for (i in 1:length(m[, 1])) {
-            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
-                output.matrix[(i * 2) - 1, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[(i * 2) - 1, 1])
-            }
-        }
-        
-        # coefficients and standard deviations
-        for (i in 1:length(m[, 1])) {  # i = row
-            j <- 1  # j = column within model (from 1 to 3)
-            k <- 2  # k = column in output matrix (= model number + 1)
-            while (j <= length(m)) {
-                if (is.na(m[i, j]) || is.nan(m[i, j])) {
-                    output.matrix[(i * 2) - 1, k] <- ""  #upper coefficient row
-                    output.matrix[(i * 2), k] <- ""  #lower se row
-                } else if (m[i, j] == -Inf) {
-                    output.matrix[(i * 2) - 1, k] <- neginfstring  #upper row
-                    output.matrix[(i * 2), k] <- ""  #lower se row
-                } else if (m[i, j] == Inf) {
-                    output.matrix[(i * 2) - 1, k] <- posinfstring  #upper row
-                    output.matrix[(i * 2), k] <- ""  #lower se row
-                } else {
-                    
-                    # in case of CIs, replace brackets by square brackets
-                    se.prefix.current <- "("
-                    se.suffix.current <- ")"
-                    if (ci[k - 1] == TRUE) {
-                        se.prefix.current <- "["
-                        se.suffix.current <- "]"
-                    }
-                    if (is.na(m[i, j + 1])) {
-                        se.prefix.current <- ""
-                        se.suffix.current <- ""
-                    }
-                    if (ci[k - 1] == FALSE) {
-                        p <- get_stars(pval = m[i, j + 2], 
-                                       stars = stars, 
-                                       star.symbol = star.symbol, 
-                                       symbol = symbol,
-                                       star.prefix = star.prefix, 
-                                       star.suffix = star.suffix
-                        )$coefficients
-                    } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
-                            (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
-                            p <- paste0(star.prefix, star.symbol, star.suffix)
-                        } else {
-                            p <- ""
-                        }
-                    }
-                    
-                    if (dcolumn == TRUE) {
-                        dollar <- ""
-                    } else {
-                        dollar <- "$"
-                    }
-                    if (is.na(m[i, j + 2])) {
-                        m[i, j + 2] <- 1.0
-                    }
-                    if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
-                               (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else {
-                        bold.pref <- ""
-                        bold.suff <- ""
-                    }
-                    output.matrix[(i * 2) - 1, k] <- paste(dollar, bold.pref, 
-                                                           coeftostring(m[i, j], leading.zero, digits = digits), bold.suff, 
-                                                           p, dollar, sep = "")
-                    if (ci[k - 1] == FALSE) {
-                        output.matrix[(i * 2), k] <- paste(dollar, se.prefix.current, 
-                                                           coeftostring(m[i, j + 1], leading.zero, digits = digits), 
-                                                           se.suffix.current, dollar, sep = "")
-                    } else {
-                        output.matrix[(i * 2), k] <- paste(dollar, se.prefix.current, 
-                                                           coeftostring(m[i, j + 1], leading.zero, digits = digits), 
-                                                           semicolon, coeftostring(m[i, j + 2], leading.zero, 
-                                                                                   digits = digits), se.suffix.current, dollar, sep = "")
-                    }
-                }
-                k <- k + 1
-                j <- j + 3
-            }
-        }
-        
-        # check if SEs are all missing and delete even rows if necessary
-        se.missing <- numeric()
-        for (i in seq(2, nrow(output.matrix), 2)) {
-            if (all(sapply(output.matrix[i, ], function(x) x == ""))) {
-                se.missing <- c(se.missing, i)
-            }
-        }
-        if (length(se.missing) == nrow(output.matrix) / 2) {
-            output.matrix <- output.matrix[-se.missing, ]
-        }
-    }
-    
-    return(output.matrix)
 }
 
 
