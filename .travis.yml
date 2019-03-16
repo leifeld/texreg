@@ -10,12 +10,22 @@ cache: packages
 
 r_check_args: --as-cran
 
+r_packages:
+  - covr
+
+r_github_packages:
+  - leifeld/btergm
+
 notifications:
   email:
     recipients:
       - philip.leifeld@glasgow.ac.uk
+      - claudia.zucca@glasgow.ac.uk
     on_success: change
     on_failure: change
 
 before_install:
   - sudo apt-get install r-cran-mcmcpack
+
+after_success:
+- Rscript -e 'library(covr); codecov()'
