@@ -299,50 +299,160 @@ matrixreg <- function(l,
     }
   }
   
-  # arrange coefficients and GOFs nicely in a matrix
-  if (output.type[1] == "latex") {
-    gof.matrix <- aggregate.matrix(models = models,
-                                   gof.names = gof.names,
-                                   custom.gof.names = custom.gof.names,
-                                   custom.gof.rows = custom.gof.rows,
-                                   reorder.gof = reorder.gof,
-                                   digits = digits,
-                                   leading.zero = leading.zero,
-                                   latex = TRUE,
-                                   dcolumn = dcolumn,
-                                   returnobject = "gof.matrix")
-    m <- aggregate.matrix(models = models,
-                          gof.names = gof.names,
-                          custom.gof.names = custom.gof.names,
-                          custom.gof.rows = custom.gof.rows,
-                          reorder.gof = reorder.gof,
-                          digits = digits,
-                          leading.zero = leading.zero,
-                          latex = TRUE,
-                          dcolumn = dcolumn,
-                          returnobject = "m")
-  } else {
-    gof.matrix <- aggregate.matrix(models = models,
-                                   gof.names = gof.names,
-                                   custom.gof.names = custom.gof.names,
-                                   custom.gof.rows = custom.gof.rows,
-                                   reorder.gof = reorder.gof,
-                                   digits = digits,
-                                   leading.zero = leading.zero,
-                                   latex = FALSE,
-                                   dcolumn = dcolumn,
-                                   returnobject = "gof.matrix")
-    m <- aggregate.matrix(models = models,
-                          gof.names = gof.names,
-                          custom.gof.names = custom.gof.names,
-                          custom.gof.rows = custom.gof.rows,
-                          reorder.gof = reorder.gof,
-                          digits = digits,
-                          leading.zero = leading.zero,
-                          latex = FALSE,
-                          dcolumn = dcolumn,
-                          returnobject = "m")
+  # aggregate GOF statistics in a matrix and create list of coef blocks
+  gofs <- matrix(nrow = length(gof.names), ncol = length(models))
+  row.names(gofs) <- gof.names
+  coefs <- list()
+  decimal.matrix <- matrix(nrow = length(gof.names), ncol = length(models))
+  for (i in 1:length(models)) {
+    cf <- models[[i]]@coef
+    se <- models[[i]]@se
+    pv <- models[[i]]@pvalues
+    cil <- models[[i]]@ci.low
+    ciu <- models[[i]]@ci.up
+    if (length(se) == 0 && length(ciu) > 0) {
+      coef_i <- cbind(cf, cil, ciu)
+    } else {
+      if (length(se) > 0 && length(pv) > 0) {
+        coef_i <- cbind(cf, se, pv)
+      } else if (length(se) > 0 && length(pv) == 0) {
+        # p-values not provided -> use p-values of 0.99
+        coef_i <- cbind(cf, se, rep(0.99, length(cf)))
+      } else if (length(se) == 0 && length(pv) > 0) {
+        coef_i <- cbind(cf, rep(NA, length(cf)), pv)
+      } else {
+        # not even SEs provided
+        coef_i <- cbind(cf, rep(NA, length(cf)), rep(0.99, length(cf)))
+      }
+    }
+    rownames(coef_i) <- models[[i]]@coef.names
+    coefs[[i]] <- coef_i
+    if (length(models[[i]]@gof) > 0) {
+      for (j in 1:length(models[[i]]@gof)) {
+        rn <- models[[i]]@gof.names[j]
+        val <- models[[i]]@gof[j]
+        col <- i
+        if (is.na(models[[i]]@gof.decimal[j])) {
+          dec <- digits
+        } else if (models[[i]]@gof.decimal[j] == FALSE) {
+          dec <- 0
+        } else {
+          dec <- digits
+        }
+        row <- which(row.names(gofs) == rn)
+        gofs[row, col] <- val
+        decimal.matrix[row, col] <- dec
+      }
+    }
   }
+  
+  # figure out correct order of the coefficients
+  coef.order <- character()
+  for (i in 1:length(coefs)) {
+    for (j in 1:length(rownames(coefs[[i]]))) {
+      if (!rownames(coefs[[i]])[j] %in% coef.order) {
+        coef.order <- append(coef.order, rownames(coefs[[i]])[j])
+      }
+    }
+  }
+  
+  # merge the coefficient tables into a new table called 'm'
+  if (length(coefs) == 1) {
+    m <- coefs[[1]]
+  } else if (length(coefs) > 1) {
+    m <- coefs[[1]]
+    for (i in 2:length(coefs)) {
+      m <- merge(m, coefs[[i]], by = 0, all = TRUE)
+      rownames(m) <- m[, 1]
+      m <- m[, colnames(m) != "Row.names"]
+      colnames(m) <- NULL
+    }
+  }
+  colnames(m) <- rep(colnames(coefs[[1]]), length(coefs))
+  
+  # reorder merged coefficient table
+  m.temp <- matrix(nrow = nrow(m), ncol = ncol(m))
+  for (i in 1:nrow(m)) {
+    new.row <- which(coef.order == rownames(m)[i])
+    for (j in 1:length(m[i,])) {
+      m.temp[new.row, j] <- m[i, j]
+    }
+  }
+  rownames(m.temp) <- coef.order
+  colnames(m.temp) <- colnames(m)
+  m <- m.temp
+  rm(m.temp)
+  
+  # replace GOF names by custom names
+  if (is.null(custom.gof.names)) {
+    # do nothing
+  } else if (!is.character(custom.gof.names)) {
+    stop("Custom GOF names must be provided as a character vector.")
+  } else if (length(custom.gof.names) != length(gof.names)) {
+    stop(paste("There are", length(gof.names), 
+               "GOF statistics, but you provided", length(custom.gof.names), 
+               "custom names for them."))
+  } else {
+    custom.gof.names[is.na(custom.gof.names)] <- rownames(gofs)[is.na(custom.gof.names)]
+    rownames(gofs) <- custom.gof.names
+  }
+  
+  # add row names as first column to GOF block and format values as character strings
+  if (dcolumn == FALSE && isTRUE(latex)) {
+    dollar <- "$"
+  } else {
+    dollar <- ""
+  }
+  gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  # including labels
+  if (nrow(gof.matrix) > 0) {
+    for (i in 1:nrow(gofs)) {
+      # replace symbols in latex
+      if (output.type[1] == "latex") {
+        gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
+      } else {
+        gof.matrix[i, 1] <- rownames(gofs)[i]
+      }
+      for (j in 1:length(gofs[1, ])) {
+        strg <- coeftostring(gofs[i, j], leading.zero, digits = decimal.matrix[i, j])
+        gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
+      }
+    }
+  }
+  
+  # add custom GOF rows
+  if (!is.null(custom.gof.rows) && !is.na(custom.gof.rows)) {
+    if (class(custom.gof.rows) != "list") {
+      stop("The 'custom.gof.rows' argument is ignored because it is not a list.")
+    }
+    for (i in length(custom.gof.rows):1) {
+      if (length(custom.gof.rows[[i]]) != ncol(gofs)) {
+        stop("Custom GOF row ", i, " has a different number of values than there are models.")
+      } else {
+        if (!is.numeric(custom.gof.rows[[i]]) && !is.character(custom.gof.rows[[i]])) {
+          custom.gof.rows[[i]] <- as.character(custom.gof.rows[[i]]) # cast into character if unknown class, such as factor or logical
+        }
+        # auto-detect decimal setting
+        if (!is.numeric(custom.gof.rows)) { # put NA for character objects, for example fixed effects
+          dec <- NA
+        } else if (all(custom.gof.rows %% 1 == 0)) { # put 0 for integers
+          dec <- 0
+        } else { # put the respective decimal places if numeric but not integer
+          dec <- digits
+        }
+        newValues <- sapply(custom.gof.rows[[i]], function(x) { # format the different values of the new row
+          if (is.character(x) && output.type[1] == "latex" && isTRUE(dcolumn)) {
+            paste0("\\multicolumn{1}{c}{", x, "}")
+          } else {
+            paste0(dollar, coeftostring(x, leading.zero, digits = dec), dollar)
+          }
+        })
+        gof.matrix <- rbind(c(names(custom.gof.rows)[i], newValues), gof.matrix) # insert GOF name and GOF values as new row
+      }
+    }
+  }
+  
+  # reorder GOF block using reorder.gof argument
+  gof.matrix <- reorder(gof.matrix, reorder.gof)
   
   if (!is.null(custom.coef.map)) {
     m <- custommap(m, custom.coef.map)
