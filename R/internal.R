@@ -93,23 +93,6 @@ rearrangeMatrix <- function(m) {
 }
 
 
-# function which extracts names of the goodness-of-fit statistics
-get.gof <- function(models) {
-    gof.names <- character()  #names of all models in one vector
-    for (i in 1:length(models)) {
-        gn <- models[[i]]@gof.names
-        if (!is.null(gn) && length(gn) > 0) {
-            for (j in 1:length(gn)) {
-                if (!gn[j] %in% gof.names) {
-                    gof.names <- append(gof.names, gn[j])
-                }
-            }
-        }
-    }
-    return(gof.names)
-}
-
-
 # function which replaces special characters in row names by LaTeX equivalents
 replaceSymbols <- function(m) {
     rn <- rownames(m)
@@ -168,9 +151,8 @@ correctDuplicateCoefNames <- function(models) {
 #' necessary, and then reorder the GOF block if necessary.
 #'
 #' @param models A list of \code{texreg} objects.
-#' @param gof.names A character vector of names for the GOF statistics, as
-#'   created by the \code{\link{get.gof}} function. This is needed to attach row
-#'   names to the GOF block or decimal matrix.
+#' @param gof.names A character vector of names for the GOF statistics. This is
+#'   needed to attach row names to the GOF block or decimal matrix.
 #' @param custom.gof.names A character vector of replacement names for the GOF
 #'   statistics. Must have the same length as \code{gof.names}. Can be
 #'   \code{NULL} if the original GOF names should be kept.
@@ -202,8 +184,8 @@ correctDuplicateCoefNames <- function(models) {
 #' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
-#' @seealso \code{\link{extract}}, \code{\link{get.gof}},
-#'   \code{\link{coeftostring}}, \code{\link{replaceSymbols}}
+#' @seealso \code{\link{extract}}, \code{\link{coeftostring}},
+#'   \code{\link{replaceSymbols}}
 aggregate.matrix <- function(models,
                              gof.names,
                              custom.gof.names = NULL,

@@ -267,7 +267,19 @@ matrixreg <- function(l,
     }
   }
   
-  gof.names <- get.gof(models)  # extract names of GOFs (before adding any GOF rows)
+  # extract names of the goodness-of-fit statistics (before adding any GOF rows)
+  gof.names <- character()  # GOF names of all models in one vector
+  for (i in 1:length(models)) {
+    gn <- models[[i]]@gof.names
+    if (!is.null(gn) && length(gn) > 0) {
+      for (j in 1:length(gn)) {
+        if (!gn[j] %in% gof.names) {
+          gof.names <- append(gof.names, gn[j])
+        }
+      }
+    }
+  }
+  
   models <- correctDuplicateCoefNames(models)
   
   # arrange coefficients and GOFs nicely in a matrix
