@@ -93,29 +93,6 @@ rearrangeMatrix <- function(m) {
 }
 
 
-# function which wraps models in a list and extracts texreg objects from them
-get.data <- function(l, ...) {
-  
-    # if a single model is handed over, put model inside a list
-    if (!"list" %in% class(l)[1]) {
-        l <- list(l)
-    }
-    
-    # extract data from the models
-    models <- NULL
-    for (i in 1:length(l)) {
-        model <- extract(l[[i]], ...)
-        if (class(model) == "list") {       #nested list of models (e.g. systemfit)
-            models <- append(models, model)
-        } else {                            #normal case; one model
-            models <- append(models, list(model))
-        }
-    }
-    
-    return(models)
-}
-
-
 # function which extracts names of the goodness-of-fit statistics
 get.gof <- function(models) {
     gof.names <- character()  #names of all models in one vector

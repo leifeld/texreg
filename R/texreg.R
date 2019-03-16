@@ -41,8 +41,22 @@ matrixreg <- function(l,
     dots[["output.type"]] <- "ascii"
   }
   
-  # extract
-  models <- get.data(l, ...)  # extract relevant coefficients, SEs, GOFs etc.
+  # if a single model is handed over, put model inside a list
+  if (!"list" %in% class(l)[1]) {
+    l <- list(l)
+  }
+  
+  # extract coefficients, SEs, GOFs etc. from the models and save in a list called 'models'
+  models <- NULL
+  for (i in 1:length(l)) {
+    model <- extract(l[[i]], ...)
+    if (class(model) == "list") { # must be a nested list of models (e.g., systemfit)
+      models <- append(models, model)
+    } else { # normal case; one model
+      models <- append(models, list(model))
+    }
+  }
+  
   models <- override(models, override.coef, override.se, override.pvalues, 
                      override.ci.low, override.ci.up)
   if (dots$output.type != "latex") {
