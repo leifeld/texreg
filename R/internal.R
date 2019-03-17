@@ -25,7 +25,7 @@ NULL
 # function which reformats a coefficient with a certain number of decimal places
 coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
   if (is.na(digits)) {
-    return(x)
+    return("")
   }
   if (!is.finite(x)) {
     return("")
@@ -48,7 +48,9 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
 
 
 names2latex <- function(x) {
-  if (!grepl("\\$", x)) {
+  if (is.null(x)) {
+    return(NULL)
+  } else if (!grepl("\\$", x)) {
     x <- gsub("_", "\\\\_", x)
     x <- gsub("<", "\\$<\\$", x)
     x <- gsub(">", "\\$>\\$", x)
@@ -57,8 +59,8 @@ names2latex <- function(x) {
     x <- gsub("\\^3", "\\$^3\\$", x)
     x <- gsub("\\^4", "\\$^4\\$", x)
     x <- gsub("\\^5", "\\$^5\\$", x)
-    return(x)
   }
+  return(x)
 }
 
 # function which replaces special characters in row names by LaTeX equivalents

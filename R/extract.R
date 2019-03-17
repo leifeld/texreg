@@ -2012,7 +2012,7 @@ setMethod("extract", signature = className("H2OBinomialModel", "h2o"),
 
 # extension for lm objects
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
-    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = TRUE, ...) {
+    include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = FALSE, ...) {
   s <- summary(model, ...)
 
   names <- rownames(s$coefficients)

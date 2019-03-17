@@ -59,7 +59,7 @@ matrixreg(l, single.row = FALSE,
     reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
     ci.force.level = 0.95, ci.test = 0, bold = 0, groups = NULL,
     custom.columns = NULL, custom.col.pos = NULL, dcolumn = TRUE,
-    output.type = c("ascii", "latex", "html"), ...) 
+    output.type = c("ascii", "latex", "html"), include.attributes = FALSE, ...) 
 
 csvreg(l, file,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL, 
