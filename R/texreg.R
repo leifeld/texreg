@@ -849,17 +849,81 @@ matrixreg <- function(l,
     }
   }
   
-  # grouping
-  if (output.type[1] == "latex") {
-    output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-                              single.row = single.row, prefix = "", suffix = "", rowLabelType = "latex")
-  } else {
-    output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-                              single.row = single.row, prefix = "", suffix = "", rowLabelType = "text")
+  # add groups to the output matrix using 'groups' argument
+  if (!is.null(groups)) {
+    indentation <- "    "
+    prefix <- ""
+    suffix <- ""
+    if (class(groups) != "list") {
+      stop("Groups must be specified as a list of numeric vectors.")
+    }
+    for (i in 1:length(groups)) {
+      if (length(groups[[i]]) == 0) {
+        stop("Empty groups are not allowed.")
+      }
+      if (!is.numeric(groups[[i]])) {
+        stop("Groups must be specified as a list of numeric vectors.")
+      }
+      groups[[i]] <- sort(unique(groups[[i]]))
+      if (groups[[i]][length(groups[[i]])] - length(groups[[i]]) + 1 != groups[[i]][1]) {
+        stop("The group indices must be consecutive within each group.")
+      }
+    }
+    for (i in 1:length(groups)) {
+      for (j in 1:length(groups)) {
+        if (i != j && length(intersect(groups[[i]], groups[[j]])) > 0) {
+          stop("Overlapping groups are not allowed. Change 'groups' argument!")
+        }
+        if (i < j && groups[[j]][1] < groups[[i]][1]) {
+          stop("Groups must be specified in the correct order.")
+        }
+      }
+    }
+    for (i in 1:length(groups)) {
+      if (single.row == FALSE) {
+        groups[[i]] <- (groups[[i]] * 2) - 1
+      }
+    }
+    if (groups[[length(groups)]][length(groups[[length(groups)]])] > nrow(output.matrix)) {
+      stop("'groups' argument contains indices outside the table dimensions.")
+    }
+    for (i in length(names(groups)):1) {
+      if (output.type[1] == "latex") {
+        label <- paste0(prefix, names2latex(names(groups)[i]), suffix)
+      } else {
+        label <- paste0(prefix, names(groups)[i], suffix)
+      }
+      for (j in nrow(output.matrix):1) {
+        if (j %in% groups[[i]]) {
+          output.matrix[j, 1] <- paste0(indentation, output.matrix[j, 1])
+        }
+      }
+      groupindex <- groups[[i]][1]
+      lastingroup <- groups[[i]][length(groups[[i]])] + (1 - single.row)
+      if (groupindex == 1) {
+        prevmat <- NULL
+      } else {
+        prevmat <- output.matrix[1:(groupindex - 1), ]
+      }
+      currentmat <- output.matrix[groupindex:lastingroup, ]
+      if (lastingroup > nrow(output.matrix) - 2) {
+        nextmat <- NULL
+      } else {
+        nextmat <- output.matrix[(lastingroup + 1):nrow(output.matrix), ]
+      }
+      newrow <- matrix(rep("", ncol(output.matrix)), nrow = 1)
+      if (single.row == FALSE) {
+        newrow <- rbind(newrow, newrow)
+      }
+      newrow[1, 1] <- label
+      output.matrix <- rbind(prevmat, newrow, currentmat, nextmat)
+    }
   }
   
-  # combine the coefficient and gof matrices vertically
+  # save coefficient names for matrix attributes later
   coef.names <- output.matrix[output.matrix[, 1] != "", 1]
+  
+  # combine the coefficient and gof matrices vertically
   output.matrix <- rbind(output.matrix, gof.matrix)
   
   # reformat output matrix
