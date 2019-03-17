@@ -926,15 +926,117 @@ matrixreg <- function(l,
   # combine the coefficient and gof matrices vertically
   output.matrix <- rbind(output.matrix, gof.matrix)
   
-  # reformat output matrix
-  if (ncol(output.matrix) == 2) {
-    temp <- matrix(format.column(matrix(output.matrix[, -1]), 
-                                 single.row = single.row, digits = digits))
-  } else {
-    temp <- apply(output.matrix[, -1], 2, format.column, 
-                  single.row = single.row, digits = digits)
+  # reformat output matrix columns by aligning by decimal point and adding spaces
+  for (j in 2:ncol(output.matrix)) {
+    x <- output.matrix[, j]
+    # create first.dot: max length before first dot; and create paren.length: max
+    # length of parentheses, including opening and closing parentheses
+    dots <- gregexpr("\\.", x)
+    parentheses <- regexpr("\\(.+\\)", x)
+    first.length <- 0
+    paren.length <- 0
+    for (i in 1:length(x)) {
+      first.dot <- dots[[i]][1]
+      paren <- attributes(parentheses)$match.length[i]
+      if (x[i] %in% c("-Inf", "Inf")) {
+        first.dot <- nchar(x[i]) - digits
+      } else if (first.dot == -1) {
+        temp <- nchar(x[i]) + 1
+        if (temp > first.length) {
+          first.length <- temp
+        }
+      } else if (first.dot > first.length) {
+        first.length <- first.dot
+      }
+      if (paren > paren.length) {
+        paren.length <- paren
+      }
+    }
+    
+    for (i in 1:length(x)) {
+      # fill with spaces at the beginning
+      first.dot <- dots[[i]][1]
+      if (x[i] %in% c("-Inf", "Inf")) {
+        first.dot <- nchar(x[i]) - digits
+      } else if (first.dot == -1) {
+        first.dot <- nchar(x[i]) + 1
+      }
+      if (nchar(x[i]) == 0) {
+        difference <- 0
+      } else {
+        difference <- first.length - first.dot
+      }
+      spaces <- paste(rep(" ", difference), collapse = "")
+      x[i] <- paste(spaces, x[i], sep = "")
+      
+      # adjust indentation for SEs
+      if (single.row == TRUE) {
+        paren <- attributes(parentheses)$match.length[i]
+        if (paren < 0) {
+          paren <- 0
+        }
+        difference <- paren.length - paren + 1  # +1 because strsplit takes 1 away
+        spaces <- paste(rep(" ", difference), collapse = "")
+        components <- strsplit(x[i], " \\(")[[1]]
+        if (length(components) == 2) {
+          x[i] <- paste(components[1], spaces, "(", components[2], sep = "")
+        }
+      }
+    }
+    
+    # make all CIs have equal length
+    ci.lower.length <- 0
+    ci.upper.length <- 0
+    for (i in 1:length(x)) {
+      if (grepl("\\[.+\\]", x[i])) {
+        regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
+        first <- sub(regex, "\\1", x[i])
+        first <- nchar(first)
+        if (first > ci.lower.length) {
+          ci.lower.length <- first
+        }
+        last <- sub(regex, "\\2", x[i])
+        last <- nchar(last)
+        if (last > ci.upper.length) {
+          ci.upper.length <- last
+        }
+      }
+    }
+    for (i in 1:length(x)) {
+      if (grepl("\\[.+\\]", x[i])) {
+        regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
+        
+        whitespace1 <- sub(regex, "\\1", x[i])
+        whitespace1 <- sub("\\s+$", "", whitespace1)
+        if (nchar(whitespace1) > 0) {
+          whitespace1 <- paste0(whitespace1, " ")
+        }
+        whitespace2 <- sub(regex, "\\4", x[i])
+        
+        first <- sub(regex, "\\2", x[i])
+        difference <- ci.lower.length - nchar(first)
+        zeros <- paste(rep(" ", difference), collapse = "")
+        first <- paste0(zeros, first)
+        
+        last <- sub(regex, "\\3", x[i])
+        difference <- ci.upper.length - nchar(last)
+        zeros <- paste(rep(" ", difference), collapse = "")
+        last <- paste0(zeros, last)
+        
+        x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
+      }
+    }
+    
+    # fill with spaces at the end to make them all equally long
+    max.x <- max(nchar(x))
+    for (i in 1:length(x)) {
+      difference <- max.x - nchar(x[i])
+      spaces <- paste(rep(" ", difference), collapse = "")
+      x[i] <- paste0(x[i], spaces)
+    }
+    
+    output.matrix[, j] <- x
   }
-  output.matrix <- cbind(output.matrix[, 1], temp)
   
   # otherwise we get duplicate model names in latex and html
   if (output.type[1] == "ascii") {
