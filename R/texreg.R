@@ -1043,10 +1043,80 @@ matrixreg <- function(l,
     output.matrix <- rbind(c("", mod.names), output.matrix)
   }
   
-  # add custom columns
-  output.matrix <- customcolumns(output.matrix, custom.columns, custom.col.pos, 
-                                 single.row = single.row, numcoef = nrow(m), groups = groups, 
-                                 modelnames = TRUE)
+  # add custom columns to output.matrix using the 'custom.columns' argument
+  if (!is.null(custom.columns)) { # start by checking validity of arguments
+    numcoef <- nrow(m)
+    if (!class(custom.columns) == "list") {
+      if (length(custom.columns) != numcoef) {
+        stop(paste("Custom column does not match table dimensions.", numcoef, "elements expected."))
+      }
+      custom.columns <- list(custom.columns)
+    }
+    if (is.null(custom.col.pos)) {
+      custom.col.pos <- rep(2, length(custom.columns))
+    }
+    if (!is.numeric(custom.col.pos)) {
+      stop("Custom column positions must be provided as a numeric vector.")
+    }
+    if (length(custom.col.pos) != length(custom.columns)) {
+      stop(paste("Length of 'custom.col.pos' does not match length of 'custom.columns'."))
+    }
+    if (any(custom.col.pos > ncol(output.matrix) + 1)) {
+      stop(paste("The table has only", ncol(output.matrix), "columns. The",
+                 "'custom.col.pos' argument does not match these dimensions."))
+    }
+    if (0 %in% custom.col.pos) {
+      stop("0 is not a valid argument in 'custom.col.pos'. The column indices start with 1.")
+    }
+    for (i in 1:length(custom.columns)) {
+      l <- length(custom.columns[[i]])
+      if (l != numcoef && !is.null(groups) && l == (numcoef + length(groups))) {
+        numcoef <- numcoef + length(groups)
+      }
+    }
+    
+    # prepare vector with column indices for custom columns
+    custom.indices <- logical()
+    for (i in 1:ncol(output.matrix)) {
+      if (i %in% custom.col.pos) {
+        custom.indices <- c(custom.indices,
+                            rep(TRUE, length(which(custom.col.pos == i))),
+                            FALSE)
+      } else {
+        custom.indices <- c(custom.indices, FALSE)
+      }
+    }
+    for (i in 1:length(custom.col.pos)) {
+      if ((ncol(output.matrix) + 1) == custom.col.pos[i]) {
+        custom.indices <- c(custom.indices, TRUE)
+      }
+    }
+
+    # combine output matrix with custom columns
+    offset <- 1
+    output.count <- 0
+    custom.count <- 0
+    temp <- matrix(character(), nrow = nrow(output.matrix), ncol = 0)
+    for (i in 1:length(custom.indices)) {
+      if (custom.indices[i] == FALSE) {
+        output.count <- output.count + 1
+        temp <- cbind(temp, cbind(output.matrix[, output.count]))
+      } else {
+        custom.count <- custom.count + 1
+        newcol <- matrix("", nrow = nrow(temp), ncol = 1)
+        newcol[1, 1] <- names(custom.columns)[custom.count]
+        for (j in 1:numcoef) {
+          if (single.row == TRUE) {
+            newcol[j + offset, 1] <- as.character(custom.columns[[custom.count]][j])
+          } else {
+            newcol[(2 * j) - (1 - offset), 1] <- as.character(custom.columns[[custom.count]][j])
+          }
+        }
+        temp <- cbind(temp, newcol)
+      }
+    }
+    output.matrix <- temp
+  }
   
   # attributes required for printing functions
   if ("include.attributes" %in% names(dots)) {
