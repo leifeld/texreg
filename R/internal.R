@@ -25,7 +25,7 @@ NULL
 # function which reformats a coefficient with a certain number of decimal places
 coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
   if (is.na(digits)) {
-    return(x)
+    return("")
   }
   if (!is.finite(x)) {
     return("")
@@ -46,298 +46,22 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
   return(y)
 }
 
-# function which conflates a matrix with duplicate row names
-rearrangeMatrix <- function(m) {
-  
-    # The following code block rearranges a matrix with duplicate row names such 
-    # that these rows are conflated where possible. First, an empty matrix q with
-    # the same width is created. The rows will be copied iteratively into this 
-    # matrix. Second, we go through the unique row names, and for each row name 
-    # we create a small virtual matrix in which the values will be nicely 
-    # rearranged. After rearranging the values, this small matrix is rbinded to 
-    # the q matrix. Rearranging works in the following way (the inner loop): for 
-    # every column, we create a vector of all values corresponding to the specific
-    # row name (as specified by the outer loop). We retain only non-NA values 
-    # because irrelevant information should be removed from the coefficients 
-    # table. Then we put the first non-NA value in the first vertical slot of the 
-    # virtual matrix, the second non-NA value of the same row name in the second 
-    # slot, etc., and we create additional rows in the virtual matrix as needed.
-    # By doing this, we ensure that no space in the matrix is wasted with NA 
-    # values. When going to the next column, we place the non-NA values in the 
-    # correct slot again, and we only create new rows if needed. The virtual rows 
-    # are finally rbinded to the large replacement matrix q.
-    
-    unique.names <- unique(rownames(m))              #unique row names in m
-    num.unique <- length(unique.names)               #count these unique names
-    orig.width <- length(m[1, ])                     #number of columns in m
-    q <- matrix(nrow = 0, ncol = orig.width)         #new matrix with same width
-    for (i in 1:num.unique) {                        #go through unique row names
-        rows <- matrix(NA, nrow = 0, ncol = orig.width)#create matrix where re-
-        #arranged rows will be stored
-        for (j in 1:orig.width) {                      #go through columns in m
-            current.name <- unique.names[i]              #save row name
-            nonNa <- m[rownames(m) == current.name, j]   #create a vector of values
-            #with same rowname in the col
-            nonNa <- nonNa[!is.na(nonNa)]                #retain only non-NA values
-            for (k in 1:length(nonNa)) {                 #go through non-NA values
-                if (k > dim(rows)[1]) {                    #add an NA-only row in which
-                    rows <- rbind(rows, rep(NA, orig.width)) #the values are stored
-                    rownames(rows)[k] <- unique.names[i]     #also add the row name
-                }
-                rows[k, j] <- nonNa[k]                     #actually store the value
-            }
-        }
-        q <- rbind(q, rows)                            #add the new row(s) to q
-    }
-    return(q)
+
+names2latex <- function(x) {
+  if (is.null(x)) {
+    return(NULL)
+  } else if (!grepl("\\$", x)) {
+    x <- gsub("_", "\\\\_", x)
+    x <- gsub("<", "\\$<\\$", x)
+    x <- gsub(">", "\\$>\\$", x)
+    x <- gsub("%", "\\\\%", x)
+    x <- gsub("\\^2", "\\$^2\\$", x)
+    x <- gsub("\\^3", "\\$^3\\$", x)
+    x <- gsub("\\^4", "\\$^4\\$", x)
+    x <- gsub("\\^5", "\\$^5\\$", x)
+  }
+  return(x)
 }
-
-
-# function which wraps models in a list and extracts texreg objects from them
-get.data <- function(l, ...) {
-  
-    # if a single model is handed over, put model inside a list
-    if (!"list" %in% class(l)[1]) {
-        l <- list(l)
-    }
-    
-    # extract data from the models
-    models <- NULL
-    for (i in 1:length(l)) {
-        model <- extract(l[[i]], ...)
-        if (class(model) == "list") {       #nested list of models (e.g. systemfit)
-            models <- append(models, model)
-        } else {                            #normal case; one model
-            models <- append(models, list(model))
-        }
-    }
-    
-    return(models)
-}
-
-
-# function which extracts names of the goodness-of-fit statistics
-get.gof <- function(models) {
-    gof.names <- character()  #names of all models in one vector
-    for (i in 1:length(models)) {
-        gn <- models[[i]]@gof.names
-        if (!is.null(gn) && length(gn) > 0) {
-            for (j in 1:length(gn)) {
-                if (!gn[j] %in% gof.names) {
-                    gof.names <- append(gof.names, gn[j])
-                }
-            }
-        }
-    }
-    return(gof.names)
-}
-
-
-# function which replaces coefs, SEs and p values by custom values if provided
-override <- function(models, override.coef, override.se, override.pval, 
-                     override.ci.low, override.ci.up) {
-    
-    if (class(override.se) == "list" || length(override.se) > 1 || 
-        override.se[1] != 0) {
-        if (length(override.pval) == 1 && class(override.pval) != "list" && 
-            override.pval[1] == 0) {
-            warning(paste("Standard errors were provided using 'override.se',", 
-                          "but p-values were not replaced!"))
-        }
-    }
-    if (class(override.pval) == "list" || length(override.pval) > 1 || 
-        override.pval[1] != 0) {
-        if (length(override.se) == 1 && class(override.se) != "list" && 
-            override.se[1] == 0) {
-            warning(paste("P-values were provided using 'override.pval',", 
-                          "but standard errors were not replaced!"))
-        }
-    }
-    
-    for (i in 1:length(models)) {
-        
-        # coefficients
-        if (class(override.coef) != "list" && length(override.coef) == 1 && 
-            override.coef == 0) {
-            cf <- models[[i]]@coef
-        } else if (class(override.coef) == "numeric" && length(models) == 1 && 
-                   length(override.coef) == length(models[[i]]@coef)) {
-            cf <- override.coef
-        } else if (class(override.coef) != "list") {
-            warning("Coefficients must be provided as a list. Using default values.")
-            cf <- models[[i]]@coef
-        } else if (length(override.coef) != length(models)) {
-            warning(paste("Number of coefficients provided does not match number of", 
-                          "models. Using default values."))
-            cf <- models[[i]]@coef
-        } else if (length(models[[i]]@coef) != length(override.coef[[i]])) {
-            warning(paste("Number of coefficients provided does not match number of ",
-                          "terms in model ", i, ". Using default values.", sep=""))
-            cf <- models[[i]]@coef
-        } else if (class(override.coef[[i]]) != "numeric") {
-            warning(paste("Coefficients provided for model", i, 
-                          "are not numeric. Using default values."))
-            cf <- models[[i]]@coef
-        } else {
-            cf <- override.coef[[i]]
-        }
-        models[[i]]@coef <- cf
-        
-        # standard errors
-        if (class(override.se) != "list" && length(override.se) == 1 && 
-            override.se == 0) {
-            se <- models[[i]]@se
-        } else if (class(override.se) == "numeric" && length(models) == 1 && 
-                   length(override.se) == length(models[[i]]@se)) {
-            se <- override.se
-        } else if (class(override.se) != "list") {
-            warning("SEs must be provided as a list. Using default SEs.")
-            se <- models[[i]]@se
-        } else if (length(override.se) != length(models)) {
-            warning(paste("Number of SEs provided does not match number of models.", 
-                          "Using default SEs."))
-            se <- models[[i]]@se
-        } else if (length(models[[i]]@se) != length(override.se[[i]])) {
-            warning(paste("Number of SEs provided does not match number of ", 
-                          "coefficients in model ", i, ". Using default SEs.", sep = ""))
-            se <- models[[i]]@se
-        } else if (class(override.se[[i]]) != "numeric") {
-            warning(paste("SEs provided for model", i, 
-                          "are not numeric. Using default SEs."))
-            se <- models[[i]]@se
-        } else {
-            se <- override.se[[i]]
-        }
-        models[[i]]@se <- se
-        
-        # p values
-        if (class(override.pval) != "list" && length(override.pval) == 1 && 
-            override.pval == 0) {
-            pval <- models[[i]]@pvalues
-        } else if (class(override.pval) == "numeric" && length(models) == 1 && 
-                   length(override.pval) == length(models[[i]]@pvalues)) {
-            pval <- override.pval
-        } else if (class(override.pval) != "list") {
-            warning("p values must be provided as a list. Using default p values.")
-            pval <- models[[i]]@pvalues
-        } else if (length(override.pval) != length(models)) {
-            warning(paste("Number of p values provided does not match number of", 
-                          "models. Using default p values."))
-            pval <- models[[i]]@pvalues
-        } else if (length(models[[i]]@se) != length(override.pval[[i]])) {
-            # previous line: comparison with se because pvalues can be empty
-            warning(paste("Number of p values provided does not match number of ", 
-                          "coefficients in model ", i, ". Using default p values.", sep = ""))
-            pval <- models[[i]]@pvalues
-        } else if (class(override.pval[[i]]) != "numeric") {
-            warning(paste("p values provided for model", i, 
-                          "are not numeric. Using default p values."))
-            pval <- models[[i]]@pvalues
-        } else {
-            pval <- override.pval[[i]]
-        }
-        models[[i]]@pvalues <- pval
-        
-        # lower bound of confidence intervals
-        if (is.null(override.ci.low)) {
-            # do nothing
-        } else if (class(override.ci.low) != "list" && length(override.ci.low) 
-                   == 1 && override.ci.low == 0) {
-            ci.low <- models[[i]]@ci.low
-        } else if (class(override.ci.low) == "numeric" && length(models) == 1 && 
-                   length(override.ci.low) == length(models[[i]]@coef)) {
-            ci.low <- override.ci.low
-        } else if (class(override.ci.low) != "list") {
-            warning("CIs must be provided as a list. Using default CIs if available.")
-            ci.low <- models[[i]]@ci.low
-        } else if (length(override.ci.low) != length(models)) {
-            warning(paste("Number of lower CIs provided does not match number of", 
-                          "models. Using default CIs if available."))
-            ci.low <- models[[i]]@ci.low
-        } else if (length(models[[i]]@coef) != length(override.ci.low[[i]])) {
-            # previous line: comparison with coef because CIs can be empty
-            warning(paste0("Number of lower CIs provided does not match number of ", 
-                           "coefficients in model ", i, ". Using default CIs if available."))
-            ci.low <- models[[i]]@ci.low
-        } else if (class(override.ci.low[[i]]) != "numeric") {
-            warning(paste("Lower CIs provided for model", i, 
-                          "are not numeric. Using default lower CIs."))
-            ci.low <- models[[i]]@ci.low
-        } else {
-            ci.low <- override.ci.low[[i]]
-        }
-        models[[i]]@ci.low <- ci.low
-        
-        # upper bound of confidence intervals
-        if (is.null(override.ci.up)) {
-            # do nothing
-        } else if (class(override.ci.up) != "list" && length(override.ci.up) 
-                   == 1 && override.ci.up == 0) {
-            ci.up <- models[[i]]@ci.up
-        } else if (class(override.ci.up) == "numeric" && length(models) == 1 && 
-                   length(override.ci.up) == length(models[[i]]@coef)) {
-            ci.up <- override.ci.up
-        } else if (class(override.ci.up) != "list") {
-            warning("CIs must be provided as a list. Using default CIs if available.")
-            ci.up <- models[[i]]@ci.up
-        } else if (length(override.ci.up) != length(models)) {
-            warning(paste("Number of lower CIs provided does not match number of", 
-                          "models. Using default CIs if available."))
-            ci.up <- models[[i]]@ci.up
-        } else if (length(models[[i]]@coef) != length(override.ci.up[[i]])) {
-            # previous line: comparison with coef because CIs can be empty
-            warning(paste0("Number of lower CIs provided does not match number of ", 
-                           "coefficients in model ", i, ". Using default CIs if available."))
-            ci.up <- models[[i]]@ci.up
-        } else if (class(override.ci.up[[i]]) != "numeric") {
-            warning(paste("Lower CIs provided for model", i, 
-                          "are not numeric. Using default lower CIs."))
-            ci.up <- models[[i]]@ci.up
-        } else {
-            ci.up <- override.ci.up[[i]]
-        }
-        models[[i]]@ci.up <- ci.up
-        
-        if (length(models[[i]]@ci.low) > 0 && length(models[[i]]@ci.up) > 0) {
-            models[[i]]@se <- numeric()
-            models[[i]]@pvalues <- numeric()
-        }
-    }
-    
-    return(models)
-}
-
-
-# function which converts GOF/coef LaTeX code to HTML oder text/screen code
-tex.replace <- function(models, type = "html", style = "") {
-    for (i in 1:length(models)) {
-        # GOF replacement
-        if (type == "html") {
-            r <- paste0("<sup", style, ">2</sup>")
-        } else if (type == "screen") {
-            r <- "^2"
-        }
-        models[[i]]@gof.names <- gsub("\\$\\^2\\$", r, models[[i]]@gof.names)
-        models[[i]]@gof.names <- gsub("\\\\ ", " ", models[[i]]@gof.names)
-        models[[i]]@gof.names <- gsub("\\ ", " ", models[[i]]@gof.names)
-        
-        # extract.sarlm coefficient name replacement
-        models[[i]]@coef.names <- gsub("\\$\\\\rho\\$", "rho", 
-                                       models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\lambda\\$", "lambda", 
-                                       models[[i]]@coef.names)
-        
-        # extract.gamlss coefficient name replacement
-        models[[i]]@coef.names <- gsub("\\$\\\\mu\\$", "mu", models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\nu\\$", "nu", models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\tau\\$", "tau", 
-                                       models[[i]]@coef.names)
-        models[[i]]@coef.names <- gsub("\\$\\\\sigma\\$", "sigma", 
-                                       models[[i]]@coef.names)
-    }
-    return(models)
-}
-
 
 # function which replaces special characters in row names by LaTeX equivalents
 replaceSymbols <- function(m) {
@@ -358,757 +82,193 @@ replaceSymbols <- function(m) {
     return(m)
 }
 
-
-# correct duplicate coefficient names (add " (1)", " (2)" etc.)
-correctDuplicateCoefNames <- function(models) {
-    for (i in 1:length(models)) {
-        for (j in 1:length(models[[i]]@coef.names)) {
-            if (models[[i]]@coef.names[j] %in% models[[i]]@coef.names[-j]) {
-                indices <- j
-                for (k in 1:length(models[[i]]@coef.names)) {
-                    if (models[[i]]@coef.names[j] == models[[i]]@coef.names[k] && 
-                        j != k) {
-                        indices <- c(indices, k)
-                    }
-                }
-                count <- 1
-                for (k in indices) {
-                    models[[i]]@coef.names[k] <- paste0(models[[i]]@coef.names[k], " (", 
-                                                        count, ")")
-                    count <- count + 1
-                }
-            }
-        }
-    }
-    return(models)
-}
-
-
-#' Aggregate models and GOFs into a common matrix
-#'
-#' Aggregate models and GOFs from \code{texreg} objects into a common matrix.
-#'
-#' This function takes a list of \code{texreg} objects, as produced by the
-#' \code{\link{extract}} function, and produces a matrix, either for the
-#' coefficient block (\code{returnobject = "m"}) (in numeric form) or for the
-#' goodness-of-fit (GOF) block of the table that is to be created
-#' (\code{returnobject = "gof"}; in formatted character form). On the way, also
-#' replace GOF names by custom GOF labels, then insert custom GOF rows if
-#' necessary, and then reorder the GOF block if necessary.
-#'
-#' @param models A list of \code{texreg} objects, as created by the
-#'   \link{get.data} function.
-#' @param gof.names A character vector of names for the GOF statistics, as
-#'   created by the \code{\link{get.gof}} function. This is needed to attach row
-#'   names to the GOF block or decimal matrix.
-#' @param custom.gof.names A character vector of replacement names for the GOF
-#'   statistics. Must have the same length as \code{gof.names}. Can be
-#'   \code{NULL} if the original GOF names should be kept.
-#' @param custom.gof.rows A named list of integer, numeric, or character vectors
-#'   that represent new rows to be inserted at the beginning of the GOF block.
-#' @param reorder.gof A numeric vector with the desired reordered positions of
-#'   the GOF entries, for example \code{c(1, 2, 4, 3)} for swapping the last two
-#'   entries.
-#' @param digits Number of decimal points (for formatting GOF values).
-#' @param leading.zero Logical indicating whether leading zeroes should be used.
-#' @param latex Is the output a LaTeX table? Needed for cell formatting.
-#' @param dcolumn Is the \pkg{dcolumn} LaTeX package used for cell formatting?
-#' @param returnobject This can be:
-#'   \describe{
-#'     \item{\code{"m"}}{for creating the coefficient block}
-#'     \item{\code{"gof.matrix"}}{for creating the GOF block}
-#'   }
-#'
-#' @return A \code{matrix} object representing...
-#'   \itemize{
-#'     \item the coefficient block with all decimal places and with separate
-#'       columns for coefficients, standard errors and p-values, or confidence
-#'       intervals (for example, six columns for two models) or
-#'     \item the GOF block with one column per model with the first column
-#'       representing the GOF names and the remaining columns the formatted GOF
-#'       statistics as character objects.
-#'   }
-#'
-#' @rdname internal
-#' @keywords internal
-#' @author Philip Leifeld
-#' @seealso \code{\link{extract}}, \code{\link{get.data}},
-#'   \code{\link{get.gof}}, \code{\link{coeftostring}},
-#'   \code{\link{replaceSymbols}}
-aggregate.matrix <- function(models,
-                             gof.names,
-                             custom.gof.names = NULL,
-                             custom.gof.rows = NULL,
-                             reorder.gof = NULL,
-                             digits = 2,
-                             leading.zero = TRUE,
-                             latex = FALSE,
-                             dcolumn = TRUE,
-                             returnobject = "m") {
-    
-    # aggregate GOF statistics in a matrix and create list of coef blocks
-    gofs <- matrix(nrow = length(gof.names), ncol = length(models))
-    row.names(gofs) <- gof.names
-    coefs <- list()
-    decimal.matrix <- matrix(nrow = length(gof.names), ncol = length(models))
-    for (i in 1:length(models)) {
-        cf <- models[[i]]@coef
-        se <- models[[i]]@se
-        pv <- models[[i]]@pvalues
-        cil <- models[[i]]@ci.low
-        ciu <- models[[i]]@ci.up
-        if (length(se) == 0 && length(ciu) > 0) {
-            coef <- cbind(cf, cil, ciu)
-        } else {
-            if (length(se) > 0 && length(pv) > 0) {
-                coef <- cbind(cf, se, pv)
-            } else if (length(se) > 0 && length(pv) == 0) {
-                # p-values not provided -> use p-values of 0.99
-                coef <- cbind(cf, se, rep(0.99, length(cf)))
-            } else if (length(se) == 0 && length(pv) > 0) {
-                coef <- cbind(cf, rep(NA, length(cf)), pv)
-            } else {
-                # not even SEs provided
-                coef <- cbind(cf, rep(NA, length(cf)), rep(0.99, length(cf)))
-            }
-        }
-        rownames(coef) <- models[[i]]@coef.names
-        coefs[[i]] <- coef
-        if (length(models[[i]]@gof) > 0) {
-            for (j in 1:length(models[[i]]@gof)) {
-                rn <- models[[i]]@gof.names[j]
-                val <- models[[i]]@gof[j]
-                col <- i
-                if (is.na(models[[i]]@gof.decimal[j])) {
-                    dec <- digits
-                } else if (models[[i]]@gof.decimal[j] == FALSE) {
-                    dec <- 0
-                } else {
-                    dec <- digits
-                }
-                row <- which(row.names(gofs) == rn)
-                gofs[row, col] <- val
-                decimal.matrix[row, col] <- dec
-            }
-        }
-    }
-    
-    # figure out correct order of the coefficients
-    coef.order <- character()
-    for (i in 1:length(coefs)) {
-        for (j in 1:length(rownames(coefs[[i]]))) {
-            if (!rownames(coefs[[i]])[j] %in% coef.order) {
-                coef.order <- append(coef.order, rownames(coefs[[i]])[j])
-            }
-        }
-    }
-    
-    # merge the coefficient tables
-    if (length(coefs) == 1) {
-        m <- coefs[[1]]
-    } else if (length(coefs) > 1) {
-        m <- coefs[[1]]
-        for (i in 2:length(coefs)) {
-            m <- merge(m, coefs[[i]], by = 0, all = TRUE)
-            rownames(m) <- m[, 1]
-            m <- m[, colnames(m) != "Row.names"]
-            colnames(m) <- NULL
-        }
-    }
-    colnames(m) <- rep(colnames(coefs[[1]]), length(coefs))
-    
-    # reorder merged coefficient table
-    m.temp <- matrix(nrow = nrow(m), ncol = ncol(m))
-    for (i in 1:nrow(m)) {
-        new.row <- which(coef.order == rownames(m)[i])
-        for (j in 1:length(m[i,])) {
-            m.temp[new.row, j] <- m[i, j]
-        }
-    }
-    rownames(m.temp) <- coef.order
-    colnames(m.temp) <- colnames(m)
-    m <- m.temp
-    
-    # replace GOF names by custom names
-    if (returnobject == "gof.matrix") {
-      if (is.null(custom.gof.names)) {
-        # do nothing
-      } else if (class(custom.gof.names) != "character") {
-        stop("Custom GOF names must be provided as a vector of strings.")
-      } else if (length(custom.gof.names) != length(gof.names)) {
-        stop(paste("There are", length(gof.names), 
-                   "GOF statistics, but you provided", length(custom.gof.names), 
-                   "custom names for them."))
-      } else {
-        custom.gof.names[is.na(custom.gof.names)] <- rownames(gofs)[is.na(custom.gof.names)]
-        rownames(gofs) <- custom.gof.names
-      }
-    }
-    
-    if (dcolumn == FALSE && isTRUE(latex)) {
-      dollar <- "$"
-    } else {
-      dollar <- ""
-    }
-    
-    # add row names as first column to GOF block and format values as character strings
-    if (returnobject == "gof.matrix") {
-      gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  # including labels
-      if (nrow(gof.matrix) > 0) {
-        for (i in 1:nrow(gofs)) {
-          # replace symbols in latex
-          if (isTRUE(latex)) {
-            gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
-          } else {
-            gof.matrix[i, 1] <- rownames(gofs)[i]
-          }
-          for (j in 1:length(gofs[1, ])) {
-            strg <- coeftostring(gofs[i, j], leading.zero, digits = decimal.matrix[i, j])
-            gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
-          }
-        }
-      }
-    }
-    
-    # add custom GOF rows
-    if (returnobject == "gof.matrix") {
-      if (!is.null(custom.gof.rows) && !is.na(custom.gof.rows)) {
-        if (class(custom.gof.rows) != "list") {
-          stop("The 'custom.gof.rows' argument is ignored because it is not a list.")
-        }
-        for (i in length(custom.gof.rows):1) {
-          if (length(custom.gof.rows[[i]]) != ncol(gofs)) {
-            stop("Custom GOF row ", i, " has a different number of values than there are models.")
-          } else {
-            if (!is.numeric(custom.gof.rows[[i]]) && !is.character(custom.gof.rows[[i]])) {
-              custom.gof.rows[[i]] <- as.character(custom.gof.rows[[i]]) # cast into character if unknown class, such as factor or logical
-            }
-            # auto-detect decimal setting
-            if (!is.numeric(custom.gof.rows)) { # put NA for character objects, for example fixed effects
-              dec <- NA
-            } else if (all(custom.gof.rows %% 1 == 0)) { # put 0 for integers
-              dec <- 0
-            } else { # put the respective decimal places if numeric but not integer
-              dec <- digits
-            }
-            newValues <- sapply(custom.gof.rows[[i]], function(x) { # format the different values of the new row
-              if (is.character(x) && isTRUE(latex) && isTRUE(dcolumn)) {
-                paste0("\\multicolumn{1}{c}{", x, "}")
-              } else {
-                paste0(dollar, coeftostring(x, leading.zero, digits = dec), dollar)
-              }
-            })
-            gof.matrix <- rbind(c(names(custom.gof.rows)[i], newValues), gof.matrix) # insert GOF name and GOF values as new row
-          }
-        }
-      }
-      
-      # reorder GOF block using reorder.gof argument
-      gof.matrix <- reorder(gof.matrix, reorder.gof)
-    }
-    
-    if (returnobject == "m") {
-        return(m)
-    } else if (returnobject == "gof.matrix") {
-        return(gof.matrix)
-    }
-}
-
-
-# function to apply the omit.coef and custom.coef.names operations
-omit_rename <- function(m, omit.coef, custom.coef.names) {
-
-    # omit
-    if (!is.null(omit.coef)) {
-        if (!is.character(omit.coef) || is.na(omit.coef)) {
-            stop("omit.coef must be a character string.")
-        }
-        idx <- !grepl(omit.coef, row.names(m), perl = TRUE)
-        if (all(!idx)) {
-            stop("You were trying to remove all coefficients using omit.coef.")
-        }
-    } else {
-        idx <- rep(TRUE, nrow(m))
-    }
-    
-    # rename
-    if (!is.null(custom.coef.names)) {
-        if (!class(custom.coef.names) == "character") { # check type
-            stop("custom.coef.names must be a vector of strings.")
-        }
-        if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
-            if (nrow(m) == sum(idx)) {
-                stop("custom.coef.names must be a string vector of length ",
-                     nrow(m),
-                     '.')
-            } else {
-                stop("custom.coef.names must be a string vector of length ",
-                     sum(idx),
-                     ' or ',
-                     nrow(m),
-                     '.')
-            }
-        }
-        # user submits number of custom names after omission
-        if (length(custom.coef.names) == sum(idx)) {
-            custom.coef.names <- custom.coef.names 
-        } else { # user submits number of custom names before omission
-            custom.coef.names <- custom.coef.names[idx]
-        } 
-    } else {
-        custom.coef.names <- row.names(m)[idx]
-    }
-    
-    # output
-    m <- m[idx, , drop = FALSE]
-    row.names(m) <- custom.coef.names
-    return(m)
-}
-
-
-# function to select, omit, reorder, and rename coefficients
-custommap <- function(m, custom.coef.map) {
-    # sanity checks
-    if (class(custom.coef.map) != 'list') {
-        stop('custom.coef.map must be a named list.') 
-    }
-    if (is.null(names(custom.coef.map))) {
-        stop('custom.coef.map must be a named list.') 
-    }
-    if (!any(names(custom.coef.map) %in% row.names(m))) {
-        stop(paste("None of the coefficient names supplied in custom.coef.map", 
-                   "appear to be in your models."))
-    }
-    
-    # when user supplies NA as destination, replace with origin
-    idx <- is.na(custom.coef.map)
-    custom.coef.map[idx] <- names(custom.coef.map)[idx]
-    
-    # subset of coefficients to keep
-    origin <- names(custom.coef.map)[names(custom.coef.map) %in% row.names(m)]
-    destination <- unlist(custom.coef.map[origin])
-    # otherwise R converts to numeric if a single coefficient is passed
-    out <- m[origin, , drop = FALSE]
-    
-    # rename
-    row.names(out) <- destination
-    
-    # output
-    return(out)
-
-}
-
-# decide if default or custom model names should be used and return them
-modelnames <- function(model.list, tr.objects, model.names) {
-    
-    if (class(model.list)[1] != "list") {
-        model.list <- list(model.list)
-    }
-    
-    mnames <- names(model.list)
-    if (is.null(mnames)) {
-        mnames <- character(length(model.list))
-        if (length(mnames) != length(tr.objects)) {
-            mnames <- character(length(tr.objects))
-        }
-    }
-    
-    for (i in 1:length(tr.objects)) {
-        nam <- tr.objects[[i]]@model.name
-        if (length(nam) == 1) {
-            model.names[i] <- nam
-        }
-    }
-    
-    if (is.null(model.names)) {
-        model.names <- rep(NA, length(mnames))
-    } else if (class(model.names) != "character") {
-        stop("Model names must be specified as a vector of strings.")
-    } else if (length(model.names) != length(tr.objects)) {
-        stop(paste("There are", length(tr.objects), "models, but you provided", 
-                   length(model.names), "name(s) for them."))
-    }
-    
-    for (i in 1:length(model.names)) {
-        if (!is.na(model.names[i])) {
-            mnames[i] <- model.names[i]
-        } else if (mnames[i] == "") {
-            mnames[i] <- paste("Model", i)
-        } else {
-            # leave mnames[i] as is
-        }
-    }
-    
-    return(mnames)
-}
-
-
-
-
-# return the output matrix with coefficients, SEs and significance stars
-outputmatrix <- function(m, single.row, neginfstring, posinfstring, 
-                         leading.zero, digits, se.prefix, se.suffix, star.prefix, star.suffix, 
-                         star.symbol = "*", stars, dcolumn = TRUE, symbol, bold, bold.prefix, 
-                         bold.suffix, ci = rep(FALSE, length(m) / 3), semicolon = "; ", 
-                         ci.test = 0, rowLabelType = 'text') {
-
-    # write coefficient rows
-    if (single.row == TRUE) {
-        output.matrix <- matrix(ncol = (length(m) / 3) + 1, nrow = length(m[, 1]))
-        
-        # row labels
-        for (i in 1:length(rownames(m))) {
-            if (rowLabelType == 'latex') {
-                output.matrix[i, 1] <- (rownames(replaceSymbols(m))[i])
-            } else {
-                output.matrix[i, 1] <- rownames(m)[i]
-            }
-        }
-        
-        # replace R syntax
-        for (i in 1:length(m[, 1])) {
-            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
-                output.matrix[i, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[i, 1])
-            }
-        }
-        # coefficients and standard errors
-        for (i in 1:length(m[, 1])) { #go through rows
-            j <- 1 #column in the original, merged coef table
-            k <- 2 #second column of output.matrix, i.e., coefficients
-            while (j <= length(m)) {
-                if (is.na(m[i, j])) {
-                    output.matrix[i, k] <- ""
-                } else if (m[i, j] == -Inf) {
-                    output.matrix[i, k] <- neginfstring
-                } else if (m[i, j] == Inf) {
-                    output.matrix[i, k] <- posinfstring
-                } else {
-                    
-                    # in case of CIs, replace brackets by square brackets
-                    se.prefix.current <- se.prefix
-                    se.suffix.current <- se.suffix
-                    if (ci[k - 1] == TRUE) {
-                        se.prefix.current <- gsub("\\(", "[", se.prefix.current)
-                        se.suffix.current <- gsub("\\)", "]", se.suffix.current)
-                    }
-                    if (is.na(m[i, j + 1])) {
-                        se.prefix.current <- ""
-                        se.suffix.current <- ""
-                    }
-                    if (ci[k - 1] == FALSE) {
-                        std <- paste(se.prefix.current, coeftostring(m[i, j + 1], 
-                                                                     leading.zero, digits = digits), se.suffix.current, sep = "")
-                    } else {
-                        std <- paste(se.prefix.current, coeftostring(m[i, j + 1], 
-                                                                     leading.zero, digits = digits), semicolon, 
-                                     coeftostring(m[i, j + 2], leading.zero, digits = digits), 
-                                     se.suffix.current, sep = "")
-                    }
-                    
-                    if (ci[k - 1] == FALSE) {
-                        p <- get_stars(pval = m[i, j + 2], 
-                                       stars = stars, 
-                                       star.symbol = star.symbol,
-                                       symbol = symbol,
-                                       star.prefix = star.prefix,
-                                       star.suffix = star.suffix,
-                                       ci = ci
-                        )$coefficients
-                    } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 && 
-                            (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
-                            p <- paste0(star.prefix, star.symbol, star.suffix)
-                        } else {
-                            p <- ""
-                        }
-                    }
-                    
-                    if (dcolumn == TRUE) {
-                        dollar <- ""
-                    } else {
-                        dollar <- "$"
-                    }
-                    if (is.na(m[i, j + 2])) {
-                        m[i, j + 2] <- 1.0
-                    }
-                    if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
-                               (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else {
-                        bold.pref <- ""
-                        bold.suff <- ""
-                    }
-                    entry <- paste(dollar, bold.pref, coeftostring(m[i, j], leading.zero, 
-                                                                   digits = digits), bold.suff, std, p, dollar, sep = "")
-                    output.matrix[i, k] <- entry
-                    
-                }
-                k <- k + 1
-                j <- j + 3
-            }
-        }
-    } else {
-        output.matrix <- matrix(ncol = (length(m) / 3) + 1, 
-                                nrow = 2 * length(m[, 1]))
-        
-        # row labels
-        for (i in 1:length(rownames(m))) {
-            if (rowLabelType == 'latex'){
-                output.matrix[(i * 2) - 1, 1] <- rownames(replaceSymbols(m))[i]
-                output.matrix[(i * 2), 1] <- ""   
-            } else {
-                output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
-                output.matrix[(i * 2), 1] <- ""
-            }
-        }
-        
-        for (i in 1:length(m[, 1])) {
-            if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
-                output.matrix[(i * 2) - 1, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[(i * 2) - 1, 1])
-            }
-        }
-        
-        # coefficients and standard deviations
-        for (i in 1:length(m[, 1])) {  # i = row
-            j <- 1  # j = column within model (from 1 to 3)
-            k <- 2  # k = column in output matrix (= model number + 1)
-            while (j <= length(m)) {
-                if (is.na(m[i, j]) || is.nan(m[i, j])) {
-                    output.matrix[(i * 2) - 1, k] <- ""  #upper coefficient row
-                    output.matrix[(i * 2), k] <- ""  #lower se row
-                } else if (m[i, j] == -Inf) {
-                    output.matrix[(i * 2) - 1, k] <- neginfstring  #upper row
-                    output.matrix[(i * 2), k] <- ""  #lower se row
-                } else if (m[i, j] == Inf) {
-                    output.matrix[(i * 2) - 1, k] <- posinfstring  #upper row
-                    output.matrix[(i * 2), k] <- ""  #lower se row
-                } else {
-                    
-                    # in case of CIs, replace brackets by square brackets
-                    se.prefix.current <- "("
-                    se.suffix.current <- ")"
-                    if (ci[k - 1] == TRUE) {
-                        se.prefix.current <- "["
-                        se.suffix.current <- "]"
-                    }
-                    if (is.na(m[i, j + 1])) {
-                        se.prefix.current <- ""
-                        se.suffix.current <- ""
-                    }
-                    if (ci[k - 1] == FALSE) {
-                        p <- get_stars(pval = m[i, j + 2], 
-                                       stars = stars, 
-                                       star.symbol = star.symbol, 
-                                       symbol = symbol,
-                                       star.prefix = star.prefix, 
-                                       star.suffix = star.suffix
-                        )$coefficients
-                    } else { # significance from confidence interval
-                        if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
-                            (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
-                            p <- paste0(star.prefix, star.symbol, star.suffix)
-                        } else {
-                            p <- ""
-                        }
-                    }
-                    
-                    if (dcolumn == TRUE) {
-                        dollar <- ""
-                    } else {
-                        dollar <- "$"
-                    }
-                    if (is.na(m[i, j + 2])) {
-                        m[i, j + 2] <- 1.0
-                    }
-                    if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
-                               (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
-                        bold.pref <- bold.prefix
-                        bold.suff <- bold.suffix
-                    } else {
-                        bold.pref <- ""
-                        bold.suff <- ""
-                    }
-                    output.matrix[(i * 2) - 1, k] <- paste(dollar, bold.pref, 
-                                                           coeftostring(m[i, j], leading.zero, digits = digits), bold.suff, 
-                                                           p, dollar, sep = "")
-                    if (ci[k - 1] == FALSE) {
-                        output.matrix[(i * 2), k] <- paste(dollar, se.prefix.current, 
-                                                           coeftostring(m[i, j + 1], leading.zero, digits = digits), 
-                                                           se.suffix.current, dollar, sep = "")
-                    } else {
-                        output.matrix[(i * 2), k] <- paste(dollar, se.prefix.current, 
-                                                           coeftostring(m[i, j + 1], leading.zero, digits = digits), 
-                                                           semicolon, coeftostring(m[i, j + 2], leading.zero, 
-                                                                                   digits = digits), se.suffix.current, dollar, sep = "")
-                    }
-                }
-                k <- k + 1
-                j <- j + 3
-            }
-        }
-        
-        # check if SEs are all missing and delete even rows if necessary
-        se.missing <- numeric()
-        for (i in seq(2, nrow(output.matrix), 2)) {
-            if (all(sapply(output.matrix[i, ], function(x) x == ""))) {
-                se.missing <- c(se.missing, i)
-            }
-        }
-        if (length(se.missing) == nrow(output.matrix) / 2) {
-            output.matrix <- output.matrix[-se.missing, ]
-        }
-    }
-    
-    return(output.matrix)
-}
-
-
-#' Format a column vector nicely using spaces
-#'
-#' Format a column (given as vector) of the output matrix by adding spaces.
-#'
-#' This function accepts a vector of coefficients and either standard errors
-#' (in parentheses) or confidence intervals (in square brackets, where the lower
-#' and upper confidence interval are separated by a semicolon) and formats the
-#' values nicely by aligning them at the decimal point. To do this, the function
-#' adds necessary spaces both at the beginning and at the end. The vector to be
-#' formatted by the function is usually a column from an output matrix as
-#' generated by the \code{\link{outputmatrix}} function.
-#'
-#' @param x A character vector with coefficients (e.g., \code{"5.03 ***"}) and
-#'   either standard errors (e.g., \code{"(0.22)"}) or confidence intervals
-#'   (e.g., \code{"[-0.98; 0.24]"}).
-#' @param single.row Are both the coefficient and the uncertainty measure in the
-#'   same row, as per the \code{single.row} argument of the table creation
-#'   functions?
-#' @param digits The number of decimal places used to generate the table.
-#'
-#' @return A character vector of the same size as the input vector, but with
-#'   decimal-aligned values and equal character length of each entry.
-#'
-#' @rdname internal
-#' @keywords internal
-#' @author Philip Leifeld
-#' @seealso \code{\link{outputmatrix}}, \code{\link{matrixreg}}
-format.column <- function(x, single.row = FALSE, digits = 2) {
+get.data <- function(l, ...) {
+  # if a single model is handed over, put model inside a list
+  if (!"list" %in% class(l)[1]) {
+    l <- list(l)
+  }
   
-  # create first.dot: max length before first dot; and create paren.length: max
-  # length of parentheses, including opening and closing parentheses
-  dots <- gregexpr("\\.", x)
-  parentheses <- regexpr("\\(.+\\)", x)
-  first.length <- 0
-  paren.length <- 0
-  for (i in 1:length(x)) {
-    first.dot <- dots[[i]][1]
-    paren <- attributes(parentheses)$match.length[i]
-    if (x[i] %in% c("-Inf", "Inf")) {
-      first.dot <- nchar(x[i]) - digits
-    } else if (first.dot == -1) {
-      temp <- nchar(x[i]) + 1
-      if (temp > first.length) {
-        first.length <- temp
-      }
-    } else if (first.dot > first.length) {
-      first.length <- first.dot
+  # create list of texreg objects
+  models <- NULL
+  for (i in 1:length(l)) {
+    model <- extract(l[[i]], ...)
+    if (class(model) == "list") { # must be a nested list of models (e.g., systemfit)
+      models <- append(models, model)
+    } else { # normal case; one model
+      models <- append(models, list(model))
     }
-    if (paren > paren.length) {
-      paren.length <- paren
+  }
+  return(models)
+}
+
+# replace coefs, SEs, p-values, and/or CIs by custom values if provided
+override <- function(models,
+                     override.coef,
+                     override.se,
+                     override.pvalues, 
+                     override.ci.low,
+                     override.ci.up) {
+  # check validity of override arguments for p-values and SEs
+  if (class(override.se) == "list" || length(override.se) > 1 || override.se[1] != 0) {
+    if (length(override.pvalues) == 1 && class(override.pvalues) != "list" && override.pvalues[1] == 0) {
+      warning("Standard errors were provided using 'override.se', but p-values were not replaced!")
+    }
+  }
+  if (class(override.pvalues) == "list" || length(override.pvalues) > 1 || override.pvalues[1] != 0) {
+    if (length(override.se) == 1 && class(override.se) != "list" && override.se[1] == 0) {
+      warning("p-values were provided using 'override.pvalues', but standard errors were not replaced!")
     }
   }
   
-  for (i in 1:length(x)) {
-    
-    # fill with spaces at the beginning
-    first.dot <- dots[[i]][1]
-    if (x[i] %in% c("-Inf", "Inf")) {
-      first.dot <- nchar(x[i]) - digits
-    } else if (first.dot == -1) {
-      first.dot <- nchar(x[i]) + 1
-    }
-    if (nchar(x[i]) == 0) {
-      difference <- 0
+  # replace coefs, SEs, p-values, and/or CIs by custom values if provided
+  for (i in 1:length(models)) {
+    # override coefficients
+    if (class(override.coef) != "list" && length(override.coef) == 1 && override.coef == 0) {
+      cf <- models[[i]]@coef
+    } else if (class(override.coef) == "numeric" &&
+               length(models) == 1 &&
+               length(override.coef) == length(models[[i]]@coef)) {
+      cf <- override.coef
+    } else if (class(override.coef) != "list") {
+      warning("Coefficients must be provided as a list. Using default values.")
+      cf <- models[[i]]@coef
+    } else if (length(override.coef) != length(models)) {
+      warning(paste("Number of coefficients provided does not match number of",
+                    "models. Using default values."))
+      cf <- models[[i]]@coef
+    } else if (length(models[[i]]@coef) != length(override.coef[[i]])) {
+      warning(paste0("Number of coefficients provided does not match number of ",
+                     "terms in model ", i, ". Using default values."))
+      cf <- models[[i]]@coef
+    } else if (class(override.coef[[i]]) != "numeric") {
+      warning("Coefficients provided for model", i, "are not numeric. Using default values.")
+      cf <- models[[i]]@coef
     } else {
-      difference <- first.length - first.dot
+      cf <- override.coef[[i]]
     }
-    spaces <- paste(rep(" ", difference), collapse = "")
-    x[i] <- paste(spaces, x[i], sep = "")
+    models[[i]]@coef <- cf
     
-    # adjust indentation for SEs
-    if (single.row == TRUE) {
-      paren <- attributes(parentheses)$match.length[i]
-      if (paren < 0) {
-        paren <- 0
-      }
-      difference <- paren.length - paren + 1  # +1 because strsplit takes 1 away
-      spaces <- paste(rep(" ", difference), collapse = "")
-      components <- strsplit(x[i], " \\(")[[1]]
-      if (length(components) == 2) {
-        x[i] <- paste(components[1], spaces, "(", components[2], sep = "")
-      }
+    # override standard errors
+    if (class(override.se) != "list" && length(override.se) == 1 && override.se == 0) {
+      se <- models[[i]]@se
+    } else if (class(override.se) == "numeric" &&
+               length(models) == 1 &&
+               length(override.se) == length(models[[i]]@se)) {
+      se <- override.se
+    } else if (class(override.se) != "list") {
+      warning("SEs must be provided as a list. Using default SEs.")
+      se <- models[[i]]@se
+    } else if (length(override.se) != length(models)) {
+      warning("Number of SEs provided does not match number of models. Using default SEs.")
+      se <- models[[i]]@se
+    } else if (length(models[[i]]@se) != length(override.se[[i]])) {
+      warning(paste0("Number of SEs provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default SEs."))
+      se <- models[[i]]@se
+    } else if (class(override.se[[i]]) != "numeric") {
+      warning(paste("SEs provided for model", i, "are not numeric. Using default SEs."))
+      se <- models[[i]]@se
+    } else {
+      se <- override.se[[i]]
+    }
+    models[[i]]@se <- se
+    
+    # override p-values
+    if (class(override.pvalues) != "list" && length(override.pvalues) == 1 && override.pvalues == 0) {
+      pval <- models[[i]]@pvalues
+    } else if (class(override.pvalues) == "numeric" &&
+               length(models) == 1 &&
+               length(override.pvalues) == length(models[[i]]@pvalues)) {
+      pval <- override.pvalues
+    } else if (class(override.pvalues) != "list") {
+      warning("p-values must be provided as a list. Using default p-values.")
+      pval <- models[[i]]@pvalues
+    } else if (length(override.pvalues) != length(models)) {
+      warning("Number of p-values provided does not match number of models. Using default p-values.")
+      pval <- models[[i]]@pvalues
+    } else if (length(models[[i]]@se) != length(override.pvalues[[i]])) {
+      # previous line: comparison with SE because p-values can be empty
+      warning(paste0("Number of p-values provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default p-values."))
+      pval <- models[[i]]@pvalues
+    } else if (class(override.pvalues[[i]]) != "numeric") {
+      warning(paste("p-values provided for model", i, "are not numeric. Using default p-values."))
+      pval <- models[[i]]@pvalues
+    } else {
+      pval <- override.pvalues[[i]]
+    }
+    models[[i]]@pvalues <- pval
+    
+    # override lower bound of confidence intervals
+    if (is.null(override.ci.low)) {
+      # do nothing
+    } else if (class(override.ci.low) != "list" &&
+               length(override.ci.low) == 1 &&
+               override.ci.low == 0) {
+      ci.low <- models[[i]]@ci.low
+    } else if (class(override.ci.low) == "numeric" &&
+               length(models) == 1 &&
+               length(override.ci.low) == length(models[[i]]@coef)) {
+      ci.low <- override.ci.low
+    } else if (class(override.ci.low) != "list") {
+      warning("CIs must be provided as a list. Using default CIs if available.")
+      ci.low <- models[[i]]@ci.low
+    } else if (length(override.ci.low) != length(models)) {
+      warning(paste("Number of lower CIs provided does not match number of", 
+                    "models. Using default CIs if available."))
+      ci.low <- models[[i]]@ci.low
+    } else if (length(models[[i]]@coef) != length(override.ci.low[[i]])) {
+      # previous line: comparison with coef because CIs can be empty
+      warning(paste0("Number of lower CIs provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default CIs if available."))
+      ci.low <- models[[i]]@ci.low
+    } else if (class(override.ci.low[[i]]) != "numeric") {
+      warning("Lower CIs provided for model", i, "are not numeric. Using default lower CIs.")
+      ci.low <- models[[i]]@ci.low
+    } else {
+      ci.low <- override.ci.low[[i]]
+    }
+    models[[i]]@ci.low <- ci.low
+    
+    # upper bound of confidence intervals
+    if (is.null(override.ci.up)) {
+      # do nothing
+    } else if (class(override.ci.up) != "list" &&
+               length(override.ci.up) == 1 &&
+               override.ci.up == 0) {
+      ci.up <- models[[i]]@ci.up
+    } else if (class(override.ci.up) == "numeric" &&
+               length(models) == 1 &&
+               length(override.ci.up) == length(models[[i]]@coef)) {
+      ci.up <- override.ci.up
+    } else if (class(override.ci.up) != "list") {
+      warning("CIs must be provided as a list. Using default CIs if available.")
+      ci.up <- models[[i]]@ci.up
+    } else if (length(override.ci.up) != length(models)) {
+      warning(paste("Number of lower CIs provided does not match number of", 
+                    "models. Using default CIs if available."))
+      ci.up <- models[[i]]@ci.up
+    } else if (length(models[[i]]@coef) != length(override.ci.up[[i]])) {
+      # previous line: comparison with coef because CIs can be empty
+      warning(paste0("Number of lower CIs provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default CIs if available."))
+      ci.up <- models[[i]]@ci.up
+    } else if (class(override.ci.up[[i]]) != "numeric") {
+      warning(paste("Lower CIs provided for model", i, 
+                    "are not numeric. Using default lower CIs."))
+      ci.up <- models[[i]]@ci.up
+    } else {
+      ci.up <- override.ci.up[[i]]
+    }
+    models[[i]]@ci.up <- ci.up
+    
+    if (length(models[[i]]@ci.low) > 0 && length(models[[i]]@ci.up) > 0) {
+      models[[i]]@se <- numeric()
+      models[[i]]@pvalues <- numeric()
     }
   }
-  
-  # make all CIs have equal length
-  ci.lower.length <- 0
-  ci.upper.length <- 0
-  for (i in 1:length(x)) {
-    if (grepl("\\[.+\\]", x[i])) {
-      regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
-      first <- sub(regex, "\\1", x[i])
-      first <- nchar(first)
-      if (first > ci.lower.length) {
-        ci.lower.length <- first
-      }
-      last <- sub(regex, "\\2", x[i])
-      last <- nchar(last)
-      if (last > ci.upper.length) {
-        ci.upper.length <- last
-      }
-    }
-  }
-  for (i in 1:length(x)) {
-    if (grepl("\\[.+\\]", x[i])) {
-      regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
-      
-      whitespace1 <- sub(regex, "\\1", x[i])
-      whitespace1 <- sub("\\s+$", "", whitespace1)
-      if (nchar(whitespace1) > 0) {
-        whitespace1 <- paste0(whitespace1, " ")
-      }
-      whitespace2 <- sub(regex, "\\4", x[i])
-      
-      first <- sub(regex, "\\2", x[i])
-      difference <- ci.lower.length - nchar(first)
-      zeros <- paste(rep(" ", difference), collapse = "")
-      first <- paste0(zeros, first)
-      
-      last <- sub(regex, "\\3", x[i])
-      difference <- ci.upper.length - nchar(last)
-      zeros <- paste(rep(" ", difference), collapse = "")
-      last <- paste0(zeros, last)
-      
-      x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
-    }
-  }
-  
-  # fill with spaces at the end to make them all equally long
-  max.x <- max(nchar(x))
-  for (i in 1:length(x)) {
-    difference <- max.x - nchar(x[i])
-    spaces <- paste(rep(" ", difference), collapse = "")
-    x[i] <- paste0(x[i], spaces)
-  }
-  
-  return(x)
+  return(models)
 }
-
 
 # reorder a matrix according to a vector of new positions
 reorder <- function(mat, new.order) {
@@ -1179,197 +339,6 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   return(v.length)
 }
 
-
-# convert SEs and p values to confidence intervals
-ciforce <- function(models, ci.force = rep(FALSE, length(models)), 
-                    ci.level = 0.95) {
-    if (class(ci.force) == "logical" && length(ci.force) == 1) {
-        ci.force <- rep(ci.force, length(models))
-    }
-    if (class(ci.force) != "logical") {
-        stop("The 'ci.force' argument must be a vector of logical values.")
-    }
-    if (length(ci.force) != length(models)) {
-        stop(paste("There are", length(models), "models and", length(ci.force), 
-                   "ci.force values."))
-    }
-    for (i in 1:length(models)) {
-        if (ci.force[i] == TRUE && length(models[[i]]@se) > 0) {
-            z <- qnorm(1 - ((1 - ci.level) / 2))
-            upper <- models[[i]]@coef + (z * models[[i]]@se)
-            lower <- models[[i]]@coef - (z * models[[i]]@se)
-            models[[i]]@ci.low <- lower
-            models[[i]]@ci.up <- upper
-            models[[i]]@se <- numeric(0)
-            models[[i]]@pvalues <- numeric(0)
-        }
-    }
-    return(models)
-}
-
-# function which adds groups to an output matrix
-grouping <- function(output.matrix, groups, indentation = "    ", 
-    single.row = FALSE, prefix = "", suffix = "", rowLabelType = 'text') {
-  if (!is.null(groups)) {
-    if (class(groups) != "list") {
-      stop("Groups must be specified as a list of numeric vectors.")
-    }
-    for (i in 1:length(groups)) {
-      if (length(groups[[i]]) == 0) {
-        stop("Empty groups are not allowed.")
-      }
-      if (!is.numeric(groups[[i]])) {
-        stop("Groups must be specified as a list of numeric vectors.")
-      }
-      groups[[i]] <- sort(unique(groups[[i]]))
-      if (groups[[i]][length(groups[[i]])] - length(groups[[i]]) + 1 != 
-          groups[[i]][1]) {
-        stop("The group indices must be consecutive within each group.")
-      }
-    }
-    for (i in 1:length(groups)) {
-      for (j in 1:length(groups)) {
-        if (i != j && length(intersect(groups[[i]], groups[[j]])) > 0) {
-          stop("Overlapping groups are not allowed. Change 'groups' argument!")
-        }
-        if (i < j && groups[[j]][1] < groups[[i]][1]) {
-          stop("Groups must be specified in the correct order.")
-        }
-      }
-    }
-    for (i in 1:length(groups)) {
-      if (single.row == FALSE) {
-        groups[[i]] <- (groups[[i]] * 2) - 1
-      }
-    }
-    if (groups[[length(groups)]][length(groups[[length(groups)]])] > 
-        nrow(output.matrix)) {
-      stop("'groups' argument contains indices outside the table dimensions")
-    }
-      for (i in length(names(groups)):1) {
-          if (rowLabelType == 'latex') {
-              label <- paste0(prefix, rownames(replaceSymbols(t(as.data.frame(rbind(groups[i]))))), suffix)
-          } else if (rowLabelType == 'text') {
-              label <- paste0(prefix, names(groups)[[i]], suffix)
-          }
-      for (j in nrow(output.matrix):1) {
-        if (j %in% groups[[i]]) {
-          output.matrix[j, 1] <- paste0(indentation, output.matrix[j, 1])
-        }
-      }
-      groupindex <- groups[[i]][1]
-      lastingroup <- groups[[i]][length(groups[[i]])] + (1 - single.row)
-      if (groupindex == 1) {
-        prevmat <- NULL
-      } else {
-        prevmat <- output.matrix[1:(groupindex - 1), ]
-      }
-      currentmat <- output.matrix[groupindex:lastingroup, ]
-      if (lastingroup > nrow(output.matrix) - 2) {
-        nextmat <- NULL
-      } else {
-        nextmat <- output.matrix[(lastingroup + 1):nrow(output.matrix), ]
-      }
-      newrow <- matrix(rep("", ncol(output.matrix)), nrow = 1)
-      if (single.row == FALSE) {
-        newrow <- rbind(newrow, newrow)
-      }
-      newrow[1, 1] <- label
-      output.matrix <- rbind(prevmat, newrow, currentmat, nextmat)
-    }
-  }
-  return(output.matrix)
-}
-
-# add custom columns to output matrix
-customcolumns <- function(output.matrix, custom.columns, custom.col.pos, 
-                          single.row = FALSE, numcoef, groups, modelnames = TRUE) {
-    
-    # check validity of arguments
-    if (is.null(custom.columns)) {
-        return(output.matrix)
-    }
-    if (!class(custom.columns) == "list") {
-        if (length(custom.columns) != numcoef) {
-            stop(paste("Custom column does not match table dimensions.", numcoef, 
-                       "elements expected."))
-        }
-        custom.columns <- list(custom.columns)
-    }
-    if (is.null(custom.col.pos)) {
-        custom.col.pos <- rep(2, length(custom.columns))
-    }
-    if (!is.numeric(custom.col.pos)) {
-        stop("Custom column positions must be provided as a numeric vector.")
-    }
-    if (length(custom.col.pos) != length(custom.columns)) {
-        stop(paste("Length of 'custom.col.pos' does not match length of", 
-                   "'custom.columns'."))
-    }
-    if (any(custom.col.pos > ncol(output.matrix) + 1)) {
-        stop(paste("The table has only", ncol(output.matrix), "columns. The",
-                   "'custom.col.pos' argument does not match these dimensions."))
-    }
-    if (0 %in% custom.col.pos) {
-        stop(paste("0 is not a valid argument in 'custom.col.pos'.", 
-                   "The column indices start with 1."))
-    }
-    for (i in 1:length(custom.columns)) {
-        l <- length(custom.columns[[i]])
-        if (l != numcoef && !is.null(groups) && l == (numcoef + length(groups))) {
-            numcoef <- numcoef + length(groups)
-        }
-    }
-    
-    # prepare vector with column indices for custom columns
-    custom.indices <- logical()
-    for (i in 1:ncol(output.matrix)) {
-        if (i %in% custom.col.pos) {
-            custom.indices <- c(custom.indices, rep(TRUE, 
-                                                    length(which(custom.col.pos == i))), FALSE)
-        } else {
-            custom.indices <- c(custom.indices, FALSE)
-        }
-    }
-    for (i in 1:length(custom.col.pos)) {
-        if ((ncol(output.matrix) + 1) == custom.col.pos[i]) {
-            custom.indices <- c(custom.indices, TRUE)
-        }
-    }
-    
-    if (modelnames == TRUE) {
-        offset <- 1
-    } else {
-        offset <- 0
-    }
-    
-    # combine output matrix with custom columns
-    output.count <- 0
-    custom.count <- 0
-    temp <- matrix(character(), nrow = nrow(output.matrix), 
-                   ncol = 0)
-    for (i in 1:length(custom.indices)) {
-        if (custom.indices[i] == FALSE) {
-            output.count <- output.count + 1
-            temp <- cbind(temp, cbind(output.matrix[, output.count]))
-        } else {
-            custom.count <- custom.count + 1
-            newcol <- matrix("", nrow = nrow(temp), ncol = 1)
-            newcol[1, 1] <- names(custom.columns)[custom.count]
-            for (j in 1:numcoef) {
-                if (single.row == TRUE) {
-                    newcol[j + offset, 1] <- as.character(
-                        custom.columns[[custom.count]][j])
-                } else {
-                    newcol[(2 * j) - (1 - offset), 1] <- as.character(
-                        custom.columns[[custom.count]][j])
-                }
-            }
-            temp <- cbind(temp, newcol)
-        }
-    }
-    return(temp)
-}
 
 # determine column names or column types if custom columns are present
 customcolumnnames <- function(modelnames, custom.columns, custom.col.pos, 

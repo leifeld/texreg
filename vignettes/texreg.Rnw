@@ -1112,11 +1112,11 @@ The diagram produced by the following code is shown in Figure~\ref{fig:plotreg}:
 plotreg(m1, custom.coef.names = c("Intercept", "Group Trt"))
 @
 \begin{figure}[ht!]
-  \begin{center}
-    \includegraphics[width=0.7\textwidth]{texreg-figure}
-  \end{center}
-  \caption{Result of the \code{plotreg} function. Significant estimates are colored in red and are represented by a circle point.}
-  \label{fig:plotreg}
+ \begin{center}
+   \includegraphics[width=0.7\textwidth]{texreg-figure}
+ \end{center}
+ \caption{Result of the \code{plotreg} function. Significant estimates are colored in red and are represented by a circle point.}
+ \label{fig:plotreg}
 \end{figure}
 
 \section{Writing extensions for new models} \label{extensions}

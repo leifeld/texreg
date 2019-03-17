@@ -31,83 +31,393 @@ matrixreg <- function(l,
                       custom.columns = NULL,
                       custom.col.pos = NULL,
                       dcolumn = TRUE,
+                      output.type = c("ascii", "latex", "html"),
+                      include.attributes = FALSE,
                       ...) {
   
   # unnamed arguments to environment
   dots <- list(...)
   
-  # argument for internal use
-  if (!"output.type" %in% names(dots)) {
-    dots[["output.type"]] <- "ascii"
+  # extract coefficients, SEs, GOFs etc. from the models and save in a list called 'models'
+  models <- get.data(l, ...)
+  
+  # override coefs, SEs, p-values, and/or CIs if provided
+  models <- override(models = models,
+                     override.coef = override.coef,
+                     override.se = override.se,
+                     override.pvalues = override.pvalues, 
+                     override.ci.low = override.ci.low,
+                     override.ci.up = override.ci.up)
+  
+  # convert LaTeX markup to text
+  if (output.type[1] != "latex") {
+    for (i in 1:length(models)) {
+      # replace markup in GOF names
+      if (output.type[1] == "html") {
+        r <- paste0("<sup", dots$css.sup, ">2</sup>")
+      } else if (output.type[1] == "ascii") {
+        r <- "^2"
+      } else {
+        stop("'output.type' must be 'latex', 'html', or 'ascii'.")
+      }
+      models[[i]]@gof.names <- gsub("\\$\\^2\\$", r, models[[i]]@gof.names)
+      models[[i]]@gof.names <- gsub("\\\\ ", " ", models[[i]]@gof.names)
+      models[[i]]@gof.names <- gsub("\\ ", " ", models[[i]]@gof.names)
+      
+      # replace Greek letters in coefficient names
+      models[[i]]@coef.names <- gsub("\\$\\\\rho\\$", "rho", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\lambda\\$", "lambda", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\mu\\$", "mu", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\nu\\$", "nu", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\tau\\$", "tau", models[[i]]@coef.names)
+      models[[i]]@coef.names <- gsub("\\$\\\\sigma\\$", "sigma", models[[i]]@coef.names)
+    }
   }
   
-  # extract
-  models <- get.data(l, ...)  # extract relevant coefficients, SEs, GOFs etc.
-  models <- override(models, override.coef, override.se, override.pvalues, 
-                     override.ci.low, override.ci.up)
-  if (dots$output.type != "latex") {
-    models <- tex.replace(models, type = "screen")  # convert TeX code to text
+  # create confidence intervals using ci.force argument if necessary
+  if (is.logical(ci.force) && length(ci.force) == 1) {
+    ci.force <- rep(ci.force, length(models))
   }
-  models <- ciforce(models, ci.force = ci.force, ci.level = ci.force.level)
-  gof.names <- get.gof(models)  # extract names of GOFs (before adding any GOF rows)
-  models <- correctDuplicateCoefNames(models)
+  if (!is.logical(ci.force)) {
+    stop("The 'ci.force' argument must be a vector of logical values.")
+  }
+  if (length(ci.force) != length(models)) {
+    stop(paste("There are", length(models), "models and", length(ci.force), "ci.force values."))
+  }
+  if (is.null(ci.force.level) ||
+      length(ci.force.level) != 1 ||
+      !is.numeric(ci.force.level) ||
+      ci.force.level > 1 ||
+      ci.force.level < 0) {
+    stop("'ci.force.level' must be a single value between 0 and 1.")
+  }
+  for (i in 1:length(models)) {
+    if (ci.force[i] == TRUE && length(models[[i]]@se) > 0) {
+      z <- qnorm(1 - ((1 - ci.force.level) / 2))
+      upper <- models[[i]]@coef + (z * models[[i]]@se)
+      lower <- models[[i]]@coef - (z * models[[i]]@se)
+      models[[i]]@ci.low <- lower
+      models[[i]]@ci.up <- upper
+      models[[i]]@se <- numeric(0)
+      models[[i]]@pvalues <- numeric(0)
+    }
+  }
   
-  # arrange coefficients and GOFs nicely in a matrix
-  if (dots$output.type == "latex") {
-    gof.matrix <- aggregate.matrix(models = models,
-                                   gof.names = gof.names,
-                                   custom.gof.names = custom.gof.names,
-                                   custom.gof.rows = custom.gof.rows,
-                                   reorder.gof = reorder.gof,
-                                   digits = digits,
-                                   leading.zero = leading.zero,
-                                   latex = TRUE,
-                                   dcolumn = dcolumn,
-                                   returnobject = "gof.matrix")
-    m <- aggregate.matrix(models = models,
-                          gof.names = gof.names,
-                          custom.gof.names = custom.gof.names,
-                          custom.gof.rows = custom.gof.rows,
-                          reorder.gof = reorder.gof,
-                          digits = digits,
-                          leading.zero = leading.zero,
-                          latex = TRUE,
-                          dcolumn = dcolumn,
-                          returnobject = "m")
+  # extract names of the goodness-of-fit statistics (before adding any GOF rows)
+  gof.names <- character()  # GOF names of all models in one vector
+  for (i in 1:length(models)) {
+    gn <- models[[i]]@gof.names
+    if (!is.null(gn) && length(gn) > 0) {
+      for (j in 1:length(gn)) {
+        if (!gn[j] %in% gof.names) {
+          gof.names <- append(gof.names, gn[j])
+        }
+      }
+    }
+  }
+  
+  # correct duplicate coefficient names (add " (1)", " (2)" etc.)
+  for (i in 1:length(models)) {
+    for (j in 1:length(models[[i]]@coef.names)) {
+      if (models[[i]]@coef.names[j] %in% models[[i]]@coef.names[-j]) {
+        indices <- j
+        for (k in 1:length(models[[i]]@coef.names)) {
+          if (models[[i]]@coef.names[j] == models[[i]]@coef.names[k] && j != k) {
+            indices <- c(indices, k)
+          }
+        }
+        count <- 1
+        for (k in indices) {
+          models[[i]]@coef.names[k] <- paste0(models[[i]]@coef.names[k], " (", count, ")")
+          count <- count + 1
+        }
+      }
+    }
+  }
+  
+  # aggregate GOF statistics in a matrix and create list of coef blocks
+  gofs <- matrix(nrow = length(gof.names), ncol = length(models))
+  row.names(gofs) <- gof.names
+  coefs <- list()
+  decimal.matrix <- matrix(nrow = length(gof.names), ncol = length(models))
+  for (i in 1:length(models)) {
+    cf <- models[[i]]@coef
+    se <- models[[i]]@se
+    pv <- models[[i]]@pvalues
+    cil <- models[[i]]@ci.low
+    ciu <- models[[i]]@ci.up
+    if (length(se) == 0 && length(ciu) > 0) {
+      coef_i <- cbind(cf, cil, ciu)
+    } else {
+      if (length(se) > 0 && length(pv) > 0) {
+        coef_i <- cbind(cf, se, pv)
+      } else if (length(se) > 0 && length(pv) == 0) {
+        # p-values not provided -> use p-values of 0.99
+        coef_i <- cbind(cf, se, rep(0.99, length(cf)))
+      } else if (length(se) == 0 && length(pv) > 0) {
+        coef_i <- cbind(cf, rep(NA, length(cf)), pv)
+      } else {
+        # not even SEs provided
+        coef_i <- cbind(cf, rep(NA, length(cf)), rep(0.99, length(cf)))
+      }
+    }
+    rownames(coef_i) <- models[[i]]@coef.names
+    coefs[[i]] <- coef_i
+    if (length(models[[i]]@gof) > 0) {
+      for (j in 1:length(models[[i]]@gof)) {
+        rn <- models[[i]]@gof.names[j]
+        val <- models[[i]]@gof[j]
+        col <- i
+        if (is.na(models[[i]]@gof.decimal[j])) {
+          dec <- digits
+        } else if (models[[i]]@gof.decimal[j] == FALSE) {
+          dec <- 0
+        } else {
+          dec <- digits
+        }
+        row <- which(row.names(gofs) == rn)
+        gofs[row, col] <- val
+        decimal.matrix[row, col] <- dec
+      }
+    }
+  }
+  
+  # figure out correct order of the coefficients
+  coef.order <- character()
+  for (i in 1:length(coefs)) {
+    for (j in 1:length(rownames(coefs[[i]]))) {
+      if (!rownames(coefs[[i]])[j] %in% coef.order) {
+        coef.order <- append(coef.order, rownames(coefs[[i]])[j])
+      }
+    }
+  }
+  
+  # merge the coefficient tables into a new table called 'm'
+  if (length(coefs) == 1) {
+    m <- coefs[[1]]
+  } else if (length(coefs) > 1) {
+    m <- coefs[[1]]
+    for (i in 2:length(coefs)) {
+      m <- merge(m, coefs[[i]], by = 0, all = TRUE)
+      rownames(m) <- m[, 1]
+      m <- m[, colnames(m) != "Row.names"]
+      colnames(m) <- NULL
+    }
+  }
+  colnames(m) <- rep(colnames(coefs[[1]]), length(coefs))
+  
+  # reorder merged coefficient table
+  m.temp <- matrix(nrow = nrow(m), ncol = ncol(m))
+  for (i in 1:nrow(m)) {
+    new.row <- which(coef.order == rownames(m)[i])
+    for (j in 1:ncol(m)) {
+      m.temp[new.row, j] <- m[i, j]
+    }
+  }
+  rownames(m.temp) <- coef.order
+  colnames(m.temp) <- colnames(m)
+  m <- m.temp
+  rm(m.temp)
+  
+  # replace GOF names by custom names
+  if (is.null(custom.gof.names)) {
+    # do nothing
+  } else if (!is.character(custom.gof.names)) {
+    stop("Custom GOF names must be provided as a character vector.")
+  } else if (length(custom.gof.names) != length(gof.names)) {
+    stop(paste("There are", length(gof.names), 
+               "GOF statistics, but you provided", length(custom.gof.names), 
+               "custom names for them."))
   } else {
-    gof.matrix <- aggregate.matrix(models = models,
-                                   gof.names = gof.names,
-                                   custom.gof.names = custom.gof.names,
-                                   custom.gof.rows = custom.gof.rows,
-                                   reorder.gof = reorder.gof,
-                                   digits = digits,
-                                   leading.zero = leading.zero,
-                                   latex = FALSE,
-                                   dcolumn = dcolumn,
-                                   returnobject = "gof.matrix")
-    m <- aggregate.matrix(models = models,
-                          gof.names = gof.names,
-                          custom.gof.names = custom.gof.names,
-                          custom.gof.rows = custom.gof.rows,
-                          reorder.gof = reorder.gof,
-                          digits = digits,
-                          leading.zero = leading.zero,
-                          latex = FALSE,
-                          dcolumn = dcolumn,
-                          returnobject = "m")
+    custom.gof.names[is.na(custom.gof.names)] <- rownames(gofs)[is.na(custom.gof.names)]
+    rownames(gofs) <- custom.gof.names
   }
   
+  # add row names as first column to GOF block and format values as character strings
+  if (dcolumn == FALSE && output.type[1] == "latex") {
+    dollar <- "$"
+  } else {
+    dollar <- ""
+  }
+  gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  # including labels
+  if (nrow(gof.matrix) > 0) {
+    for (i in 1:nrow(gofs)) {
+      # replace symbols in latex
+      if (output.type[1] == "latex") {
+        gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
+      } else {
+        gof.matrix[i, 1] <- rownames(gofs)[i]
+      }
+      for (j in 1:ncol(gofs)) {
+        strg <- coeftostring(gofs[i, j], leading.zero, digits = decimal.matrix[i, j])
+        gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
+      }
+    }
+  }
+  
+  # add custom GOF rows
+  if (!is.null(custom.gof.rows) && !is.na(custom.gof.rows)) {
+    if (class(custom.gof.rows) != "list") {
+      stop("The 'custom.gof.rows' argument is ignored because it is not a list.")
+    }
+    for (i in length(custom.gof.rows):1) {
+      if (length(custom.gof.rows[[i]]) != ncol(gofs)) {
+        stop("Custom GOF row ", i, " has a different number of values than there are models.")
+      } else {
+        if (!is.numeric(custom.gof.rows[[i]]) && !is.character(custom.gof.rows[[i]])) {
+          custom.gof.rows[[i]] <- as.character(custom.gof.rows[[i]]) # cast into character if unknown class, such as factor or logical
+        }
+        # auto-detect decimal setting
+        if (!is.numeric(custom.gof.rows)) { # put NA for character objects, for example fixed effects
+          dec <- NA
+        } else if (all(custom.gof.rows %% 1 == 0)) { # put 0 for integers
+          dec <- 0
+        } else { # put the respective decimal places if numeric but not integer
+          dec <- digits
+        }
+        newValues <- sapply(custom.gof.rows[[i]], function(x) { # format the different values of the new row
+          if (is.character(x) && output.type[1] == "latex" && isTRUE(dcolumn)) {
+            paste0("\\multicolumn{1}{c}{", x, "}")
+          } else {
+            paste0(dollar, coeftostring(x, leading.zero, digits = dec), dollar)
+          }
+        })
+        gof.matrix <- rbind(c(names(custom.gof.rows)[i], newValues), gof.matrix) # insert GOF name and GOF values as new row
+      }
+    }
+  }
+  
+  # apply custom coefficient map using 'custom.coef.map' argument
   if (!is.null(custom.coef.map)) {
-    m <- custommap(m, custom.coef.map)
-  } else {
-    m <- omit_rename(m,
-                     omit.coef = omit.coef,
-                     custom.coef.names = custom.coef.names)
+    # sanity checks
+    if (class(custom.coef.map) != "list" || is.null(names(custom.coef.map))) {
+      stop("'custom.coef.map' must be a named list.") 
+    }
+    if (!any(names(custom.coef.map) %in% row.names(m))) {
+      stop(paste("None of the coefficient names supplied in 'custom.coef.map'", 
+                 "appear to be in your models."))
+    }
+    
+    # when user supplies NA as destination, replace with origin
+    idx <- is.na(custom.coef.map)
+    custom.coef.map[idx] <- names(custom.coef.map)[idx]
+    
+    # subset of coefficients to keep
+    origin <- names(custom.coef.map)[names(custom.coef.map) %in% row.names(m)]
+    destination <- unlist(custom.coef.map[origin])
+    out <- m[origin, , drop = FALSE] # drop: otherwise R converts to numeric if a single coefficient is passed
+    
+    # rename
+    row.names(out) <- destination
+  } else { # use 'omit.coef' and 'custom.coef.names' if available
+    # omit
+    if (!is.null(omit.coef)) {
+      if (!is.character(omit.coef) || is.na(omit.coef)) {
+        stop("'omit.coef' must be a character object.")
+      }
+      idx <- !grepl(omit.coef, row.names(m), perl = TRUE)
+      if (all(!idx)) {
+        stop("You tried to remove all coefficients using 'omit.coef'.")
+      }
+    } else {
+      idx <- rep(TRUE, nrow(m))
+    }
+    
+    # rename
+    if (!is.null(custom.coef.names)) {
+      if (!is.character(custom.coef.names)) {
+        stop("'custom.coef.names' must be a character vector.")
+      }
+      if (!length(custom.coef.names) %in% c(nrow(m), sum(idx))) { # check length
+        if (nrow(m) == sum(idx)) {
+          stop("'custom.coef.names' must be a character vector of length ", nrow(m), ".")
+        } else {
+          stop("'custom.coef.names' must be a character vector of length ", sum(idx), " or ", nrow(m), ".")
+        }
+      }
+      # user submits number of custom names after omission
+      if (length(custom.coef.names) == sum(idx)) {
+        custom.coef.names <- custom.coef.names 
+      } else { # user submits number of custom names before omission
+        custom.coef.names <- custom.coef.names[idx]
+      } 
+    } else {
+      custom.coef.names <- row.names(m)[idx]
+    }
+    
+    # output
+    m <- m[idx, , drop = FALSE]
+    row.names(m) <- custom.coef.names
   }
-  m <- rearrangeMatrix(m)  # resort matrix and conflate duplicate entries
   m <- as.data.frame(m)
   
-  mod.names <- modelnames(l, models, custom.model.names)  # model names
+  # reorder GOF block using reorder.gof argument
+  gof.matrix <- reorder(gof.matrix, reorder.gof)
+  
+  # resort matrix and conflate duplicate entries:
+  # The following code block rearranges a matrix with duplicate row names such 
+  # that these rows are conflated where possible. First, an empty matrix q with
+  # the same width is created. The rows will be copied iteratively into this 
+  # matrix. Second, we go through the unique row names, and for each row name 
+  # we create a small virtual matrix in which the values will be nicely 
+  # rearranged. After rearranging the values, this small matrix is rbinded to 
+  # the q matrix. Rearranging works in the following way (the inner loop): for 
+  # every column, we create a vector of all values corresponding to the specific
+  # row name (as specified by the outer loop). We retain only non-NA values 
+  # because irrelevant information should be removed from the coefficients 
+  # table. Then we put the first non-NA value in the first vertical slot of the 
+  # virtual matrix, the second non-NA value of the same row name in the second 
+  # slot, etc., and we create additional rows in the virtual matrix as needed.
+  # By doing this, we ensure that no space in the matrix is wasted with NA 
+  # values. When going to the next column, we place the non-NA values in the 
+  # correct slot again, and we only create new rows if needed. The virtual rows 
+  # are finally rbinded to the large replacement matrix q.
+  unique.names <- unique(rownames(m))               # unique row names in m
+  num.unique <- length(unique.names)                # count these unique names
+  orig.width <- ncol(m)                             # number of columns in m
+  q <- matrix(nrow = 0, ncol = orig.width)          # new matrix with same width
+  for (i in 1:num.unique) {                         # go through unique row names
+    rows <- matrix(NA, nrow = 0, ncol = orig.width) # create matrix where re-
+    # arranged rows will be stored
+    for (j in 1:orig.width) {                       # go through columns in m
+      current.name <- unique.names[i]               # save row name
+      nonNa <- m[rownames(m) == current.name, j]    # create a vector of values
+      # with same rowname in the col
+      nonNa <- nonNa[!is.na(nonNa)]                 # retain only non-NA values
+      for (k in 1:length(nonNa)) {                  # go through non-NA values
+        if (k > dim(rows)[1]) {                     # add an NA-only row in which
+          rows <- rbind(rows, rep(NA, orig.width))  # the values are stored
+          rownames(rows)[k] <- unique.names[i]      # also add the row name
+        }
+        rows[k, j] <- nonNa[k]                      # actually store the value
+      }
+    }
+    q <- rbind(q, rows)                             # add the new row(s) to q
+  }
+  m <- q
+  
+  # decide if default or custom model names should be used
+  if (!is.null(custom.model.names) && !is.character(custom.model.names)) {
+    stop("Model names in 'custom.model.names' must be specified as a character vector.")
+  } else if (!is.null(custom.model.names) && length(custom.model.names) != length(models)) {
+    stop(paste("There are", length(models), "models, but you provided", 
+               length(custom.model.names), "name(s) for them."))
+  }
+  mod.names <- character(length(models))
+  for (i in 1:length(mod.names)) {
+    if (!is.null(custom.model.names) && !is.na(custom.model.names[i]) && custom.model.names[i] != "") {
+      mod.names[i] <- custom.model.names[i]
+    } else if (!is.null(names(l)) && !is.na(names(l)[i]) && names(l)[i] != "") {
+      mod.names[i] <- names(l)[i]
+    } else if (!is.null(models[[i]]@model.name) &&
+               !is.na(models[[i]]@model.name) &&
+               !length(models[[i]]@model.name) == 0 &&
+               models[[i]]@model.name != "") {
+      mod.names[i] <- models[[i]]@model.name
+    } else {
+      mod.names[i] <- paste("Model", i)
+    }
+  }
   
   # reorder coef matrix
   m <- reorder(m, reorder.coef)
@@ -122,74 +432,538 @@ matrixreg <- function(l,
     }
   }
   
-  # output matrix
-  if (dots$output.type == "ascii") {
-    output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
-                                  posinfstring = "Inf", leading.zero, digits, 
-                                  se.prefix = " (", se.suffix = ")", star.prefix = " ", star.suffix = "", 
-                                  stars, dcolumn = TRUE, star.symbol = star.symbol, symbol = symbol, 
-                                  bold = bold, bold.prefix = "", bold.suffix = "", ci = ci, 
-                                  ci.test = ci.test)
-  } else if (dots$output.type == "latex") {
-    output.matrix <- outputmatrix(m, single.row, 
-                                  neginfstring = "\\multicolumn{1}{c}{$-\\infty$}", 
-                                  posinfstring = "\\multicolumn{1}{c}{$\\infty$}", leading.zero, digits, 
-                                  se.prefix = " \\; (", se.suffix = ")", star.prefix = "^{", 
-                                  star.suffix = "}", stars, dcolumn = dcolumn, star.symbol = star.symbol,
-                                  symbol = symbol, bold = bold, bold.prefix = "\\mathbf{", 
-                                  bold.suffix = "}", ci = ci, semicolon = ";\\ ", ci.test = ci.test, rowLabelType = 'latex')
-  } else if (dots$output.type == "html") {
-    output.matrix <- outputmatrix(m, single.row, neginfstring = "-Inf", 
-                                  posinfstring = "Inf", leading.zero, digits, 
-                                  se.prefix = " (", se.suffix = ")", star.symbol = star.symbol, 
-                                  star.prefix = paste0("<sup", dots$css.sup, ">"), 
-                                  star.suffix = "</sup>", stars, dcolumn = TRUE, symbol = symbol, 
-                                  bold = bold, bold.prefix = "<b>", bold.suffix = "</b>", ci = ci, 
-                                  ci.test = ci.test)
+  # write coefficient rows
+  if (output.type[1] == "ascii") {
+    neginfstring <- "-Inf"
+    posinfstring <- "Inf"
+    se.prefix <- " ("
+    se.suffix <- ")"
+    star.prefix <- " "
+    star.suffix <- ""
+    dcolumn <- TRUE
+    bold.prefix <- ""
+    bold.suffix <- ""
+    semicolon <- "; "
+  } else if (output.type[1] == "latex") {
+    neginfstring <- "\\multicolumn{1}{c}{$-\\infty$}"
+    posinfstring <- "\\multicolumn{1}{c}{$\\infty$}"
+    se.prefix <- " \\; ("
+    se.suffix <- ")"
+    star.prefix <- "^{"
+    star.suffix <- "}"
+    bold.prefix <- "\\mathbf{"
+    bold.suffix <- "}"
+    semicolon <- ";\\ "
+  } else if (output.type[1] == "html") {
+    neginfstring <- "-Inf"
+    posinfstring <- "Inf"
+    se.prefix <- " ("
+    se.suffix <- ")"
+    star.prefix <- paste0("<sup", dots$css.sup, ">")
+    star.suffix <- "</sup>"
+    dcolumn <- TRUE
+    bold.prefix <- "<b>"
+    bold.suffix <- "</b>"
+    semicolon <- "; "
+  }
+  if (single.row == TRUE) {
+    output.matrix <- matrix(ncol = (ncol(m) / 3) + 1, nrow = nrow(m))
+    
+    # row labels
+    for (i in 1:length(rownames(m))) {
+      if (output.type[1] == "latex") {
+        output.matrix[i, 1] <- names2latex(rownames(m)[i])
+      } else {
+        output.matrix[i, 1] <- rownames(m)[i]
+      }
+    }
+    
+    # replace R syntax
+    for (i in 1:nrow(m)) {
+      if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
+        output.matrix[i, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[i, 1])
+      }
+    }
+    
+    # coefficients and standard errors
+    for (i in 1:nrow(m)) { # go through rows
+      j <- 1 # column in the original, merged coef table
+      k <- 2 # second column of output.matrix, i.e., coefficients
+      while (j <= ncol(m)) {
+        if (is.na(m[i, j])) {
+          output.matrix[i, k] <- ""
+        } else if (m[i, j] == -Inf) {
+          output.matrix[i, k] <- neginfstring
+        } else if (m[i, j] == Inf) {
+          output.matrix[i, k] <- posinfstring
+        } else {
+          se.prefix.current <- se.prefix
+          se.suffix.current <- se.suffix
+          if (ci[k - 1] == TRUE) { # in case of CIs, replace parentheses by square brackets
+            se.prefix.current <- gsub("\\(", "[", se.prefix.current)
+            se.suffix.current <- gsub("\\)", "]", se.suffix.current)
+          }
+          if (is.na(m[i, j + 1])) {
+            se.prefix.current <- ""
+            se.suffix.current <- ""
+          }
+          if (ci[k - 1] == FALSE) {
+            std <- paste0(se.prefix.current,
+                          coeftostring(m[i, j + 1], leading.zero, digits = digits),
+                          se.suffix.current)
+          } else {
+            std <- paste0(se.prefix.current,
+                          coeftostring(m[i, j + 1], leading.zero, digits = digits),
+                          semicolon,
+                          coeftostring(m[i, j + 2], leading.zero, digits = digits),
+                          se.suffix.current)
+          }
+          
+          if (ci[k - 1] == FALSE) {
+            p <- get_stars(pval = m[i, j + 2],
+                           stars = stars,
+                           star.symbol = star.symbol,
+                           symbol = symbol,
+                           star.prefix = star.prefix,
+                           star.suffix = star.suffix,
+                           ci = ci
+            )$coefficients
+          } else { # significance from confidence interval
+            if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 && 
+                (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
+              p <- paste0(star.prefix, star.symbol, star.suffix)
+            } else {
+              p <- ""
+            }
+          }
+          
+          if (isTRUE(dcolumn)) {
+            dollar <- ""
+          } else {
+            dollar <- "$"
+          }
+          if (is.na(m[i, j + 2])) {
+            m[i, j + 2] <- 1.0
+          }
+          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
+                     (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else {
+            bold.pref <- ""
+            bold.suff <- ""
+          }
+          entry <- paste0(dollar,
+                          bold.pref,
+                          coeftostring(m[i, j], leading.zero, digits = digits),
+                          bold.suff,
+                          std,
+                          p,
+                          dollar)
+          output.matrix[i, k] <- entry
+        }
+        k <- k + 1
+        j <- j + 3
+      }
+    }
+  } else {
+    output.matrix <- matrix(ncol = (ncol(m) / 3) + 1, nrow = 2 * nrow(m))
+    
+    # row labels
+    for (i in 1:length(rownames(m))) {
+      if (output.type[1] == "latex"){
+        output.matrix[(i * 2) - 1, 1] <- names2latex(rownames(m)[i])
+      } else {
+        output.matrix[(i * 2) - 1, 1] <- rownames(m)[i]
+      }
+      output.matrix[(i * 2), 1] <- ""
+    }
+    
+    for (i in 1:nrow(m)) {
+      if (grepl("I\\(", rownames(m)[i]) == TRUE) { 
+        output.matrix[(i * 2) - 1, 1] <- gsub("(.*)(?:I\\()(.+)(?:\\))(.*)", "\\1\\2\\3", output.matrix[(i * 2) - 1, 1])
+      }
+    }
+    
+    # coefficients and standard errors
+    for (i in 1:nrow(m)) {  # i = row
+      j <- 1  # j = column within model (from 1 to 3)
+      k <- 2  # k = column in output matrix (= model number + 1)
+      while (j <= ncol(m)) {
+        if (is.na(m[i, j]) || is.nan(m[i, j])) {
+          output.matrix[(i * 2) - 1, k] <- "" # upper coefficient row
+          output.matrix[(i * 2), k] <- "" # lower se row
+        } else if (m[i, j] == -Inf) {
+          output.matrix[(i * 2) - 1, k] <- neginfstring # upper row
+          output.matrix[(i * 2), k] <- "" # lower se row
+        } else if (m[i, j] == Inf) {
+          output.matrix[(i * 2) - 1, k] <- posinfstring # upper row
+          output.matrix[(i * 2), k] <- "" # lower se row
+        } else {
+          se.prefix.current <- "("
+          se.suffix.current <- ")"
+          if (ci[k - 1] == TRUE) { # in case of CIs, replace parentheses by square brackets
+            se.prefix.current <- "["
+            se.suffix.current <- "]"
+          }
+          if (is.na(m[i, j + 1])) {
+            se.prefix.current <- ""
+            se.suffix.current <- ""
+          }
+          if (ci[k - 1] == FALSE) {
+            p <- get_stars(pval = m[i, j + 2], 
+                           stars = stars, 
+                           star.symbol = star.symbol, 
+                           symbol = symbol,
+                           star.prefix = star.prefix, 
+                           star.suffix = star.suffix
+            )$coefficients
+          } else { # significance from confidence interval
+            if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
+                (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
+              p <- paste0(star.prefix, star.symbol, star.suffix)
+            } else {
+              p <- ""
+            }
+          }
+          
+          if (isTRUE(dcolumn)) {
+            dollar <- ""
+          } else {
+            dollar <- "$"
+          }
+          if (is.na(m[i, j + 2])) {
+            m[i, j + 2] <- 1.0
+          }
+          if (ci[k - 1] == FALSE && m[i, j + 2] < bold) { # significant p-value
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else if (ci[k - 1] == TRUE && bold > 0 &&  # significant CI
+                     (m[i, j + 1] > 0 || m[i, j + 2] < 0)) {
+            bold.pref <- bold.prefix
+            bold.suff <- bold.suffix
+          } else {
+            bold.pref <- ""
+            bold.suff <- ""
+          }
+          output.matrix[(i * 2) - 1, k] <- paste0(dollar,
+                                                  bold.pref, 
+                                                  coeftostring(m[i, j], leading.zero, digits = digits),
+                                                  bold.suff, 
+                                                  p,
+                                                  dollar)
+          if (ci[k - 1] == FALSE) {
+            output.matrix[(i * 2), k] <- paste0(dollar,
+                                                se.prefix.current,
+                                                coeftostring(m[i, j + 1], leading.zero, digits = digits),
+                                                se.suffix.current,
+                                                dollar)
+          } else {
+            output.matrix[(i * 2), k] <- paste0(dollar,
+                                                se.prefix.current,
+                                                coeftostring(m[i, j + 1], leading.zero, digits = digits),
+                                                semicolon,
+                                                coeftostring(m[i, j + 2], leading.zero, digits = digits),
+                                                se.suffix.current,
+                                                dollar)
+          }
+        }
+        k <- k + 1
+        j <- j + 3
+      }
+    }
+    
+    # check if SEs are all missing and delete even rows if necessary
+    se.missing <- numeric()
+    for (i in seq(2, nrow(output.matrix), 2)) {
+      if (all(sapply(output.matrix[i, ], function(x) x == ""))) {
+        se.missing <- c(se.missing, i)
+      }
+    }
+    if (length(se.missing) == nrow(output.matrix) / 2) {
+      output.matrix <- output.matrix[-se.missing, ]
+    }
   }
   
-  # grouping
-  if (dots$output.type == "latex") {
-    output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-                              single.row = single.row, prefix = "", suffix = "", rowLabelType = "latex")
-  } else {
-    output.matrix <- grouping(output.matrix, groups, indentation = "    ", 
-                              single.row = single.row, prefix = "", suffix = "", rowLabelType = "text")
+  # add groups to the output matrix using 'groups' argument
+  if (!is.null(groups)) {
+    indentation <- "    "
+    prefix <- ""
+    suffix <- ""
+    if (class(groups) != "list") {
+      stop("Groups must be specified as a list of numeric vectors.")
+    }
+    for (i in 1:length(groups)) {
+      if (length(groups[[i]]) == 0) {
+        stop("Empty groups are not allowed.")
+      }
+      if (!is.numeric(groups[[i]])) {
+        stop("Groups must be specified as a list of numeric vectors.")
+      }
+      groups[[i]] <- sort(unique(groups[[i]]))
+      if (groups[[i]][length(groups[[i]])] - length(groups[[i]]) + 1 != groups[[i]][1]) {
+        stop("The group indices must be consecutive within each group.")
+      }
+    }
+    for (i in 1:length(groups)) {
+      for (j in 1:length(groups)) {
+        if (i != j && length(intersect(groups[[i]], groups[[j]])) > 0) {
+          stop("Overlapping groups are not allowed. Change 'groups' argument!")
+        }
+        if (i < j && groups[[j]][1] < groups[[i]][1]) {
+          stop("Groups must be specified in the correct order.")
+        }
+      }
+    }
+    for (i in 1:length(groups)) {
+      if (single.row == FALSE) {
+        groups[[i]] <- (groups[[i]] * 2) - 1
+      }
+    }
+    if (groups[[length(groups)]][length(groups[[length(groups)]])] > nrow(output.matrix)) {
+      stop("'groups' argument contains indices outside the table dimensions.")
+    }
+    for (i in length(names(groups)):1) {
+      if (output.type[1] == "latex") {
+        label <- paste0(prefix, names2latex(names(groups)[i]), suffix)
+      } else {
+        label <- paste0(prefix, names(groups)[i], suffix)
+      }
+      for (j in nrow(output.matrix):1) {
+        if (j %in% groups[[i]]) {
+          output.matrix[j, 1] <- paste0(indentation, output.matrix[j, 1])
+        }
+      }
+      groupindex <- groups[[i]][1]
+      lastingroup <- groups[[i]][length(groups[[i]])] + (1 - single.row)
+      if (groupindex == 1) {
+        prevmat <- NULL
+      } else {
+        prevmat <- output.matrix[1:(groupindex - 1), ]
+      }
+      currentmat <- output.matrix[groupindex:lastingroup, ]
+      if (lastingroup > nrow(output.matrix) - 2) {
+        nextmat <- NULL
+      } else {
+        nextmat <- output.matrix[(lastingroup + 1):nrow(output.matrix), ]
+      }
+      newrow <- matrix(rep("", ncol(output.matrix)), nrow = 1)
+      if (single.row == FALSE) {
+        newrow <- rbind(newrow, newrow)
+      }
+      newrow[1, 1] <- label
+      output.matrix <- rbind(prevmat, newrow, currentmat, nextmat)
+    }
   }
+  
+  # save coefficient names for matrix attributes later
+  coef.names <- output.matrix[output.matrix[, 1] != "", 1]
   
   # combine the coefficient and gof matrices vertically
-  coef.names <- output.matrix[output.matrix[, 1] != "", 1]
   output.matrix <- rbind(output.matrix, gof.matrix)
   
-  # reformat output matrix
-  if (ncol(output.matrix) == 2) {
-    temp <- matrix(format.column(matrix(output.matrix[, -1]), 
-                                 single.row = single.row, digits = digits))
-  } else {
-    temp <- apply(output.matrix[, -1], 2, format.column, 
-                  single.row = single.row, digits = digits)
+  # reformat output matrix columns by aligning by decimal point and adding spaces
+  for (j in 2:ncol(output.matrix)) {
+    x <- output.matrix[, j]
+    # create first.dot: max length before first dot; and create paren.length: max
+    # length of parentheses, including opening and closing parentheses
+    dots <- gregexpr("\\.", x)
+    parentheses <- regexpr("\\(.+\\)", x)
+    first.length <- 0
+    paren.length <- 0
+    for (i in 1:length(x)) {
+      first.dot <- dots[[i]][1]
+      paren <- attributes(parentheses)$match.length[i]
+      if (x[i] %in% c("-Inf", "Inf")) {
+        first.dot <- nchar(x[i]) - digits
+      } else if (first.dot == -1) {
+        temp <- nchar(x[i]) + 1
+        if (temp > first.length) {
+          first.length <- temp
+        }
+      } else if (first.dot > first.length) {
+        first.length <- first.dot
+      }
+      if (paren > paren.length) {
+        paren.length <- paren
+      }
+    }
+    
+    for (i in 1:length(x)) {
+      # fill with spaces at the beginning
+      first.dot <- dots[[i]][1]
+      if (x[i] %in% c("-Inf", "Inf")) {
+        first.dot <- nchar(x[i]) - digits
+      } else if (first.dot == -1) {
+        first.dot <- nchar(x[i]) + 1
+      }
+      if (nchar(x[i]) == 0) {
+        difference <- 0
+      } else {
+        difference <- first.length - first.dot
+      }
+      spaces <- paste(rep(" ", difference), collapse = "")
+      x[i] <- paste(spaces, x[i], sep = "")
+      
+      # adjust indentation for SEs
+      if (single.row == TRUE) {
+        paren <- attributes(parentheses)$match.length[i]
+        if (paren < 0) {
+          paren <- 0
+        }
+        difference <- paren.length - paren + 1  # +1 because strsplit takes 1 away
+        spaces <- paste(rep(" ", difference), collapse = "")
+        components <- strsplit(x[i], " \\(")[[1]]
+        if (length(components) == 2) {
+          x[i] <- paste(components[1], spaces, "(", components[2], sep = "")
+        }
+      }
+    }
+    
+    # make all CIs have equal length
+    ci.lower.length <- 0
+    ci.upper.length <- 0
+    for (i in 1:length(x)) {
+      if (grepl("\\[.+\\]", x[i])) {
+        regex <- ".*\\[(.+?);[\\\"]? (.+?)\\].*"
+        first <- sub(regex, "\\1", x[i])
+        first <- nchar(first)
+        if (first > ci.lower.length) {
+          ci.lower.length <- first
+        }
+        last <- sub(regex, "\\2", x[i])
+        last <- nchar(last)
+        if (last > ci.upper.length) {
+          ci.upper.length <- last
+        }
+      }
+    }
+    for (i in 1:length(x)) {
+      if (grepl("\\[.+\\]", x[i])) {
+        regex <- "(.*?)\\[(.+?);[\\\"]? (.+?)\\](.*?)$"
+        
+        whitespace1 <- sub(regex, "\\1", x[i])
+        whitespace1 <- sub("\\s+$", "", whitespace1)
+        if (nchar(whitespace1) > 0) {
+          whitespace1 <- paste0(whitespace1, " ")
+        }
+        whitespace2 <- sub(regex, "\\4", x[i])
+        
+        first <- sub(regex, "\\2", x[i])
+        difference <- ci.lower.length - nchar(first)
+        zeros <- paste(rep(" ", difference), collapse = "")
+        first <- paste0(zeros, first)
+        
+        last <- sub(regex, "\\3", x[i])
+        difference <- ci.upper.length - nchar(last)
+        zeros <- paste(rep(" ", difference), collapse = "")
+        last <- paste0(zeros, last)
+        
+        x[i] <- paste0(whitespace1, "[", first, "; ", last, "]", whitespace2)
+      }
+    }
+    
+    # fill with spaces at the end to make them all equally long
+    max.x <- max(nchar(x))
+    for (i in 1:length(x)) {
+      difference <- max.x - nchar(x[i])
+      spaces <- paste(rep(" ", difference), collapse = "")
+      x[i] <- paste0(x[i], spaces)
+    }
+    
+    output.matrix[, j] <- x
   }
-  output.matrix <- cbind(output.matrix[, 1], temp)
   
   # otherwise we get duplicate model names in latex and html
-  if (dots$output.type == "ascii") {
+  if (output.type[1] == "ascii") {
     output.matrix <- rbind(c("", mod.names), output.matrix)
   }
   
-  # add custom columns
-  output.matrix <- customcolumns(output.matrix, custom.columns, custom.col.pos, 
-                                 single.row = single.row, numcoef = nrow(m), groups = groups, 
-                                 modelnames = TRUE)
+  # add custom columns to output.matrix using the 'custom.columns' argument
+  if (!is.null(custom.columns)) { # start by checking validity of arguments
+    numcoef <- nrow(m)
+    if (!class(custom.columns) == "list") {
+      if (length(custom.columns) != numcoef) {
+        stop(paste("Custom column does not match table dimensions.", numcoef, "elements expected."))
+      }
+      custom.columns <- list(custom.columns)
+    }
+    if (is.null(custom.col.pos)) {
+      custom.col.pos <- rep(2, length(custom.columns))
+    }
+    if (!is.numeric(custom.col.pos)) {
+      stop("Custom column positions must be provided as a numeric vector.")
+    }
+    if (length(custom.col.pos) != length(custom.columns)) {
+      stop(paste("Length of 'custom.col.pos' does not match length of 'custom.columns'."))
+    }
+    if (any(custom.col.pos > ncol(output.matrix) + 1)) {
+      stop(paste("The table has only", ncol(output.matrix), "columns. The",
+                 "'custom.col.pos' argument does not match these dimensions."))
+    }
+    if (0 %in% custom.col.pos) {
+      stop("0 is not a valid argument in 'custom.col.pos'. The column indices start with 1.")
+    }
+    for (i in 1:length(custom.columns)) {
+      l <- length(custom.columns[[i]])
+      if (l != numcoef && !is.null(groups) && l == (numcoef + length(groups))) {
+        numcoef <- numcoef + length(groups)
+      }
+    }
+    
+    # prepare vector with column indices for custom columns
+    custom.indices <- logical()
+    for (i in 1:ncol(output.matrix)) {
+      if (i %in% custom.col.pos) {
+        custom.indices <- c(custom.indices,
+                            rep(TRUE, length(which(custom.col.pos == i))),
+                            FALSE)
+      } else {
+        custom.indices <- c(custom.indices, FALSE)
+      }
+    }
+    for (i in 1:length(custom.col.pos)) {
+      if ((ncol(output.matrix) + 1) == custom.col.pos[i]) {
+        custom.indices <- c(custom.indices, TRUE)
+      }
+    }
+
+    # combine output matrix with custom columns
+    offset <- 1
+    output.count <- 0
+    custom.count <- 0
+    temp <- matrix(character(), nrow = nrow(output.matrix), ncol = 0)
+    for (i in 1:length(custom.indices)) {
+      if (custom.indices[i] == FALSE) {
+        output.count <- output.count + 1
+        temp <- cbind(temp, cbind(output.matrix[, output.count]))
+      } else {
+        custom.count <- custom.count + 1
+        newcol <- matrix("", nrow = nrow(temp), ncol = 1)
+        newcol[1, 1] <- names(custom.columns)[custom.count]
+        for (j in 1:numcoef) {
+          if (single.row == TRUE) {
+            newcol[j + offset, 1] <- as.character(custom.columns[[custom.count]][j])
+          } else {
+            newcol[(2 * j) - (1 - offset), 1] <- as.character(custom.columns[[custom.count]][j])
+          }
+        }
+        temp <- cbind(temp, newcol)
+      }
+    }
+    output.matrix <- temp
+  }
   
   # attributes required for printing functions
-  if ("include.attributes" %in% names(dots)) {
-    if (dots$include.attributes) {
-      attr(output.matrix, "ci") <- ci
-      attr(output.matrix, "ci.test") <- ci.test
-      attr(output.matrix, "gof.names") <- gof.matrix[, 1]
-      attr(output.matrix, "coef.names") <- coef.names
-      attr(output.matrix, "mod.names") <- mod.names
-    }
+  if (isTRUE(include.attributes)) {
+    attr(output.matrix, "ci") <- ci
+    attr(output.matrix, "ci.test") <- ci.test
+    attr(output.matrix, "gof.names") <- gof.matrix[, 1]
+    attr(output.matrix, "coef.names") <- coef.names
+    attr(output.matrix, "mod.names") <- mod.names
   }
   
   return(output.matrix)
@@ -259,11 +1033,11 @@ screenreg <- function(l,
                              include.attributes = TRUE,
                              ...)
   
-  gof.names <- attr(output.matrix, 'gof.names')
-  coef.names <- attr(output.matrix, 'coef.names')
-  mod.names <- attr(output.matrix, 'mod.names')
-  ci <- attr(output.matrix, 'ci')
-  ci.test <- attr(output.matrix, 'ci.test')
+  gof.names <- attr(output.matrix, "gof.names")
+  coef.names <- attr(output.matrix, "coef.names")
+  mod.names <- attr(output.matrix, "mod.names")
+  ci <- attr(output.matrix, "ci")
+  ci.test <- attr(output.matrix, "ci.test")
   
   # add spaces
   for (j in 1:ncol(output.matrix)) {
@@ -929,15 +1703,15 @@ htmlreg <- function(l,
                              custom.col.pos = custom.col.pos,
                              bold = bold,
                              include.attributes = TRUE,
-                             output.type = 'html',
+                             output.type = "html",
                              css.sup = css.sup,
                              ...)
   
-  gof.names <- attr(output.matrix, 'gof.names')
-  coef.names <- attr(output.matrix, 'coef.names')
-  mod.names <- attr(output.matrix, 'mod.names')
-  ci <- attr(output.matrix, 'ci')
-  ci.test <- attr(output.matrix, 'ci.test')
+  gof.names <- attr(output.matrix, "gof.names")
+  coef.names <- attr(output.matrix, "coef.names")
+  mod.names <- attr(output.matrix, "mod.names")
+  ci <- attr(output.matrix, "ci")
+  ci.test <- attr(output.matrix, "ci.test")
   
   coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos, 
                                 types = TRUE)
@@ -1337,14 +2111,14 @@ wordreg <- function(l,
                    groups = groups,
                    custom.columns = custom.columns,
                    custom.col.pos = custom.col.pos,
-                   output.type = 'ascii',
+                   output.type = "ascii",
                    include.attributes = FALSE
   )
   wd <- getwd()
-  f = tempfile(fileext = '.Rmd')
-  cat(file = f, '```{r, echo = FALSE}
+  f = tempfile(fileext = ".Rmd")
+  cat(file = f, "```{r, echo = FALSE}
                     knitr::kable(mat)
-                    ```', append = TRUE)
+                    ```", append = TRUE)
   rmarkdown::render(f, output_file = paste0(wd, "/", file))
 }
 

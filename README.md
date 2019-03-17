@@ -4,12 +4,6 @@ Conversion of R Regression Output to LaTeX or HTML Tables.
 
 Converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables or HTML tables/MS Word documents or to nicely formatted screen output for the R console for easy model comparison. A list of several models can be combined in a single table. The output is highly customizable. New model types can be easily implemented.
 
-[![Build Status](https://travis-ci.org/leifeld/texreg.svg?branch=master)](https://travis-ci.org/leifeld/texreg)
-[![cran version](http://www.r-pkg.org/badges/version/texreg)](https://cran.r-project.org/package=texreg)
-[![downloads](http://cranlogs.r-pkg.org/badges/texreg)](http://cranlogs.r-pkg.org/badges/texreg)
-[![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/texreg)](http://cranlogs.r-pkg.org/badges/grand-total/texreg)
-[![Research software impact](http://depsy.org/api/package/cran/texreg/badge.svg)](http://depsy.org/package/r/texreg)
-
 ## Documentation
 
 Details on **texreg** can be found in the following article:
@@ -21,4 +15,11 @@ An updated version of this paper is included as a [package vignette](https://cra
 
 ## Bugs or feature requests
 
-Please feel free to report bugs or possible enhancements using the [issue tracker](http://github.com/leifeld/texreg/issues) and propose solutions for known bugs using a pull request. I am overwhelmed with other work at the moment and need your help in fixing bugs or adding new functions! Important: I will only consider pull requests that address an issue described in the issue tracker, so please create an issue first before fixing it.
+Please feel free to report bugs or possible enhancements using the [issue tracker](http://github.com/leifeld/texreg/issues) and propose solutions for known bugs using a pull request.
+
+[![Build Status](https://travis-ci.org/leifeld/texreg.svg?branch=master)](https://travis-ci.org/leifeld/texreg)
+[![cran version](http://www.r-pkg.org/badges/version/texreg)](https://cran.r-project.org/package=texreg)
+[![downloads](http://cranlogs.r-pkg.org/badges/texreg)](http://cranlogs.r-pkg.org/badges/texreg)
+[![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/texreg)](http://cranlogs.r-pkg.org/badges/grand-total/texreg)
+[![Research software impact](http://depsy.org/api/package/cran/texreg/badge.svg)](http://depsy.org/package/r/texreg)
+[![Coverage status](https://codecov.io/gh/leifeld/texreg/branch/master/graph/badge.svg)](https://codecov.io/github/leifeld/texreg?branch=master)
