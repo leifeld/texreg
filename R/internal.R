@@ -82,6 +82,193 @@ replaceSymbols <- function(m) {
     return(m)
 }
 
+get.data <- function(l, ...) {
+  # if a single model is handed over, put model inside a list
+  if (!"list" %in% class(l)[1]) {
+    l <- list(l)
+  }
+  
+  # create list of texreg objects
+  models <- NULL
+  for (i in 1:length(l)) {
+    model <- extract(l[[i]], ...)
+    if (class(model) == "list") { # must be a nested list of models (e.g., systemfit)
+      models <- append(models, model)
+    } else { # normal case; one model
+      models <- append(models, list(model))
+    }
+  }
+  return(models)
+}
+
+# replace coefs, SEs, p-values, and/or CIs by custom values if provided
+override <- function(models,
+                     override.coef,
+                     override.se,
+                     override.pvalues, 
+                     override.ci.low,
+                     override.ci.up) {
+  # check validity of override arguments for p-values and SEs
+  if (class(override.se) == "list" || length(override.se) > 1 || override.se[1] != 0) {
+    if (length(override.pvalues) == 1 && class(override.pvalues) != "list" && override.pvalues[1] == 0) {
+      warning("Standard errors were provided using 'override.se', but p-values were not replaced!")
+    }
+  }
+  if (class(override.pvalues) == "list" || length(override.pvalues) > 1 || override.pvalues[1] != 0) {
+    if (length(override.se) == 1 && class(override.se) != "list" && override.se[1] == 0) {
+      warning("p-values were provided using 'override.pvalues', but standard errors were not replaced!")
+    }
+  }
+  
+  # replace coefs, SEs, p-values, and/or CIs by custom values if provided
+  for (i in 1:length(models)) {
+    # override coefficients
+    if (class(override.coef) != "list" && length(override.coef) == 1 && override.coef == 0) {
+      cf <- models[[i]]@coef
+    } else if (class(override.coef) == "numeric" &&
+               length(models) == 1 &&
+               length(override.coef) == length(models[[i]]@coef)) {
+      cf <- override.coef
+    } else if (class(override.coef) != "list") {
+      warning("Coefficients must be provided as a list. Using default values.")
+      cf <- models[[i]]@coef
+    } else if (length(override.coef) != length(models)) {
+      warning(paste("Number of coefficients provided does not match number of",
+                    "models. Using default values."))
+      cf <- models[[i]]@coef
+    } else if (length(models[[i]]@coef) != length(override.coef[[i]])) {
+      warning(paste0("Number of coefficients provided does not match number of ",
+                     "terms in model ", i, ". Using default values."))
+      cf <- models[[i]]@coef
+    } else if (class(override.coef[[i]]) != "numeric") {
+      warning("Coefficients provided for model", i, "are not numeric. Using default values.")
+      cf <- models[[i]]@coef
+    } else {
+      cf <- override.coef[[i]]
+    }
+    models[[i]]@coef <- cf
+    
+    # override standard errors
+    if (class(override.se) != "list" && length(override.se) == 1 && override.se == 0) {
+      se <- models[[i]]@se
+    } else if (class(override.se) == "numeric" &&
+               length(models) == 1 &&
+               length(override.se) == length(models[[i]]@se)) {
+      se <- override.se
+    } else if (class(override.se) != "list") {
+      warning("SEs must be provided as a list. Using default SEs.")
+      se <- models[[i]]@se
+    } else if (length(override.se) != length(models)) {
+      warning("Number of SEs provided does not match number of models. Using default SEs.")
+      se <- models[[i]]@se
+    } else if (length(models[[i]]@se) != length(override.se[[i]])) {
+      warning(paste0("Number of SEs provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default SEs."))
+      se <- models[[i]]@se
+    } else if (class(override.se[[i]]) != "numeric") {
+      warning(paste("SEs provided for model", i, "are not numeric. Using default SEs."))
+      se <- models[[i]]@se
+    } else {
+      se <- override.se[[i]]
+    }
+    models[[i]]@se <- se
+    
+    # override p-values
+    if (class(override.pvalues) != "list" && length(override.pvalues) == 1 && override.pvalues == 0) {
+      pval <- models[[i]]@pvalues
+    } else if (class(override.pvalues) == "numeric" &&
+               length(models) == 1 &&
+               length(override.pvalues) == length(models[[i]]@pvalues)) {
+      pval <- override.pvalues
+    } else if (class(override.pvalues) != "list") {
+      warning("p-values must be provided as a list. Using default p-values.")
+      pval <- models[[i]]@pvalues
+    } else if (length(override.pvalues) != length(models)) {
+      warning("Number of p-values provided does not match number of models. Using default p-values.")
+      pval <- models[[i]]@pvalues
+    } else if (length(models[[i]]@se) != length(override.pvalues[[i]])) {
+      # previous line: comparison with SE because p-values can be empty
+      warning(paste0("Number of p-values provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default p-values."))
+      pval <- models[[i]]@pvalues
+    } else if (class(override.pvalues[[i]]) != "numeric") {
+      warning(paste("p-values provided for model", i, "are not numeric. Using default p-values."))
+      pval <- models[[i]]@pvalues
+    } else {
+      pval <- override.pvalues[[i]]
+    }
+    models[[i]]@pvalues <- pval
+    
+    # override lower bound of confidence intervals
+    if (is.null(override.ci.low)) {
+      # do nothing
+    } else if (class(override.ci.low) != "list" &&
+               length(override.ci.low) == 1 &&
+               override.ci.low == 0) {
+      ci.low <- models[[i]]@ci.low
+    } else if (class(override.ci.low) == "numeric" &&
+               length(models) == 1 &&
+               length(override.ci.low) == length(models[[i]]@coef)) {
+      ci.low <- override.ci.low
+    } else if (class(override.ci.low) != "list") {
+      warning("CIs must be provided as a list. Using default CIs if available.")
+      ci.low <- models[[i]]@ci.low
+    } else if (length(override.ci.low) != length(models)) {
+      warning(paste("Number of lower CIs provided does not match number of", 
+                    "models. Using default CIs if available."))
+      ci.low <- models[[i]]@ci.low
+    } else if (length(models[[i]]@coef) != length(override.ci.low[[i]])) {
+      # previous line: comparison with coef because CIs can be empty
+      warning(paste0("Number of lower CIs provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default CIs if available."))
+      ci.low <- models[[i]]@ci.low
+    } else if (class(override.ci.low[[i]]) != "numeric") {
+      warning("Lower CIs provided for model", i, "are not numeric. Using default lower CIs.")
+      ci.low <- models[[i]]@ci.low
+    } else {
+      ci.low <- override.ci.low[[i]]
+    }
+    models[[i]]@ci.low <- ci.low
+    
+    # upper bound of confidence intervals
+    if (is.null(override.ci.up)) {
+      # do nothing
+    } else if (class(override.ci.up) != "list" &&
+               length(override.ci.up) == 1 &&
+               override.ci.up == 0) {
+      ci.up <- models[[i]]@ci.up
+    } else if (class(override.ci.up) == "numeric" &&
+               length(models) == 1 &&
+               length(override.ci.up) == length(models[[i]]@coef)) {
+      ci.up <- override.ci.up
+    } else if (class(override.ci.up) != "list") {
+      warning("CIs must be provided as a list. Using default CIs if available.")
+      ci.up <- models[[i]]@ci.up
+    } else if (length(override.ci.up) != length(models)) {
+      warning(paste("Number of lower CIs provided does not match number of", 
+                    "models. Using default CIs if available."))
+      ci.up <- models[[i]]@ci.up
+    } else if (length(models[[i]]@coef) != length(override.ci.up[[i]])) {
+      # previous line: comparison with coef because CIs can be empty
+      warning(paste0("Number of lower CIs provided does not match number of ", 
+                     "coefficients in model ", i, ". Using default CIs if available."))
+      ci.up <- models[[i]]@ci.up
+    } else if (class(override.ci.up[[i]]) != "numeric") {
+      warning(paste("Lower CIs provided for model", i, 
+                    "are not numeric. Using default lower CIs."))
+      ci.up <- models[[i]]@ci.up
+    } else {
+      ci.up <- override.ci.up[[i]]
+    }
+    models[[i]]@ci.up <- ci.up
+    
+    if (length(models[[i]]@ci.low) > 0 && length(models[[i]]@ci.up) > 0) {
+      models[[i]]@se <- numeric()
+      models[[i]]@pvalues <- numeric()
+    }
+  }
+  return(models)
+}
 
 # reorder a matrix according to a vector of new positions
 reorder <- function(mat, new.order) {
