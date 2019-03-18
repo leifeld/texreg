@@ -33,7 +33,7 @@ csvreg <- function(l,
                    groups = NULL,
                    custom.columns = NULL,
                    custom.col.pos = NULL,
-                   caption = 'Statistical Models',
+                   caption = "Statistical Models",
                    ...) {
 
   # matrixreg produces the output matrix
@@ -66,13 +66,13 @@ csvreg <- function(l,
                              ...)
 
   # attributes
-  ci <- attr(output.matrix, 'ci')
-  ci.test <- attr(output.matrix, 'ci.test')
+  ci <- attr(output.matrix, "ci")
+  ci.test <- attr(output.matrix, "ci.test")
 
   # append notes to bottom of table
   out <- output.matrix
-  if (is.character(caption) && (caption != '')) {
-    out <- rbind(out, c('Caption: ', caption, rep('', ncol(output.matrix) - 2)))
+  if (is.character(caption) && (caption != "")) {
+    out <- rbind(out, c("Caption: ", caption, rep("", ncol(output.matrix) - 2)))
   }
   snote <- get_stars(pval = NULL,
                      stars = stars,
@@ -80,22 +80,22 @@ csvreg <- function(l,
                      symbol = symbol,
                      ci = ci,
                      ci.test = ci.test,
-                     output = 'ascii')$note
-  if (trimws(snote) != '') {
-    out <- rbind(out, c('Note: ', snote, rep('', ncol(output.matrix) - 2)))
+                     output = "ascii")$note
+  if (trimws(snote) != "") {
+    out <- rbind(out, c("Note: ", snote, rep("", ncol(output.matrix) - 2)))
   }
-  if (is.character(custom.note) && (custom.note != '')) {
-    out <- rbind(out, c('Note: ', custom.note, rep('', ncol(output.matrix) - 2)))
+  if (is.character(custom.note) && (custom.note != "")) {
+    out <- rbind(out, c("Note: ", custom.note, rep("", ncol(output.matrix) - 2)))
   }
   out <- as.data.frame(out)
 
   # write csv to file
   if (!is.character(file)) {
-    stop('file must be a character string')
+    stop("File must be a character string.")
   } else {
     write.table(out,
                 file = file,
-                sep = ',',
+                sep = ",",
                 quote = TRUE,
                 col.names = FALSE,
                 row.names = FALSE)
@@ -388,7 +388,7 @@ htmlreg <- function(l,
                      ci = ci,
                      ci.test = ci.test,
                      css.sup = css.sup,
-                     output = 'html')$note
+                     output = "html")$note
 
   if (is.null(custom.note)) {
     note <- snote
@@ -1629,7 +1629,7 @@ screenreg <- function(l,
                      symbol = symbol,
                      ci = ci,
                      ci.test = ci.test,
-                     output = 'ascii')$note
+                     output = "ascii")$note
 
   # custom note
   if (is.null(custom.note)) {
@@ -1775,8 +1775,8 @@ texreg <- function(l,
   gof.names <- attr(output.matrix, "gof.names")
   coef.names <- attr(output.matrix, "coef.names")
   mod.names <- attr(output.matrix, "mod.names")
-  ci <- attr(output.matrix, 'ci')
-  ci.test <- attr(output.matrix, 'ci.test')
+  ci <- attr(output.matrix, "ci")
+  ci.test <- attr(output.matrix, "ci.test")
 
   # what is the optimal length of the labels?
   lab.list <- c(coef.names, gof.names)
@@ -1940,7 +1940,7 @@ texreg <- function(l,
                      symbol = symbol,
                      ci = ci,
                      ci.test = ci.test,
-                     output = 'latex')$note
+                     output = "latex")$note
 
   if (is.null(fontsize)) {
     notesize <- "scriptsize"
@@ -2138,7 +2138,7 @@ wordreg <- function(l,
                     custom.col.pos = NULL,
                     ...) {
 
-  if (!'rmarkdown' %in% row.names(installed.packages())) {
+  if (!"rmarkdown" %in% row.names(installed.packages())) {
     stop(paste("The wordreg function requires the 'rmarkdown' package.",
                "Install it and try again."))
   }
@@ -2194,10 +2194,10 @@ NULL
 .onAttach <- function(libname, pkgname) {
   desc  <- packageDescription(pkgname, libname)
   packageStartupMessage(
-    'Version:  ', desc$Version, '\n',
-    'Date:     ', desc$Date, '\n',
-    'Author:   ', 'Philip Leifeld (University of Glasgow)', '\n\n',
-    'Please cite the JSS article in your publications ',
+    "Version:  ", desc$Version, "\n",
+    "Date:     ", desc$Date, "\n",
+    "Author:   ", "Philip Leifeld (University of Glasgow)", "\n\n",
+    "Please cite the JSS article in your publications ",
     '-- see citation("texreg").'
   )
 }
@@ -2205,7 +2205,7 @@ NULL
 # extract coefficients using the broom package
 broom_coefficients <- function(x) {
   out <- broom::tidy(x)
-  out <- out[, c('term', 'estimate', 'std.error', 'p.value')]
+  out <- out[, c("term", "estimate", "std.error", "p.value")]
   return(out)
 }
 
@@ -2214,25 +2214,25 @@ broom_gof <- function(x) {
   # extract
   out <- broom::glance(x)[1, ]
   gof.decimal <- sapply(out, function(k) class(k)[1]) # type inference
-  gof.decimal <- ifelse(gof.decimal %in% c('integer', 'logical'), FALSE, TRUE)
-  out <- data.frame('gof.names' = colnames(out),
-                    'gof' = as.numeric(out),
-                    'gof.decimal' = gof.decimal,
+  gof.decimal <- ifelse(gof.decimal %in% c("integer", "logical"), FALSE, TRUE)
+  out <- data.frame("gof.names" = colnames(out),
+                    "gof" = as.numeric(out),
+                    "gof.decimal" = gof.decimal,
                     stringsAsFactors = FALSE)
   # rename
   gof_dict <- c(
-    'adj.r.squared' = 'Adj.\ R$^2$',
-    'deviance' = 'Deviance',
-    'df' = 'DF',
-    'df.residual' = 'DF Resid.',
-    'finTol' = 'Tolerance',
-    'isConv' = 'Convergence',
-    'logLik' = 'Log Likelihood',
-    'null.deviance' = 'Deviance (Null)',
-    'p.value' = 'P Value',
-    'r.squared' = 'R$^2$',
-    'sigma' = 'Sigma',
-    'statistic' = 'Statistic'
+    "adj.r.squared" = "Adj.\ R$^2$",
+    "deviance" = "Deviance",
+    "df" = "DF",
+    "df.residual" = "DF Resid.",
+    "finTol" = "Tolerance",
+    "isConv" = "Convergence",
+    "logLik" = "Log Likelihood",
+    "null.deviance" = "Deviance (Null)",
+    "p.value" = "P Value",
+    "r.squared" = "R$^2$",
+    "sigma" = "Sigma",
+    "statistic" = "Statistic"
   )
   gof_dict <- gof_dict[names(gof_dict) %in% out$gof.names]
   idx <- match(names(gof_dict), out$gof.names)
@@ -2398,18 +2398,18 @@ get.data <- function(l, ...) {
 get_stars <- function(pval = NULL, # test statistics;
                       # leave NULL if you only want the legend
                       stars = c(0.01, 0.05, 0.1),  # numeric vector of cut-offs
-                      star.symbol = '*',  # character to repeat for first 3
+                      star.symbol = "*",  # character to repeat for first 3
                       # levels of significance
-                      symbol = '.',  # character for 4th level of significance
-                      star.prefix = '',
-                      star.suffix = '',
+                      symbol = ".",  # character for 4th level of significance
+                      star.prefix = "",
+                      star.suffix = "",
                       ci = FALSE,
                       ci.test = NULL,
                       css.sup = NULL,
-                      output = 'ascii') {
+                      output = "ascii") {
 
   # sanity checks and prep
-  if (!output %in% c('ascii', 'latex', 'html')) {
+  if (!output %in% c("ascii", "latex", "html")) {
     stop("'output' argument must be 'ascii', 'latex', or 'html'.")
   }
   if (!is.numeric(ci.test) && !is.null(ci.test)) {
@@ -2436,7 +2436,7 @@ get_stars <- function(pval = NULL, # test statistics;
   if (!is.null(symbol) && !is.character(symbol)) {
     stop("The argument 'symbol' must be NULL or character.")
   }
-  if (is.null(css.sup) & (output == 'html')) {
+  if (is.null(css.sup) & (output == "html")) {
     stop("To write a star note in html, you must supply 'css.sup'.")
   }
   if (length(stars) == 0) {
@@ -2445,8 +2445,8 @@ get_stars <- function(pval = NULL, # test statistics;
   p_note_flag <- any(!ci) # at least one model doesn't print confidence interval
   ci_note_flag <- any(ci) # at least one model prints a confidence interval
 
-  symbols <- c(paste(rep(star.symbol, 3), collapse = ''),
-               paste(rep(star.symbol, 2), collapse = ''),
+  symbols <- c(paste(rep(star.symbol, 3), collapse = ""),
+               paste(rep(star.symbol, 2), collapse = ""),
                star.symbol,
                symbol)
   if (length(stars) == 1) {
@@ -2493,33 +2493,33 @@ get_stars <- function(pval = NULL, # test statistics;
     if (is.numeric(ci.test) && !is.na(ci.test)) { # sanity check
       ci_note <- paste(ci.test, "outside the confidence interval")
     } else {
-      ci_note <- ''
+      ci_note <- ""
     }
-    if (output == 'ascii') {
-      ci_symbol <- '*'
-    } else if (output == 'latex') {
-      ci_symbol <- '$^*$'
-    } else if (output == 'html') {
-      ci_symbol <- paste0('<sup', css.sup, '>*</sup>')
+    if (output == "ascii") {
+      ci_symbol <- "*"
+    } else if (output == "latex") {
+      ci_symbol <- "$^*$"
+    } else if (output == "html") {
+      ci_symbol <- paste0("<sup", css.sup, ">*</sup>")
     }
   } else {  # ci not calculated for any model -> empty ci note
-    ci_note <- ''
+    ci_note <- ""
   }
 
   # combine p and ci notes
-  if (p_note_flag && ci_note_flag && (p_note != '') && (ci_note != '')) {
-    s_note <- paste0(p_note, ' (or ', ci_note, ').')
-  } else if (p_note_flag && (p_note != '')) {
+  if (p_note_flag && ci_note_flag && (p_note != "") && (ci_note != "")) {
+    s_note <- paste0(p_note, " (or ", ci_note, ").")
+  } else if (p_note_flag && (p_note != "")) {
     s_note <- p_note
-  } else if (ci_note_flag && (ci_note != '')) {
-    s_note <- paste0(ci_symbol, ' ', ci_note, '.')
+  } else if (ci_note_flag && (ci_note != "")) {
+    s_note <- paste0(ci_symbol, " ", ci_note, ".")
   } else {
-    s_note <- ''
+    s_note <- ""
   }
 
   # stars for individual coefficients
   if (is.null(pval) | is.null(stars)) {
-    p = ''
+    p = ""
   } else {
     if (is.na(pval)) {
       pval <- 1.0
@@ -2532,7 +2532,7 @@ get_stars <- function(pval = NULL, # test statistics;
     }
   }
 
-  out <- list('note' = s_note, 'coefficients' = p)
+  out <- list("note" = s_note, "coefficients" = p)
   return(out)
 }
 

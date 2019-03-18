@@ -126,8 +126,8 @@ setMethod("extract", signature = className("ARIMA", "forecast"),
 extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
     include.nobs = TRUE, ...) {
 
-  # MuMIn >= 1.15.0 : c('coefmat.subset', 'coefmat.full')
-  # MuMIn < 1.15.0 : c('coefmat', 'coefmat.full')
+  # MuMIn >= 1.15.0 : c("coefmat.subset", "coefmat.full")
+  # MuMIn < 1.15.0 : c("coefmat", "coefmat.full")
   ct <- summary(model)$coefmat.full
   coefs <- ct[, 1L]
   se <- ct[, if(adjusted.se) 3L else 2L]
@@ -415,15 +415,15 @@ setMethod("extract", signature = className("biglm", "biglm"),
 
 # default extract method prompts users to install the broom package
 extract.broom <- function(model, ...) {
-  if (!'broom' %in% row.names(installed.packages())) {
+  if (!"broom" %in% row.names(installed.packages())) {
     stop("texreg does not directly support models of class ",
          class(model),
          ", but it can sometimes use the ``broom`` package to extract model information. Call texreg again after installing the ``broom`` package to see if this is possible.")
   }
   coefficients <- try(broom_coefficients(model), silent = TRUE)
   gof <- try(broom_gof(model), silent = TRUE)
-  if ((class(coefficients) == 'try-error') || (class(gof) == 'try-error')) {
-    stop('Neither texreg nor broom supports models of class ', class(model), '.')
+  if ((class(coefficients) == "try-error") || (class(gof) == "try-error")) {
+    stop("Neither texreg nor broom supports models of class ", class(model), ".")
   }
   tr <- createTexreg(coef.names = coefficients$term,
                      coef = coefficients$estimate,
@@ -5336,24 +5336,24 @@ extract.Zelig <- function(model, include.nobs = TRUE, include.nimp = TRUE, ...) 
     gof <- gof.names <- gof.decimal <- NULL
     if (include.nobs) {
       gof <- c(gof, nrow(model$data))
-      gof.names <- c(gof.names, 'Num. obs.')
+      gof.names <- c(gof.names, "Num. obs.")
       gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.nimp) {
-      if (class(model$originaldata)[1] == 'amelia') {
+      if (class(model$originaldata)[1] == "amelia") {
         gof <- c(gof, model$originaldata$m)
-        gof.names <- c(gof.names, 'Num. imp.')
+        gof.names <- c(gof.names, "Num. imp.")
         gof.decimal <- c(gof.decimal, FALSE)
-      } else if (class(model$originaldata)[1] == 'mi') { # when imputed dataset was created using to_zelig_mi
+      } else if (class(model$originaldata)[1] == "mi") { # when imputed dataset was created using to_zelig_mi
         gof <- c(gof, length(model$originaldata))
-        gof.names <- c(gof.names, 'Num. imp.')
+        gof.names <- c(gof.names, "Num. imp.")
         gof.decimal <- c(gof.decimal, FALSE)
       }
     }
     out <- createTexreg(coef.names = row.names(combined),
-                        coef = combined[, 'Estimate'],
-                        se = combined[, 'Std.Error'],
-                        pvalues = combined[, 'Pr(>|z|)'],
+                        coef = combined[, "Estimate"],
+                        se = combined[, "Std.Error"],
+                        pvalues = combined[, "Pr(>|z|)"],
                         gof.names = gof.names,
                         gof = gof,
                         gof.decimal = gof.decimal)
