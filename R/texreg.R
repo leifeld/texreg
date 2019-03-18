@@ -63,6 +63,7 @@ csvreg <- function(l,
                              custom.columns = custom.columns,
                              custom.col.pos = custom.col.pos,
                              include.attributes = TRUE,
+                             trim = TRUE,
                              ...)
 
   # attributes
@@ -195,6 +196,7 @@ htmlreg <- function(l,
                              custom.col.pos = custom.col.pos,
                              bold = bold,
                              include.attributes = TRUE,
+                             trim = FALSE,
                              output.type = "html",
                              css.sup = css.sup,
                              ...)
@@ -479,9 +481,8 @@ huxtablereg <- function(l,
   mr.call <- match.call(expand.dots = FALSE)
   mr.call[[1L]] <- quote(texreg::matrixreg)
   mr.call$include.attributes <- TRUE
+  mr.call$trim <- TRUE
   mx <- eval(mr.call)
-
-  mx <- trimws(mx)
 
   gof.names <- attr(mx, "gof.names")
   coef.names <- attr(mx, "coef.names")
@@ -533,6 +534,7 @@ matrixreg <- function(l,
                       dcolumn = TRUE,
                       output.type = c("ascii", "latex", "html"),
                       include.attributes = FALSE,
+                      trim = FALSE,
                       ...) {
 
   # unnamed arguments to environment
@@ -1457,6 +1459,11 @@ matrixreg <- function(l,
     output.matrix <- temp
   }
 
+  # trim leading and trailing white space in output matrix
+  if (isTRUE(trim)) {
+    output.matrix <- trimws(output.matrix)
+  }
+
   # attributes required for printing functions
   if (isTRUE(include.attributes)) {
     attr(output.matrix, "ci") <- ci
@@ -1467,6 +1474,11 @@ matrixreg <- function(l,
   }
 
   return(output.matrix)
+}
+
+# print method for texreg table strings
+print.texregTable <- function(x, ...) {
+  cat(x, ...)
 }
 
 # screenreg function
@@ -1531,6 +1543,7 @@ screenreg <- function(l,
                              custom.columns = custom.columns,
                              custom.col.pos = custom.col.pos,
                              include.attributes = TRUE,
+                             trim = FALSE,
                              ...)
 
   gof.names <- attr(output.matrix, "gof.names")
@@ -1702,12 +1715,12 @@ texreg <- function(l,
                    float.pos = "",
                    ...) {
 
-  #check dcolumn vs. bold
-  if (dcolumn == TRUE && bold > 0) {
+  # check dcolumn vs. bold
+  if (isTRUE(dcolumn) && bold > 0) {
     dcolumn <- FALSE
-    msg <- paste("The dcolumn package and the bold argument cannot be used at",
-                 "the same time. Switching off dcolumn.")
-    if (length(stars) > 1 || stars == TRUE) {
+    msg <- paste("The dcolumn package and the 'bold' argument cannot be used at",
+                 "the same time. Switching off 'dcolumn'.")
+    if (length(stars) > 1 || stars == TRUE || stars != 0) {
       warning(paste(msg, "You should also consider setting stars = 0."))
     } else {
       warning(msg)
@@ -1715,28 +1728,27 @@ texreg <- function(l,
   }
 
   # check longtable vs. sideways
-  if (longtable == TRUE && sideways == TRUE) {
+  if (isTRUE(longtable) && isTRUE(sideways)) {
     sideways <- FALSE
     msg <- paste("The longtable package and sideways environment cannot be",
                  "used at the same time. You may want to use the pdflscape package.",
-                 "Switching off sideways.")
+                 "Switching off 'sideways'.")
     warning(msg)
   }
 
   # check longtable vs. float.pos
-  if (longtable == TRUE && !(float.pos %in% c("", "l", "c", "r"))) {
+  if (isTRUE(longtable) && !(float.pos %in% c("", "l", "c", "r"))) {
     float.pos <- ""
-    msg <- paste("When the longtable environment is used, the float.pos",
-                 "argument can only take one of the \"l\", \"c\", \"r\", or \"\"",
-                 "(empty) values. Setting float.pos = \"\".")
+    msg <- paste("When the longtable environment is used, the 'float.pos'",
+                 "argument can only take one of the 'l', 'c', 'r', or ''",
+                 "(empty) values. Setting float.pos = ''.")
     warning(msg)
   }
 
   # check longtable vs. scalebox
-  if (longtable == TRUE && !is.null(scalebox)) {
+  if (isTRUE(longtable) && !is.null(scalebox)) {
     scalebox <- NULL
-    warning(paste("longtable and scalebox are not compatible. Setting",
-                  "scalebox = NULL."))
+    warning(paste("'longtable' and 'scalebox' are not compatible. Setting scalebox = NULL."))
   }
 
   # matrixreg produces the output matrix
@@ -1770,6 +1782,7 @@ texreg <- function(l,
                              bold = bold,
                              output.type = "latex",
                              include.attributes = TRUE,
+                             trim = TRUE,
                              ...)
 
   gof.names <- attr(output.matrix, "gof.names")
@@ -1778,26 +1791,18 @@ texreg <- function(l,
   ci <- attr(output.matrix, "ci")
   ci.test <- attr(output.matrix, "ci.test")
 
-  # what is the optimal length of the labels?
-  lab.list <- c(coef.names, gof.names)
-  lab.length <- 0
-  for (i in 1:length(lab.list)) {
-    if (nchar(lab.list[i]) > lab.length) {
-      lab.length <- nchar(lab.list[i])
-    }
-  }
+  lab.length <- max(nchar(c(coef.names, gof.names))) # what is the optimal width of the labels?
 
-  coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos,
-                                types = TRUE)
-  mod.names <- customcolumnnames(mod.names, custom.columns, custom.col.pos,
-                                 types = FALSE)
+  # determine column types (coef or custom) and model names in the presence of custom columns
+  coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos, types = TRUE)
+  mod.names <- customcolumnnames(mod.names, custom.columns, custom.col.pos, types = FALSE)
 
   # define columns of the table (define now, add later)
   coldef <- ""
-  if (no.margin == FALSE) {
-    margin.arg <- ""
-  } else {
+  if (isTRUE(no.margin)) {
     margin.arg <- "@{}"
+  } else {
+    margin.arg <- ""
   }
   coefcount <- 0
   for (i in 1:length(mod.names)) {
@@ -2172,7 +2177,9 @@ wordreg <- function(l,
                    custom.columns = custom.columns,
                    custom.col.pos = custom.col.pos,
                    output.type = "ascii",
-                   include.attributes = FALSE
+                   include.attributes = FALSE,
+                   trim = FALSE,
+                   ...
   )
   wd <- getwd()
   f = tempfile(fileext = ".Rmd")
@@ -2311,13 +2318,12 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
 }
 
 # determine column names or column types if custom columns are present
-customcolumnnames <- function(modelnames, custom.columns, custom.col.pos,
-                              types = FALSE) {
+customcolumnnames <- function(modelnames, custom.columns, custom.col.pos, types = FALSE) {
 
   # adjust arguments
   modelnames <- c("", modelnames)
   if (is.null(custom.columns)) {
-    if (types == FALSE) {
+    if (isFALSE(types)) {
       return(modelnames)
     } else {
       return(c("coefnames", rep("coef", length(modelnames) - 1)))
@@ -2334,13 +2340,14 @@ customcolumnnames <- function(modelnames, custom.columns, custom.col.pos,
   custom.types <- character()
   for (i in 1:length(modelnames)) {
     if (i %in% custom.col.pos) {
-      if (i == 1 && types == TRUE) {
+      if (i == 1 && isTRUE(types)) {
         value <- "coefnames"
       } else {
         value <- "coef"
       }
-      custom.types <- c(custom.types, rep("customcol",
-                                          length(which(custom.col.pos == i))), value)
+      custom.types <- c(custom.types,
+                        rep("customcol", length(which(custom.col.pos == i))),
+                        value)
     } else {
       if (i == 1) {
         custom.types <- c(custom.types, "coefnames")
@@ -2367,7 +2374,7 @@ customcolumnnames <- function(modelnames, custom.columns, custom.col.pos,
     }
   }
 
-  if (types == TRUE) {
+  if (isTRUE(types)) {
     return(custom.types)
   } else {
     return(temp)
@@ -2719,11 +2726,6 @@ override <- function(models,
     }
   }
   return(models)
-}
-
-# print method for texreg table strings
-print.texregTable <- function(x, ...) {
-  cat(x, ...)
 }
 
 # function which replaces special characters in row names by LaTeX equivalents
