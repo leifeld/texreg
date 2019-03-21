@@ -1,109 +1,107 @@
-# The texreg package was written by Philip Leifeld.
-# Please use the issue tracker at http://github.com/leifeld/texreg
-# for bug reports, help, or feature requests.
+#' Conversion of R Regression Output to LaTeX or HTML Tables
+#'
+#' \pkg{texreg} converts coefficients, standard errors, uncertainty measures,
+#' and goodness-of-fit statistics of statistical models into LaTeX or HTML
+#' tables or into nicely formatted screen output for the \R console. A list of
+#' several models can be combined in a single table. The output is
+#' customizable. New model types can be easily implemented. Confidence
+#' intervals can be used instead of standard errors and p-values.
+#'
+#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @seealso \code{\link{extract}} \code{\link{texreg}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'
+#' @docType package
+#' @name texreg-package
+NULL
 
 
 # texreg functions -------------------------------------------------------------
 
-# csvreg function
-csvreg <- function(l,
-                   file,
-                   stars = c(0.001, 0.01, 0.05),
-                   custom.model.names = NULL,
-                   custom.coef.names = NULL,
-                   custom.coef.map = NULL,
-                   custom.gof.names = NULL,
-                   custom.gof.rows = NULL,
-                   custom.note = NULL,
-                   digits = 2,
-                   leading.zero = TRUE,
-                   star.symbol = "*",
-                   symbol = ".",
-                   override.coef = 0,
-                   override.se = 0,
-                   override.pvalues = 0,
-                   override.ci.low = 0,
-                   override.ci.up = 0,
-                   omit.coef = NULL,
-                   reorder.coef = NULL,
-                   reorder.gof = NULL,
-                   ci.force = FALSE,
-                   ci.force.level = 0.95,
-                   ci.test = 0,
-                   groups = NULL,
-                   custom.columns = NULL,
-                   custom.col.pos = NULL,
-                   caption = "Statistical Models",
-                   ...) {
-
-  # matrixreg produces the output matrix
-  output.matrix <- matrixreg(l,
-                             stars = stars,
-                             custom.model.names = custom.model.names,
-                             custom.coef.names = custom.coef.names,
-                             custom.coef.map = custom.coef.map,
-                             custom.gof.names = custom.gof.names,
-                             custom.gof.rows = custom.gof.rows,
-                             digits = digits,
-                             leading.zero = leading.zero,
-                             star.symbol = star.symbol,
-                             symbol = symbol,
-                             override.coef = override.coef,
-                             override.se = override.se,
-                             override.pvalues = override.pvalues,
-                             override.ci.low = override.ci.low,
-                             override.ci.up = override.ci.up,
-                             omit.coef = omit.coef,
-                             reorder.coef = reorder.coef,
-                             reorder.gof = reorder.gof,
-                             ci.force = ci.force,
-                             ci.force.level = ci.force.level,
-                             ci.test = ci.test,
-                             groups = groups,
-                             custom.columns = custom.columns,
-                             custom.col.pos = custom.col.pos,
-                             include.attributes = TRUE,
-                             trim = TRUE,
-                             ...)
-
-  # attributes
-  ci <- attr(output.matrix, "ci")
-  ci.test <- attr(output.matrix, "ci.test")
-
-  # append notes to bottom of table
-  out <- output.matrix
-  if (is.character(caption) && (caption != "")) {
-    out <- rbind(out, c("Caption: ", caption, rep("", ncol(output.matrix) - 2)))
-  }
-  snote <- get_stars(pval = NULL,
-                     stars = stars,
-                     star.symbol = star.symbol,
-                     symbol = symbol,
-                     ci = ci,
-                     ci.test = ci.test,
-                     output = "ascii")$note
-  if (trimws(snote) != "") {
-    out <- rbind(out, c("Note: ", snote, rep("", ncol(output.matrix) - 2)))
-  }
-  if (is.character(custom.note) && (custom.note != "")) {
-    out <- rbind(out, c("Note: ", custom.note, rep("", ncol(output.matrix) - 2)))
-  }
-  out <- as.data.frame(out)
-
-  # write csv to file
-  if (!is.character(file)) {
-    stop("File must be a character string.")
-  } else {
-    write.table(out,
-                file = file,
-                sep = ",",
-                quote = TRUE,
-                col.names = FALSE,
-                row.names = FALSE)
-  }
-}
-
-# htmlreg function
+#' Convert regression output to a HTML table
+#'
+#' Conversion of \R regression output to a HTML table.
+#'
+#' The \code{htmlreg} function creates HTML code. Tables in HTML format can
+#' be saved with a ".html" extension and displayed in a web browser.
+#' Alternatively, they can be saved with a ".doc" extension and opened in MS
+#' Word for inclusion in office documents. \code{\link{htmlreg}} also works with
+#' \pkg{knitr} and HTML or Markdown. Note that the \code{inline.css},
+#' \code{doctype}, \code{html.tag}, \code{head.tag}, \code{body.tag}, and
+#' \code{star.symbol} arguments must be adjusted for the different purposes (see
+#' the description of the arguments).
+#'
+#' @param inline.css Should the CSS stylesheets be embedded directly in the code
+#'   of the table (\code{inline.css = TRUE}), or should the CSS stylesheets be
+#'   enclosed in the <head> tag, that is, separated from the table code
+#'   (\code{inline.css = FALSE})? Having inline CSS code makes the code of the
+#'   table more complex, but sometimes it may be helpful when only the table
+#'   shall be printed, without the head of the HTML file (for example when the
+#'   table is embedded in a \pkg{knitr} report). As a rule of thumb: use inline
+#'   CSS if the table is not saved to a file.
+#' @param doctype Should the first line of the HTML code contain the DOCTYPE
+#'   definition? If \code{TRUE}, the HTML 4 TRANSITIONAL version is used. If
+#'   \code{FALSE}, no DOCTYPE will be included. Omitting the DOCTYPE can be
+#'   helpful when the \pkg{knitr} package is used to generate HTML code because
+#'   \pkg{knitr} requires only the plain table, not the whole HTML document
+#'   including the document type declaration. Including the DOCTYPE can be
+#'   helpful when the code is saved to a file, for example as an MS Word
+#'   document.
+#' @param html.tag Should the table code (and possibly the <body> and <head>
+#'   tags) be enclosed in an <html> tag? Suppressing this tag is recommended
+#'   when \pkg{knitr} is used for dynamic HTML or Markdown report generation.
+#'   Including this tag is recommended when the code is saved to a file, for
+#'   example as an MS Word document.
+#' @param head.tag Should the <head> tag (including CSS definitions and
+#'   title/caption) be included in the HTML code? Suppressing this tag is
+#'   recommended when \pkg{knitr} is used for dynamic HTML or Markdown report
+#'   generation. Including this tag is recommended when the code is saved to a
+#'   file, for example as an MS Word document.
+#' @param body.tag Should the table code be enclosed in a <body> HTML tag?
+#'   Suppressing this tag is recommended when \pkg{knitr} is used for dynamic
+#'   HTML or Markdown report generation. Including this tag is recommended when
+#'   the code is saved to a file, for example as an MS Word document.
+#' @param indentation Characters used for indentation of the HTML code. By
+#'   default, \code{indentation = ""} uses no indentation. Any number of spaces
+#'   or characters can be used instead. For example, \code{indentation = " "}
+#'   uses two spaces of (additional) indentation for each subelement.
+#' @param vertical.align.px Vertical alignment of significance stars. Browsers
+#'   differ in their ways of displaying superscripted significance stars; in
+#'   some browsers, the stars are elevated by default, and in other browsers,
+#'   the stars are aligned vertically with the text, without any actual
+#'   superscripting. This argument controls by how many additional pixels the
+#'   stars are elevated. The default setting of \code{0} uses the defaults of
+#'   the browser. In RStudio's internal browser, this looks OK, but in Firefox,
+#'   this looks too low. A value of \code{4} looks OK in Firefox, for example,
+#'   but is above the line in RStudio's internal browser.
+#' @inheritParams texreg
+#'
+#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
+#' @family texreg
+#' @seealso \code{\link{texreg-package}} \code{\link{extract}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'
+#' @examples
+#' library("nlme")
+#' model.1 <- lme(distance ~ age, data = Orthodont, random = ~ 1)
+#' model.2 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
+#' htmlreg(list(model.1, model.2),
+#'         file = "texreg.doc",
+#'         inline.css = FALSE,
+#'         doctype = TRUE,
+#'         html.tag = TRUE,
+#'         head.tag = TRUE,
+#'         body.tag = TRUE)
+#' unlink("texreg.doc")
+#'
+#' @export
 htmlreg <- function(l,
                     file = NULL,
                     single.row = FALSE,
@@ -196,7 +194,7 @@ htmlreg <- function(l,
                              custom.col.pos = custom.col.pos,
                              bold = bold,
                              include.attributes = TRUE,
-                             trim = FALSE,
+                             trim = TRUE,
                              output.type = "html",
                              css.sup = css.sup,
                              ...)
@@ -445,7 +443,42 @@ htmlreg <- function(l,
   }
 }
 
-# huxtablereg function
+#' Create a huxtable object from multiple statistical models
+#'
+#' Create a huxtable object from multiple statistical models.
+#'
+#' The \code{huxtablereg} function creates a \code{\link[huxtable]{huxtable}}
+#' object using the \pkg{huxtable} package. This allows output to HTML,
+#' LaTeX, Word, Excel, Powerpoint, and RTF. The object can be formatted using
+#' \pkg{huxtable} package functions. See also \code{\link[huxtable]{huxreg}}.
+#'
+#' @inheritParams matrixreg
+#'
+#' @author David Hugh-Jones
+#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
+#' @family texreg
+#' @seealso \code{\link{texreg-package}} \code{\link{extract}}
+#'
+#' @examples
+#' library("nlme")
+#' model.1 <- lme(distance ~ age, data = Orthodont, random = ~ 1)
+#' model.2 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
+#' if (requireNamespace("huxtable")) {
+#'   hr <- huxtablereg(list(model.1, model.2))
+#'   hr <- huxtable::set_bottom_border(hr, 1, -1, 0.4)
+#'   hr <- huxtable::set_bold(hr, 1:nrow(hr), 1, TRUE)
+#'   hr <- huxtable::set_bold(hr, 1, -1, TRUE)
+#'   hr <- huxtable::set_all_borders(hr, 4, 2, 0.4)
+#'   hr <- huxtable::set_all_border_colors(hr, 4, 2, "red")
+#'   hr
+#'   \dontrun{
+#'   huxtable::quick_pdf(hr)
+#'   huxtable::quick_docx(hr)
+#'   # or use in a knitr document
+#'   }
+#' }
+#'
+#' @export
 huxtablereg <- function(l,
                         single.row = FALSE,
                         stars = c(0.001, 0.01, 0.05),
@@ -503,7 +536,280 @@ huxtablereg <- function(l,
   return(hx)
 }
 
-# matrixreg function
+#' Convert regression output to a \code{character} matrix
+#'
+#' Conversion of \R regression output to a \code{character} matrix.
+#'
+#' The \code{matrixreg} function creates a \code{character} matrix with the row
+#' names for the coefficients and goodness-of-fit statistics in the first
+#' column. The function is used under the hood by other functions like
+#' \code{\link{screenreg}} or \code{\link{texreg}} but can also be called
+#' directly.
+#'
+#' @param l A statistical model or a list of statistical models. Lists of
+#'   models can be specified as \code{l = list(model.1, model.2, ...)}.
+#'   Different object types can also be mixed.
+#' @param single.row By default, a model parameter takes up two lines of the
+#'   table: the standard error is listed in parentheses under the coefficient.
+#'   This saves a lot of horizontal space on the page and is the default table
+#'   format in most academic journals. If \code{single.row = TRUE} is activated,
+#'   however, both coefficient and standard error are placed in a single table
+#'   cell in the same line.
+#' @param stars The significance levels to be used to draw stars. Between 0 and
+#'   4 threshold values can be provided as a numeric vector. For example,
+#'   \code{stars = numeric(0)} will not print any stars and will not print any
+#'   note about significance levels below the table. \code{stars = 0.05} will
+#'   attach one single star to all coefficients where the p value is below 0.05.
+#'   \code{stars = c(0.001, 0.01, 0.05, 0.1)} will print one, two, or three
+#'   stars, or a symbol as specified by the \code{symbol} argument depending on
+#'   the p-values.
+#' @param custom.model.names A character vector of labels for the models. By
+#'   default, the models are named "Model 1", "Model 2", etc. Specifying
+#'   \code{model.names = c("My name 1", "My name 2")} etc. overrides the default
+#'   behavior.
+#' @param custom.coef.names By default, \pkg{texreg} uses the coefficient names
+#'   which are stored in the models. The \code{custom.coef.names} argument can
+#'   be used to replace them by other character strings in the order of
+#'   appearance. For example, if a table shows a total of three different
+#'   coefficients (including the intercept), the argument
+#'   \code{custom.coef.names = c("Intercept", "variable 1", "variable 2")} will
+#'   replace their names in this order.
+#'
+#'   Sometimes it happens that the same variable has a different name in
+#'   different models. In this case, the user can use this function to assign
+#'   identical names. If possible, the rows will then be merged into a single
+#'   row unless both rows contain values in the same column.
+#'
+#'   Where the argument contains an \code{NA} value, the original name of the
+#'   coefficient is kept. For example, \code{custom.coef.names = c(NA, "age",
+#'   NA)} will only replace the second coefficient name and leave the first and
+#'   third name as they are in the original model.
+#'
+#'   See also \code{custom.coef.map} for an easier and more comprehensive way to
+#'   rename, omit, and reorder coefficients.
+#' @param custom.coef.map The \code{custom.coef.map} argument can be used to
+#'   select, omit, rename, and reorder coefficients.
+#'
+#'   Users must supply a named list of this form: \code{list("x" = "First
+#'   variable", "y" = NA, "z" = "Third variable")}. With that particular example
+#'   of \code{custom.coef.map},
+#'   \enumerate{
+#'    \item coefficients will presented in order: \code{"x"}, \code{"y"},
+#'      \code{"z"}.
+#'    \item variable \code{"x"} will appear as \code{"First variable"}, variable
+#'      \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
+#'      appear as "Third variable".
+#'    \item all variables not named \code{"x"}, \code{"y"}, or \code{"z"} will
+#'      be omitted from the table.
+#'   }
+#' @param custom.gof.names A character vector which is used to replace the
+#'   names of the goodness-of-fit statistics at the bottom of the table. The
+#'   vector must have the same length as the number of GOF statistics in the
+#'   final table. The argument works like the \code{custom.coef.names} argument,
+#'   but for the GOF values. \code{NA} values can be included where the original
+#'   GOF name should be kept.
+#' @param custom.gof.rows A named list of vectors for new lines at the
+#'   beginning of the GOF block of the table. For example, \code{list("Random
+#'   effects" = c("YES", "YES", "NO"), Observations = c(25, 25, 26))} would
+#'   insert two new rows into the table, at the beginning of the GOF block
+#'   (i.e., after the coefficients). The rows can contain integer, numeric, or
+#'   character objects. Note that this argument is processed after the
+#'   \code{custom.gof.names} argument (meaning \code{custom.gof.names} should
+#'   not include any of the new GOF rows) and before the \code{reorder.gof}
+#'   argument (meaning that the new GOF order specified there should contain
+#'   values for the new custom GOF rows). Arguments for custom columns are not
+#'   affected because they only insert columns into the coefficient block.
+#' @param digits Set the number of decimal places for coefficients, standard
+#'   errors and goodness-of-fit statistics. Do not use negative values! The
+#'   argument works like the \code{digits} argument in the \code{round} function
+#'   of the \pkg{base} package.
+#' @param leading.zero Most journals require leading zeros of coefficients and
+#'   standard errors (for example, \code{0.35}). This is also the default texreg
+#'   behavior. Some journals, however, require omission of leading zeros (for
+#'   example, \code{.35}). This can be achieved by setting \code{leading.zero =
+#'   FALSE}.
+#' @param star.symbol Alternative characters for the significance stars can be
+#'   specified. This is useful if \pkg{knitr} and Markdown are used for HTML
+#'   report generation. In Markdown, asterisks or stars are interpreted as
+#'   special characters, so they have to be escaped. To make a HTML table
+#'   compatible with Markdown, specify \code{star.symbol = "\*"}. Note that some
+#'   other modifications are recommended for usage with \pkg{knitr} in
+#'   combination with Markdown or HTML (see the \code{inline.css},
+#'   \code{doctype}, \code{html.tag}, \code{head.tag}, and \code{body.tag}
+#'   arguments in the \code{\link{htmlreg}} function).
+#' @param symbol If four threshold values are handed over to the \code{stars}
+#'   argument, p-values smaller than the largest threshold value but larger than
+#'   the second-largest threshold value are denoted by this symbol. The default
+#'   symbol is \code{"\\cdot"} for the LaTeX dot, \code{"&middot;"} for the HTML
+#'   dot, or simply \code{"."} for the ASCII dot. If the \code{\link{texreg}}
+#'   function is used, any other mathematical LaTeX symbol or plain text symbol
+#'   can be used, for example \code{symbol = "\\circ"} for a small circle (note
+#'   that backslashes must be escaped). If the \code{\link{htmlreg}} function is
+#'   used, any other HTML character or symbol can be used. For the
+#'   \code{screenreg} function, only plain text characters can be used.
+#' @param override.coef Set custom values for the coefficients. New coefficients
+#'   are provided as a list of numeric vectors. The list contains vectors of
+#'   coefficients for each model. There must be as many vectors of coefficients
+#'   as there are models. For example, if there are two models with three model
+#'   terms each, the argument could be specified as \code{override.coef =
+#'   list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model,
+#'   custom values can be provided as a plain vector (not embedded in a list).
+#'   For example: \code{override.coef = c(0.05, 0.06, 0.07)}.
+#' @param override.se Set custom values for the standard errors. New standard
+#'   errors are provided as a list of numeric vectors. The list contains vectors
+#'   of standard errors for each model. There must be as many vectors of
+#'   standard errors as there are models. For example, if there are two models
+#'   with three coefficients each, the argument could be specified as
+#'   \code{override.se = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there
+#'   is only one model, custom values can be provided as a plain vector (not
+#'   embedded in a list).For example: \code{override.se = c(0.05, 0.06, 0.07)}.
+#'   Overriding standard errors can be useful for the implementation of robust
+#'   SEs, for example.
+#' @param override.pvalues Set custom values for the p-values. New p-values are
+#'   provided as a list of numeric vectors. The list contains vectors of
+#'   p-values for each model. There must be as many vectors of p-values as there
+#'   are models. For example, if there are two models with three coefficients
+#'   each, the argument could be specified as \code{override.pvalues =
+#'   list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model,
+#'   custom values can be provided as a plain vector (not embedded in a list).
+#'   For example: \code{override.pvalues = c(0.05, 0.06, 0.07)}. Overriding
+#'   p-values can be useful for the implementation of robust SEs and p-values,
+#'   for example.
+#' @param override.ci.low Set custom lower confidence interval bounds. This
+#'   works like the other override arguments, with one exception: if confidence
+#'   intervals are provided here and in the \code{override.ci.up} argument, the
+#'   standard errors and p-values as well as the \code{ci.force} argument are
+#'   ignored.
+#' @param override.ci.up Set custom upper confidence interval bounds. This
+#'   works like the other override arguments, with one exception: if confidence
+#'   intervals are provided here and in the \code{override.ci.low} argument, the
+#'   standard errors and p values as well as the \code{ci.force} argument are
+#'   ignored.
+#' @param omit.coef A character string which is used as a regular expression to
+#'   remove coefficient rows from the table. For example, \code{omit.coef =
+#'   "group"} deletes all coefficient rows from the table where the name of the
+#'   coefficient contains the character sequence \code{"group"}. More complex
+#'   regular expressions can be used to filter out several kinds of model terms,
+#'   for example \code{omit.coef = "(thresh)|(ranef)"} to remove all model terms
+#'   matching either \code{"thresh"} or \code{"ranef"}. The \code{omit.coef}
+#'   argument is processed after the \code{custom.coef.names} argument, so the
+#'   regular expression should refer to the custom coefficient names. To omit
+#'   GOF entries instead of coefficient entries, use the custom arguments of the
+#'   extract functions instead (see the help entry of the \code{\link{extract}}
+#'   function or \code{\link{extract-methods}}.
+#' @param reorder.coef Reorder the rows of the coefficient block of the
+#'   resulting table in a custom way. The argument takes a vector of the same
+#'   length as the number of coefficients. For example, if there are three
+#'   coefficients, \code{reorder.coef = c(3, 2, 1)} will put the third
+#'   coefficient in the first row and the first coefficient in the third row.
+#'   Reordering can be sensible because interaction effects are often added to
+#'   the end of the model output although they were specified earlier in the
+#'   model formula. Note: Reordering takes place after processing custom
+#'   coefficient names and after omitting coefficients, so the
+#'   \code{custom.coef.names} and \code{omit.coef} arguments should follow the
+#'   original order.
+#' @param reorder.gof Reorder the rows of the goodness-of-fit block of the
+#'   resulting table in a custom way. The argument takes a vector of the same
+#'   length as the number of GOF statistics. For example, if there are three
+#'   goodness-of-fit rows, \code{reorder.gof = c(3, 2, 1)} will exchange the
+#'   first and the third row. Note: Reordering takes place after processing
+#'   custom GOF names and after adding new custom GOF rows, so the
+#'   \code{custom.gof.names} and \code{custom.gof.rows} arguments should follow
+#'   the original order, and the \code{reorder.gof} argument should contain
+#'   values for any rows that are added through the \code{custom.gof.rows}
+#'   argument.
+#' @param ci.force Should confidence intervals be used instead of the default
+#'   standard errors and p-values? Most models implemented in the \pkg{texreg}
+#'   package report standard errors and p-values by default while few models
+#'   report confidence intervals. However, the functions in the \pkg{texreg}
+#'   package can convert standard errors and into confidence intervals using
+#'   z-scores if desired. To enforce confidence intervals instead of standard
+#'   errors, the \code{ci.force} argument accepts either a logical value
+#'   indicating whether all models or none of the models should be forced to
+#'   report confidence intervals (\code{ci.force = TRUE} for all and
+#'   \code{ci.force = FALSE} for none) or a vector of logical values indicating
+#'   for each model separately whether the model should be forced to report
+#'   confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}).
+#'   Confidence intervals are computed using the standard normal distribution
+#'   (z-values based on the \code{\link{qnorm}} function). The t-distribution is
+#'   currently not supported because this would require each
+#'   \code{\link{extract}} method to have an additional argument for the degrees
+#'   of freedom.
+#' @param ci.force.level If the \code{ci.force} argument is used to convert
+#'   standard errors to confidence intervals, what confidence level should be
+#'   used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).
+#' @param ci.test If confidence intervals are reported, the \code{ci.test}
+#'   argument specifies the reference value to establish whether a
+#'   coefficient/CI is significant. The default value \code{ci.test = 0}, for
+#'   example, will attach a significance star to coefficients if the confidence
+#'   interval does not contain \code{0}. If no star should be printed at all,
+#'   \code{ci.test = NULL} can be used. The \code{ci.test} argument works both
+#'   for models with native support for confidence intervals and in cases where
+#'   the \code{ci.force} argument is used.
+#' @param bold The p-value threshold below which the coefficient shall be
+#'   formatted in a bold font. For example, \code{bold = 0.05} will cause all
+#'   coefficients that are significant at the 95\% level to be formatted in
+#'   bold. Note that this is not compatible with the \code{dcolumn} argument in
+#'   the \code{\link{texreg}} function. If both are \code{TRUE}, \code{dcolumn}
+#'   is switched off, and a warning message appears. Note also that it is
+#'   advisable to use \code{stars = FALSE} together with the \code{bold}
+#'   argument because having both bolded coefficients and significance stars
+#'   usually does not make any sense.
+#' @param groups This argument can be used to group the rows of the table into
+#'   blocks. For example, there could be one block for hypotheses and another
+#'   block for control variables. Each group has a heading, and the row labels
+#'   within a group are indented. The partitions must be handed over as a list
+#'   of named numeric vectors, where each number is a row index and each name is
+#'   the heading of the group. Example: \code{groups = list("first group" = 1:4,
+#'   "second group" = 7:8)}.
+#' @param custom.columns An optional list of additional text columns to be
+#'   inserted into the table, for example coefficient types. The list should
+#'   contain one or more character vectors with as many character or numeric
+#'   elements as there are rows. If the vectors in the list are named, the names
+#'   are used as labels in the table header. For example, \code{custom.columns =
+#'   list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is
+#'   labeled while the second one is not. Note that the numeric elements of the
+#'   second column will be converted to character objects in this example. The
+#'   consequence is that decimal alignment with the \pkg{dcolumn} package is
+#'   switched off in these columns. Note that this argument is processed after
+#'   any arguments that affect the number of rows.
+#' @param custom.col.pos An optional integer vector of positions for the columns
+#'   given in the \code{custom.columns} argument. For example, if there are
+#'   three custom columns, \code{custom.col.pos = c(1, 3, 3)} will insert the
+#'   first custom column before the first column of the original table and the
+#'   remaining two custom columns after the second column of the original table.
+#'   By default, all custom columns are placed after the first column, which
+#'   usually contains the coefficient names.
+#' @param dcolumn Use the \pkg{dcolumn} LaTeX package to get a nice alignment of
+#'   the coefficients at the decimal separator (recommended for use with the
+#'   \code{link{texreg}} function).
+#' @param output.type Which type of output should be produced? Valid values are
+#'   \code{"ascii"} (for plain text tables), \code{"latex"} (for LaTeX markup)
+#'   in the resulting table), and \code{"html"} (for HTML markup in the
+#'   resulting table).
+#' @param include.attributes Add some attributes to the return object for
+#'   confidence intervals, coefficient names, GOF statistic names, and model
+#'   names? These are used by \code{\link{texreg}} and other functions for table
+#'   construction.
+#' @param trim leading and trailing white space in the table cells? If
+#'   \code{FALSE}, the values in each column will be aligned at the decimal
+#'   point, and spaces are used to make all cells equally long. This is useful
+#'   for on-screen output.
+#' @param ... Custom options to be passed on to the \code{\link{extract}}
+#'   function. For example, most extract methods provide custom options for the
+#'   inclusion or exclusion of specific goodness-of-fit statistics. See the help
+#'   entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
+#'   information.
+#' @return A \code{character} matrix with the coefficients and goodness-of-fit
+#'   statistics and their column names.
+#'
+#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
+#' @family texreg
+#' @seealso \code{\link{texreg-package}} \code{\link{extract}}
+#'   \code{\link{extract-methods}} \code{\link{texreg}}
+#'
+#' @export
 matrixreg <- function(l,
                       single.row = FALSE,
                       stars = c(0.001, 0.01, 0.05),
@@ -540,7 +846,7 @@ matrixreg <- function(l,
   # unnamed arguments to environment
   dots <- list(...)
 
-  # extract coefficients, SEs, GOFs etc. from the models and save in a list called 'models'
+  # extract coefficients, SEs, GOFs etc. from the models and save in a list
   models <- get.data(l, ...)
 
   # override coefs, SEs, p-values, and/or CIs if provided
@@ -879,12 +1185,10 @@ matrixreg <- function(l,
   orig.width <- ncol(m)                             # number of columns in m
   q <- matrix(nrow = 0, ncol = orig.width)          # new matrix with same width
   for (i in 1:num.unique) {                         # go through unique row names
-    rows <- matrix(NA, nrow = 0, ncol = orig.width) # create matrix where re-
-    # arranged rows will be stored
+    rows <- matrix(NA, nrow = 0, ncol = orig.width) # create matrix where re-arranged rows will be stored
     for (j in 1:orig.width) {                       # go through columns in m
       current.name <- unique.names[i]               # save row name
-      nonNa <- m[rownames(m) == current.name, j]    # create a vector of values
-      # with same rowname in the col
+      nonNa <- m[rownames(m) == current.name, j]    # create a vector of values with same rowname in the col
       nonNa <- nonNa[!is.na(nonNa)]                 # retain only non-NA values
       for (k in 1:length(nonNa)) {                  # go through non-NA values
         if (k > dim(rows)[1]) {                     # add an NA-only row in which
@@ -909,7 +1213,7 @@ matrixreg <- function(l,
   for (i in 1:length(mod.names)) {
     if (!is.null(custom.model.names) && !is.na(custom.model.names[i]) && custom.model.names[i] != "") {
       mod.names[i] <- custom.model.names[i]
-    } else if (!is.null(names(l)) && !is.na(names(l)[i]) && names(l)[i] != "") {
+    } else if (!is.null(names(l)) && !is.na(names(l)[i]) && names(l)[i] != "" && class(l) == "list") {
       mod.names[i] <- names(l)[i]
     } else if (!is.null(models[[i]]@model.name) &&
                !is.na(models[[i]]@model.name) &&
@@ -1476,12 +1780,65 @@ matrixreg <- function(l,
   return(output.matrix)
 }
 
-# print method for texreg table strings
+#' Prints a \code{texregTable} object.
+#'
+#' @param x A \code{texregTable} argument, as produced by \code{\link{texreg}}
+#'   and related functions.
+#' @param ... Additional arguments for the \code{\link[base]{cat}} function.
+#'
+#' @method print texregTable
+#' @S3method print texregTable
+#'
+#' @export
 print.texregTable <- function(x, ...) {
   cat(x, ...)
 }
 
-# screenreg function
+#' Convert regression output to an ASCII table
+#'
+#' Conversion of \R regression output to an ASCII table for display on screen.
+#'
+#' The \code{screenreg} function creates text representations of tables and
+#' prints them to the \R console. This is an alternative to the \code{summary}
+#' function and serves easy model comparison.  Moreover, once a table has been
+#' prepared in the \R console, it can be later exported to LaTeX or HTML with
+#' little extra effort because the majority of arguments of the different
+#' functions is identical.
+#'
+#' @param column.spacing The amount of space between any two columns of a table.
+#'   By default, two spaces are used. If the tables do not fit on a single page
+#'   horizontally, the value can be set to \code{1} or \code{0}.
+#' @param outer.rule The character which is used to draw the outer horizontal
+#'   line above and below a table. If an empty character object is provided
+#'   (i.e., \code{outer.rule = ""}), there will be no outer horizontal lines.
+#'   Recommended values are \code{""}, \code{"="}, \code{"-"}, \code{"_"}, or
+#'   \code{"#"}.
+#' @param inner.rule The character used to draw the inner horizontal line above
+#'   and below a table. If an empty character object is provided (i.e.,
+#'   \code{outer.rule = ""}), there will be no inner horizontal lines.
+#'   Recommended values are \code{""}, \code{"-"}, or \code{"_"}.
+#' @inheritParams texreg
+#'
+#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
+#' @family texreg
+#' @seealso \code{\link{texreg-package}} \code{\link{extract}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'
+#' @examples
+#' # Display models from ?lm:
+#' ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
+#' trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
+#' group <- gl(2, 10, 20, labels = c("Ctl", "Trt"))
+#' weight <- c(ctl, trt)
+#' lm.D9 <- lm(weight ~ group)
+#' lm.D90 <- lm(weight ~ group - 1)
+#' screenreg(list(lm.D9, lm.D90))
+#'
+#' @export
 screenreg <- function(l,
                       file = NULL,
                       single.row = FALSE,
@@ -1669,7 +2026,111 @@ screenreg <- function(l,
   }
 }
 
-# texreg function
+#' Convert regression output to a LaTeX table
+#'
+#' Conversion of \R regression output to a LaTeX table.
+#'
+#' The \code{texreg} function creates LaTeX code for inclusion in a LaTeX
+#' document or for usage with \pkg{Sweave} or \pkg{knitr}, based on a list of
+#' statistical models.
+#'
+#' @param file Using this argument, the resulting table is written to a file
+#'   rather than to the \R prompt. The file name can be specified as a character
+#'   string. Writing a table to a file can be useful for working with MS Office
+#'   or LibreOffice. For example, using the \code{\link{htmlreg}} function, an
+#'   HTML table can be written to a file with the extension \code{.doc} and
+#'   opened with MS Word. The table can then be simply copied into any Word
+#'   document, retaining the formatting of the table. Note that LibreOffice can
+#'   import only plain HTML; CSS decorations are not supported; the resulting
+#'   tables do not retain the full formatting in LibreOffice.
+#' @param custom.note With this argument, a replacement text for the
+#'   significance note below the table can be provided. If an empty character
+#'   object is provided (\code{custom.note = ""}), the note will be omitted
+#'   completely. If some character string is provided (e.g., \code{custom.note =
+#'   "My note"}), the significance legend is replaced by \code{My note}. The
+#'   original significance legend can be included by inserting the \code{%stars}
+#'   wildcard. For example, a custom note can be added right after the
+#'   significance legend by providing \code{custom.note = "%stars. My note."}.
+#' @param center Should the table be horizontally aligned at the center of the
+#'   page?
+#' @param caption Set the caption of the table.
+#' @param caption.above Should the caption of the table be placed above the
+#'   table? By default, it is placed below the table.
+#' @param label Set the label of the \code{table} environment.
+#' @param booktabs Use the \code{booktabs} LaTeX package to get thick horizontal
+#'   rules in the output table (recommended).
+#' @param lyx \code{logical}; if \code{TRUE}, each new line in the output is
+#'   doubled, which facilitates transferring the output into the LyX document
+#'   processor.
+#' @param sideways If \code{sideways = TRUE} is set, the \code{table} floating
+#'   environment is replaced by a \code{sidewaystable} float, and the
+#'   \code{rotating} package is loaded in the preamble. The argument only has an
+#'   effect if \code{table = TRUE} is also set.
+#' @param longtable If \code{longtable = TRUE} is set, the \code{longtable}
+#'   environment from the \code{longtable} LaTeX package is used to set tables
+#'   across multiple pages. Note that this argument is not compatible with the
+#'   \code{sideways} and \code{scalebox} arguments. These arguments will be
+#'   automatically switched off when \code{longtable = TRUE} is set.
+#' @param use.packages If this argument is set to \code{TRUE} (= the default
+#'   behavior), the required LaTeX packages are loaded in the beginning. If set
+#'   to \code{FALSE}, the use package statements are omitted from the output.
+#' @param table By default, \code{texreg} puts the actual \code{tabular} object
+#'   in a \code{table} floating environment. To get only the \code{tabular}
+#'   object without the whole table header, set \code{table = FALSE}.
+#' @param no.margin In order to save space, inner margins of tables can be
+#'   switched off.
+#' @param fontsize The \code{fontsize} argument serves to change the font size
+#'   used in the table. Valid values are \code{"tiny"}, \code{"scriptsize"},
+#'   \code{"footnotesize"}, \code{"small"}, \code{"normalsize"}, \code{"large"},
+#'   \code{"Large"}, \code{"LARGE"}, \code{"huge"}, and \code{"Huge"}. Note that
+#'   the \code{scalebox} argument often achieves better results when the goal is
+#'   to change the size of the table.
+#' @param scalebox The \code{scalebox} argument serves to resize the table. For
+#'   example, \code{scalebox = 1.0} is equivalent to the normal size,
+#'   \code{scalebox = 0.5} decreases the size of the table by one half, and
+#'   \code{scalebox = 2.0} doubles the space occupied by the table. Note that
+#'   the \code{scalebox} argument does not work when the \code{longtable}
+#'   argument is used.
+#' @param float.pos This argument specifies where the table should be located on
+#'   the page or in the document. By default, no floating position is specified,
+#'   and LaTeX takes care of the position automatically. Possible values include
+#'   \code{"h"} (here), \code{"p"} (page), \code{"t"} (top), \code{"b"}
+#'   (bottom), any combination thereof, e.g., \code{"tb"}, or any of these
+#'   values followed by an exclamation mark, e.g. \code{"t!"}, in order to
+#'   enforce this position. The square brackets do not have to be specified.
+#' @return A \code{character} object with a regression table and LaTeX markup.
+#'   The object has an additional \code{"texregTable"} class identifier, which
+#'   causes the object to be formatted nicely on screen when printed.
+#' @inheritParams matrixreg
+#'
+#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
+#' @family texreg
+#' @seealso \code{\link{texreg-package}} \code{\link{extract}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'
+#' @keywords print misc utilities IO programming|interface
+#'
+#' @examples
+#' # Linear mixed-effects models
+#' library("nlme")
+#' model.1 <- lme(distance ~ age, data = Orthodont, random = ~ 1)
+#' model.2 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
+#' texreg(list(model.1, model.2), booktabs = TRUE, dcolumn = TRUE)
+#'
+#' # Ordinary least squares model (example from the 'lm' help file)
+#' ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
+#' trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
+#' group <- gl(2,10,20, labels = c("Ctl","Trt"))
+#' weight <- c(ctl, trt)
+#' lm.D9 <- lm(weight ~ group)
+#' table.string <- texreg(lm.D9, return.string = TRUE)
+#' cat(table.string)
+#'
+#' @export
 texreg <- function(l,
                    file = NULL,
                    single.row = FALSE,
@@ -1809,11 +2270,11 @@ texreg <- function(l,
     if (coltypes[i] == "coef") {
       coefcount <- coefcount + 1
     }
-    if (single.row == TRUE && coltypes[i] == "coef") {
-      if (ci[coefcount] == FALSE) {
-        separator <- ")"
-      } else {
+    if (isTRUE(single.row) && coltypes[i] == "coef") {
+      if (isTRUE(ci[coefcount])) {
         separator <- "]"
+      } else {
+        separator <- ")"
       }
     } else {
       separator <- "."
@@ -1823,47 +2284,51 @@ texreg <- function(l,
     } else if (coltypes[i] == "coefnames") {
       alignmentletter <- "l"
     }
-    if (dcolumn == FALSE) {
-      coldef <- paste0(coldef, alignmentletter, margin.arg, " ")
-    } else {
+    if (isTRUE(dcolumn)) {
       if (coltypes[i] != "coef") {
         coldef <- paste0(coldef, alignmentletter, margin.arg, " ")
       } else {
-        dl <- compute.width(output.matrix[, i], left = TRUE,
-                            single.row = single.row, bracket = separator)
-        dr <- compute.width(output.matrix[, i], left = FALSE,
-                            single.row = single.row, bracket = separator)
+        dl <- compute.width(output.matrix[, i],
+                            left = TRUE,
+                            single.row = single.row,
+                            bracket = separator)
+        dr <- compute.width(output.matrix[, i],
+                            left = FALSE,
+                            single.row = single.row,
+                            bracket = separator)
         coldef <- paste0(coldef, "D{", separator, "}{", separator, "}{",
                          dl, separator, dr, "}", margin.arg, " ")
       }
+    } else {
+      coldef <- paste0(coldef, alignmentletter, margin.arg, " ")
     }
   }
+  coldef <- trimws(coldef) # remove white space at the end due to the for-loop
 
   string <- "\n"
-  linesep <- if (lyx) "\n\n" else "\n"
+  linesep <- ifelse(isTRUE(lyx), "\n\n", "\n")
 
   # write table header
-  if (use.packages == TRUE) {
-    if (sideways == TRUE & table == TRUE) {
+  if (isTRUE(use.packages)) {
+    if (isTRUE(sideways) & isTRUE(table)) {
       string <- paste0(string, "\\usepackage{rotating}", linesep)
     }
-    if (booktabs == TRUE) {
+    if (isTRUE(booktabs)) {
       string <- paste0(string, "\\usepackage{booktabs}", linesep)
     }
-    if (dcolumn == TRUE) {
+    if (isTRUE(dcolumn)) {
       string <- paste0(string, "\\usepackage{dcolumn}", linesep)
     }
-    if (longtable == TRUE) {
+    if (isTRUE(longtable)) {
       string <- paste0(string, "\\usepackage{longtable}", linesep)
     }
-    if (dcolumn == TRUE || booktabs == TRUE || sideways == TRUE ||
-        longtable == TRUE) {
+    if (isTRUE(dcolumn) || isTRUE(booktabs) || isTRUE(sideways) || isTRUE(longtable)) {
       string <- paste0(string, linesep)
     }
   }
 
-  if (longtable == TRUE) {
-    if (center == TRUE) {
+  if (isTRUE(longtable)) {
+    if (isTRUE(center)) {
       string <- paste0(string, "\\begin{center}\n")
     }
     if (!is.null(fontsize)) {
@@ -1875,8 +2340,8 @@ texreg <- function(l,
       string <- paste0(string, "\\begin{longtable}[", float.pos, "]", linesep)
     }
   } else {  # table or sidewaystable
-    if (table == TRUE) {
-      if (sideways == TRUE) {
+    if (isTRUE(table)) {
+      if (isTRUE(sideways)) {
         t <- "sideways"
       } else {
         t <- ""
@@ -1887,10 +2352,10 @@ texreg <- function(l,
         string <- paste0(string, "\\begin{", t, "table}[", float.pos, "]",
                          linesep)
       }
-      if (caption.above == TRUE) {
+      if (isTRUE(caption.above)) {
         string <- paste0(string, "\\caption{", caption, "}", linesep)
       }
-      if (center == TRUE) {
+      if (isTRUE(center)) {
         string <- paste0(string, "\\begin{center}", linesep)
       }
       if (!is.null(fontsize)) {
@@ -1905,7 +2370,7 @@ texreg <- function(l,
 
   # horizontal rule above the table
   tablehead <- ""
-  if (booktabs == TRUE) {
+  if (isTRUE(booktabs)) {
     tablehead <- paste0(tablehead, "\\toprule", linesep)
   } else {
     tablehead <- paste0(tablehead, "\\hline", linesep)
@@ -1913,13 +2378,12 @@ texreg <- function(l,
 
   # specify model names
   tablehead <- paste0(tablehead, mod.names[1])
-  if (dcolumn == TRUE) {
+  if (isTRUE(dcolumn)) {
     for (i in 2:length(mod.names)) {
       if (coltypes[i] != "coef") {
         tablehead <- paste0(tablehead, " & ", mod.names[i])
       } else {
-        tablehead <- paste0(tablehead, " & \\multicolumn{1}{c}{", mod.names[i],
-                            "}")
+        tablehead <- paste0(tablehead, " & \\multicolumn{1}{c}{", mod.names[i], "}")
       }
     }
   } else {
@@ -1929,12 +2393,12 @@ texreg <- function(l,
   }
 
   # horizontal rule between model names and coefficients (define now, add later)
-  if (booktabs == TRUE) {
+  if (isTRUE(booktabs)) {
     tablehead <- paste0(tablehead, " \\\\", linesep, "\\midrule", linesep)
   } else {
     tablehead <- paste0(tablehead, " \\\\", linesep, "\\hline", linesep)
   }
-  if (longtable == FALSE) {
+  if (isFALSE(longtable)) {
     string <- paste0(string, tablehead)
   }
 
@@ -1949,8 +2413,10 @@ texreg <- function(l,
 
   if (is.null(fontsize)) {
     notesize <- "scriptsize"
-  } else if (fontsize == "tiny" || fontsize == "scriptsize" ||
-             fontsize == "footnotesize" || fontsize == "small") {
+  } else if (fontsize == "tiny" ||
+             fontsize == "scriptsize" ||
+             fontsize == "footnotesize" ||
+             fontsize == "small") {
     notesize <- "tiny"
   } else if (fontsize == "normalsize") {
     notesize <- "scriptsize"
@@ -1988,15 +2454,15 @@ texreg <- function(l,
   }
 
   # bottom rule (define now, add later)
-  if (booktabs == TRUE) {
+  if (isTRUE(booktabs)) {
     bottomline <- paste0("\\bottomrule", linesep)
   } else {
     bottomline <- paste0("\\hline", linesep)
   }
 
   # write table header (and footer, in the case of longtable)
-  if (longtable == TRUE) {
-    if (caption.above == TRUE) {
+  if (isTRUE(longtable)) {
+    if (isTRUE(caption.above)) {
       string <- paste0(string, "\\caption{", caption, "}", linesep, "\\label{",
                        label, "}\\\\", linesep, tablehead, "\\endfirsthead", linesep,
                        tablehead, "\\endhead", linesep, bottomline, "\\endfoot", linesep,
@@ -2043,7 +2509,7 @@ texreg <- function(l,
 
   if (length(gof.names) > 0) {
     # lower mid rule
-    if (booktabs == TRUE) {
+    if (isTRUE(booktabs)) {
       string <- paste0(string, "\\midrule", linesep)
     } else {
       string <- paste0(string, "\\hline", linesep)
@@ -2064,35 +2530,35 @@ texreg <- function(l,
   }
 
   # write table footer
-  if (longtable == FALSE) {
+  if (isFALSE(longtable)) {
     string <- paste0(string, bottomline)
     string <- paste0(string, note, "\\end{tabular}", linesep)
   }
 
   # take care of center, scalebox and table environment
-  if (longtable == TRUE) {
+  if (isTRUE(longtable)) {
     string <- paste0(string, "\\end{longtable}", linesep)
     if (!is.null(fontsize)) {
       string <- paste0(string, "\\end{", fontsize, "}", linesep)
     }
-    if (center == TRUE) {
+    if (isTRUE(center)) {
       string <- paste0(string, "\\end{center}", linesep)
     }
-  } else if (table == TRUE) {
+  } else if (isTRUE(table)) {
     if (!is.null(fontsize)) {
       string <- paste0(string, "\\end{", fontsize, "}", linesep)
     }
     if (!is.null(scalebox)) {
       string <- paste0(string, "}", linesep)
     }
-    if (caption.above == FALSE) {
+    if (isFALSE(caption.above)) {
       string <- paste0(string, "\\caption{", caption, "}", linesep)
     }
     string <- paste0(string, "\\label{", label, "}", linesep)
-    if (center == TRUE) {
+    if (isTRUE(center)) {
       string <- paste0(string, "\\end{center}", linesep)
     }
-    if (sideways == TRUE) {
+    if (isTRUE(sideways)) {
       t <- "sideways"
     } else {
       t <- ""
@@ -2113,7 +2579,32 @@ texreg <- function(l,
   }
 }
 
-# Microsoft Word function
+#' Export regression output to an MS Word file
+#'
+#' Export regression output to an MS Word file.
+#'
+#' The \code{wordreg} function creates a Microsoft Word document with the
+#' requested table.
+#'
+#' @inheritParams matrixreg
+#'
+#' @author Vincent Arel-Bundock
+#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
+#' @family texreg
+#' @seealso \code{\link{texreg-package}} \code{\link{extract}}
+#'
+#' @examples
+#' # Use models from ?lm:
+#' ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
+#' trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
+#' group <- gl(2, 10, 20, labels = c("Ctl", "Trt"))
+#' weight <- c(ctl, trt)
+#' lm.D9 <- lm(weight ~ group)
+#' lm.D90 <- lm(weight ~ group - 1)
+#' wordreg(list(lm.D9, lm.D90), file = "testfile.doc")
+#' unlink("testfile.doc")
+#'
+#' @export
 wordreg <- function(l,
                     file = NULL,
                     single.row = FALSE,
@@ -2207,50 +2698,6 @@ NULL
     "Please cite the JSS article in your publications ",
     '-- see citation("texreg").'
   )
-}
-
-# extract coefficients using the broom package
-broom_coefficients <- function(x) {
-  out <- broom::tidy(x)
-  out <- out[, c("term", "estimate", "std.error", "p.value")]
-  return(out)
-}
-
-# extract gof using the broom package
-broom_gof <- function(x) {
-  # extract
-  out <- broom::glance(x)[1, ]
-  gof.decimal <- sapply(out, function(k) class(k)[1]) # type inference
-  gof.decimal <- ifelse(gof.decimal %in% c("integer", "logical"), FALSE, TRUE)
-  out <- data.frame("gof.names" = colnames(out),
-                    "gof" = as.numeric(out),
-                    "gof.decimal" = gof.decimal,
-                    stringsAsFactors = FALSE)
-  # rename
-  gof_dict <- c(
-    "adj.r.squared" = "Adj.\ R$^2$",
-    "deviance" = "Deviance",
-    "df" = "DF",
-    "df.residual" = "DF Resid.",
-    "finTol" = "Tolerance",
-    "isConv" = "Convergence",
-    "logLik" = "Log Likelihood",
-    "null.deviance" = "Deviance (Null)",
-    "p.value" = "P Value",
-    "r.squared" = "R$^2$",
-    "sigma" = "Sigma",
-    "statistic" = "Statistic"
-  )
-  gof_dict <- gof_dict[names(gof_dict) %in% out$gof.names]
-  idx <- match(names(gof_dict), out$gof.names)
-  out$gof.names[idx] <- gof_dict
-  if (any(is.na(out$gof))) {
-    warning(paste("texreg used the broom package to extract the following GOF",
-                  "measures, but could not cast them to numeric type:",
-                  out$gof.names[is.na(out$gof)]))
-  }
-  out <- stats::na.omit(out)
-  return(out)
 }
 
 # function which reformats a coefficient with a certain number of decimal places

@@ -1,17 +1,16 @@
 import("utils")
-importFrom("grDevices", "bmp", "dev.off", "jpeg", "pdf", "png", "postscript", 
+importFrom("grDevices", "bmp", "dev.off", "jpeg", "pdf", "png", "postscript",
     "tiff")
-importFrom("graphics", "axis", "mtext", "par", "plot", "points", "segments", 
+importFrom("graphics", "axis", "mtext", "par", "plot", "points", "segments",
     "strwidth")
-importFrom("stats", "AIC", "BIC", "coef", "confint", "deviance", "extractAIC", 
-    "logLik", "model.frame", "nobs", "pchisq", "pnorm", "pt", "qnorm", 
+importFrom("stats", "AIC", "BIC", "coef", "confint", "deviance", "extractAIC",
+    "logLik", "model.frame", "nobs", "pchisq", "pnorm", "pt", "qnorm",
     "residuals", "summary.lm", "vcov", "na.omit")
 importFrom("stats", "fitted")
 import("methods")
 export("texreg")
 export("htmlreg")
 export("screenreg")
-export("csvreg")
 export("matrixreg")
 export("wordreg")
 export("huxtablereg")

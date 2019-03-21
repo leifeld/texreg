@@ -3,7 +3,6 @@
 \alias{htmlreg}
 \alias{screenreg}
 \alias{matrixreg}
-\alias{csvreg}
 \alias{wordreg}
 \alias{huxtablereg}
 \title{Convert regression output to LaTeX or HTML tables}
@@ -62,16 +61,6 @@ matrixreg(l, single.row = FALSE,
     output.type = c("ascii", "latex", "html"), include.attributes = FALSE,
     trim = FALSE, ...)
 
-csvreg(l, file,
-    stars = c(0.001, 0.01, 0.05), custom.model.names = NULL,
-    custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL,
-    custom.gof.rows = NULL, custom.note = NULL, digits = 2, leading.zero = TRUE,
-    star.symbol = '*', symbol = ".", override.coef = 0, override.se = 0,
-    override.pvalues = 0, override.ci.low = 0, override.ci.up = 0,
-    omit.coef = NULL, reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
-    ci.force.level = 0.95, ci.test = 0, groups = NULL, custom.columns = NULL,
-    custom.col.pos = NULL, caption = 'Statistical Models', ...)
-
 wordreg(l, file = NULL, single.row = FALSE,
     stars = c(0.001, 0.01, 0.05), custom.model.names = NULL,
     custom.coef.names = NULL, custom.coef.map = NULL, custom.gof.names = NULL,
@@ -127,9 +116,6 @@ requested table.
 
 The \code{matrixreg()} function creates text representations of
 tables and prints them to the R console.
-
-The \code{csvreg()} function creates a spreadsheet in CSV containing the
-information in the tables.
 
 The \code{huxtablereg()} function creates a
 \code{\link[huxtable]{huxtable}} object using the \sQuote{huxtable}
