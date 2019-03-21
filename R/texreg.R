@@ -381,14 +381,13 @@ htmlreg <- function(l,
   }
 
   # stars note
-  snote <- get_stars(pval = NULL,
-                     stars = stars,
-                     star.symbol = star.symbol,
-                     symbol = symbol,
-                     ci = ci,
-                     ci.test = ci.test,
-                     css.sup = css.sup,
-                     output = "html")$note
+  snote <- get_stars_note(stars = stars,
+                          star.symbol = star.symbol,
+                          symbol = symbol,
+                          ci = ci,
+                          ci.test = ci.test,
+                          css.sup = css.sup,
+                          output = "html")
 
   if (is.null(custom.note)) {
     note <- snote
@@ -1238,6 +1237,19 @@ matrixreg <- function(l,
     }
   }
 
+  # process star symbols; create 'symbols' vector
+  symbols <- c(paste(rep(star.symbol, 3), collapse = ""),
+               paste(rep(star.symbol, 2), collapse = ""),
+               star.symbol,
+               symbol)
+  if (length(stars) == 1) {
+    symbols <- symbols[3]
+  } else if (length(stars) == 2) {
+    symbols <- symbols[2:3]
+  } else if (length(stars) == 3) {
+    symbols <- symbols[1:3]
+  }
+
   # write coefficient rows
   if (output.type[1] == "ascii") {
     neginfstring <- "-Inf"
@@ -1325,15 +1337,22 @@ matrixreg <- function(l,
                           se.suffix.current)
           }
 
-          if (ci[k - 1] == FALSE) {
-            p <- get_stars(pval = m[i, j + 2],
-                           stars = stars,
-                           star.symbol = star.symbol,
-                           symbol = symbol,
-                           star.prefix = star.prefix,
-                           star.suffix = star.suffix,
-                           ci = ci
-            )$coefficients
+          if (ci[k - 1] == FALSE) { # attach SE stars to the matrix cell
+            pval <- m[i, j + 2]
+            if (is.null(pval) || is.null(stars) || length(stars) == 0) {
+              p = ""
+            } else {
+              if (is.na(pval)) {
+                pval <- 1.0
+              }
+              st <- sort(stars)
+              idx <- (pval < st)
+              if (any(idx)) {  # choose lowest threshold (relies on previous sorting)
+                p <- paste0(star.prefix, symbols[idx][1], star.suffix)
+              } else {  # not significant
+                p <- ""
+              }
+            }
           } else { # significance from confidence interval
             if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
                 (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
@@ -1419,14 +1438,22 @@ matrixreg <- function(l,
             se.prefix.current <- ""
             se.suffix.current <- ""
           }
-          if (ci[k - 1] == FALSE) {
-            p <- get_stars(pval = m[i, j + 2],
-                           stars = stars,
-                           star.symbol = star.symbol,
-                           symbol = symbol,
-                           star.prefix = star.prefix,
-                           star.suffix = star.suffix
-            )$coefficients
+          if (ci[k - 1] == FALSE) { # attach SE stars to the matrix cell
+            pval <- m[i, j + 2]
+            if (is.null(pval) || is.null(stars) || length(stars) == 0) {
+              p = ""
+            } else {
+              if (is.na(pval)) {
+                pval <- 1.0
+              }
+              st <- sort(stars)
+              idx <- (pval < st)
+              if (any(idx)) {  # choose lowest threshold (relies on previous sorting)
+                p <- paste0(star.prefix, symbols[idx][1], star.suffix)
+              } else {  # not significant
+                p <- ""
+              }
+            }
           } else { # significance from confidence interval
             if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
                 (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
@@ -1993,13 +2020,12 @@ screenreg <- function(l,
   }
 
   # stars note
-  snote <- get_stars(pval = NULL,
-                     stars = stars,
-                     star.symbol = star.symbol,
-                     symbol = symbol,
-                     ci = ci,
-                     ci.test = ci.test,
-                     output = "ascii")$note
+  snote <- get_stars_note(stars = stars,
+                          star.symbol = star.symbol,
+                          symbol = symbol,
+                          ci = ci,
+                          ci.test = ci.test,
+                          output = "ascii")
 
   # custom note
   if (is.null(custom.note)) {
@@ -2403,13 +2429,12 @@ texreg <- function(l,
   }
 
   # stars note (define now, add later)
-  snote <- get_stars(pval = NULL,
-                     stars = stars,
-                     star.symbol = "*",
-                     symbol = symbol,
-                     ci = ci,
-                     ci.test = ci.test,
-                     output = "latex")$note
+  snote <- get_stars_note(stars = stars,
+                          star.symbol = "*",
+                          symbol = symbol,
+                          ci = ci,
+                          ci.test = ci.test,
+                          output = "latex")
 
   if (is.null(fontsize)) {
     notesize <- "scriptsize"
@@ -2688,7 +2713,8 @@ wordreg <- function(l,
 #' @name internal
 NULL
 
-# display version number and date when the package is loaded
+#' Display version number and date when the package is loaded.
+#' @noRd
 .onAttach <- function(libname, pkgname) {
   desc  <- packageDescription(pkgname, libname)
   packageStartupMessage(
@@ -2700,7 +2726,29 @@ NULL
   )
 }
 
-# function which reformats a coefficient with a certain number of decimal places
+#' Convert a number into a string with rounded decimal places
+#'
+#' Reformat a coefficient as a string with a certain number of decimal places.
+#'
+#' This function takes a \code{numeric} object, usually a coefficient from a
+#' statistical model, and converts it into a \code{character} object. The user
+#' can choose to how many decimal places the number is rounded (usually two in
+#' most published regression models) and whether there should be a leading zero
+#' if the coefficient is between 0 and 1.
+#'
+#' @param x A \code{numeric} object to reformat.
+#' @param lead.zero Should a leading zero be printed if the coefficient is
+#'   non-negative and smaller than one (e.g., \code{"0.23"} as opposed to
+#'   \code{".23"})?
+#' @param digits Number of decimal places to round to.
+#' @return A reformatted coefficient string as a \code{character} object.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{texreg}}
+#'
+#' @export
 coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
   if (is.na(digits)) {
     return("")
@@ -2724,9 +2772,39 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
   return(y)
 }
 
-# compute column width left and right of the decimal separator
+#' Compute maximum column width left and right of a decimal separator
+#'
+#' Compute maximum column width left and right of a decimal separator.
+#'
+#' This function takes a vector of \code{character} objects with coefficients,
+#' usually a column of a regression table, and computes the maximal width left
+#' or right of the decimal separator or bracket at which the cells are aligned
+#' vertically. This is useful in the context of the \code{\link{texreg}}
+#' function when the \code{dcolumn} argument is used for vertical decimal point
+#' alignment.
+#'
+#' @param v A \code{character} vector representing a column in a regression
+#'   table.
+#' @param left Should the width left of the separator/bracket be calculated? If
+#'   \code{FALSE}, the width right of the separator/bracket is computed.
+#' @param Was the \code{single.row} argument used to construct the regression
+#'   table? I.e., are both the coefficient and uncertainty measure (SE or CI) in
+#'   the same rows of the matrix?
+#' @param bracket The separator symbol to match. These can be closing
+#'   parentheses (in the case of standard errors when \code{single.row} is
+#'   switched on), closing square brackets (in the case of confidence
+#'   intervals), or dots (in the case of \code{single.row = FALSE}, for decimal
+#'   alignment at the actual decimal separator).
+#' @return A number indicating the maximal width left or right of the separator.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{texreg}}
+#'
+#' @export
 compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
-  if (single.row == FALSE) {
+  if (isFALSE(single.row)) {
     v[which(!grepl("\\.", v))] <- paste0(v[which(!grepl("\\.", v))], ".")
     ssp <- strsplit(v, "\\.")
     left.side <- character()
@@ -2753,7 +2831,7 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
       }
     }
   }
-  if (left == TRUE) {
+  if (isTRUE(left)) {
     left.side <- sub("\\\\; ", "", left.side)
     v.length <- max(nchar(left.side), na.rm = TRUE)
   } else {
@@ -2764,8 +2842,40 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   return(v.length)
 }
 
-# determine column names or column types if custom columns are present
-customcolumnnames <- function(modelnames, custom.columns, custom.col.pos, types = FALSE) {
+#' Determine column names or column types if custom columns are present
+#'
+#' Determine column names or column types if custom columns are present.
+#'
+#' This function takes model names (as saved in the attributes of a matrix
+#' generated by \code{\link{matrixreg}}, for example) and the
+#' \code{custom.columns} and \code{custom.col.pos} arguments of
+#' \code{link{matrixreg}} or related functions and determines the column types
+#' (\code{"coefnames"}, \code{"coef"}, or \code{"customcol"}) or model names in
+#' the presence of custom columns.
+#'
+#' @param modelnames A \code{character} vector of original model names, before
+#'   any custom columns are inserted.
+#' @param custom.columns The same argument as specified in the
+#'   \code{link{matrixreg}} function.
+#' @param custom.col.pos The same argument as specified in the
+#'   \code{link{matrixreg}} function.
+#' @param types Return the column types? If \code{FALSE}, the column names in
+#'   the possible presence of custom columns are returned.
+#' @return A \code{character} vector with column names or types in the possible
+#'   presence of custom columns. If \code{types = TRUE}, the vector contains
+#'   the values \code{"coefnames"} (for the first column), \code{"coef"} (for
+#'   columns with coefficients), or \code{"customcol"} (for custom new columns).
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{matrixreg}}
+#'
+#' @export
+customcolumnnames <- function(modelnames,
+                              custom.columns,
+                              custom.col.pos,
+                              types = FALSE) {
 
   # adjust arguments
   modelnames <- c("", modelnames)
@@ -2828,6 +2938,27 @@ customcolumnnames <- function(modelnames, custom.columns, custom.col.pos, types 
   }
 }
 
+#' Extract all data necessary for generating a table from statistical models
+#'
+#' Extract all data necessary for generating a table from a list of models.
+#'
+#' This function applies the \code{link{extract}} function and its respective
+#' methods to each element in a list of statistical models in order to extract
+#' coefficients, standard errors, p-values, confidence intervals, and
+#' goodness-of-fit statistics for generating a regression table.
+#'
+#' @param l A list of statistical models.
+#' @param ... Arguments to be passed over to the \code{\link{extract}} function,
+#'   such as \code{include.nobs} or \code{include.aic}. Details are provided in
+#'   the documentation of the \code{\link{extract}} function.
+#' @return A list of \code{"texreg"} objects.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{extract}}
+#'
+#' @export
 get.data <- function(l, ...) {
   # if a single model is handed over, put model inside a list
   if (!"list" %in% class(l)[1]) {
@@ -2849,18 +2980,45 @@ get.data <- function(l, ...) {
 
 # create the star note (legend) printed at the bottom of tables and the stars
 # printed next to standard errors
-get_stars <- function(pval = NULL, # test statistics;
-                      # leave NULL if you only want the legend
-                      stars = c(0.01, 0.05, 0.1),  # numeric vector of cut-offs
-                      star.symbol = "*",  # character to repeat for first 3
-                      # levels of significance
-                      symbol = ".",  # character for 4th level of significance
-                      star.prefix = "",
-                      star.suffix = "",
-                      ci = FALSE,
-                      ci.test = NULL,
-                      css.sup = NULL,
-                      output = "ascii") {
+
+#' Create a legend for the stars in a regression table
+#'
+#' Create a legend for the stars in a regression table.
+#'
+#' This function creates a stars note as a legend to be placed below a
+#' regression table. The note contains the p-value or confidence interval
+#' significance levels and stars attached to them.
+#'
+#' @param stars A numeric vector of cut-offs, with a maximum of four numbers.
+#' @param star.symbol The character to repeat for the first three levels of
+#'   significance.
+#' @param symbol The character for the fourth level of significance.
+#' @param ci Confidence intervals instead of standard errors?
+#' @param ci.test The null hypothesis value, for example \code{0} (the normal
+#'   case) or \code{1} (e.g., with exponentiated coefficients). A star is added
+#'   if this value is outside the confidence interval.
+#' @param css.sup An HTML style sheet attribute to be added to the
+#'   \code{"<sup>"} tag for vertical alignment. For example,
+#'   \code{" style=\"vertical-align: 4px;\"}. Only required with
+#'   \code{output = "html"}.
+#' @param output The output type of the note. This can be \code{"ascii"},
+#'   \code{"latex"}, or \code{"html"}.
+#' @return A \code{character} string to be put below the regression table. It
+#'   describes the thresholds for the significance stars.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{texreg}}, \code{\link{htmlreg}}, \code{\link{screenreg}}
+#'
+#' @export
+get_stars_note <- function(stars = c(0.01, 0.05, 0.1),
+                           star.symbol = "*",
+                           symbol = ".",
+                           ci = FALSE,
+                           ci.test = NULL,
+                           css.sup = NULL,
+                           output = "ascii") {
 
   # sanity checks and prep
   if (!output %in% c("ascii", "latex", "html")) {
@@ -2890,8 +3048,8 @@ get_stars <- function(pval = NULL, # test statistics;
   if (!is.null(symbol) && !is.character(symbol)) {
     stop("The argument 'symbol' must be NULL or character.")
   }
-  if (is.null(css.sup) & (output == "html")) {
-    stop("To write a star note in html, you must supply 'css.sup'.")
+  if (is.null(css.sup) & output == "html") {
+    stop("To write a star note in HTML, you must supply 'css.sup'.")
   }
   if (length(stars) == 0) {
     stars <- NULL
@@ -2915,15 +3073,11 @@ get_stars <- function(pval = NULL, # test statistics;
   if (p_note_flag && !is.null(stars)) {  # stars supplied = build note
     st <- sort(stars)
     if (output == "ascii") {
-      p_note <- paste0(star.prefix,
-                       symbols,
-                       star.suffix,
+      p_note <- paste0(symbols,
                        " p < ", st)
     } else if (output == "latex") {
       p_note <- paste0("$^{",
-                       star.prefix,
                        symbols,
-                       star.suffix,
                        "}p<",
                        st,
                        "$")
@@ -2931,9 +3085,7 @@ get_stars <- function(pval = NULL, # test statistics;
       p_note <- paste0("<sup",
                        css.sup,
                        ">",
-                       star.prefix,
                        symbols,
-                       star.suffix,
                        "</sup>p &lt; ",
                        st)
     }
@@ -2971,28 +3123,32 @@ get_stars <- function(pval = NULL, # test statistics;
     s_note <- ""
   }
 
-  # stars for individual coefficients
-  if (is.null(pval) | is.null(stars)) {
-    p = ""
-  } else {
-    if (is.na(pval)) {
-      pval <- 1.0
-    }
-    idx <- pval < st
-    if (any(idx)) {  # choose lowest threshold (relies on previous sorting)
-      p <- paste0(star.prefix, symbols[idx][1], star.suffix)
-    } else {  # not significant
-      p <- ""
-    }
-  }
-
-  out <- list("note" = s_note, "coefficients" = p)
-  return(out)
+  return(s_note)
 }
 
+#' Replace symbols in a character string or vector by LaTeX equivalents
+#'
+#' Replace symbols in a character string or vector by LaTeX equivalents-
+#'
+#' This function is an internal helper function that takes a \code{character}
+#' object or vector and replaces symbols like underscores, angle brackets, or
+#' superscripted numbers by properly escaped LaTeX equivalents in order not to
+#' break any LaTeX table code when the \code{link{texreg}} function is used.
+#'
+#' @param x A \code{character} object of arbitrary length.
+#' @return Same as the input object but with escaped or replaced symbols.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{texreg}}
+#'
+#' @export
 names2latex <- function(x) {
   if (is.null(x)) {
     return(NULL)
+  } else if (is.na(x)) {
+    return(NA)
   } else if (!grepl("\\$", x)) {
     x <- gsub("_", "\\\\_", x)
     x <- gsub("<", "\\$<\\$", x)
