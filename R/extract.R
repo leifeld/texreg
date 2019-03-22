@@ -2154,7 +2154,7 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
 #' @aliases extract.lm
 #' @author Philip Leifeld
 #'
-# #' @importFrom stats nobs
+#' @importFrom stats nobs
 #' @export
 setMethod("extract", signature = className("lm", "stats"),
     definition = extract.lm)
