@@ -2078,7 +2078,7 @@ setMethod("extract", signature = className("H2OBinomialModel", "h2o"),
     definition = extract.H2OBinomialModel)
 
 
-# extension for lm objects
+#' @noRd
 extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
     include.nobs = TRUE, include.fstatistic = FALSE, include.rmse = FALSE, ...) {
   s <- summary(model, ...)
@@ -2088,35 +2088,34 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
   se <- s$coefficients[, 2]
   pval <- s$coefficients[, 4]
 
-  rs <- s$r.squared  #extract R-squared
-  adj <- s$adj.r.squared  #extract adjusted R-squared
-  n <- nobs(model)  #extract number of observations
-
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
-  if (include.rsquared == TRUE) {
+  if (isTRUE(include.rsquared)) {
+    rs <- s$r.squared  # extract R-squared
     gof <- c(gof, rs)
     gof.names <- c(gof.names, "R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.adjrs == TRUE) {
+  if (isTRUE(include.adjrs)) {
+    adj <- s$adj.r.squared  # extract adjusted R-squared
     gof <- c(gof, adj)
     gof.names <- c(gof.names, "Adj.\ R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.nobs == TRUE) {
+  if (isTRUE(include.nobs)) {
+    n <- nobs(model)  # extract number of observations
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
-  if (include.fstatistic == TRUE) {
+  if (isTRUE(include.fstatistic)) {
     fstat <- s$fstatistic[[1]]
     gof <- c(gof, fstat)
     gof.names <- c(gof.names, "F statistic")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
+  if (isTRUE(include.rmse) && !is.null(s$sigma[[1]])) {
     rmse <- s$sigma[[1]]
     gof <- c(gof, rmse)
     gof.names <- c(gof.names, "RMSE")
@@ -2135,19 +2134,85 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{lm} objects
+#'
+#' \code{\link{extract}} method for \code{lm} objects. These objects are
+#' created by the \code{\link[stats]{lm}} function in the \pkg{stats} package.
+#'
+#' @param model A model object.
+#' @param include.rsquared Report R^2 in the GOF block?
+#' @param include.adjrs Report adjusted R^2 in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.fstatistic Report the F-statistic in the GOF block?
+#' @param include.rmse Report the root mean square error (RMSE; = residual
+#'   standard deviation) in the GOF block?
+#' @param ... Additional arguments for the \code{\link[base]{summary}} function
+#'   for \code{lm} objects.
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract lm
+#' @aliases extract.lm
+#' @author Philip Leifeld
+#'
+# #' @importFrom stats nobs
+#' @export
 setMethod("extract", signature = className("lm", "stats"),
     definition = extract.lm)
 
 extract.dynlm <- extract.lm
+
+#' \code{\link{extract}} method for \code{dynlm} objects
+#'
+#' \code{\link{extract}} method for \code{dynlm} objects. These objects are
+#' created by the \code{\link[dynlm]{dynlm}} function in the \pkg{dynlm}
+#' package.
+#'
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract dynlm
+#' @aliases extract.dynlm
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("dynlm", "dynlm"),
     definition = extract.dynlm)
 
 extract.ivreg <- extract.lm
+
+#' \code{\link{extract}} method for \code{ivreg} objects
+#'
+#' \code{\link{extract}} method for \code{ivreg} objects. These objects are
+#' created by the \code{\link[AER]{ivreg}} function in the \pkg{AER}
+#' package.
+#'
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract ivreg
+#' @aliases extract.ivreg
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("ivreg", "AER"),
     definition = extract.ivreg)
 
-#extension for speedlm objects
 extract.speedlm <- extract.lm
+
+#' \code{\link{extract}} method for \code{speedglm} objects
+#'
+#' \code{\link{extract}} method for \code{speedglm} objects. These objects are
+#' created by the \code{\link[speedglm]{speedglm}} function in the
+#' \pkg{speedglm} package.
+#'
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract speedglm
+#' @aliases extract.speedglm
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract",  signature = className("speedlm", "speedglm"),
           definition = extract.speedlm)
 
