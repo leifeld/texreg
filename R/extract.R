@@ -1,11 +1,41 @@
-# The texreg package was written by Philip Leifeld.
-# Please use the issue tracker at http://github.com/leifeld/texreg
-# for bug reports, help or feature requests.
-
-
 # Generic function -------------------------------------------------------------
 
-# generic extract function
+#' Extract details for table construction from statistical models
+#'
+#' Extract details for table construction from statistical models.
+#'
+#' The \code{\link{extract}} function serves to retrieve coefficients, standard
+#' errors, p-values, confidence intervals, and goodness-of-fit statistics from
+#' statistical models in \R. More than 100 \code{\link{extract}} methods
+#' ("extensions") for various statistical models are available. The function
+#' returns a \linkS4class{texreg} object.
+#'
+#' \code{\link{extract}} is a generic function, which extracts coefficients and
+#' GOF measures from statistical model objects. \code{\link{extract}} methods
+#' for the specific model types are called by the generic \code{\link{extract}}
+#' function if it encounters a model known to be handled by the specific method.
+#' The output is a \linkS4class{texreg} object, which is subsequently used by
+#' the \code{\link{texreg}} function and related functions.
+#'
+#' Users can contribute their own extensions for additional statistical models.
+#' Examples are contained in the article in the Journal of Statistical Software
+#' referenced below. Suggestions can be submitted as pull requests at
+#' \url{https://github.com/leifeld/texreg/pulls} or through the issue tracker at
+#' \url{https://github.com/leifeld/texreg/issues}.
+#'
+#' @param model A statistical model object.
+#' @param ... Custom parameters, which are handed over to subroutines.
+#' @return A \linkS4class{texreg} object.
+#'
+#' @rdname extract
+#' @author Philip Leifeld
+#' @seealso \code{\link{createTexreg}}, \code{\link{screenreg}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'
+#' @export
 setGeneric("extract", function(model, ...) standardGeneric("extract"),
     package = "texreg")
 

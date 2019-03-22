@@ -1,4 +1,4 @@
-#' Conversion of R Regression Output to LaTeX or HTML Tables
+#' Conversion of \R Regression Output to LaTeX or HTML Tables
 #'
 #' \pkg{texreg} converts coefficients, standard errors, uncertainty measures,
 #' and goodness-of-fit statistics of statistical models into LaTeX or HTML
@@ -78,9 +78,9 @@ NULL
 #'   this looks too low. A value of \code{4} looks OK in Firefox, for example,
 #'   but is above the line in RStudio's internal browser.
 #' @inheritParams texreg
+#' @inheritParams matrixreg
 #'
 #' @author Philip Leifeld
-#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'
@@ -446,15 +446,16 @@ htmlreg <- function(l,
 #'
 #' Create a huxtable object from multiple statistical models.
 #'
-#' The \code{huxtablereg} function creates a \code{\link[huxtable]{huxtable}}
-#' object using the \pkg{huxtable} package. This allows output to HTML,
-#' LaTeX, Word, Excel, Powerpoint, and RTF. The object can be formatted using
-#' \pkg{huxtable} package functions. See also \code{\link[huxtable]{huxreg}}.
+#' The \code{\link{huxtablereg}} function creates a
+#' \code{\link[huxtable]{huxtable}} object using the \pkg{huxtable} package.
+#' This allows output to HTML, LaTeX, Word, Excel, Powerpoint, and RTF. The
+#' object can be formatted using \pkg{huxtable} package functions. See also
+#' \code{\link[huxtable]{huxreg}}.
 #'
 #' @inheritParams matrixreg
 #'
 #' @author David Hugh-Jones
-#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
+#'
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'
@@ -620,8 +621,8 @@ huxtablereg <- function(l,
 #'   affected because they only insert columns into the coefficient block.
 #' @param digits Set the number of decimal places for coefficients, standard
 #'   errors and goodness-of-fit statistics. Do not use negative values! The
-#'   argument works like the \code{digits} argument in the \code{round} function
-#'   of the \pkg{base} package.
+#'   argument works like the \code{digits} argument in the
+#'   \code{\link[base]{round}} function of the \pkg{base} package.
 #' @param leading.zero Most journals require leading zeros of coefficients and
 #'   standard errors (for example, \code{0.35}). This is also the default texreg
 #'   behavior. Some journals, however, require omission of leading zeros (for
@@ -781,7 +782,7 @@ huxtablereg <- function(l,
 #'   usually contains the coefficient names.
 #' @param dcolumn Use the \pkg{dcolumn} LaTeX package to get a nice alignment of
 #'   the coefficients at the decimal separator (recommended for use with the
-#'   \code{link{texreg}} function).
+#'   \code{\link{texreg}} function).
 #' @param output.type Which type of output should be produced? Valid values are
 #'   \code{"ascii"} (for plain text tables), \code{"latex"} (for LaTeX markup)
 #'   in the resulting table), and \code{"html"} (for HTML markup in the
@@ -803,7 +804,6 @@ huxtablereg <- function(l,
 #'   statistics and their column names.
 #'
 #' @author Philip Leifeld
-#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'   \code{\link{extract-methods}} \code{\link{texreg}}
@@ -1814,7 +1814,8 @@ matrixreg <- function(l,
 #' @param ... Additional arguments for the \code{\link[base]{cat}} function.
 #'
 #' @method print texregTable
-#' @S3method print texregTable
+#'
+#' @author Philip Leifeld
 #'
 #' @export
 print.texregTable <- function(x, ...) {
@@ -1825,12 +1826,12 @@ print.texregTable <- function(x, ...) {
 #'
 #' Conversion of \R regression output to an ASCII table for display on screen.
 #'
-#' The \code{screenreg} function creates text representations of tables and
-#' prints them to the \R console. This is an alternative to the \code{summary}
-#' function and serves easy model comparison.  Moreover, once a table has been
-#' prepared in the \R console, it can be later exported to LaTeX or HTML with
-#' little extra effort because the majority of arguments of the different
-#' functions is identical.
+#' The \code{\link{screenreg}} function creates text representations of tables
+#' and prints them to the \R console. This is an alternative to the
+#' \code{\link[base]{summary}} function and serves easy model comparison.
+#' Moreover, once a table has been prepared in the \R console, it can be later
+#' exported to LaTeX or HTML with little extra effort because the majority of
+#' arguments of the different functions are identical.
 #'
 #' @param column.spacing The amount of space between any two columns of a table.
 #'   By default, two spaces are used. If the tables do not fit on a single page
@@ -1845,9 +1846,9 @@ print.texregTable <- function(x, ...) {
 #'   \code{outer.rule = ""}), there will be no inner horizontal lines.
 #'   Recommended values are \code{""}, \code{"-"}, or \code{"_"}.
 #' @inheritParams texreg
+#' @inheritParams matrixreg
 #'
 #' @author Philip Leifeld
-#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'
@@ -2056,7 +2057,7 @@ screenreg <- function(l,
 #'
 #' Conversion of \R regression output to a LaTeX table.
 #'
-#' The \code{texreg} function creates LaTeX code for inclusion in a LaTeX
+#' The \code{\link{texreg}} function creates LaTeX code for inclusion in a LaTeX
 #' document or for usage with \pkg{Sweave} or \pkg{knitr}, based on a list of
 #' statistical models.
 #'
@@ -2075,16 +2076,16 @@ screenreg <- function(l,
 #'   will be omitted completely. If some character string is provided (e.g.,
 #'   \code{custom.note = "My note"}), the significance legend is replaced by
 #'   \code{My note}. The original significance legend can be included by
-#'   inserting the \code{%stars} wildcard. For example, a custom note can be
+#'   inserting the \code{\%stars} wildcard. For example, a custom note can be
 #'   added right after the significance legend by providing \code{custom.note =
-#'   "%stars. My note."}.
+#'   "\%stars. My note."}.
 #' @param center Should the table be horizontally aligned at the center of the
 #'   page?
 #' @param caption Set the caption of the table.
 #' @param caption.above Should the caption of the table be placed above the
 #'   table? By default, it is placed below the table.
 #' @param label Set the label of the \code{table} environment.
-#' @param booktabs Use the \code{booktabs} LaTeX package to get thick horizontal
+#' @param booktabs Use the \pkg{booktabs} LaTeX package to get thick horizontal
 #'   rules in the output table (recommended).
 #' @param lyx \code{logical}; if \code{TRUE}, each new line in the output is
 #'   doubled, which facilitates transferring the output into the LyX document
@@ -2131,7 +2132,6 @@ screenreg <- function(l,
 #' @inheritParams matrixreg
 #'
 #' @author Philip Leifeld
-#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'
@@ -2613,9 +2613,9 @@ texreg <- function(l,
 #' requested table.
 #'
 #' @inheritParams matrixreg
+#' @inheritParams texreg
 #'
 #' @author Vincent Arel-Bundock
-#' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'
@@ -2709,11 +2709,6 @@ wordreg <- function(l,
 
 # Internal helpers -------------------------------------------------------------
 
-#' Internal functions for the \pkg{texreg} package
-#'
-#' @name internal
-NULL
-
 #' Display version number and date when the package is loaded.
 #' @noRd
 .onAttach <- function(libname, pkgname) {
@@ -2744,7 +2739,6 @@ NULL
 #' @param digits Number of decimal places to round to.
 #' @return A reformatted coefficient string as a \code{character} object.
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{texreg}}
@@ -2798,7 +2792,6 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
 #'   alignment at the actual decimal separator).
 #' @return A number indicating the maximal width left or right of the separator.
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{texreg}}
@@ -2867,7 +2860,6 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
 #'   the values \code{"coefnames"} (for the first column), \code{"coef"} (for
 #'   columns with coefficients), or \code{"customcol"} (for custom new columns).
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{matrixreg}}
@@ -2954,7 +2946,6 @@ customcolumnnames <- function(modelnames,
 #'   the documentation of the \code{\link{extract}} function.
 #' @return A list of \linkS4class{texreg} objects.
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{extract}}
@@ -3000,14 +2991,13 @@ get.data <- function(l, ...) {
 #'   if this value is outside the confidence interval.
 #' @param css.sup An HTML style sheet attribute to be added to the
 #'   \code{"<sup>"} tag for vertical alignment. For example,
-#'   \code{" style=\"vertical-align: 4px;\"}. Only required with
+#'   \code{" style=\"vertical-align: 4px;\""}. Only required with
 #'   \code{output = "html"}.
 #' @param output The output type of the note. This can be \code{"ascii"},
 #'   \code{"latex"}, or \code{"html"}.
 #' @return A \code{character} string to be put below the regression table. It
 #'   describes the thresholds for the significance stars.
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{texreg}}, \code{\link{htmlreg}}, \code{\link{screenreg}}
@@ -3139,7 +3129,6 @@ get_stars_note <- function(stars = c(0.01, 0.05, 0.1),
 #' @param x A \code{character} object of arbitrary length.
 #' @return Same as the input object but with escaped or replaced symbols.
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{texreg}}
@@ -3176,7 +3165,7 @@ names2latex <- function(x) {
 #' in the documentation of the \code{\link{matrixreg}} function.
 #'
 #' @param models A list of \linkS4class{texreg} objects (e.g., as returned by
-#'   \code{\link{get.data}).
+#'   \code{\link{get.data}}).
 #' @param override.coef Replacement list of coefficient vectors.
 #' @param override.se Replacement list of standard error vectors
 #' @param override.pvalues Replacement list of p-value vectors.
@@ -3186,7 +3175,6 @@ names2latex <- function(x) {
 #'   values.
 #' @return Same list as input list of models, but with replaced values.
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{matrixreg}}, \code{\link{plotreg}}, \code{\link{texreg}}
@@ -3393,7 +3381,6 @@ replaceSymbols <- function(m) {
 #'   not contain NA values, duplicate entries, or gaps.
 #' @return Reordered matrix.
 #'
-#' @rdname internal
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{matrixreg}}
@@ -3434,7 +3421,13 @@ reorder <- function(mat, new.order) {
 #'
 #' Constructor for \linkS4class{texreg} objects.
 #'
-#' This function creates a \linkS4class{texreg} object and returns it.
+#' This function creates a \linkS4class{texreg} object. A \linkS4class{texreg}
+#' object contains information about coefficients, standard errors, p-values
+#' (optional), and about goodness-of-fit statistics. Instead of standard
+#' errors and p-values, a \linkS4class{texreg} object may also contain upper and
+#' lower bounds of a confidence interval. \linkS4class{texreg} objects are used
+#' by the \code{\link{texreg}} function to create LaTeX tables and other
+#' representations of the model results.
 #'
 #' @param coef.names The names for the covariates in a model as a
 #'   \code{character} vector (= row names).
@@ -3459,9 +3452,38 @@ reorder <- function(mat, new.order) {
 #'   vector of length zero if there is no model name.
 #' @return A \linkS4class{texreg} object representing the statistical model.
 #'
-#' @rdname texreg-class
 #' @author Philip Leifeld
 #' @seealso \code{\link{extract}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'
+#' @examples
+#'
+#' library("nlme")  # load library for fitting linear mixed effects models
+#' model <- lme(distance ~ age, data = Orthodont, random = ~ 1)  # estimate
+#' coefficient.names <- rownames(summary(model)$tTable)  # extract coef names
+#' coefficients <- summary(model)$tTable[, 1]  # extract coefficient values
+#' standard.errors <- summary(model)$tTable[, 2]  # extract standard errors
+#' significance <- summary(model)$tTable[, 5]  #extract p-values
+#'
+#' lik <- summary(model)$logLik  # extract log likelihood
+#' aic <- summary(model)$AIC  # extract AIC
+#' bic <- summary(model)$BIC  # extract BIC
+#' n <- nobs(model)  # extract number of observations
+#' gof <- c(aic, bic, lik, n)  # create a vector of GOF statistics
+#' gof.names <- c("AIC", "BIC", "Log Likelihood", "Num. obs.")  # names of GOFs
+#' decimal.places <- c(TRUE, TRUE, TRUE, FALSE)  # last one is a count variable
+#'
+#' # create the texreg object
+#' tr <- createTexreg(coef.names = coefficient.names,
+#'                    coef = coefficients,
+#'                    se = standard.errors,
+#'                    pvalues = significance,
+#'                    gof.names = gof.names,
+#'                    gof = gof,
+#'                    gof.decimal = decimal.places)
 #'
 #' @export
 createTexreg <- function(coef.names,
@@ -3491,6 +3513,10 @@ createTexreg <- function(coef.names,
 #'
 #' An S4 class to represent a statistical model as a texreg object.
 #'
+#' A \linkS4class{texreg} object stores details about a statistical model. It
+#' can be used for creating regression tables using \code{\link{screenreg}},
+#' \code{\link{texreg}}, and similar functions.
+#'
 #' @slot coef.names The covariate names.
 #' @slot coef The coefficients.
 #' @slot se The standard errors.
@@ -3503,9 +3529,12 @@ createTexreg <- function(coef.names,
 #'   decimal value (\code{TRUE}) or an integer value (\code{FALSE}).
 #' @slot An optional model name. Can be of length zero.
 #'
-#' @rdname texreg-class
 #' @author Philip Leifeld
 #' @seealso \code{\link{extract}} \code{\link{createTexreg}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
 #'
 #' @export
 setClass(Class = "texreg",
@@ -3562,10 +3591,13 @@ setClass(Class = "texreg",
 #'
 #' @param object The \linkS4class{texreg} object to display.
 #'
-#' @rdname texreg-class
 #' @author Philip Leifeld
 #' @seealso \code{\link{extract}}, \code{\link{createTexreg}},
 #'   \code{\link{screenreg}}
+#'
+#' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
+#'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
+#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
 #'
 #' @export
 setMethod(f = "show", signature = "texreg", definition = function(object) {
