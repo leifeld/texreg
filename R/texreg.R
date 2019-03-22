@@ -3567,9 +3567,6 @@ get.data <- function(l, ...) {
   return(models)
 }
 
-# create the star note (legend) printed at the bottom of tables and the stars
-# printed next to standard errors
-
 #' Create a legend for the stars in a regression table
 #'
 #' Create a legend for the stars in a regression table.
