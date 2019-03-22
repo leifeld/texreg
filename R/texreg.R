@@ -7,7 +7,7 @@
 #' customizable. New model types can be easily implemented. Confidence
 #' intervals can be used instead of standard errors and p-values.
 #'
-#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @author Philip Leifeld
 #' @seealso \code{\link{extract}} \code{\link{texreg}}
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
@@ -79,7 +79,7 @@ NULL
 #'   but is above the line in RStudio's internal browser.
 #' @inheritParams texreg
 #'
-#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @author Philip Leifeld
 #' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
@@ -612,7 +612,7 @@ huxtablereg <- function(l,
 #'   effects" = c("YES", "YES", "NO"), Observations = c(25, 25, 26))} would
 #'   insert two new rows into the table, at the beginning of the GOF block
 #'   (i.e., after the coefficients). The rows can contain integer, numeric, or
-#'   character objects. Note that this argument is processed after the
+#'   \code{character} objects. Note that this argument is processed after the
 #'   \code{custom.gof.names} argument (meaning \code{custom.gof.names} should
 #'   not include any of the new GOF rows) and before the \code{reorder.gof}
 #'   argument (meaning that the new GOF order specified there should contain
@@ -768,7 +768,7 @@ huxtablereg <- function(l,
 #'   are used as labels in the table header. For example, \code{custom.columns =
 #'   list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is
 #'   labeled while the second one is not. Note that the numeric elements of the
-#'   second column will be converted to character objects in this example. The
+#'   second column will be converted to \code{character} objects in this example. The
 #'   consequence is that decimal alignment with the \pkg{dcolumn} package is
 #'   switched off in these columns. Note that this argument is processed after
 #'   any arguments that affect the number of rows.
@@ -802,7 +802,7 @@ huxtablereg <- function(l,
 #' @return A \code{character} matrix with the coefficients and goodness-of-fit
 #'   statistics and their column names.
 #'
-#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @author Philip Leifeld
 #' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
@@ -1841,12 +1841,12 @@ print.texregTable <- function(x, ...) {
 #'   Recommended values are \code{""}, \code{"="}, \code{"-"}, \code{"_"}, or
 #'   \code{"#"}.
 #' @param inner.rule The character used to draw the inner horizontal line above
-#'   and below a table. If an empty character object is provided (i.e.,
+#'   and below a table. If an empty \code{character} object is provided (i.e.,
 #'   \code{outer.rule = ""}), there will be no inner horizontal lines.
 #'   Recommended values are \code{""}, \code{"-"}, or \code{"_"}.
 #' @inheritParams texreg
 #'
-#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @author Philip Leifeld
 #' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
@@ -2070,13 +2070,14 @@ screenreg <- function(l,
 #'   import only plain HTML; CSS decorations are not supported; the resulting
 #'   tables do not retain the full formatting in LibreOffice.
 #' @param custom.note With this argument, a replacement text for the
-#'   significance note below the table can be provided. If an empty character
-#'   object is provided (\code{custom.note = ""}), the note will be omitted
-#'   completely. If some character string is provided (e.g., \code{custom.note =
-#'   "My note"}), the significance legend is replaced by \code{My note}. The
-#'   original significance legend can be included by inserting the \code{%stars}
-#'   wildcard. For example, a custom note can be added right after the
-#'   significance legend by providing \code{custom.note = "%stars. My note."}.
+#'   significance note below the table can be provided. If an empty
+#'   \code{character} object is provided (\code{custom.note = ""}), the note
+#'   will be omitted completely. If some character string is provided (e.g.,
+#'   \code{custom.note = "My note"}), the significance legend is replaced by
+#'   \code{My note}. The original significance legend can be included by
+#'   inserting the \code{%stars} wildcard. For example, a custom note can be
+#'   added right after the significance legend by providing \code{custom.note =
+#'   "%stars. My note."}.
 #' @param center Should the table be horizontally aligned at the center of the
 #'   page?
 #' @param caption Set the caption of the table.
@@ -2129,7 +2130,7 @@ screenreg <- function(l,
 #'   causes the object to be formatted nicely on screen when printed.
 #' @inheritParams matrixreg
 #'
-#' @author Philip Leifeld (\url{http://www.philipleifeld.com})
+#' @author Philip Leifeld
 #' @aliases texreg htmlreg screenreg matrixreg wordreg huxtablereg plotreg
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
@@ -2951,7 +2952,7 @@ customcolumnnames <- function(modelnames,
 #' @param ... Arguments to be passed over to the \code{\link{extract}} function,
 #'   such as \code{include.nobs} or \code{include.aic}. Details are provided in
 #'   the documentation of the \code{\link{extract}} function.
-#' @return A list of \code{"texreg"} objects.
+#' @return A list of \linkS4class{texreg} objects.
 #'
 #' @rdname internal
 #' @keywords internal
@@ -3162,13 +3163,41 @@ names2latex <- function(x) {
   return(x)
 }
 
-# replace coefs, SEs, p-values, and/or CIs by custom values if provided
+#' Replace coefs, SEs, p-values, and/or CIs by custom values if provided
+#'
+#' Replace coefs, SEs, p-values, and/or CIs by custom values if provided.
+#'
+#' This function replaces coefficients, standard errors, p-values, and/or
+#' confidence intervals in a list of \linkS4class{texreg} objects. It is used by
+#' the \code{\link{matrixreg}} and \code{\link{plotreg}} functions. The new
+#' values must be provided as lists of equal length as the list of models, with
+#' each element representing a vector of replacement values. If the arguments
+#' have value \code{0}, the original values are retained. More details are found
+#' in the documentation of the \code{\link{matrixreg}} function.
+#'
+#' @param models A list of \linkS4class{texreg} objects (e.g., as returned by
+#'   \code{\link{get.data}).
+#' @param override.coef Replacement list of coefficient vectors.
+#' @param override.se Replacement list of standard error vectors
+#' @param override.pvalues Replacement list of p-value vectors.
+#' @param override.ci.low Replacement list of lower-bound confidence interval
+#'   values.
+#' @param override.ci.up Replacement list of upper-bound confidence interval
+#'   values.
+#' @return Same list as input list of models, but with replaced values.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{matrixreg}}, \code{\link{plotreg}}, \code{\link{texreg}}
+#'
+#' @export
 override <- function(models,
-                     override.coef,
-                     override.se,
-                     override.pvalues,
-                     override.ci.low,
-                     override.ci.up) {
+                     override.coef = 0,
+                     override.se = 0,
+                     override.pvalues = 0,
+                     override.ci.low = 0,
+                     override.ci.up = 0) {
   # check validity of override arguments for p-values and SEs
   if (class(override.se) == "list" || length(override.se) > 1 || override.se[1] != 0) {
     if (length(override.pvalues) == 1 && class(override.pvalues) != "list" && override.pvalues[1] == 0) {
@@ -3331,7 +3360,8 @@ override <- function(models,
   return(models)
 }
 
-# function which replaces special characters in row names by LaTeX equivalents
+#' will be replaced by names2latex
+#' @noRd
 replaceSymbols <- function(m) {
   rn <- rownames(m)
   for (i in 1:length(rn)) {
@@ -3350,7 +3380,25 @@ replaceSymbols <- function(m) {
   return(m)
 }
 
-# reorder a matrix according to a vector of new positions
+#' Reorder a matrix vertically according to a vector of new positions
+#'
+#' Reorder a matrix vertically according to a vector of new positions.
+#'
+#' This function takes a matrix and reorders its rows based on a vector of new
+#' positions.
+#'
+#' @param mat Input matrix.
+#' @param new.order Vector of integer numbers with the new order of rows. The
+#'   new order must contain as many elements as the matrix has rows and it must
+#'   not contain NA values, duplicate entries, or gaps.
+#' @return Reordered matrix.
+#'
+#' @rdname internal
+#' @keywords internal
+#' @author Philip Leifeld
+#' @seealso \code{\link{matrixreg}}
+#'
+#' @export
 reorder <- function(mat, new.order) {
   if (is.null(new.order)) {
     return(mat)
@@ -3382,17 +3430,84 @@ reorder <- function(mat, new.order) {
 
 # Class definition -------------------------------------------------------------
 
-# constructor for texreg objects
-createTexreg <- function(coef.names, coef, se = numeric(0),
-                         pvalues = numeric(0), ci.low = numeric(0), ci.up = numeric(0),
-                         gof.names = character(0), gof = numeric(0), gof.decimal = logical(0),
+#' Constructor for \linkS4class{texreg} objects
+#'
+#' Constructor for \linkS4class{texreg} objects.
+#'
+#' This function creates a \linkS4class{texreg} object and returns it.
+#'
+#' @param coef.names The names for the covariates in a model as a
+#'   \code{character} vector (= row names).
+#' @param coef The coefficients as a \code{numeric} vector. Can have length
+#'   zero.
+#' @param se The standard errors as a \code{numeric} vector. Can have length
+#'   zero.
+#' @param pvalues The p-values as a \code{numeric} vector. Can have length zero.
+#' @param ci.low The lower bounds of the confidence intervals as a
+#'   \code{numeric} vector. Can have length zero.
+#' @param ci.up The upper bounds of the confidence intervals as a
+#'   \code{numeric} vector. Can have length zero.
+#' @param gof.names Names of the goodness-of-fit statistics as a
+#'   \code{character} vector. Can have length zero.
+#' @param gof Goodness-of-fit statistics as a \code{numeric} vector. Can have
+#'   length zero.
+#' @param gof.decimal A \code{logical} vector with as many elements as the
+#'   \code{gof} argument, indicating whether the respective GOF statistic is a
+#'   double (\code{TRUE}) or integer (\code{FALSE}) number or whether it is a
+#'   \code{character} entry (\code{NA}).
+#' @param model.name A name for the statistical model. Can be a \code{character}
+#'   vector of length zero if there is no model name.
+#' @return A \linkS4class{texreg} object representing the statistical model.
+#'
+#' @rdname texreg-class
+#' @author Philip Leifeld
+#' @seealso \code{\link{extract}}
+#'
+#' @export
+createTexreg <- function(coef.names,
+                         coef,
+                         se = numeric(0),
+                         pvalues = numeric(0),
+                         ci.low = numeric(0),
+                         ci.up = numeric(0),
+                         gof.names = character(0),
+                         gof = numeric(0),
+                         gof.decimal = logical(0),
                          model.name = character(0)) {
-  new("texreg", coef.names = coef.names, coef = coef, se = se,
-      pvalues = pvalues, ci.low = ci.low, ci.up = ci.up, gof.names = gof.names,
-      gof = gof, gof.decimal = gof.decimal, model.name = model.name)
+  new("texreg",
+      coef.names = coef.names,
+      coef = coef,
+      se = se,
+      pvalues = pvalues,
+      ci.low = ci.low,
+      ci.up = ci.up,
+      gof.names = gof.names,
+      gof = gof,
+      gof.decimal = gof.decimal,
+      model.name = model.name)
 }
 
-# a class for texreg objects
+#' An S4 class to represent a statistical model as a texreg object
+#'
+#' An S4 class to represent a statistical model as a texreg object.
+#'
+#' @slot coef.names The covariate names.
+#' @slot coef The coefficients.
+#' @slot se The standard errors.
+#' @slot pvalues The p-values.
+#' @slot ci.low The lower bounds of the confidence intervals.
+#' @slot ci.up The upper bounds of the confidence intervals.
+#' @slot gof.names The names of the goodness-of-fit statistics.
+#' @slot gof The goodness-of-fit statistics.
+#' @slot gof.decimal A vector describing for each GOF statistic whether it is a
+#'   decimal value (\code{TRUE}) or an integer value (\code{FALSE}).
+#' @slot An optional model name. Can be of length zero.
+#'
+#' @rdname texreg-class
+#' @author Philip Leifeld
+#' @seealso \code{\link{extract}} \code{\link{createTexreg}}
+#'
+#' @export
 setClass(Class = "texreg",
          representation = representation(
            coef.names = "character",  # row names of the coefficient block
@@ -3439,7 +3554,20 @@ setClass(Class = "texreg",
          }
 )
 
-# define show method for pretty output of texreg objects
+#' Show method for pretty output of \linkS4class{texreg} objects
+#'
+#' Show method for pretty output of \linkS4class{texreg} objects.
+#'
+#' Print the different slots of \linkS4class{texreg} objects to the screen.
+#'
+#' @param object The \linkS4class{texreg} object to display.
+#'
+#' @rdname texreg-class
+#' @author Philip Leifeld
+#' @seealso \code{\link{extract}}, \code{\link{createTexreg}},
+#'   \code{\link{screenreg}}
+#'
+#' @export
 setMethod(f = "show", signature = "texreg", definition = function(object) {
   if (length(object@model.name) == 1) {
     cat(paste("Model name:", object@model.name))
