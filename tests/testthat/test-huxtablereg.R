@@ -14,15 +14,7 @@ test_that("huxtablereg gives useful error message if huxtable not installed", {
   })
 })
 
-
-test_that("screenreg works", {
-  expect_known_output(screenreg(list(m1, m2)), file = "../files/screenreg.RDS")
-})
-
-
 test_that("huxtablereg works", {
-  hr <- huxtablereg(list(m1, m2))
-  expect_known_output(hr, 
-        file = "../files/huxtablereg.RDS")
+  expect_known_output(huxtablereg(list(m1, m2)),
+                      file = "../files/huxtablereg.RDS")
 })
-
