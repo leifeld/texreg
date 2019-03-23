@@ -1116,6 +1116,7 @@ matrixreg <- function(l,
 
     # rename
     row.names(out) <- destination
+    m <- out
   } else { # use 'omit.coef' and 'custom.coef.names' if available
     # omit
     if (!is.null(omit.coef)) {
