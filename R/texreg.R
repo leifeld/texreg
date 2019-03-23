@@ -1049,12 +1049,7 @@ matrixreg <- function(l,
   gof.matrix <- matrix(nrow = nrow(gofs), ncol = ncol(gofs) + 1)  # including labels
   if (nrow(gof.matrix) > 0) {
     for (i in 1:nrow(gofs)) {
-      # replace symbols in latex
-      if (output.type[1] == "latex") {
-        gof.matrix[i, 1] <- rownames(replaceSymbols(gofs))[i]
-      } else {
-        gof.matrix[i, 1] <- rownames(gofs)[i]
-      }
+      gof.matrix[i, 1] <- rownames(gofs)[i]
       for (j in 1:ncol(gofs)) {
         strg <- coeftostring(gofs[i, j], leading.zero, digits = decimal.matrix[i, j])
         gof.matrix[i, j + 1] <- paste0(dollar, strg, dollar)
@@ -3347,26 +3342,6 @@ override <- function(models,
     }
   }
   return(models)
-}
-
-#' will be replaced by names2latex
-#' @noRd
-replaceSymbols <- function(m) {
-  rn <- rownames(m)
-  for (i in 1:length(rn)) {
-    if (!grepl("\\$", rn[i])) {
-      rn[i] <- gsub("_", "\\\\_", rn[i])
-      rn[i] <- gsub("<", "\\$<\\$", rn[i])
-      rn[i] <- gsub(">", "\\$>\\$", rn[i])
-      rn[i] <- gsub("%", "\\\\%", rn[i])
-      rn[i] <- gsub("\\^2", "\\$^2\\$", rn[i])
-      rn[i] <- gsub("\\^3", "\\$^3\\$", rn[i])
-      rn[i] <- gsub("\\^4", "\\$^4\\$", rn[i])
-      rn[i] <- gsub("\\^5", "\\$^5\\$", rn[i])
-    }
-  }
-  rownames(m) <- rn
-  return(m)
 }
 
 #' Reorder a matrix vertically according to a vector of new positions
