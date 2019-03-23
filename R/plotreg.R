@@ -174,8 +174,8 @@ plotreg <- function(l,
         signif.outer <- dataframe$pv < (1 - ci.level)
     } else if (length(dataframe$ci.low) > 0) {
         signif.outer <- ((dataframe$ci.low) > 0 & (dataframe$ci.up) > 0 | (dataframe$ci.low) < 0 & (dataframe$ci.up) < 0)
-        }
-
+    }
+    
     if (sapply(signif.outer, is.logical) &&
         length(signif.outer) == length(dataframe$co)) {
         signif <- sapply(signif.outer, isTRUE)
@@ -233,10 +233,22 @@ plotreg <- function(l,
         }
         
         if (length(custom.coef.map) > 0) {
-            #dataframe <- custommap(dataframe, custom.coef.map)
+            # keep only coefficients selected by the user and replace NAs if any
+            idx <- is.na(custom.coef.map)
+            custom.coef.map[idx] <- names(custom.coef.map)[idx]
+            selectcoef <- names(custom.coef.map)
+            keepcoef <- paste(selectcoef, collapse="|")
+            dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
+            # resize number of levels in factor to avoid error
+            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            # rename selected coefficients
+            renamedcoef <- paste(unlist(custom.coef.map), sep = ", ")
+            levels(dataframe$co.names) <- renamedcoef
+            # invert order factors for plot
+            coeforder<- c(length(dataframe$co.names):1)
+            dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[coeforder])
         }
         
-        # plot
         p <- ggplot(dataframe, aes(co.names, co)) + 
             geom_hline(yintercept = 0, 
                        lty = 2, lwd = 1, 
@@ -253,15 +265,15 @@ plotreg <- function(l,
                        pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22), 
                        fill = ifelse(sapply(dataframe$signif, isTRUE), signif.dark, insignif.dark)) +
             coord_flip() 
-            p <- p + theme
-            p <- p + xlab(" ") +
+        p <- p + theme
+        p <- p + xlab(" ") +
             facet_wrap(~lab, 
                        strip.position="left", 
                        nrow=length(dataframe), 
                        scales = "free_y")
         
         if (length(custom.title) > 0) {
-            p <- p +   ggtitle(custom.title)
+            p <- p + ggtitle(custom.title)
         } 
         
     } else if (type == "forest") {
@@ -278,34 +290,27 @@ plotreg <- function(l,
             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
         }
         
-        # if (length(custom.coef.map) > 0) {
-        #     cat("\ncustommapploreg", deparse(custom.coef.map))
-        #     # separate data frame by model
-        #     dataframes <- split(dataframe, dataframe$lab)
-        #     # rename rows in order to use custommap
-        #     dataframes <- lapply(dataframes,function(DF) {rownames(DF) <- DF$co.names; DF})
-        #     # apply custommap to each model
-        #     dataframes <- lapply(dataframes, function(x) custommap(x, custom.coef.map))
-        #     cat("\ndataframes2", deparse(dataframes))
-        #     # rename levels of co.names (factor)
-        #     cat("\nco.namesLevels: ", levels(dataframes[[1]]$co.names))
-        #     #co.names ha ancora 4 livelli
-        #     #QUI#dataframes <- lapply(dataframes, function(DF) {droplevels(DF$co.names); DF})
-        #     #droplevel non va 
-        #     cat("\nco.namesLevels2: ", levels(dataframes[[1]]$co.names))
-        #     dataframes <- lapply(dataframes, function(DF) {levels(DF$co.names) <- as.character(rownames(DF)); DF})
-        #     cat("\ndataframes3", deparse(dataframes))
-        #     
-        #     # putting them together again
-        #     dataframes <- Reduce(rbind, dataframes)
-        #     cat("\ndataframes4", deparse(dataframes))
-        #     
-        # }
-        # 
+        if (length(custom.coef.map) > 0) {
+            # keep only coefficients selected by the user and replace NAs if any
+            idx <- is.na(custom.coef.map)
+            custom.coef.map[idx] <- names(custom.coef.map)[idx]
+            selectcoef <- names(custom.coef.map)
+            keepcoef <- paste(selectcoef, collapse="|")
+            dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
+            # resize number of levels in factor to avoid error
+            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            # rename selected coefficients
+            renamedcoef <- paste(unlist(custom.coef.map), sep = ", ")
+            levels(dataframe$co.names) <- renamedcoef
+            # invert order factors for plot
+            coeforder<- c(length(dataframe$lab):1)
+            dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[coeforder])
+        }
+        
         # put models in the right order
         laborder<- c(length(dataframe$lab):1)
         dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[laborder])
-        cat("\ndataframes5", deparse(dataframes))
+        
         # plot
         p <- ggplot(dataframe, aes(lab, co)) + 
             geom_hline(yintercept = 0, 
@@ -324,15 +329,15 @@ plotreg <- function(l,
                        pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22), 
                        fill = ifelse(sapply(dataframe$signif, isTRUE), signif.dark, insignif.dark)) +
             coord_flip() 
-            p <- p + theme
-            p <- p + xlab(" ") +
+        p <- p + theme
+        p <- p + xlab(" ") +
             facet_wrap(~co.names, 
                        strip.position="left", 
                        nrow=length(dataframe), 
                        scales = "free_y")
         
         if (length(custom.title) > 0) {
-            p <- p +   ggtitle(custom.title)
+            p <- p + ggtitle(custom.title)
         } 
     } 
     
@@ -385,4 +390,3 @@ plotreg <- function(l,
         dev.off()
     }
 }
-
