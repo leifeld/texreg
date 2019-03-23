@@ -515,7 +515,7 @@ huxtablereg <- function(l,
   mr.call[[1L]] <- quote(texreg::matrixreg)
   mr.call$include.attributes <- TRUE
   mr.call$trim <- TRUE
-  mx <- eval(mr.call)
+  mx <- eval.parent(mr.call)
 
   gof.names <- attr(mx, "gof.names")
   coef.names <- attr(mx, "coef.names")
