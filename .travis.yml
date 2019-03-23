@@ -13,10 +13,6 @@ r_check_args: --as-cran
 r_packages:
   - covr
 
-r_github_packages:
-  - leifeld/btergm
-  - statnet/ergm
-
 notifications:
   email:
     recipients:

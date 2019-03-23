@@ -1,5 +1,5 @@
 import("utils")
-importFrom("grDevices", "bmp", "dev.off", "jpeg", "pdf", "png", "postscript", 
+importFrom("grDevices", "bmp", "dev.off", "jpeg", "pdf", "png", "postscript",
     "tiff")
 importFrom("stats", "AIC", "BIC", "coef", "confint", "deviance", "extractAIC", 
     "logLik", "model.frame", "nobs", "pchisq", "pnorm", "pt", "qnorm", 
@@ -11,7 +11,6 @@ import("methods")
 export("texreg")
 export("htmlreg")
 export("screenreg")
-export("csvreg")
 export("matrixreg")
 export("wordreg")
 export("huxtablereg")
