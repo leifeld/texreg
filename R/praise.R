@@ -99,10 +99,18 @@
 #'   your organization? The more we know, the more convincing our evidence base
 #'   will be. This argument accepts \code{numeric} values or more detailed
 #'   responses as a \code{character} object.
-#' @return If everything works well, no output is returned. If the submission of
-#'   the praise to the maintainer fails, a \code{response} object (as defined in
-#'   the \pkg{httr} package) will be returned. Should you have any problems, do
-#'   feel free to e-mail your praise to the package maintainer directly.
+#' @param return.response If \code{TRUE}, a website with the submitted data will
+#'   be returned as a \code{response} object, as defined in the \pkg{httr}
+#'   package. You can load the \pkg{httr} package and use the
+#'   \code{\link[httr]{content}} function, possibly enclosed in an
+#'   \code{\link[base]{as.character}} call, to inspect the output and diagnose
+#'   any problems with the transmission of the data. Only use this argument if
+#'   instructed by the package authors.
+#' @return If everything works well, no output is returned (but see the
+#'   \code{return.response} argument to change this). If the submission of the
+#'   praise to the maintainer fails, a \code{response} object (as defined in the
+#'   \pkg{httr} package) will be returned. Should you have any problems, do feel
+#'   free to e-mail your praise to the package maintainer directly.
 #'
 #' @author Philip Leifeld
 #' @aliases praise, feedback
@@ -126,7 +134,8 @@ praise <- function(academic_user,
                    name = NULL,
                    contact_details = NULL,
                    models = NULL,
-                   num_users = NULL) {
+                   num_users = NULL,
+                   return.response = FALSE) {
 
   # process 'academic_user' argument
   if (is.null(academic_user) || is.na(academic_user) || !is.logical(academic_user) || length(academic_user) != 1) {
@@ -221,29 +230,20 @@ praise <- function(academic_user,
   }
 
   # collate all information and submit
-  query <- c("user_type" = user_type,
-             "organization" = organization,
-             "general_praise" = general_praise,
-             "increase_productivity" = increase_productivity,
-             "increase_quality" = increase_quality,
-             "start_using" = start_using,
-             "where_learn" = where_learn,
-             "name" = name,
-             "contact_details" = contact_details,
-             "models" = models,
-             "num_users" = num_users)
-  url <- "http://www.webassistent.net/?"
-  tryCatch({
-      for (i in 1:length(query)) {
-        if (i > 1) {
-          url <- paste0(url, "&")
-        }
-        url <- paste0(url, names(query)[i], "=", URLencode(query[i], reserved = TRUE))
-      }
-    },
-    error = function(e) message("URL could not be encoded. Did you use any exotic characters?")
-  )
-  tryCatch(response <- POST(url = url),
+  query <- list("package" = "texreg",
+                "user_type" = user_type,
+                "organization" = organization,
+                "general_praise" = general_praise,
+                "increase_productivity" = increase_productivity,
+                "increase_quality" = increase_quality,
+                "start_using" = start_using,
+                "where_learn" = where_learn,
+                "name" = name,
+                "contact_details" = contact_details,
+                "models" = models,
+                "num_users" = num_users)
+  url <- "https://praise.philipleifeld.com/index.php"
+  tryCatch(response <- POST(url = url, body = query),
            error = function(e) message("Praise could not be sent. Please check your internet connection."))
 
   # user feedback
@@ -251,6 +251,9 @@ praise <- function(academic_user,
     message("Success! Thank you so much for providing feedback.")
     message("This will be valuable in demonstrating the impact of texreg to funders.")
     message("You can view all feedback at http://www.philipleifeld.com/texreg-praise")
+    if (isTRUE(return.response)) {
+      return(response)
+    }
   } else {
     message("Oops, something went wrong...")
     message("Returning website response now as an httr 'response' object.")
