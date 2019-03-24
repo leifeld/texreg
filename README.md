@@ -26,7 +26,7 @@ Please feel free to report bugs or possible enhancements using the [issue tracke
 
 Please also consider contributing to the project by telling other people about the software; citing our underlying [research](https://www.philipleifeld.com/publications) in your publications; or funding the development financially:
 
+<a href="https://liberapay.com/leifeld/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a>
+
 [<img src="http://img.shields.io/liberapay/patrons/leifeld.svg?logo=liberapay">](https://liberapay.com/leifeld)
 [<img src="http://img.shields.io/liberapay/receives/leifeld.svg?logo=liberapay">](https://liberapay.com/leifeld)
-
-<a href="https://liberapay.com/leifeld/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a>
