@@ -13,11 +13,12 @@
 #'  confidence intervals. Most of the arguments work either like in the
 #'  \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} 
 #'  \code{\link{matrixreg}} and \code{\link{wordreg}} functions.It is 
-#'  possible to display the plots in two ways: using the \code{\link{facet}} 
-#'  option, one forest plot applied to point estimates and confidence intervals 
+#'  possible to display the plots in two ways: using the 
+#'  \code{\link[ggplot2]{facet}} option, one forest
+#'   plot applied to point estimates and confidence intervals 
 #'  will be visualised in case there is only one model. If there is more than 
 #'  one model each one will be plotted next to the other; using the 
-#'  \code{\link{forest}} option, coefficients from one or more models will 
+#'  code{\link[ggplot2]{forest}} option, coefficients from one or more models will 
 #'  be grouped together and displayed as a forest plot. 
 #' 
 #'
@@ -130,11 +131,11 @@
 #'   standard errors from the estimate for the outer horizontal bar (instead 
 #'   of confidence intervals). Only available if standard errors can be 
 #'   extracted from the model using the respective \code{\link{extract}} function.
-#' @param type The default option is \code{\link{facet}}. If one model only is 
+#' @param type The default option is code{\link[ggplot2]{facet}}. If one model only is 
 #'   specified, it will print one forest plot applied to point estimates and 
 #'   confidence intervals. If more than one model is specified, it will print 
 #'   as many plots as the number of models in a column of plots. Alternatively,
-#'   if \code{\link{forest}} is specified, coefficients from one or more models 
+#'   if code{\link[ggplot2]{forest}} is specified, coefficients from one or more models 
 #'   will be grouped together and displayed as a forest plot.
 #' @param theme The \code{\link{theme}} argument can be used to customomise 
 #'   the non data component of your plot. The default \code{\link{theme}} is
@@ -364,8 +365,7 @@ plotreg <- function(l,
         signif.outer <- ((dataframe$ci.low) > 0 & (dataframe$ci.up) > 0 | (dataframe$ci.low) < 0 & (dataframe$ci.up) < 0)
     }
     
-    if (sapply(signif.outer, is.logical) &&
-        length(signif.outer) == length(dataframe$co)) {
+    if (is.logical(signif.outer) && length(signif.outer) == length(dataframe$co)) {
         signif <- sapply(signif.outer, isTRUE)
     } else if (sapply(signif.outer, isTRUE)) {
         signif <- apply(cbind(lower.outer, upper.outer), 1,
