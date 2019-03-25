@@ -13,7 +13,7 @@
 #' The \code{\link{praise}} function is our attempt at rectifying the situation.
 #' With this function, you can provide positive feedback to the developers. The
 #' praise is saved to a database on the web server of the package maintainer and
-#' subsequently displayed at \url{http://www.philipleifeld.com/texreg-praise}
+#' subsequently displayed at \url{http://www.philipleifeld.com/praise}
 #' for other users, funders, and employers to view. This will also enable the
 #' package authors to compile reports about how \pkg{texreg} is used by academic
 #' and non-academic users to increase their productivity and work quality, for
@@ -250,7 +250,7 @@ praise <- function(academic_user,
   if (grepl("<p>User type: (non-academic)|(academic)</p>", as.character(httr::content(response)))) {
     message("Success! Thank you so much for providing feedback.")
     message("This will be valuable in demonstrating the impact of texreg to funders.")
-    message("You can view all feedback at http://www.philipleifeld.com/texreg-praise")
+    message("You can view all feedback at http://www.philipleifeld.com/praise.")
     if (isTRUE(return.response)) {
       return(response)
     }
