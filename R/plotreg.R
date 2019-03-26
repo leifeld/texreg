@@ -1,6 +1,6 @@
-#' Create coefficient plots from statistical model output using \code{\link{ggplot2}}.
+#' Create coefficient plots from statistical model output using \pkg{ggplot2}.
 #'
-#' Create coefficient plots of \R regression output using \code{\link{ggplot2}}.
+#' Create coefficient plots of \R regression output using \pkg{ggplot2}.
 #'
 #'  The \code{plotreg} function produces coefficient plots (i.e., forest plots 
 #'  applied to point estimates and confidence intervals) and works much like 
@@ -13,167 +13,47 @@
 #'  confidence intervals. Most of the arguments work either like in the
 #'  \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} 
 #'  \code{\link{matrixreg}} and \code{\link{wordreg}} functions.It is 
-#'  possible to display the plots in two ways: using the \code{\link{facet}} 
+#'  possible to display the plots in two ways: using the \code{type = "facet"} 
 #'  option, one forest plot applied to point estimates and confidence intervals 
 #'  will be visualised in case there is only one model. If there is more than 
 #'  one model each one will be plotted next to the other; using the 
-#'  \code{\link{forest}} option, coefficients from one or more models will 
+#'  \code{type = "forest"} option, coefficients from one or more models will 
 #'  be grouped together and displayed as a forest plot. 
-#' 
 #'
-#' @param l A statistical model or a list of statistical models. Lists of
-#'   models can be specified as \code{l = list(model.1, model.2, ...)}.
-#'   Different object types can also be mixed.
-#' @param custom.model.names A character vector of labels for the models. By
-#'   default, the models are named "Model 1", "Model 2", etc. Specifying
-#'   \code{model.names = c("My name 1", "My name 2")} etc. overrides the default
-#'   behavior.
-#' @param custom.title With this argument, a replacement text for the \code{ggtitle} 
-#'   that provides a title above the diagram can be provided. If an empty character 
-#'   object is provided (\code{custom.note = ""}), the note will be omitted completely.
-#' @param custom.coef.names By default, \pkg{texreg} uses the coefficient names
-#'   which are stored in the models. The \code{custom.coef.names} argument can
-#'   be used to replace them by other character strings in the order of
-#'   appearance. For example, if a table shows a total of three different
-#'   coefficients (including the intercept), the argument
-#'   \code{custom.coef.names = c("Intercept", "variable 1", "variable 2")} will
-#'   replace their names in this order.
-#'
-#'   Sometimes it happens that the same variable has a different name in
-#'   different models. In this case, the user can use this function to assign
-#'   identical names. If possible, the rows will then be merged into a single
-#'   row unless both rows contain values in the same column.
-#'
-#'   Where the argument contains an \code{NA} value, the original name of the
-#'   coefficient is kept. For example, \code{custom.coef.names = c(NA, "age",
-#'   NA)} will only replace the second coefficient name and leave the first and
-#'   third name as they are in the original model.
-#'
-#'   See also \code{custom.coef.map} for an easier and more comprehensive way to
-#'   rename, omit, and reorder coefficients.
-#' @param custom.note With this argument, a replacement text for the \code{xlab} 
-#'   note below the diagram can be provided. If an empty character object is provided
-#'   (\code{custom.note = ""}), the note will be omitted completely.
-#' @param override.coef Set custom values for the coefficients. New coefficients
-#'   are provided as a list of numeric vectors. The list contains vectors of 
-#'   coefficients for each model. There must be as many vectors of coefficients 
-#'   as there are models. For example, if there are two models with three model 
-#'   terms each, the argument could be specified as 
-#'   \code{override.coef = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. 
-#'   If there is only one model, custom values can be provided as a plain vector
-#'   (not embedded in a list). 
-#'   For example: \code{override.coef = c(0.05, 0.06, 0.07)}.
-#' @param override.se Set custom values for the standard errors. This only 
-#'   has an effect where standard errors are converted into confidence 
-#'   intervals because no other CIs are present. New standard errors are 
-#'   provided as a list of numeric vectors. The list contains vectors of 
-#'   standard errors for each model. There must be as many vectors of 
-#'   standard errors as there are models. For example, if there are two
-#'   models with three coefficients each, the argument could be specified 
-#'   as \code{override.se = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. 
-#'   If there is only one model, custom values can be provided as a plain
-#'   vector (not embedded in a list). For example: 
-#'   \code{override.se = c(0.05, 0.06, 0.07)}. Overriding standard 
-#'   errors can be useful for the implementation of robust SEs, for example.
-#' @param override.pval Set custom values for the p values. This only has
-#'   an effect where standard errors are converted into confidence intervals
-#'   because no other CIs are present. In this case, significance is derived 
-#'   from the p values rather than the confidence intervals. New p values are 
-#'   provided as a list of numeric vectors. The list contains vectors of 
-#'   p values for each model. There must be as many vectors of p values as 
-#'   there are models. For example, if there are two models with three 
-#'   coefficients each, the argument could be specified as 
-#'   \code{override.pval = list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. 
-#'   If there is only one model, custom values can be provided as a plain 
-#'   vector (not embedded in a list). For example: 
-#'   \code{override.pval = c(0.05, 0.06, 0.07)}. 
-#'   Overriding p values can be useful for the implementation 
-#'   of robust SEs and p values, for example.
-#' @param override.ci.low Set custom lower confidence interval bounds. 
-#'   This works like the other override arguments, with one exception: if 
-#'   confidence intervals are provided here and in the \code{override.ci.up} 
-#'   argument, the standard errors and p values as well as the \code{ci.force} 
-#'   argument are ignored.
-#' @param override.ci.up Set custom upper confidence interval bounds. 
-#'   This works like the other override arguments, with one exception: if 
-#'   confidence intervals are provided here and in the \code{override.ci.low} 
-#'   argument, the standard errors and p values as well as the \code{ci.force} 
-#'   argument are ignored.
-#' @param omit.coef A character string which is used as a regular expression to
-#'   remove coefficient rows from the table. For example, \code{omit.coef =
-#'   "group"} deletes all coefficient rows from the table where the name of the
-#'   coefficient contains the character sequence \code{"group"}. More complex
-#'   regular expressions can be used to filter out several kinds of model terms,
-#'   for example \code{omit.coef = "(thresh)|(ranef)"} to remove all model terms
-#'   matching either \code{"thresh"} or \code{"ranef"}. The \code{omit.coef}
-#'   argument is processed after the \code{custom.coef.names} argument, so the
-#'   regular expression should refer to the custom coefficient names. To omit
-#'   GOF entries instead of coefficient entries, use the custom arguments of the
-#'   extract functions instead (see the help entry of the \code{\link{extract}}
-#'   function or \code{\link{extract-methods}}.
-#' @param reorder.coef Reorder the rows of the coefficient block of the
-#'   resulting table in a custom way. The argument takes a vector of the same
-#'   length as the number of coefficients. For example, if there are three
-#'   coefficients, \code{reorder.coef = c(3, 2, 1)} will put the third
-#'   coefficient in the first row and the first coefficient in the third row.
-#'   Reordering can be sensible because interaction effects are often added to
-#'   the end of the model output although they were specified earlier in the
-#'   model formula. Note: Reordering takes place after processing custom
-#'   coefficient names and after omitting coefficients, so the
-#'   \code{custom.coef.names} and \code{omit.coef} arguments should follow the
-#'   original order.
+#' @param override.pval Replacement list of p-value vectors.
 #' @param ci.level If standard errors are converted to confidence intervals
 #'   (because a model does not natively support CIs), what confidence level 
 #'   should be used for the outer confidence interval? By default, \code{0.95}
 #'   is used (i.e., an alpha value of 0.05).
-#' @param use.se Use one standard error for the inner horizontal bar and two 
-#'   standard errors from the estimate for the outer horizontal bar (instead 
-#'   of confidence intervals). Only available if standard errors can be 
-#'   extracted from the model using the respective \code{\link{extract}} function.
-#' @param type The default option is \code{\link{facet}}. If one model only is 
+#' @param type The default option is \code{type = "facet"}. If one model only is 
 #'   specified, it will print one forest plot applied to point estimates and 
 #'   confidence intervals. If more than one model is specified, it will print 
 #'   as many plots as the number of models in a column of plots. Alternatively,
-#'   if \code{\link{forest}} is specified, coefficients from one or more models 
+#'   if \code{type = "forest"} is specified, coefficients from one or more models 
 #'   will be grouped together and displayed as a forest plot.
 #' @param theme The \code{\link{theme}} argument can be used to customomise 
 #'   the non data component of your plot. The default \code{\link{theme}} is
 #'   \code{theme_bw} and it can be substituted by any other theme compatible 
 #'   with \pkg{ggplot2}.
-#' @param custom.coef.map The \code{custom.coef.map} argument can be used to
-#'   select, omit, rename, and reorder coefficients.
-#'   Users must supply a named list of this form: \code{list("x" = "First
-#'   variable", "y" = NA, "z" = "Third variable")}. With that particular example
-#'   of \code{custom.coef.map},
-#'   \enumerate{
-#'   \item coefficients will presented in order: \code{"x"}, \code{"y"},
-#'   \code{"z"}.
-#'   \item variable \code{"x"} will appear as \code{"First variable"}, variable
-#'   \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
-#'   appear as "Third variable".
-#'   \item all variables not named \code{"x"}, \code{"y"}, or \code{"z"} will
-#'   be omitted from the table.}
 #' @param signif.light Color of outer confidence intervals for significant model terms.
 #' @param signif.medium Color of inner confidence intervals for significant model terms.
 #' @param signif.dark Color of point estimates and labels for significant model terms.
 #' @param insignif.light Color of outer confidence intervals for insignificant model terms.
 #' @param insignif.medium Color of inner confidence intervals for insignificant model terms.
 #' @param insignif.dark Color of point estimates and labels for insignificant model terms.
-#' @param ggsave.output Using this argument, the resulting table is written to a file 
-#'   rather than to the R prompt. The file name can be specified as a character string. 
-#'   The file extension is automatically recognized. \code{pdf}, \code{ps}, \code{png}, 
-#'   \code{bmp}, \code{jpg}, and \code{tiff} are supported.
-#' @param ... Custom options to be passed on to the extract function or the 
-#'   gggplot2 device. See the help entries of \link{extract} and \link{extract-methods} 
-#'   for more information. 
-#' @return coefficient plots from statistical model output using \code{\link{ggplot2}}
+#' 
+#' @return coefficient plots from statistical model output using \pkg{ggplot2}.
+#' 
+#' @inheritParams texreg
+#' @inheritParams matrixreg
+#'
 #'
 #' @author Philip Leifeld
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'   \code{\link{extract-methods}} \code{\link{texreg}}
 #'   
-#'   @examples
+#' @examples
 #' # example from the 'lm' help file:
 #' ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
 #' trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
@@ -189,6 +69,7 @@
 #' 
 #' @export
 plotreg <- function(l,
+                    file = NULL,
                     custom.model.names = NULL,
                     custom.title = NULL,
                     custom.coef.names = NULL,
@@ -211,11 +92,10 @@ plotreg <- function(l,
                     insignif.light = "#C5DBE9",
                     insignif.medium = "#5A9ECC",
                     insignif.dark = "#1C5BA6",
-                    ggsave.output = NULL,
                     ...) {
     
     if (!is.null(omit.coef) && !is.na(omit.coef) && !is.character(omit.coef)) {
-        stop("omit.coef must be a character string!")
+        stop("'omit.coef' must be a character string!")
     }
     if (is.null(omit.coef)) {
         omit.coef <- NA
@@ -242,6 +122,7 @@ plotreg <- function(l,
     }
     
     co <- se <- co.names <- pv <- lab <- ci.low <- ci.up <- NULL
+    
     
     # make dataframe
     for (i in 1:length(models)) {
@@ -357,7 +238,7 @@ plotreg <- function(l,
         dataframe <- cbind(dataframe, upper.inner)     
     }
     
-    # # which terms are significant?
+    # which terms are significant?
     if (length(dataframe$pv) > 0) {
         signif.outer <- dataframe$pv < (1 - ci.level)
     } else if (length(dataframe$ci.low) > 0) {
@@ -373,7 +254,7 @@ plotreg <- function(l,
         signif <- apply(cbind(lower.inner, upper.inner), 1,
                         function(x) x[1] <= 0 && x[2] >= 0)
     } else {
-        stop("signif.outer does not correspond to the intervals provided.")
+        stop("'signif.outer' does not correspond to the intervals provided.")
     }
     
     
@@ -424,7 +305,7 @@ plotreg <- function(l,
             idx <- is.na(custom.coef.map)
             custom.coef.map[idx] <- names(custom.coef.map)[idx]
             selectcoef <- names(custom.coef.map)
-            keepcoef <- paste(selectcoef, collapse="|")
+            keepcoef <- paste(selectcoef, collapse = "|")
             dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
             # resize number of levels in factor to avoid error
             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
@@ -439,12 +320,12 @@ plotreg <- function(l,
         p <- ggplot(dataframe, aes(co.names, co)) + 
             geom_hline(yintercept = 0, 
                        lty = 2, lwd = 1, 
-                       colour="grey50") +
-            geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
+                       colour = "grey50") +
+            geom_errorbar(aes(ymin = lower.outer, ymax = upper.outer), 
                           lwd = 1, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light), 
                           width = 0) +
-            geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), 
+            geom_errorbar(aes(ymin = lower.inner, ymax = upper.inner), 
                           lwd = 2.5, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium), 
                           width = 0) +
@@ -455,8 +336,8 @@ plotreg <- function(l,
         p <- p + theme
         p <- p + xlab(" ") +
             facet_wrap(~lab, 
-                       strip.position="left", 
-                       nrow=length(dataframe), 
+                       strip.position = "left", 
+                       nrow = length(dataframe), 
                        scales = "free_y")
         
         if (length(custom.title) > 0) {
@@ -472,7 +353,7 @@ plotreg <- function(l,
         } else {
             # reorder levels 
             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-            #reorder coef in original order
+            # reorder coef in original order
             startlevel<- c(1:length(dataframe$co.names))
             dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
         }
@@ -482,7 +363,7 @@ plotreg <- function(l,
             idx <- is.na(custom.coef.map)
             custom.coef.map[idx] <- names(custom.coef.map)[idx]
             selectcoef <- names(custom.coef.map)
-            keepcoef <- paste(selectcoef, collapse="|")
+            keepcoef <- paste(selectcoef, collapse = "|")
             dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
             # resize number of levels in factor to avoid error
             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
@@ -503,12 +384,12 @@ plotreg <- function(l,
             geom_hline(yintercept = 0, 
                        lty = 2, 
                        lwd = 1, 
-                       colour="grey50") +
-            geom_errorbar(aes(ymin=lower.outer, ymax=upper.outer), 
+                       colour = "grey50") +
+            geom_errorbar(aes(ymin = lower.outer, ymax = upper.outer), 
                           lwd = 1, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light), 
                           width = 0) +
-            geom_errorbar(aes(ymin= lower.inner, ymax= upper.inner), 
+            geom_errorbar(aes(ymin = lower.inner, ymax = upper.inner), 
                           lwd = 2.5, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
                           width = 0) +
@@ -519,8 +400,8 @@ plotreg <- function(l,
         p <- p + theme
         p <- p + xlab(" ") +
             facet_wrap(~co.names, 
-                       strip.position="left", 
-                       nrow=length(dataframe), 
+                       strip.position = "left", 
+                       nrow = length(dataframe), 
                        scales = "free_y")
         
         if (length(custom.title) > 0) {
@@ -565,10 +446,9 @@ plotreg <- function(l,
     }
     
     # print plot in R
-    print(p)
-    
-    # file output - save plot with ggsave
-    if (length(ggsave.output) > 0 ) {
-        ggsave(ggsave.output, plot = p) 
+    if (is.null(file)) {
+        return(p)
+    } else {
+        ggsave(file = file, plot = p)
     }
 }
