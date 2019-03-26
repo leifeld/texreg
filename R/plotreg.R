@@ -20,11 +20,19 @@
 #'  \code{type = "forest"} option, coefficients from one or more models will 
 #'  be grouped together and displayed as a forest plot. 
 #'
+#' 
+#' @param custom.title With this argument, a replacement text for the \code{ggtitle} 
+#'   that provides a title above the diagram can be provided. If an empty character 
+#'   object is provided (\code{custom.note = ""}), the note will be omitted completely.
 #' @param override.pval Replacement list of p-value vectors.
 #' @param ci.level If standard errors are converted to confidence intervals
 #'   (because a model does not natively support CIs), what confidence level 
 #'   should be used for the outer confidence interval? By default, \code{0.95}
 #'   is used (i.e., an alpha value of 0.05).
+#' @param use.se Use one standard error for the inner horizontal bar and two 
+#'   standard errors from the estimate for the outer horizontal bar (instead 
+#'   of confidence intervals). Only available if standard errors can be 
+#'   extracted from the model using the respective \code{\link{extract}} function.
 #' @param type The default option is \code{type = "facet"}. If one model only is 
 #'   specified, it will print one forest plot applied to point estimates and 
 #'   confidence intervals. If more than one model is specified, it will print 
