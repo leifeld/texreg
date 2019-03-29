@@ -1769,7 +1769,6 @@ matrixreg <- function(l,
     }
 
     # combine output matrix with custom columns
-    offset <- 1
     output.count <- 0
     custom.count <- 0
     temp <- matrix(character(), nrow = nrow(output.matrix), ncol = 0)
@@ -1780,12 +1779,11 @@ matrixreg <- function(l,
       } else {
         custom.count <- custom.count + 1
         newcol <- matrix("", nrow = nrow(temp), ncol = 1)
-        newcol[1, 1] <- names(custom.columns)[custom.count]
         for (j in 1:numcoef) {
           if (single.row == TRUE) {
-            newcol[j + offset, 1] <- as.character(custom.columns[[custom.count]][j])
+            newcol[j, 1] <- as.character(custom.columns[[custom.count]][j])
           } else {
-            newcol[(2 * j) - (1 - offset), 1] <- as.character(custom.columns[[custom.count]][j])
+            newcol[(2 * j) - 1, 1] <- as.character(custom.columns[[custom.count]][j])
           }
         }
         temp <- cbind(temp, newcol)

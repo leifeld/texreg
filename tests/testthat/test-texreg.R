@@ -1,4 +1,4 @@
-context("Test of texreg function arguments")
+context("Test of texreg et al. function arguments")
 library("texreg")
 
 data("iris")
@@ -60,4 +60,22 @@ test_that("sanity checks and arguments work in texreg function", {
       fs
     }, 400)
   expect_error(texreg(model1, file = 12), "The 'file' argument must be a character string.")
+  expect_match(texreg(model1,
+                      custom.columns = list("column 1" = c("yes", "no"),
+                                            c(11, 13)),
+                      custom.col.pos = c(1, 2)),
+               "column 1 &  &  & Model 1 \\\\\\\\\n",
+               perl = TRUE)
+  expect_match(texreg(list(model1, model1),
+                      custom.columns = list("column 1" = c("yes", "no"),
+                                            c(11, 13)),
+                      custom.col.pos = c(1, 3)),
+               "column 1 &  & Model 1 &  & Model 2 \\\\\\\\\n",
+               perl = TRUE)
+  expect_match(texreg(list(model1, model1),
+                      custom.columns = list("column 1" = c("yes", "no"),
+                                            c(11, 13)),
+                      custom.col.pos = c(1, 3)),
+               "yes & \\(Intercept\\) & \\$3.31\\^{.{3}}\\$  & 11 & \\$3\\.31\\^{.{3}}\\$  \\\\\\\\\n",
+               perl = TRUE)
 })
