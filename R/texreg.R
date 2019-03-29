@@ -842,6 +842,14 @@ matrixreg <- function(l,
                       trim = FALSE,
                       ...) {
 
+  # check stars
+  if (is.null(stars) || length(stars) == 0 || (length(stars) == 1 && is.na(stars))) {
+    stars <- 0
+  }
+  if (any(is.na(stars)) || !is.numeric(stars) || length(stars) > 4) {
+    stop("'stars' must be numeric and of length between 1 and 4.")
+  }
+
   # unnamed arguments to environment
   dots <- list(...)
 
@@ -1761,7 +1769,6 @@ matrixreg <- function(l,
     }
 
     # combine output matrix with custom columns
-    offset <- 1
     output.count <- 0
     custom.count <- 0
     temp <- matrix(character(), nrow = nrow(output.matrix), ncol = 0)
@@ -1772,12 +1779,11 @@ matrixreg <- function(l,
       } else {
         custom.count <- custom.count + 1
         newcol <- matrix("", nrow = nrow(temp), ncol = 1)
-        newcol[1, 1] <- names(custom.columns)[custom.count]
         for (j in 1:numcoef) {
           if (single.row == TRUE) {
-            newcol[j + offset, 1] <- as.character(custom.columns[[custom.count]][j])
+            newcol[j, 1] <- as.character(custom.columns[[custom.count]][j])
           } else {
-            newcol[(2 * j) - (1 - offset), 1] <- as.character(custom.columns[[custom.count]][j])
+            newcol[(2 * j) - 1, 1] <- as.character(custom.columns[[custom.count]][j])
           }
         }
         temp <- cbind(temp, newcol)
@@ -2204,7 +2210,7 @@ texreg <- function(l,
     dcolumn <- FALSE
     msg <- paste("The dcolumn package and the 'bold' argument cannot be used at",
                  "the same time. Switching off 'dcolumn'.")
-    if (length(stars) > 1 || stars == TRUE || stars != 0) {
+    if (length(stars) > 1 || (length(stars) > 0 && (stars == TRUE || stars != 0))) {
       warning(paste(msg, "You should also consider setting stars = 0."))
     } else {
       warning(msg)
@@ -2217,15 +2223,6 @@ texreg <- function(l,
     msg <- paste("The longtable package and sideways environment cannot be",
                  "used at the same time. You may want to use the pdflscape package.",
                  "Switching off 'sideways'.")
-    warning(msg)
-  }
-
-  # check longtable vs. float.pos
-  if (isTRUE(longtable) && !(float.pos %in% c("", "l", "c", "r"))) {
-    float.pos <- ""
-    msg <- paste("When the longtable environment is used, the 'float.pos'",
-                 "argument can only take one of the 'l', 'c', 'r', or ''",
-                 "(empty) values. Setting float.pos = ''.")
     warning(msg)
   }
 
@@ -2333,6 +2330,9 @@ texreg <- function(l,
 
   # write table header
   if (isTRUE(use.packages)) {
+    if (!is.null(scalebox)) {
+      string <- paste0(string, "\\usepackage{graphicx}", linesep)
+    }
     if (isTRUE(sideways) & isTRUE(table)) {
       string <- paste0(string, "\\usepackage{rotating}", linesep)
     }
@@ -2345,7 +2345,7 @@ texreg <- function(l,
     if (isTRUE(longtable)) {
       string <- paste0(string, "\\usepackage{longtable}", linesep)
     }
-    if (isTRUE(dcolumn) || isTRUE(booktabs) || isTRUE(sideways) || isTRUE(longtable)) {
+    if (!is.null(scalebox) || isTRUE(dcolumn) || isTRUE(booktabs) || isTRUE(sideways) || isTRUE(longtable)) {
       string <- paste0(string, linesep)
     }
   }
@@ -2360,7 +2360,7 @@ texreg <- function(l,
     if (float.pos == "") {
       string <- paste0(string, "\\begin{longtable}{", coldef, "}", linesep)
     } else {
-      string <- paste0(string, "\\begin{longtable}[", float.pos, "]", linesep)
+      string <- paste0(string, "\\begin{longtable}[", float.pos, "]{", coldef, "}", linesep)
     }
   } else {  # table or sidewaystable
     if (isTRUE(table)) {
@@ -2823,11 +2823,11 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   }
   if (isTRUE(left)) {
     left.side <- sub("\\\\; ", "", left.side)
-    v.length <- max(nchar(left.side), na.rm = TRUE)
+    v.length <- max(c(0, nchar(left.side)), na.rm = TRUE)
   } else {
     right.side <- sub("\\^\\{", "", right.side)
     right.side <- sub("\\}", "", right.side)
-    v.length <- max(nchar(right.side), na.rm = TRUE)
+    v.length <- max(c(0, nchar(right.side)), na.rm = TRUE)
   }
   return(v.length)
 }

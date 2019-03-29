@@ -1,3 +1,5 @@
+dist: xenial
+
 language: r
 
 r:
@@ -10,8 +12,45 @@ cache: packages
 
 r_check_args: --as-cran
 
+addons:
+  apt:
+    packages:
+      - ghostscript
+      - r-cran-rcpp
+      - r-cran-mcmcpack
+      - libudunits2-dev
+      - r-cran-ggplot2
+      - r-cran-brglm
+      - r-cran-dynlm
+      - r-cran-fgarch
+      - r-cran-gee
+      - r-cran-gmm
+      - r-cran-pscl
+      - r-cran-rms
+      - r-cran-spdep
+      - r-cran-amelia
+
 r_packages:
   - covr
+  - betareg
+  - censReg
+  - eha
+  - erer
+  - gamlss
+  - h2o
+  - latentnet
+  - lqmm
+  - mfx
+  - mlogit
+  - MuMIn
+  - ordinal
+  - panelAR
+  - relevent
+  - sampleSelection
+  - simex
+  - systemfit
+  - tergm
+  - xergm
 
 notifications:
   email:
@@ -20,9 +59,6 @@ notifications:
       - claudia.zucca@glasgow.ac.uk
     on_success: change
     on_failure: change
-
-before_install:
-  - sudo apt-get install r-cran-mcmcpack
 
 after_success:
 - Rscript -e 'library(covr); codecov()'

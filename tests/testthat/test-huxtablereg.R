@@ -15,6 +15,6 @@ test_that("huxtablereg gives useful error message if huxtable not installed", {
 })
 
 test_that("huxtablereg works", {
-  expect_known_output(huxtablereg(list(m1, m2)),
-                      file = "../files/huxtablereg.RDS")
+  expect_known_value(huxtablereg(list(m1, m2)),
+                     file = "../files/huxtablereg.RDS")
 })
