@@ -1,4 +1,4 @@
-context("Test of the texreg, screenreg, htmlreg etc. code from the 2013 JSS article")
+context("Test of the code from the 2013 JSS article")
 library("texreg")
 
 # example models from ?lm

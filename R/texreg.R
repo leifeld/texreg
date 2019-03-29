@@ -2823,11 +2823,11 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   }
   if (isTRUE(left)) {
     left.side <- sub("\\\\; ", "", left.side)
-    v.length <- max(nchar(left.side), na.rm = TRUE)
+    v.length <- max(c(0, nchar(left.side)), na.rm = TRUE)
   } else {
     right.side <- sub("\\^\\{", "", right.side)
     right.side <- sub("\\}", "", right.side)
-    v.length <- max(nchar(right.side), na.rm = TRUE)
+    v.length <- max(c(0, nchar(right.side)), na.rm = TRUE)
   }
   return(v.length)
 }
