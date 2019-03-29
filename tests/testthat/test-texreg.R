@@ -32,6 +32,9 @@ test_that("sanity checks and arguments work in texreg function", {
   expect_match(texreg(model1, booktabs = TRUE), "\\\\midrule\n", perl = TRUE)
   expect_match(texreg(model1, booktabs = TRUE), "\\\\bottomrule\n", perl = TRUE)
   expect_match(texreg(model1, ci.force = TRUE), "& \\$ \\[ 3.19;  3.43\\]\\$ \\\\\\\\\n", perl = TRUE)
+  expect_match(texreg(model1, ci.force = TRUE, single.row = TRUE),
+               "\\(Intercept\\) & \\$3.31 \\\\; \\[ 3\\.19;  3\\.43\\]\\^{.}\\$  \\\\\\\\\n",
+               perl = TRUE)
   expect_match(texreg(model1, center = FALSE), "\\\\end{table}$", perl = TRUE)
   expect_match(texreg(model1, float.pos = ""), "\\\\begin{table}\n", perl = TRUE)
   expect_match(texreg(model1, float.pos = "tb"), "\\\\begin{table}\\[tb\\]\n", perl = TRUE)
@@ -44,6 +47,7 @@ test_that("sanity checks and arguments work in texreg function", {
   expect_match(texreg(model1, fontsize = "LARGE"), "\\\\multicolumn\\{2\\}{l}{\\\\normalsize{", perl = TRUE)
   expect_match(texreg(model1, fontsize = "huge"), "\\\\multicolumn\\{2\\}{l}{\\\\large{", perl = TRUE)
   expect_match(texreg(model1, fontsize = "Huge"), "\\\\multicolumn\\{2\\}{l}{\\\\Large{", perl = TRUE)
+  expect_match(texreg(model1, fontsize = "footnotesize", longtable = TRUE), "\\\\begin{footnotesize}\n\\\\begin{longtable}", perl = TRUE)
   expect_match(texreg(model1, caption.above = TRUE), "\\\\begin{table}\n\\\\caption{Statistical models}\n", perl = TRUE)
   expect_match(texreg(model1, custom.note = "my new note"), "\\\\multicolumn\\{2\\}{l}{\\\\scriptsize{my new note}}", perl = TRUE)
   expect_match(texreg(model1, custom.note = ""), "\\\\hline\n\\\\end{tabular}\n", perl = TRUE)
@@ -77,5 +81,8 @@ test_that("sanity checks and arguments work in texreg function", {
                                             c(11, 13)),
                       custom.col.pos = c(1, 3)),
                "yes & \\(Intercept\\) & \\$3.31\\^{.{3}}\\$  & 11 & \\$3\\.31\\^{.{3}}\\$  \\\\\\\\\n",
+               perl = TRUE)
+  expect_match(texreg(model1, dcolumn = TRUE, custom.columns = list("column 1" = 1:2)),
+               " & column 1 & \\\\multicolumn\\{1\\}{c}{Model 1} \\\\\\\\\n",
                perl = TRUE)
 })
