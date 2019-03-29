@@ -1,3 +1,5 @@
+dist: xenial
+
 language: r
 
 r:
@@ -13,6 +15,7 @@ r_check_args: --as-cran
 addons:
   apt:
     packages:
+      - ghostscript
       - r-cran-mcmcpack
       - libudunits2-dev
       - r-cran-ggplot2
