@@ -16,6 +16,7 @@ addons:
   apt:
     packages:
       - ghostscript
+      - r-cran-rcpp
       - r-cran-mcmcpack
       - libudunits2-dev
       - r-cran-ggplot2
@@ -27,6 +28,7 @@ addons:
       - r-cran-pscl
       - r-cran-rms
       - r-cran-spdep
+      - r-cran-amelia
 
 r_packages:
   - covr

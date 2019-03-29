@@ -85,4 +85,24 @@ test_that("sanity checks and arguments work in texreg function", {
   expect_match(texreg(model1, dcolumn = TRUE, custom.columns = list("column 1" = 1:2)),
                " & column 1 & \\\\multicolumn\\{1\\}{c}{Model 1} \\\\\\\\\n",
                perl = TRUE)
+  expect_match(capture.output(print(texreg(model1)))[22], "\\\\end\\{table\\}")
+})
+
+test_that("arguments work in screenreg function", {
+  expect_error(screenreg(model1, outer.rule = TRUE), "outer.rule must be a character.")
+  expect_error(screenreg(model1, outer.rule = "=="), "outer.rule must be a character of maximum length 1.")
+  expect_match(screenreg(model1, outer.rule = ""), "^\n     ")
+  expect_error(screenreg(model1, inner.rule = TRUE), "inner.rule must be a character.")
+  expect_error(screenreg(model1, inner.rule = "--"), "inner.rule must be a character of maximum length 1.")
+  expect_match(screenreg(model1, inner.rule = ""), "Model 1   \n\\(Intercept")
+  expect_match(screenreg(model1, custom.note = ""), "==\n$")
+  expect_match(screenreg(model1, custom.note = "my note"), "==\nmy note\n$")
+  expect_match(screenreg(model1, custom.note = "%stars. my note"), "0.05. my note\n$")
+  expect_error(screenreg(model1, file = TRUE), "The 'file' argument must be a character string.$")
+  expect_gt({
+    suppressMessages(screenreg(model1, file = "../files/temp.txt"))
+    fs <- file.size("../files/temp.txt")
+    unlink("../files/temp.txt")
+    fs
+  }, 300)
 })
