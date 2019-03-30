@@ -1066,7 +1066,7 @@ matrixreg <- function(l,
   }
 
   # add custom GOF rows
-  if (!is.null(custom.gof.rows) && !is.na(custom.gof.rows)) {
+  if (!is.null(custom.gof.rows)) {
     if (class(custom.gof.rows) != "list") {
       stop("The 'custom.gof.rows' argument is ignored because it is not a list.")
     }
