@@ -105,4 +105,9 @@ test_that("arguments work in screenreg function", {
     unlink("../files/temp.txt")
     fs
   }, 300)
+  expect_match(screenreg(list(model1, model1),
+                         custom.gof.rows = list(test = c("yes", "no"),
+                                                "test 2" = 4:5,
+                                                "test 3" = c(2.4, 3.7))),
+                         "--\ntest\\s+yes\\s+no\\s+\ntest 2\\s+4\\s+5\\s+\ntest 3\\s+2.40\\s+3.70\\s+\nR\\^2")
 })
