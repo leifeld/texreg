@@ -1194,6 +1194,107 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
 setMethod("extract", signature = className("feglm", "alpaca"), definition = extract.feglm)
 
 
+#' @noRd
+extract.feis <- function(model,
+                         include.rsquared = TRUE,
+                         include.adjrs = TRUE,
+                         include.nobs = TRUE,
+                         include.groups = TRUE,
+                         include.rmse = TRUE,
+                         ...) {
+  s <- summary(model, ...)
+
+  coefficient.names <- rownames(coef(s))
+  coefficients <- coef(s)[, 1]
+  standard.errors <- coef(s)[, 2]
+  significance <- coef(s)[, 4]
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (isTRUE(include.rsquared)) {
+    rs <- s$r.squared[1]
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (isTRUE(include.adjrs)) {
+    adj <- s$r.squared[2]
+    gof <- c(gof, adj)
+    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (isTRUE(include.nobs)) {
+    n <- length(model$residuals)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (isTRUE(include.groups)) {
+    grps <-length(unique(model$id))
+    grp.names <- model$call[[match(c("id"), names(model$call))]]
+    grp.names <- paste("Num.\ groups:", grp.names)
+    gof <- c(gof, grps)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (isTRUE(include.rmse)) {
+    rmse <- sqrt(sum((model$residuals * model$residuals)) / model$df.residual)
+    gof <- c(gof, rmse)
+    gof.names <- c(gof.names, "RMSE")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+
+  tr <- texreg::createTexreg(
+    coef.names = coefficient.names,
+    coef = coefficients,
+    se = standard.errors,
+    pvalues = significance,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{feis} objects
+#'
+#' \code{\link{extract}} method for \code{feis} objects. These objects are
+#' created by the \code{\link[feisr]{feis}} function in the \pkg{feisr} package.
+#'
+#' @param model A model object.
+#' @param include.rsquared Report R^2 in the GOF block?
+#' @param include.adjrs Report adjusted R^2 in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.groups Report the number of groups in the GOF block?
+#' @param include.rmse Report the root mean square error (RMSE; = residual
+#'   standard deviation) in the GOF block?
+#' @param ... Additional arguments for the \code{\link[base]{summary}} function
+#'   for \code{feis} objects.
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract feis
+#' @aliases extract.feis
+#' @author Tobias Rüttenauer, Philip Leifeld
+#'
+#' @examples
+#' library("feisr")
+#' library("texreg")
+#' data("mwp", package = "feisr")
+#' feis1.mod <- feis(lnw ~ marry | exp, data = mwp, id = "id")
+#' feis2.mod <- feis(lnw ~ marry + enrol + as.factor(yeargr) | exp,
+#'                   data = mwp,
+#'                   id = "id")
+#' sr1 <- screenreg(list(feis1.mod, feis2.mod), digits = 3)
+#' tr1 <- texreg(list(feis1.mod, feis2.mod), digits = 3)
+#'
+#' @importFrom stats nobs
+#' @importFrom stats coef
+#' @export
+setMethod("extract", signature = className("feis", "feisr"),
+          definition = extract.feis)
+
+
 # extension for felm objects (lfe package)
 extract.felm <- function(model, include.nobs = TRUE, include.rsquared = TRUE,
     include.adjrs = TRUE, include.fstatistic = FALSE, ...) {
