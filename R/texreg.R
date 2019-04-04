@@ -1066,7 +1066,7 @@ matrixreg <- function(l,
   }
 
   # add custom GOF rows
-  if (!is.null(custom.gof.rows) && !is.na(custom.gof.rows)) {
+  if (!is.null(custom.gof.rows)) {
     if (class(custom.gof.rows) != "list") {
       stop("The 'custom.gof.rows' argument is ignored because it is not a list.")
     }
@@ -1078,9 +1078,9 @@ matrixreg <- function(l,
           custom.gof.rows[[i]] <- as.character(custom.gof.rows[[i]]) # cast into character if unknown class, such as factor or logical
         }
         # auto-detect decimal setting
-        if (!is.numeric(custom.gof.rows)) { # put NA for character objects, for example fixed effects
+        if (!is.numeric(custom.gof.rows[[i]])) { # put NA for character objects, for example fixed effects
           dec <- NA
-        } else if (all(custom.gof.rows %% 1 == 0)) { # put 0 for integers
+        } else if (all(custom.gof.rows[[i]] %% 1 == 0)) { # put 0 for integers
           dec <- 0
         } else { # put the respective decimal places if numeric but not integer
           dec <- digits
@@ -1096,6 +1096,7 @@ matrixreg <- function(l,
       }
     }
   }
+  colnames(gof.matrix) <- NULL
 
   # apply custom coefficient map using 'custom.coef.map' argument
   if (!is.null(custom.coef.map)) {
@@ -2741,6 +2742,9 @@ wordreg <- function(l,
 #'
 #' @export
 coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
+  if (is.character(x)) {
+    return(x)
+  }
   if (is.na(digits)) {
     return("")
   }
