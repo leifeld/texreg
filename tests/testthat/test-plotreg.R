@@ -30,11 +30,11 @@ test_that("xlab is labelled 'Bars denote SEs. Circle points denote significance.
 # biglm model -confidence interval 
 library("biglm")
 data(trees)
-ff<-log(Volume)~log(Girth)+log(Height)
-a <- bigglm(ff,data=trees, chunksize=10, sandwich=TRUE)
-gg<-log(Volume)~log(Girth)+log(Height)+offset(2*log(Girth)+log(Height))
-b <- bigglm(gg,data=trees, chunksize=10, sandwich=TRUE)
-p3 <- plotreg(list(a,b))
+ff <- log(Volume) ~ log(Girth) + log(Height)
+a <- bigglm(ff, data = trees, chunksize = 10, sandwich = TRUE)
+gg <- log(Volume) ~ log(Girth) + log(Height) + offset(2 * log(Girth) + log(Height))
+b <- bigglm(gg, data = trees, chunksize = 10, sandwich = TRUE)
+p3 <- plotreg(list(a, b))
 
 # tests if dataframe is correctly made
 test_that("Dataframe is correctly constructed",{
