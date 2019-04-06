@@ -71,7 +71,6 @@
 #' lm.D9 <- lm(weight ~ group)
 #' plotreg(lm.D9)    # plot model output as a diagram
 #' # plot model output as a diagram customising theme and title and automatically saving in pdf.
-#' dev.off()
 #' plotreg(lm.D9, theme = theme_dark(),  ggtitle ="my title", file = "myplot.pdf")
 #' unlink("myplot.pdf")
 #' 
@@ -246,6 +245,10 @@ plotreg <- function(l,
     }
     
     # which terms are significant?
+    if (length(dataframe$pv) == 0 & length(dataframe$ci.low) == 0) {
+        stop("Impossible to estimate significance since no CIs or SEs are provided")
+    }
+    
     if (length(dataframe$pv) > 0) {
         signif.outer <- dataframe$pv < (1 - ci.level)
     } else if (length(dataframe$ci.low) > 0) {
@@ -454,6 +457,6 @@ plotreg <- function(l,
     if (is.null(file)) {
         return(p)
     } else {
-        ggsave(file = file, plot = p)
+        ggsave(filename = file, plot = p)
     }
 }
