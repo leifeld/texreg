@@ -246,7 +246,7 @@ plotreg <- function(l,
     
     # which terms are significant?
     if (length(dataframe$pv) == 0 & length(dataframe$ci.low) == 0) {
-        stop("Impossible to estimate significance since no CIs or SEs are provided")
+        stop("Impossible to estimate significance since no CIs or SEs are provided.")
     }
     
     if (length(dataframe$pv) > 0) {
