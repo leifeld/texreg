@@ -8,7 +8,6 @@ Description: Converts coefficients, standard errors, significance stars, and goo
 URL: http://github.com/leifeld/texreg/
 BugReports: https://github.com/leifeld/texreg/issues
 Suggests:
-  biglm
   broom (>= 0.4.2),
   huxtable (>= 4.2.0),
   knitr (>= 1.22),
@@ -23,7 +22,7 @@ Suggests:
   Zelig (>= 5.0-16),
 Depends: R (>= 3.5), ggplot2 (>= 3.1.0)
 Imports: methods, grDevices, graphics, stats
-Enhances: AER, betareg, brglm, btergm, censReg, dynlm, eha, erer, ergm, fGarch, gamlss, gee, geepack, gmm, h2o, latentnet, lmtest, lqmm, MASS, mfx, mgcv, mlogit, MuMIn, nnet, ordinal, panelAR, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, survey, systemfit, tergm, VGAM, xergm
+Enhances: AER, betareg, biglm, brglm, btergm, censReg, dynlm, eha, erer, ergm, fGarch, gamlss, gee, geepack, gmm, h2o, latentnet, lmtest, lqmm, MASS, mfx, mgcv, mlogit, MuMIn, nnet, ordinal, panelAR, pscl, quantreg, relevent, rms, robustbase, RSiena, sampleSelection, simex, sna, spdep, survey, systemfit, tergm, VGAM, xergm
 Additional_repositories: 
 License: GPL-3
 Encoding: UTF-8

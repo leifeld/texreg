@@ -1947,7 +1947,6 @@ print.texregTable <- function(x, ...) {
 #'  \code{type = "forest"} option, coefficients from one or more models will 
 #'  be grouped together and displayed as a forest plot. 
 #'
-#' 
 #' @param custom.title With this argument, a replacement text for the \code{ggtitle} 
 #'   that provides a title above the diagram can be provided. If an empty character 
 #'   object is provided (\code{custom.note = ""}), the note will be omitted completely.
@@ -1978,11 +1977,10 @@ print.texregTable <- function(x, ...) {
 #' @param insignif.dark Color of point estimates and labels for insignificant model terms.
 #' 
 #' @return Coefficient plot as a \pkg{ggplot2} \code{gg} object if \code{file = FALSE}. 
-#' \code{NULL} otherwise.
+#'  \code{NULL} otherwise.
 #' 
 #' @inheritParams texreg
 #' @inheritParams matrixreg
-#'
 #'
 #' @author Claudia Zucca, Philip Leifeld
 #' @family texreg
@@ -1998,7 +1996,7 @@ print.texregTable <- function(x, ...) {
 #' lm.D9 <- lm(weight ~ group)
 #' plotreg(lm.D9)    # plot model output as a diagram
 #' # plot model output as a diagram customising theme and title and automatically saving in pdf.
-#' plotreg(lm.D9, theme = theme_dark(),  ggtitle ="my title", file = "myplot.pdf")
+#' plotreg(lm.D9, theme = theme_dark(),  ggtitle = "my title", file = "myplot.pdf")
 #' unlink("myplot.pdf")
 #' 
 #' @export
