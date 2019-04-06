@@ -306,10 +306,9 @@ if (requireNamespace("huxtable")) {
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
 
-Other texreg: \code{\link{htmlreg}},
-  \code{\link{matrixreg}}, \code{\link{plotreg}},
-  \code{\link{screenreg}}, \code{\link{texreg}},
-  \code{\link{wordreg}}
+Other texreg: \code{\link{htmlreg}}, \code{\link{knitreg}},
+  \code{\link{matrixreg}}, \code{\link{screenreg}},
+  \code{\link{texreg}}, \code{\link{wordreg}}, \code{\link{plotreg}}
 }
 \author{
 David Hugh-Jones

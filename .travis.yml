@@ -25,6 +25,8 @@ addons:
       - r-cran-fgarch
       - r-cran-gee
       - r-cran-gmm
+      - r-cran-knitr
+      - r-cran-rmarkdown
       - r-cran-pscl
       - r-cran-rms
       - r-cran-spdep

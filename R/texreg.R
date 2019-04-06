@@ -536,6 +536,103 @@ huxtablereg <- function(l,
   return(hx)
 }
 
+#' Flexibly choose the right table output format for use with \pkg{knitr}
+#'
+#' Flexibly choose the right table output format for use with \pkg{knitr}.
+#'
+#' This function automatically selects the right function (\link{texreg},
+#' \link{screenreg}, \link{htmlreg}, or \link{matrixreg}) with the right set of
+#' arguments for use with the \pkg{knitr} package, for example in RStudio. The
+#' advantage of using this function with \pkg{knitr} is that the user does not
+#' need to replace the \link{texreg}, \link{htmlreg} etc. function call in the
+#' document when a different output format is selected.
+#'
+#' \link{knitreg} works with...
+#' \itemize{
+#'   \item \R HTML documents (\code{.Rhtml} extension)
+#'   \item \R Sweave documents (\code{.Rnw} extension) for PDF output via LaTeX,
+#'     rendered using...
+#'     \itemize{
+#'       \item the \pkg{knitr} package
+#'       \item the \pkg{Sweave} package
+#'     }
+#'   \item \R Markdown documents (\code{.Rmd} extension), rendered as...
+#'     \itemize{
+#'       \item HTML documents
+#'       \item PDF documents
+#'       \item Word documents
+#'     }
+#'   \item \R Notebooks, including preview
+#' }
+#'
+#' If Markdown and HTML rendering are selected, \link{htmlreg} arguments
+#' \code{doctype = FALSE} and \code{star.symbol = "\\*"} are set to enable
+#' compatibility with Markdown. With \R HTML documents (but not Markdown), only
+#' \code{doctype = FALSE} is set.
+#'
+#' For PDF/LaTeX documents, the \link{texreg} argument
+#' \code{use.packages = FALSE} is set to suppress any package loading
+#' instructions in the preamble. The user must load any packages manually in the
+#' preamble of the document.
+#'
+#' The \pkg{knitr} and \pkg{rmarkdown} packages must be installed for this
+#' function to work.
+#'
+#' @param ... Arguments to be handed over to the \link{texreg}, \link{htmlreg},
+#'   \link{screenreg}, or \link{matrixreg} function. See the respective help
+#'   page for details.
+#' @return A table as a \code{character} string in the respective output format.
+#'
+#' @author Philip Leifeld, with input from David Hugh-Jones
+#' @family texreg
+#' @seealso \code{\link{texreg-package}} \code{\link{extract}}
+#'
+#' @examples
+#' require("nlme")
+#' model.1 <- lme(distance ~ age, data = Orthodont, random = ~ 1)
+#' model.2 <- lme(distance ~ age + Sex, data = Orthodont, random = ~ 1)
+#' knitreg(list(model.1, model.2), center = FALSE, caption = "", table = FALSE)
+#'
+#' @export
+knitreg <- function(...) {
+  if (!requireNamespace("knitr", quietly = TRUE)) {
+    stop("knitreg requires the 'knitr' package to be installed.\n",
+         "To do this, enter 'install.packages(\"knitr\")'.")
+  }
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
+    stop("knitreg requires the 'rmarkdown' package to be installed.\n",
+         "To do this, enter 'install.packages(\"rmarkdown\")'.")
+  }
+  of <- knitr::opts_knit$get("out.format")
+  if (is.null(of)) { # R Notebook preview (rendered on the R console)
+    screenreg(...)
+  } else if (of == "markdown") { # R Markdown document with extension .Rmd, which can be rendered to HTML, PDF, or Word
+    output <- rmarkdown::all_output_formats(knitr::current_input())[1]
+    if (output == "html_document") { # .Rmd with HTML rendering via the rmarkdown package
+      htmlreg(..., doctype = FALSE, star.symbol = "\\*") # the '*' symbol must be escaped in Markdown
+    } else if (output == "pdf_document") { # .Rmd with PDF LaTeX rendering via the rmarkdown package
+      texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
+    } else if (output == "word_document") { # .Rmd with Word rendering through the rmarkdown package
+      mr <- matrixreg(..., output.type = "ascii", include.attributes = FALSE, trim = TRUE)
+      colnames(mr) <- mr[1, ] # set column names because we want 'kable' to draw a horizontal  line under the model names
+      mr <- mr[-1, ] # remove the first row because we already set the model names as column names
+      knitr::kable(mr) # use the kable function to render the table in the Word document
+    } else { # unknown other output format through the rmarkdown package
+      screenreg(...)
+    }
+  } else if (of == "html") { # R HTML document with extension .Rhtml (do not escape '*' symbol!)
+    htmlreg(..., doctype = FALSE)
+  } else if (of == "latex") { # knitr LaTeX .Rnw documents rendered to PDF
+    texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
+  } else if (of == "sweave") { # Sweave LaTeX .Rnw documents rendered to PDF
+    texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
+  } else if (of == "jekyll") { # not sure how Jekyll works, but I'll assume plain ASCII for now
+    screenreg(...)
+  } else { # whatever else knitr is throwing our way should prompt an ASCII table
+    screenreg(...)
+  }
+}
+
 #' Convert regression output to a \code{character} matrix
 #'
 #' Conversion of \R regression output to a \code{character} matrix.
@@ -2692,7 +2789,7 @@ wordreg <- function(l,
                    custom.col.pos = custom.col.pos,
                    output.type = "ascii",
                    include.attributes = FALSE,
-                   trim = FALSE,
+                   trim = TRUE,
                    ...
   )
   wd <- getwd()
