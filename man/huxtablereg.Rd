@@ -306,7 +306,7 @@ if (requireNamespace("huxtable")) {
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
 
-Other texreg: \code{\link{htmlreg}},
+Other texreg: \code{\link{htmlreg}}, \code{\link{knitreg}},
   \code{\link{matrixreg}}, \code{\link{screenreg}},
   \code{\link{texreg}}, \code{\link{wordreg}}
 }

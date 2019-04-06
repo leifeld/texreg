@@ -111,3 +111,11 @@ test_that("arguments work in screenreg function", {
                                                 "test 3" = c(2.4, 3.7))),
                          "--\ntest\\s+yes\\s+no\\s+\ntest 2\\s+4\\s+5\\s+\ntest 3\\s+2.40\\s+3.70\\s+\nR\\^2")
 })
+
+test_that("knitreg function works", {
+  skip_if_not_installed("knitr", minimum_version = "1.22")
+  require("knitr")
+  skip_if_not_installed("rmarkdown", minimum_version = "1.12")
+  require("rmarkdown")
+  expect_match(knitreg(model1), "Petal.Width")
+})
