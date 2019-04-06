@@ -44,12 +44,6 @@ test_that("biglm tests",{
     expect_identical(p3$labels$y, "Bars denote CIs. Circle points denote significance.")
 })
 
-# # tests if it is printing the correct xlab
-# test_that("xlab is labelled 'Bars denote CIs. Circle points denote significance.'",{
-#     expect_true(is.ggplot(p3))
-#     expect_identical(p3$labels$y, "Bars denote CIs. Circle points denote significance.")
-# })
-
 
 
 
