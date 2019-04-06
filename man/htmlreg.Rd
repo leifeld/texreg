@@ -401,9 +401,9 @@ Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 \code{\link{texreg-package}} \code{\link{extract}}
 
 Other texreg: \code{\link{huxtablereg}},
-  \code{\link{knitreg}}, \code{\link{matrixreg}}, \code{\link{plotreg}},
-  \code{\link{screenreg}}, \code{\link{texreg}},
-  \code{\link{wordreg}}
+  \code{\link{knitreg}}, \code{\link{matrixreg}},
+  \code{\link{plotreg}}, \code{\link{screenreg}},
+  \code{\link{texreg}}, \code{\link{wordreg}}
 }
 \author{
 Philip Leifeld

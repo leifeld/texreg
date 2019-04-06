@@ -307,8 +307,8 @@ unlink("testfile.doc")
 
 Other texreg: \code{\link{htmlreg}},
   \code{\link{huxtablereg}}, \code{\link{knitreg}},
-  \code{\link{matrixreg}}, \code{\link{screenreg}}, \code{\link{plotreg}}, 
-  \code{\link{texreg}}
+  \code{\link{matrixreg}}, \code{\link{plotreg}},
+  \code{\link{screenreg}}, \code{\link{texreg}}
 }
 \author{
 Vincent Arel-Bundock

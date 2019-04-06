@@ -228,9 +228,9 @@ unlink("myplot.pdf")
   \code{\link{extract-methods}} \code{\link{texreg}}
 
 Other texreg: \code{\link{htmlreg}},
-  \code{\link{huxtablereg}}, \code{\link{matrixreg}},
-  \code{\link{screenreg}}, \code{\link{texreg}},
-  \code{\link{wordreg}}
+  \code{\link{huxtablereg}}, \code{\link{knitreg}},
+  \code{\link{matrixreg}}, \code{\link{screenreg}},
+  \code{\link{texreg}}, \code{\link{wordreg}}
 }
 \author{
 Claudia Zucca, Philip Leifeld
