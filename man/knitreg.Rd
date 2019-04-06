@@ -39,14 +39,15 @@ document when a different output format is selected.
       \item HTML documents
       \item PDF documents
       \item Word documents
+      \item Presentations (\code{.Rpres} extension, not \code{.Rmd})
     }
   \item \R Notebooks, including preview
 }
 
 If Markdown and HTML rendering are selected, \link{htmlreg} arguments
 \code{doctype = FALSE} and \code{star.symbol = "\\*"} are set to enable
-compatibility with Markdown. With \R HTML documents (but not Markdown), only
-\code{doctype = FALSE} is set.
+compatibility with Markdown. With \R HTML documents (but not Markdown) or
+presentations (\code{.Rpres} extension), only \code{doctype = FALSE} is set.
 
 For PDF/LaTeX documents, the \link{texreg} argument
 \code{use.packages = FALSE} is set to suppress any package loading
