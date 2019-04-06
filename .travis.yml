@@ -55,7 +55,7 @@ r_packages:
 notifications:
   email:
     recipients:
-      - philip.leifeld@glasgow.ac.uk
+      - philip.leifeld@essex.ac.uk
       - claudia.zucca@glasgow.ac.uk
     on_success: change
     on_failure: change
