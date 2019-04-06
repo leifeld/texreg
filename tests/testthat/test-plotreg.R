@@ -29,7 +29,7 @@ test_that("xlab is labelled 'Bars denote SEs. Circle points denote significance.
 
 # biglm model -confidence interval 
 skip_if_not_installed("biglm")
-library("biglm")
+require("biglm")
 data(trees)
 ff <- log(Volume) ~ log(Girth) + log(Height)
 a <- bigglm(ff, data = trees, chunksize = 10, sandwich = TRUE)
@@ -38,16 +38,17 @@ b <- bigglm(gg, data = trees, chunksize = 10, sandwich = TRUE)
 p3 <- plotreg(list(a, b))
 
 # tests if dataframe is correctly made
-test_that("Dataframe is correctly constructed",{
+test_that("biglm tests",{
     expect_true(is.ggplot(p3))
     expect_equal(p3$data, readRDS("../files/PlotDataFrameCI.RDS"))
-})
-
-# tests if it is printing the correct xlab
-test_that("xlab is labelled 'Bars denote CIs. Circle points denote significance.'",{
-    expect_true(is.ggplot(p3))
     expect_identical(p3$labels$y, "Bars denote CIs. Circle points denote significance.")
 })
+
+# # tests if it is printing the correct xlab
+# test_that("xlab is labelled 'Bars denote CIs. Circle points denote significance.'",{
+#     expect_true(is.ggplot(p3))
+#     expect_identical(p3$labels$y, "Bars denote CIs. Circle points denote significance.")
+# })
 
 
 

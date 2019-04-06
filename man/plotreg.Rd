@@ -186,7 +186,7 @@ information.}
 }
 \value{
 Coefficient plot as a \pkg{ggplot2} \code{gg} object if \code{file = FALSE}. 
-\code{NULL} otherwise.
+ \code{NULL} otherwise.
 }
 \description{
 Create coefficient plots of \R regression output using \pkg{ggplot2}.
@@ -219,7 +219,7 @@ weight <- c(ctl, trt)
 lm.D9 <- lm(weight ~ group)
 plotreg(lm.D9)    # plot model output as a diagram
 # plot model output as a diagram customising theme and title and automatically saving in pdf.
-plotreg(lm.D9, theme = theme_dark(),  ggtitle ="my title", file = "myplot.pdf")
+plotreg(lm.D9, theme = theme_dark(),  ggtitle = "my title", file = "myplot.pdf")
 unlink("myplot.pdf")
 
 }

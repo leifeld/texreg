@@ -1977,7 +1977,7 @@ print.texregTable <- function(x, ...) {
 #' @param insignif.dark Color of point estimates and labels for insignificant model terms.
 #' 
 #' @return Coefficient plot as a \pkg{ggplot2} \code{gg} object if \code{file = FALSE}. 
-#'  \code{NULL} otherwise.
+#'   \code{NULL} otherwise.
 #' 
 #' @inheritParams texreg
 #' @inheritParams matrixreg
