@@ -28,7 +28,7 @@ test_that("xlab is labelled 'Bars denote SEs. Circle points denote significance.
 })
 
 # biglm model -confidence interval 
-library(biglm)
+library("biglm")
 data(trees)
 ff<-log(Volume)~log(Girth)+log(Height)
 a <- bigglm(ff,data=trees, chunksize=10, sandwich=TRUE)
