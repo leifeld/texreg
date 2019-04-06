@@ -561,14 +561,15 @@ huxtablereg <- function(l,
 #'       \item HTML documents
 #'       \item PDF documents
 #'       \item Word documents
+#'       \item Presentations (\code{.Rpres} extension, not \code{.Rmd})
 #'     }
 #'   \item \R Notebooks, including preview
 #' }
 #'
 #' If Markdown and HTML rendering are selected, \link{htmlreg} arguments
 #' \code{doctype = FALSE} and \code{star.symbol = "\\*"} are set to enable
-#' compatibility with Markdown. With \R HTML documents (but not Markdown), only
-#' \code{doctype = FALSE} is set.
+#' compatibility with Markdown. With \R HTML documents (but not Markdown) or
+#' presentations (\code{.Rpres} extension), only \code{doctype = FALSE} is set.
 #'
 #' For PDF/LaTeX documents, the \link{texreg} argument
 #' \code{use.packages = FALSE} is set to suppress any package loading
@@ -608,7 +609,9 @@ knitreg <- function(...) {
     screenreg(...)
   } else if (of == "markdown") { # R Markdown document with extension .Rmd, which can be rendered to HTML, PDF, or Word
     output <- rmarkdown::all_output_formats(knitr::current_input())[1]
-    if (output == "html_document") { # .Rmd with HTML rendering via the rmarkdown package
+    if (is.null(output)) { # .Rpres presentation (not .Rmd)
+      htmlreg(..., doctype = FALSE) # do not include document type because inline table
+    } else if (output == "html_document") { # .Rmd with HTML rendering via the rmarkdown package
       htmlreg(..., doctype = FALSE, star.symbol = "\\*") # the '*' symbol must be escaped in Markdown
     } else if (output == "pdf_document") { # .Rmd with PDF LaTeX rendering via the rmarkdown package
       texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
@@ -618,7 +621,7 @@ knitreg <- function(...) {
       mr <- mr[-1, ] # remove the first row because we already set the model names as column names
       knitr::kable(mr) # use the kable function to render the table in the Word document
     } else { # unknown other output format through the rmarkdown package
-      screenreg(...)
+      htmlreg(..., doctype = FALSE)
     }
   } else if (of == "html") { # R HTML document with extension .Rhtml (do not escape '*' symbol!)
     htmlreg(..., doctype = FALSE)
