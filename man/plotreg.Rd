@@ -185,7 +185,8 @@ entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
 information.}
 }
 \value{
-coefficient plots from statistical model output using \pkg{ggplot2}.
+Coefficient plot as a \pkg{ggplot2} \code{gg} object if \code{file = FALSE}. 
+\code{NULL} otherwise.
 }
 \description{
 Create coefficient plots of \R regression output using \pkg{ggplot2}.
@@ -216,11 +217,10 @@ trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
 group <- gl(2,10,20, labels = c("Ctl","Trt"))
 weight <- c(ctl, trt)
 lm.D9 <- lm(weight ~ group)
-screenreg(lm.D9)  # print model output to the R console
 plotreg(lm.D9)    # plot model output as a diagram
 # plot model output as a diagram customising theme and title and automatically saving in pdf.
 dev.off()
-plotreg(lm.D9, theme = theme_dark(),  ggtitle ="my title", ggsave.output = "myplot.pdf")
+plotreg(lm.D9, theme = theme_dark(),  ggtitle ="my title", file = "myplot.pdf")
 unlink("myplot.pdf")
 
 }
@@ -234,6 +234,6 @@ Other texreg: \code{\link{htmlreg}},
   \code{\link{wordreg}}
 }
 \author{
-Philip Leifeld
+Claudia Zucca, Philip Leifeld
 }
 \concept{texreg}

@@ -50,13 +50,14 @@
 #' @param insignif.medium Color of inner confidence intervals for insignificant model terms.
 #' @param insignif.dark Color of point estimates and labels for insignificant model terms.
 #' 
-#' @return coefficient plots from statistical model output using \pkg{ggplot2}.
+#' @return Coefficient plot as a \pkg{ggplot2} \code{gg} object if \code{file = FALSE}. 
+#' \code{NULL} otherwise.
 #' 
 #' @inheritParams texreg
 #' @inheritParams matrixreg
 #'
 #'
-#' @author Philip Leifeld
+#' @author Claudia Zucca, Philip Leifeld
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'   \code{\link{extract-methods}} \code{\link{texreg}}
@@ -68,11 +69,10 @@
 #' group <- gl(2,10,20, labels = c("Ctl","Trt"))
 #' weight <- c(ctl, trt)
 #' lm.D9 <- lm(weight ~ group)
-#' screenreg(lm.D9)  # print model output to the R console
 #' plotreg(lm.D9)    # plot model output as a diagram
 #' # plot model output as a diagram customising theme and title and automatically saving in pdf.
 #' dev.off()
-#' plotreg(lm.D9, theme = theme_dark(),  ggtitle ="my title", ggsave.output = "myplot.pdf")
+#' plotreg(lm.D9, theme = theme_dark(),  ggtitle ="my title", file = "myplot.pdf")
 #' unlink("myplot.pdf")
 #' 
 #' @export
@@ -130,7 +130,6 @@ plotreg <- function(l,
     }
     
     co <- se <- co.names <- pv <- lab <- ci.low <- ci.up <- NULL
-    
     
     # make dataframe
     for (i in 1:length(models)) {
@@ -250,7 +249,7 @@ plotreg <- function(l,
     if (length(dataframe$pv) > 0) {
         signif.outer <- dataframe$pv < (1 - ci.level)
     } else if (length(dataframe$ci.low) > 0) {
-        signif.outer <- ((dataframe$ci.low) > 0 & (dataframe$ci.up) > 0 | (dataframe$ci.low) < 0 & (dataframe$ci.up) < 0)
+        signif.outer <- ((dataframe$ci.low > 0 & dataframe$ci.up > 0) | (dataframe$ci.low < 0 & dataframe$ci.up < 0))
     }
     
     if (is.logical(signif.outer) && length(signif.outer) == length(dataframe$co)) {
@@ -290,10 +289,8 @@ plotreg <- function(l,
         levels(dataframe$lab) <- custom.model.names
     }
     
-    
     # ggplot functions   
     if (type == "facet") {
-        
         if (length(reorder.coef) > 0) {
             # reorder levels 
             dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
