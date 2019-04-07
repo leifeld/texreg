@@ -50,6 +50,9 @@
 #' @param organization Please tell us the name of the organization for which you
 #'   are using \pkg{texreg}. If we can show that the package is being employed
 #'   in a number of different settings, this will help us demonstrate impact.
+#' @param name (Optional) We would be delighted to to know who you are. After
+#'   all, we can quote you much more effectively if we can tell the funders and
+#'   employers who provided this praise! If possible, include your title.
 #' @param general_praise Use this argument to provide general praise, for
 #'   example about the way it was designed, the user support you have received,
 #'   or just how much you enjoy using it. While this is useful, however, we
@@ -84,9 +87,6 @@
 #'   for example \code{"back in 2013 when the JSS article came out"}.
 #' @param where_learn (Optional) Where or how did you learn about the
 #'   \pkg{texreg} package?
-#' @param name (Optional) We would be delighted to to know who you are. After
-#'   all, we can quote you much more effectively if we can tell the funders and
-#'   employers who provided this praise! If possible, include your title.
 #' @param contact_details (Optional) Tell us how we can contact you in case we
 #'   would benefit from additional information. This might help us further down
 #'   the road in compiling an impact case study or a similar report. Don't
@@ -126,12 +126,12 @@
 #' @export
 praise <- function(academic_user,
                    organization,
+                   name = NULL,
                    general_praise = NULL,
                    increase_productivity = NULL,
                    increase_quality = NULL,
                    start_using = NULL,
                    where_learn = NULL,
-                   name = NULL,
                    contact_details = NULL,
                    models = NULL,
                    num_users = NULL,
@@ -141,7 +141,6 @@ praise <- function(academic_user,
   if (is.null(academic_user) || is.na(academic_user) || !is.logical(academic_user) || length(academic_user) != 1) {
     stop("'academic_user' must be TRUE if you are at a university or research institute and FALSE otherwise.")
   }
-  user_type <- "N/A"
   if (isTRUE(academic_user)) {
     user_type <- "academic"
   } else {
@@ -151,6 +150,14 @@ praise <- function(academic_user,
   # process 'organization' argument
   if (is.null(organization) || is.na(organization) || !is.character(organization) || length(organization) != 1) {
     stop("'organization' must be the name of your organization. You may write 'private' if your texreg use is restricted to private purposes.")
+  }
+
+  # process 'name' argument
+  if (!is.null(name) && (is.na(name) || !is.character(name) || length(name) != 1)) {
+    stop("Optional 'name' argument: You don't have to leave your name, but we'd be happy if you did!")
+  }
+  if (is.null(name)) {
+    name <- ""
   }
 
   # process 'general praise', 'increase_productivity', and 'increase_quality' arguments
@@ -195,14 +202,6 @@ praise <- function(academic_user,
     where_learn <- ""
   }
 
-  # process 'name' argument
-  if (!is.null(name) && (is.na(name) || !is.character(name) || length(name) != 1)) {
-    stop("Optional 'name' argument: You don't have to leave your name, but we'd be happy if you did!")
-  }
-  if (is.null(contact_details)) {
-    contact_details <- ""
-  }
-
   # process 'contact_details' argument
   if (!is.null(contact_details) && (is.na(contact_details) || !is.character(contact_details) || length(contact_details) != 1)) {
     stop("Optional 'contact_details' argument: How can we reach you if we need to ask for further testimony for our reporting purposes?")
@@ -244,7 +243,8 @@ praise <- function(academic_user,
                 "num_users" = num_users)
   url <- "https://praise.philipleifeld.com/index.php"
   tryCatch(response <- POST(url = url, body = query),
-           error = function(e) message("Praise could not be sent. Please check your internet connection."))
+           error = function(e) message("Praise could not be sent. Please check your internet connection.\n",
+                                       "If this does not help, perhaps the server is currently down."))
 
   # user feedback
   if (grepl("<p>User type: (non-academic)|(academic)</p>", as.character(httr::content(response)))) {

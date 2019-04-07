@@ -6,10 +6,10 @@
 \alias{feedback}
 \title{Publish praise about \pkg{texreg}}
 \usage{
-praise(academic_user, organization, general_praise = NULL,
+praise(academic_user, organization, name = NULL, general_praise = NULL,
   increase_productivity = NULL, increase_quality = NULL,
-  start_using = NULL, where_learn = NULL, name = NULL,
-  contact_details = NULL, models = NULL, num_users = NULL)
+  start_using = NULL, where_learn = NULL, contact_details = NULL,
+  models = NULL, num_users = NULL, return.response = FALSE)
 }
 \arguments{
 \item{academic_user}{Should be \code{TRUE} if you are at a university or
@@ -23,6 +23,10 @@ indirectly.}
 \item{organization}{Please tell us the name of the organization for which you
 are using \pkg{texreg}. If we can show that the package is being employed
 in a number of different settings, this will help us demonstrate impact.}
+
+\item{name}{(Optional) We would be delighted to to know who you are. After
+all, we can quote you much more effectively if we can tell the funders and
+employers who provided this praise! If possible, include your title.}
 
 \item{general_praise}{Use this argument to provide general praise, for
 example about the way it was designed, the user support you have received,
@@ -63,10 +67,6 @@ for example \code{"back in 2013 when the JSS article came out"}.}
 \item{where_learn}{(Optional) Where or how did you learn about the
 \pkg{texreg} package?}
 
-\item{name}{(Optional) We would be delighted to to know who you are. After
-all, we can quote you much more effectively if we can tell the funders and
-employers who provided this praise! If possible, include your title.}
-
 \item{contact_details}{(Optional) Tell us how we can contact you in case we
 would benefit from additional information. This might help us further down
 the road in compiling an impact case study or a similar report. Don't
@@ -81,12 +81,21 @@ many other non-academic users you are aware of and how many of them are in
 your organization? The more we know, the more convincing our evidence base
 will be. This argument accepts \code{numeric} values or more detailed
 responses as a \code{character} object.}
+
+\item{return.response}{If \code{TRUE}, a website with the submitted data will
+be returned as a \code{response} object, as defined in the \pkg{httr}
+package. You can load the \pkg{httr} package and use the
+\code{\link[httr]{content}} function, possibly enclosed in an
+\code{\link[base]{as.character}} call, to inspect the output and diagnose
+any problems with the transmission of the data. Only use this argument if
+instructed by the package authors.}
 }
 \value{
-If everything works well, no output is returned. If the submission of
-  the praise to the maintainer fails, a \code{response} object (as defined in
-  the \pkg{httr} package) will be returned. Should you have any problems, do
-  feel free to e-mail your praise to the package maintainer directly.
+If everything works well, no output is returned (but see the
+  \code{return.response} argument to change this). If the submission of the
+  praise to the maintainer fails, a \code{response} object (as defined in the
+  \pkg{httr} package) will be returned. Should you have any problems, do feel
+  free to e-mail your praise to the package maintainer directly.
 }
 \description{
 Publish praise about \pkg{texreg} to help the developers demonstrate impact.
@@ -103,7 +112,7 @@ require evidence of impact on society, firms, or policy makers.
 The \code{\link{praise}} function is our attempt at rectifying the situation.
 With this function, you can provide positive feedback to the developers. The
 praise is saved to a database on the web server of the package maintainer and
-subsequently displayed at \url{http://www.philipleifeld.com/texreg-praise}
+subsequently displayed at \url{http://www.philipleifeld.com/praise}
 for other users, funders, and employers to view. This will also enable the
 package authors to compile reports about how \pkg{texreg} is used by academic
 and non-academic users to increase their productivity and work quality, for
