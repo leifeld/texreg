@@ -3299,9 +3299,8 @@ wordreg <- function(l,
   packageStartupMessage(
     "Version:  ", desc$Version, "\n",
     "Date:     ", desc$Date, "\n",
-    "Author:   ", "Philip Leifeld (University of Glasgow)", "\n\n",
-    "Please cite the JSS article in your publications ",
-    '-- see citation("texreg").'
+    "Author:   ", "Philip Leifeld (University of Essex)", "\n\n",
+    "Please cite the JSS article in your publications -- see citation(\"texreg\")."
   )
 }
 
