@@ -42,7 +42,7 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
 
 # Extract functions ------------------------------------------------------------
 
-# extension for Arima objects (stats package)
+#' @noRd
 extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE,
     include.loglik = TRUE, ...) {
 
@@ -90,11 +90,33 @@ extract.Arima <- function(model, include.pvalues = FALSE, include.aic = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{Arima} objects
+#'
+#' \code{\link{extract}} method for \code{Arima} objects. These objects are
+#' created by the \code{\link[stats]{Arima}} function in the \pkg{stats} package.
+#'
+#' @param model A model object.
+#' @param include.pvalues Report p values in the GOF block?
+#' @param include.aic Report AIC in the GOF block?
+#' @param include.loglik Report log likelihood in the GOF block?
+#' @param ... Additional arguments for the \code{\link[base]{summary}} function
+#'   for \code{Arima} objects.
+#' @inheritParams extract
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract Arima
+#' @aliases extract.Arima
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @importFrom stats
+#' @export
 setMethod("extract", signature = className("Arima", "stats"),
     definition = extract.Arima)
 
 
-# extension for ARIMA objects (forecast package)
+#' @noRd
 extract.ARIMA <- function (model, include.pvalues = FALSE, include.aic = TRUE,
     include.aicc = TRUE, include.bic = TRUE, include.loglik = TRUE, ...) {
   mask <- model$mask
@@ -148,11 +170,34 @@ extract.ARIMA <- function (model, include.pvalues = FALSE, include.aic = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{ARIMA} objects
+#'
+#' \code{\link{extract}} method for \code{ARIMA} objects. These objects are
+#' created by the \code{\link[forecast]{ARIMA}} function in the \pkg{forecast} package.
+#'
+#' @param model A model object.
+#' @param include.pvalues Report p values in the GOF block?
+#' @param include.aic Report AIC in the GOF block?
+#' @param include.aicc Report AICC in the GOF block?
+#' @param include.bic Report BIC in the GOF block?
+#' @param include.loglik Report log likelihood in the GOF block?
+#' @param ... Additional arguments for the \code{\link[forecast]{summary}} function
+#'   for \code{ARIMA} objects.
+#' @inheritParams extract
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract ARIMA
+#' @aliases extract.ARIMA
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @importFrom forecast
+#' @export
 setMethod("extract", signature = className("ARIMA", "forecast"),
     definition = extract.ARIMA)
 
-
-# extension for averaging objects (MuMIn package)
+#' @noRd
 extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
     include.nobs = TRUE, ...) {
 
@@ -197,6 +242,28 @@ extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{averaging} objects
+#'
+#' \code{\link{extract}} method for \code{averaging} objects. These objects are
+#' created by the \code{\link[MuMIn]{averaging}} function in the \pkg{MuMIn} package.
+#'
+#' @param model A model object.
+#' @param use.ci Report confidence intervals in the GOF block?
+#' @param adjusted.se Report adjusted standard error in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param ... Additional arguments for the \code{\link[MuMIn]{summary}} function
+#'   for \code{averaging} objects.
+#' @inheritParams extract
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract averaging
+#' @aliases extract.averaging
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @importFrom MuMIn
+#' @export
 setMethod("extract", signature = className("averaging", "MuMIn"),
     definition = extract.averaging)
 
