@@ -35,6 +35,16 @@ A \linkS4class{texreg} object.
 created by the \code{\link[speedglm]{speedglm}} function in the
 \pkg{speedglm} package.
 }
+\seealso{
+\link{extract}
+
+Other extract: \code{\link{extract,dynlm-method}},
+  \code{\link{extract,feis-method}},
+  \code{\link{extract,ivreg-method}},
+  \code{\link{extract,lm-method}},
+  \code{\link{extract,lme4-method}}
+}
 \author{
 Philip Leifeld
 }
+\concept{extract}

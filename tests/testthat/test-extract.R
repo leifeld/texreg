@@ -1,4 +1,4 @@
-context("Extract methods")
+context("extract methods")
 library("texreg")
 
 # dynlm (dynlm) ----
@@ -41,6 +41,37 @@ test_that("extract feis objects from the feisr package", {
   expect_length(tr2@coef, 6)
   expect_length(which(tr2@pvalues < 0.05), 2)
   expect_length(which(tr2@gof.decimal), 3)
+})
+
+# glmerMod (lme4) ----
+test_that("extract glmerMod objects from the lme4 package", {
+  skip_if_not_installed("lme4")
+  require("lme4")
+  set.seed(12345)
+  gm1 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
+               data = cbpp,
+               family = binomial)
+  expect_equivalent(class(gm1), "glmerMod")
+  tr <- extract(gm1, include.dic = TRUE, include.deviance = TRUE)
+  expect_equivalent(tr@coef, c(-1.40, -0.99, -1.13, -1.58), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.23, 0.30, 0.32, 0.42), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0, 0, 0, 0), tolerance = 1e-2)
+  expect_length(tr@gof.names, 8)
+  expect_equivalent(which(tr@gof.decimal), c(1:5, 8))
+  expect_length(which(grepl("Var", tr@gof.names)), 1)
+  expect_length(which(grepl("Cov", tr@gof.names)), 0)
+  tr_profile <- extract(gm1, method = "profile", nsim = 5)
+  tr_boot <- suppressWarnings(extract(gm1, method = "boot", nsim = 5))
+  tr_wald <- extract(gm1, method = "Wald")
+  expect_length(tr_profile@se, 0)
+  expect_length(tr_profile@ci.low, 4)
+  expect_length(tr_profile@ci.up, 4)
+  expect_length(tr_boot@se, 0)
+  expect_length(tr_boot@ci.low, 4)
+  expect_length(tr_boot@ci.up, 4)
+  expect_length(tr_wald@se, 0)
+  expect_length(tr_wald@ci.low, 4)
+  expect_length(tr_wald@ci.up, 4)
 })
 
 # ivreg (AER) ----
@@ -88,6 +119,65 @@ test_that("extract lm objects from the stats package", {
   expect_length(tr2@coef, 2)
   expect_length(which(tr2@pvalues < 0.05), 2)
   expect_length(which(tr2@gof.decimal), 3)
+})
+
+# lmerMod (lme4) ----
+test_that("extract lmerMod objects from the lme4 package", {
+  skip_if_not_installed("lme4")
+  require("lme4")
+  set.seed(12345)
+  fm1 <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+  fm1_ML <- update(fm1, REML = FALSE)
+  fm2 <- lmer(Reaction ~ Days + (Days || Subject), sleepstudy)
+  tr1 <- extract(fm1, include.dic = TRUE, include.deviance = TRUE)
+  tr1_ML <- extract(fm1_ML, include.dic = TRUE, include.deviance = TRUE)
+  tr2_profile <- extract(fm2, method = "profile", nsim = 5)
+  tr2_boot <- suppressWarnings(extract(fm2, method = "boot", nsim = 5))
+  tr2_wald <- extract(fm2, method = "Wald")
+  expect_equivalent(class(fm1), "lmerMod")
+  expect_equivalent(tr1@coef, c(251.41, 10.47), tolerance = 1e-2)
+  expect_equivalent(tr1@coef, tr1_ML@coef, tolerance = 1e-2)
+  expect_equivalent(tr1@se, c(6.82, 1.55), tolerance = 1e-2)
+  expect_equivalent(tr1@pvalues, c(0, 0), tolerance = 1e-2)
+  expect_equivalent(tr1@gof, c(1755.63, 1774.79, 1760.25, 1751.94, -871.81, 180, 18, 611.90, 35.08, 9.61, 654.94), tolerance = 1e-2)
+  expect_length(tr1@gof.names, 11)
+  expect_equivalent(which(tr1@gof.decimal), c(1:5, 8:11))
+  expect_equivalent(tr1@coef, tr1_ML@coef)
+  expect_length(tr1_ML@gof, 11)
+  expect_length(tr2_profile@gof, 8)
+  expect_equivalent(tr1@coef, tr2_profile@coef, tolerance = 1e-2)
+  expect_equivalent(tr1@coef, tr2_boot@coef, tolerance = 1e-2)
+  expect_equivalent(tr1@coef, tr2_wald@coef, tolerance = 1e-2)
+  expect_length(which(grepl("Var", tr1@gof.names)), 3)
+  expect_length(which(grepl("Var", tr2_wald@gof.names)), 3)
+  expect_length(which(grepl("Cov", tr1@gof.names)), 1)
+  expect_length(which(grepl("Cov", tr2_wald@gof.names)), 0)
+})
+
+# nlmerMod (lme4) ----
+test_that("extract nlmerMod objects from the lme4 package", {
+  skip_if_not_installed("lme4")
+  require("lme4")
+  set.seed(12345)
+  startvec <- c(Asym = 200, xmid = 725, scal = 350)
+  nm1 <- nlmer(circumference ~ SSlogis(age, Asym, xmid, scal) ~ Asym|Tree,
+               Orange,
+               start = startvec)
+  expect_equivalent(class(nm1), "nlmerMod")
+  expect_warning(extract(nm1, include.dic = TRUE, include.deviance = TRUE),
+                 "falling back to var-cov estimated from RX")
+  tr <- suppressWarnings(extract(nm1, include.dic = TRUE, include.deviance = TRUE))
+  expect_equivalent(tr@coef, c(192.05, 727.90, 348.07), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(15.58, 34.44, 26.31), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0, 0, 0), tolerance = 1e-2)
+  expect_length(tr@gof.names, 9)
+  expect_equivalent(which(tr@gof.decimal), c(1:5, 8, 9))
+  expect_length(which(grepl("Var", tr@gof.names)), 2)
+  expect_length(which(grepl("Cov", tr@gof.names)), 0)
+  tr_wald <- suppressWarnings(extract(nm1, method = "Wald"))
+  expect_length(tr_wald@se, 0)
+  expect_length(tr_wald@ci.low, 3)
+  expect_length(tr_wald@ci.up, 3)
 })
 
 # speedlm (speedglm) ----

@@ -34,6 +34,16 @@ A \linkS4class{texreg} object.
 \code{\link{extract}} method for \code{lm} objects. These objects are
 created by the \code{\link[stats]{lm}} function in the \pkg{stats} package.
 }
+\seealso{
+\link{extract}
+
+Other extract: \code{\link{extract,dynlm-method}},
+  \code{\link{extract,feis-method}},
+  \code{\link{extract,ivreg-method}},
+  \code{\link{extract,lme4-method}},
+  \code{\link{extract,speedlm-method}}
+}
 \author{
 Philip Leifeld
 }
+\concept{extract}

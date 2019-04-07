@@ -19,8 +19,6 @@
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
-\item{include.groups}{Report the number of groups in the GOF block?}
-
 \item{include.rmse}{Report the root mean square error (RMSE; = residual
 standard deviation) in the GOF block?}
 
@@ -46,6 +44,16 @@ sr1 <- screenreg(list(feis1.mod, feis2.mod), digits = 3)
 tr1 <- texreg(list(feis1.mod, feis2.mod), digits = 3)
 
 }
+\seealso{
+\link{extract}
+
+Other extract: \code{\link{extract,dynlm-method}},
+  \code{\link{extract,ivreg-method}},
+  \code{\link{extract,lm-method}},
+  \code{\link{extract,lme4-method}},
+  \code{\link{extract,speedlm-method}}
+}
 \author{
 Tobias Rüttenauer, Philip Leifeld
 }
+\concept{extract}

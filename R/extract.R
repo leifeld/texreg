@@ -1262,19 +1262,15 @@ extract.feis <- function(model,
 #' \code{\link{extract}} method for \code{feis} objects. These objects are
 #' created by the \code{\link[feisr]{feis}} function in the \pkg{feisr} package.
 #'
-#' @param model A model object.
-#' @param include.rsquared Report R^2 in the GOF block?
-#' @param include.adjrs Report adjusted R^2 in the GOF block?
-#' @param include.nobs Report the number of observations in the GOF block?
-#' @param include.groups Report the number of groups in the GOF block?
-#' @param include.rmse Report the root mean square error (RMSE; = residual
-#'   standard deviation) in the GOF block?
 #' @param ... Additional arguments for the \code{\link[base]{summary}} function
 #'   for \code{feis} objects.
+#' @inheritParams extract,lm-method
 #' @return A \linkS4class{texreg} object.
 #'
 #' @method extract feis
 #' @aliases extract.feis
+#' @family extract
+#' @seealso \link{extract}
 #' @author Tobias Rüttenauer, Philip Leifeld
 #'
 #' @examples
@@ -2253,6 +2249,8 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
 #'
 #' @method extract lm
 #' @aliases extract.lm
+#' @family extract
+#' @seealso \link{extract}
 #' @author Philip Leifeld
 #'
 #' @importFrom stats nobs
@@ -2273,6 +2271,8 @@ extract.dynlm <- extract.lm
 #'
 #' @method extract dynlm
 #' @aliases extract.dynlm
+#' @family extract
+#' @seealso \link{extract}
 #' @author Philip Leifeld
 #'
 #' @export
@@ -2292,6 +2292,8 @@ extract.ivreg <- extract.lm
 #'
 #' @method extract ivreg
 #' @aliases extract.ivreg
+#' @family extract
+#' @seealso \link{extract}
 #' @author Philip Leifeld
 #'
 #' @export
@@ -2311,6 +2313,8 @@ extract.speedlm <- extract.lm
 #'
 #' @method extract speedglm
 #' @aliases extract.speedglm
+#' @family extract
+#' @seealso \link{extract}
 #' @author Philip Leifeld
 #'
 #' @export
@@ -2416,7 +2420,7 @@ setMethod("extract", signature = className("glmmPQL", "MASS"),
           definition = extract.glmmPQL)
 
 
-# extension for lme4 (+ mer, lmerMod, glmerMod, nlmerMod) objects (lme4 package)
+#' @noRd
 extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
     level = 0.95, nsim = 1000, include.aic = TRUE, include.bic = TRUE,
     include.dic = FALSE, include.deviance = FALSE, include.loglik = TRUE,
@@ -2492,31 +2496,29 @@ extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
       gof <- c(gof, vc[i, 4])
       gof.decimal <- c(gof.decimal, TRUE)
     }
-#    vc <- lme4::VarCorr(model)
-#    varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
-#        attr(vc, "sc")^2)                     # residual variance
-#    varnames <- names(varcomps)
-#    varnames[length(varnames)] <- "Residual"
-#    varnames <- paste("Variance:", varnames)
-#    if (is.na(attr(vc, "sc"))) {
-#      varnames <- varnames[-length(varnames)]
-#      varcomps <- varcomps[-length(varcomps)]
-#    }
-#    gof <- c(gof, varcomps)
-#    gof.names <- c(gof.names, varnames)
-#    gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
+    # vc <- lme4::VarCorr(model)
+    # varcomps <- c(unlist(lapply(vc, diag)),   # random intercept variances
+    #               attr(vc, "sc")^2)                     # residual variance
+    # varnames <- names(varcomps)
+    # varnames[length(varnames)] <- "Residual"
+    # varnames <- paste("Variance:", varnames)
+    # if (is.na(attr(vc, "sc"))) {
+    #   varnames <- varnames[-length(varnames)]
+    #   varcomps <- varcomps[-length(varcomps)]
+    # }
+    # gof <- c(gof, varcomps)
+    # gof.names <- c(gof.names, varnames)
+    # gof.decimal <- c(gof.decimal, rep(TRUE, length(varcomps)))
   }
 
   betas <- lme4::fixef(model, ...)
   if ("confint.merMod" %in% methods("confint") && method[1] != "naive") {
     ci <- tryCatch({
-        ci <- confint(model, method = method[1], level = level, nsim = nsim,
-        ...)
+        ci <- confint(model, method = method[1], level = level, nsim = nsim, ...)
       },
       error = function(err) {
         method <- "naive"
-        message(paste("Confidence intervals not available for",
-            "this model. Using naive p values instead."))
+        message("Confidence intervals not available for this model. Using naive p-values instead.")
       }
     )
     if (is.null(ci)) {
@@ -2536,8 +2538,7 @@ extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
     }
   } else if (method[1] != "naive") {
     method[1] <- "naive"
-    message(paste("confint.merMod method not found. Using naive p values",
-        "instead."))
+    message("confint.merMod method not found. Using naive p-values instead.")
   }
 
   if (method[1] == "naive") {
@@ -2576,22 +2577,84 @@ extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
   return(tr)
 }
 
+
+#' \code{\link{extract}} method for \code{merMod} objects
+#'
+#' \code{\link{extract}} method for \code{merMod} objects, in particular:
+#' \itemize{
+#'   \item \code{lmerMod} objects created by the \code{\link[lme4]{lmer}}
+#'     function in the \pkg{lme4} package
+#'   \item \code{glmerMod} objects created by the \code{\link[lme4]{glmer}}
+#'     function in the \pkg{lme4} package
+#'   \item \code{nlmerMod} objects created by the \code{\link[lme4]{nlmer}}
+#'     function in the \pkg{lme4} package
+#' }
+#'
+#' @param method The method used to compute confidence intervals or p-values.
+#'   The default value \code{"naive"} computes naive p-values while the other
+#'   methods compute confidence intervals using the \code{confint} function. See
+#'   \code{\link[lme4]{confint.merMod}}.
+#' @param level Confidence level (\code{1 - alpha}) for computing confidence
+#'   intervals.
+#' @param nsim In (generalized) linear mixed effects models: the MCMC sample
+#'   size or number of bootstrapping replications on the basis of which
+#'   confidence intervals are computed (only if the \code{method} argument does
+#'   not specify \code{"naive"}, which is the default behavior). Note: large
+#'   values may take considerable computing time.
+#' @param include.aic Report Akaike's information criterion (AIC)?
+#' @param include.bic Report the Bayesian information criterion (BIC)?
+#' @param include.dic Report the deviance information criterion (DIC)?
+#' @param include.deviance Report the deviance?
+#' @param include.loglik Report the log-likelihood?
+#' @param include.groups Report the number of groups or alternatives?
+#' @param include.variance Report group variances?
+#' @param ... Additional arguments for the \code{\link[lme4]{fixef}} function.
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract lme4
+#' @rdname extract.lme4
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("lme4", "lme4"),
     definition = extract.lme4)
 
 extract.mer <- extract.lme4
+
+#' @rdname extract.lme4
+#' @method extract mer
+#' @aliases extract.merMod extract.mer
+#' @export
 setMethod("extract", signature = className("mer", "lme4"),
     definition = extract.mer)
 
 extract.lmerMod <- extract.lme4
+
+#' @rdname extract.lme4
+#' @method extract lmerMod
+#' @aliases extract.lmerMod extract.lmer
+#' @export
 setMethod("extract", signature = className("lmerMod", "lme4"),
     definition = extract.lmerMod)
 
 extract.glmerMod <- extract.lme4
+
+#' @rdname extract.lme4
+#' @method extract glmerMod
+#' @aliases extract.glmerMod extract.glmer
+#' @export
 setMethod("extract", signature = className("glmerMod", "lme4"),
     definition = extract.glmerMod)
 
 extract.nlmerMod <- extract.lme4
+
+#' @rdname extract.lme4
+#' @method extract nlmerMod
+#' @aliases extract.nlmerMod extract.nlmer
+#' @export
 setMethod("extract", signature = className("nlmerMod", "lme4"),
     definition = extract.nlmerMod)
 

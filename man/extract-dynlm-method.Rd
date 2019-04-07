@@ -35,6 +35,16 @@ A \linkS4class{texreg} object.
 created by the \code{\link[dynlm]{dynlm}} function in the \pkg{dynlm}
 package.
 }
+\seealso{
+\link{extract}
+
+Other extract: \code{\link{extract,feis-method}},
+  \code{\link{extract,ivreg-method}},
+  \code{\link{extract,lm-method}},
+  \code{\link{extract,lme4-method}},
+  \code{\link{extract,speedlm-method}}
+}
 \author{
 Philip Leifeld
 }
+\concept{extract}

@@ -35,6 +35,16 @@ A \linkS4class{texreg} object.
 created by the \code{\link[AER]{ivreg}} function in the \pkg{AER}
 package.
 }
+\seealso{
+\link{extract}
+
+Other extract: \code{\link{extract,dynlm-method}},
+  \code{\link{extract,feis-method}},
+  \code{\link{extract,lm-method}},
+  \code{\link{extract,lme4-method}},
+  \code{\link{extract,speedlm-method}}
+}
 \author{
 Philip Leifeld
 }
+\concept{extract}

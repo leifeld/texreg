@@ -1,4 +1,4 @@
-context("Praise function")
+context("praise function")
 library("texreg")
 
 test_that("praise gives useful error messages if the fields were not filled out properly", {
