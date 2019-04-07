@@ -26,19 +26,24 @@ test_that("plotreg works", {
   expect_identical(p2$labels$y, "Bars denote SEs. Circle points denote significance.") # tests if it is printing the correct xlab
   expect_identical(p3$labels$title, "My Plot") # test if title is printed
   expect_identical(p4$labels$y, "My note") # test if note is printed
+
+  p5 <- plotreg(list(m1, m2), ci.inner = 0)
+  expect_equal(p5$data$lower.inner, p5$data$upper.inner, tolerance = 1e-3) # test if inner CIs can be switched off
 })
 
-test_that("plotreg works with confidence intervals (here: biglm)", {
+test_that("plotreg works with confidence intervals using the biglm package", {
   skip_if_not_installed("biglm")
   require("biglm")
+  skip_if_not_installed("DBI")
+  require("DBI")
   data("trees")
   ff <- log(Volume) ~ log(Girth) + log(Height)
-  a <- bigglm(ff, data = trees, chunksize = 10, sandwich = TRUE)
+  a <- biglm::bigglm(ff, data = trees, chunksize = 10, sandwich = TRUE)
   gg <- log(Volume) ~ log(Girth) + log(Height) + offset(2 * log(Girth) + log(Height))
-  b <- bigglm(gg, data = trees, chunksize = 10, sandwich = TRUE)
-  p5 <- plotreg(list(a, b))
-  expect_true(is.ggplot(p5))
-  expect_equal(PlotDataFrameCI <- p5$data, readRDS("../files/PlotDataFrameCI.RDS"))
+  b <- biglm::bigglm(gg, data = trees, chunksize = 10, sandwich = TRUE)
+  p6 <- plotreg(list(a, b))
+  expect_true(is.ggplot(p6))
+  expect_equal(PlotDataFrameCI <- p6$data, readRDS("../files/PlotDataFrameCI.RDS"))
   # saveRDS(PlotDataFrameCI, "../files/PlotDataFrameCI.RDS")
-  expect_identical(p5$labels$y, "Bars denote CIs. Circle points denote significance.")
+  expect_identical(p6$labels$y, "Bars denote CIs. Circle points denote significance.")
 })

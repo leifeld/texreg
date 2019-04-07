@@ -163,7 +163,8 @@ is used (i.e., an alpha value of 0.05).}
 \item{ci.inner}{If standard errors are converted to confidence intervals
 (because a model does not natively support CIs), what confidence level
 should be used for the inner confidence interval? By default, \code{0.50}
-is used (i.e., an alpha value of 0.5).}
+is used (i.e., an alpha value of 0.5). Can be set to \code{ci.inner = 0} to
+suppress inner confidence CI bars.}
 
 \item{use.se}{Use one standard error for the inner horizontal bar and two
 standard errors from the estimate for the outer horizontal bar (instead
@@ -238,6 +239,7 @@ trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
 group <- gl(2, 10, 20, labels = c("Ctl", "Trt"))
 weight <- c(ctl, trt)
 lm.D9 <- lm(weight ~ group)
+lm.D90 <- lm(weight ~ group - 1)
 plotreg(lm.D9) # plot model output as a diagram
 
 # customize theme and title and save as a PDF file.
