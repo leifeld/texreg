@@ -5,14 +5,15 @@
 \title{Create coefficient plots from statistical model output using \pkg{ggplot2}.}
 \usage{
 plotreg(l, file = NULL, custom.model.names = NULL,
-  custom.title = NULL, custom.coef.names = NULL, custom.note = NULL,
-  override.coef = 0, override.se = 0, override.pval = 0,
-  override.ci.low = 0, override.ci.up = 0, omit.coef = NULL,
-  reorder.coef = NULL, ci.level = 0.95, use.se = FALSE,
-  type = "facet", theme = theme_bw(), custom.coef.map = NULL,
-  signif.light = "#FBC9B9", signif.medium = "#F7523A",
-  signif.dark = "#BD0017", insignif.light = "#C5DBE9",
-  insignif.medium = "#5A9ECC", insignif.dark = "#1C5BA6", ...)
+  custom.title = NULL, custom.coef.names = NULL,
+  custom.coef.map = NULL, custom.note = NULL, override.coef = 0,
+  override.se = 0, override.pval = 0, override.ci.low = 0,
+  override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL,
+  ci.level = 0.95, ci.inner = 0.5, use.se = FALSE, type = "facet",
+  theme = theme_bw(), signif.light = "#FBC9B9",
+  signif.medium = "#F7523A", signif.dark = "#BD0017",
+  insignif.light = "#C5DBE9", insignif.medium = "#5A9ECC",
+  insignif.dark = "#1C5BA6", ...)
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of
@@ -34,9 +35,9 @@ default, the models are named "Model 1", "Model 2", etc. Specifying
 \code{model.names = c("My name 1", "My name 2")} etc. overrides the default
 behavior.}
 
-\item{custom.title}{With this argument, a replacement text for the \code{ggtitle} 
-that provides a title above the diagram can be provided. If an empty character 
-object is provided (\code{custom.note = ""}), the note will be omitted completely.}
+\item{custom.title}{With this argument, a replacement text for the \code{ggtitle}, 
+which provides a title above the diagram, can be provided. If an empty character 
+object is provided (\code{custom.title = ""}), the title will be omitted completely.}
 
 \item{custom.coef.names}{By default, \pkg{texreg} uses the coefficient names
   which are stored in the models. The \code{custom.coef.names} argument can
@@ -58,6 +59,22 @@ object is provided (\code{custom.note = ""}), the note will be omitted completel
 
   See also \code{custom.coef.map} for an easier and more comprehensive way to
   rename, omit, and reorder coefficients.}
+
+\item{custom.coef.map}{The \code{custom.coef.map} argument can be used to
+  select, omit, rename, and reorder coefficients.
+
+  Users must supply a named list of this form: \code{list("x" = "First
+  variable", "y" = NA, "z" = "Third variable")}. With that particular example
+  of \code{custom.coef.map},
+  \enumerate{
+   \item coefficients will presented in order: \code{"x"}, \code{"y"},
+     \code{"z"}.
+   \item variable \code{"x"} will appear as \code{"First variable"}, variable
+     \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
+     appear as "Third variable".
+   \item all variables not named \code{"x"}, \code{"y"}, or \code{"z"} will
+     be omitted from the table.
+  }}
 
 \item{custom.note}{With this argument, a replacement text for the
 significance note below the table can be provided. If an empty
@@ -89,7 +106,16 @@ embedded in a list).For example: \code{override.se = c(0.05, 0.06, 0.07)}.
 Overriding standard errors can be useful for the implementation of robust
 SEs, for example.}
 
-\item{override.pval}{Replacement list of p-value vectors.}
+\item{override.pval}{Set custom values for the p-values. New p-values are
+provided as a list of numeric vectors. The list contains vectors of
+p-values for each model. There must be as many vectors of p-values as there
+are models. For example, if there are two models with three coefficients
+each, the argument could be specified as \code{override.pvalues =
+list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model,
+custom values can be provided as a plain vector (not embedded in a list).
+For example: \code{override.pvalues = c(0.05, 0.06, 0.07)}. Overriding
+p-values can be useful for the implementation of robust SEs and p-values,
+for example.}
 
 \item{override.ci.low}{Set custom lower confidence interval bounds. This
 works like the other override arguments, with one exception: if confidence
@@ -133,38 +159,26 @@ original order.}
 should be used for the outer confidence interval? By default, \code{0.95}
 is used (i.e., an alpha value of 0.05).}
 
+\item{ci.inner}{If standard errors are converted to confidence intervals
+(because a model does not natively support CIs), what confidence level 
+should be used for the inner confidence interval? By default, \code{0.50} 
+is used (i.e., an alpha value of 0.5).}
+
 \item{use.se}{Use one standard error for the inner horizontal bar and two 
 standard errors from the estimate for the outer horizontal bar (instead 
 of confidence intervals). Only available if standard errors can be 
-extracted from the model using the respective \code{\link{extract}} function.}
+extracted from the model using the respective \code{\link{extract}} method.}
 
-\item{type}{The default option is \code{type = "facet"}. If one model only is 
+\item{type}{The default option is \code{type = "facet"}. If only one model is 
 specified, it will print one forest plot applied to point estimates and 
 confidence intervals. If more than one model is specified, it will print 
-as many plots as the number of models in a column of plots. Alternatively,
+as many facets as the number of models in a column of plots. Alternatively,
 if \code{type = "forest"} is specified, coefficients from one or more models 
-will be grouped together and displayed as a forest plot.}
+will be grouped together and displayed as a single forest plot.}
 
-\item{theme}{The \code{\link{theme}} argument can be used to customomise 
-the non data component of your plot. The default \code{\link{theme}} is
-\code{theme_bw} and it can be substituted by any other theme compatible 
-with \pkg{ggplot2}.}
-
-\item{custom.coef.map}{The \code{custom.coef.map} argument can be used to
-  select, omit, rename, and reorder coefficients.
-
-  Users must supply a named list of this form: \code{list("x" = "First
-  variable", "y" = NA, "z" = "Third variable")}. With that particular example
-  of \code{custom.coef.map},
-  \enumerate{
-   \item coefficients will presented in order: \code{"x"}, \code{"y"},
-     \code{"z"}.
-   \item variable \code{"x"} will appear as \code{"First variable"}, variable
-     \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
-     appear as "Third variable".
-   \item all variables not named \code{"x"}, \code{"y"}, or \code{"z"} will
-     be omitted from the table.
-  }}
+\item{theme}{The \code{\link{theme}} argument can be used to customomize 
+the appearance of the plot. The default theme is
+\code{theme_bw} and it can be replaced by any other \pkg{ggplot2} theme.}
 
 \item{signif.light}{Color of outer confidence intervals for significant model terms.}
 
@@ -186,29 +200,29 @@ information.}
 }
 \value{
 Coefficient plot as a \pkg{ggplot2} \code{gg} object if \code{file = FALSE}. 
- \code{NULL} otherwise.
+  \code{NULL} otherwise.
 }
 \description{
 Create coefficient plots of \R regression output using \pkg{ggplot2}.
 }
 \details{
 The \code{plotreg} function produces coefficient plots (i.e., forest plots 
- applied to point estimates and confidence intervals) and works much like 
- the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, 
- \code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a 
- single or multiple statistical models as input and internally extracts the
- relevant data from the models. If confidence intervals are not defined 
- in the extract method of a statistical model (see \link{extract} and 
- \link{extract-methods}), the default standard errors are converted to 
- confidence intervals. Most of the arguments work either like in the
- \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} 
- \code{\link{matrixreg}} and \code{\link{wordreg}} functions.It is 
- possible to display the plots in two ways: using the \code{type = "facet"} 
- option, one forest plot applied to point estimates and confidence intervals 
- will be visualised in case there is only one model. If there is more than 
- one model each one will be plotted next to the other; using the 
- \code{type = "forest"} option, coefficients from one or more models will 
- be grouped together and displayed as a forest plot.
+applied to point estimates and confidence intervals) and works much like 
+the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, 
+\code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a 
+single model or multiple statistical models as input and internally 
+extracts the relevant data from the models. If confidence intervals are 
+not defined in the extract method of a statistical model (see \link{extract} 
+and \link{extract-methods}), the default standard errors are converted to 
+confidence intervals. Most of the arguments work like in the
+\code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} 
+\code{\link{matrixreg}}, and \code{\link{wordreg}} functions. It is 
+possible to display the plots in two ways: using the \code{type = "facet"} 
+option, one forest plot applied to point estimates and confidence intervals 
+will be visualized in case there is only one model. If there is more than 
+one model, each one will be plotted next to the other as a separate facet;  
+using the \code{type = "forest"} option, coefficients from one or more  
+models will be grouped together and displayed as a single forest plot.
 }
 \examples{
 # example from the 'lm' help file:
@@ -218,7 +232,8 @@ group <- gl(2,10,20, labels = c("Ctl","Trt"))
 weight <- c(ctl, trt)
 lm.D9 <- lm(weight ~ group)
 plotreg(lm.D9)    # plot model output as a diagram
-# plot model output as a diagram customising theme and title and automatically saving in pdf.
+
+# customize theme and title and save as a PDF file.
 plotreg(lm.D9, theme = theme_dark(),  ggtitle = "my title", file = "myplot.pdf")
 unlink("myplot.pdf")
 
@@ -226,6 +241,7 @@ unlink("myplot.pdf")
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
   \code{\link{extract-methods}} \code{\link{texreg}}
+  \code{\link{matrixreg}}
 
 Other texreg: \code{\link{htmlreg}},
   \code{\link{huxtablereg}}, \code{\link{knitreg}},

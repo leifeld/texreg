@@ -1929,46 +1929,58 @@ print.texregTable <- function(x, ...) {
 #'
 #' Create coefficient plots of \R regression output using \pkg{ggplot2}.
 #'
-#'  The \code{plotreg} function produces coefficient plots (i.e., forest plots 
-#'  applied to point estimates and confidence intervals) and works much like 
-#'  the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, 
-#'  \code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a 
-#'  single or multiple statistical models as input and internally extracts the
-#'  relevant data from the models. If confidence intervals are not defined 
-#'  in the extract method of a statistical model (see \link{extract} and 
-#'  \link{extract-methods}), the default standard errors are converted to 
-#'  confidence intervals. Most of the arguments work either like in the
-#'  \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} 
-#'  \code{\link{matrixreg}} and \code{\link{wordreg}} functions.It is 
-#'  possible to display the plots in two ways: using the \code{type = "facet"} 
-#'  option, one forest plot applied to point estimates and confidence intervals 
-#'  will be visualised in case there is only one model. If there is more than 
-#'  one model each one will be plotted next to the other; using the 
-#'  \code{type = "forest"} option, coefficients from one or more models will 
-#'  be grouped together and displayed as a forest plot. 
+#' The \code{plotreg} function produces coefficient plots (i.e., forest plots 
+#' applied to point estimates and confidence intervals) and works much like 
+#' the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, 
+#' \code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a 
+#' single model or multiple statistical models as input and internally 
+#' extracts the relevant data from the models. If confidence intervals are 
+#' not defined in the extract method of a statistical model (see \link{extract} 
+#' and \link{extract-methods}), the default standard errors are converted to 
+#' confidence intervals. Most of the arguments work like in the
+#' \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} 
+#' \code{\link{matrixreg}}, and \code{\link{wordreg}} functions. It is 
+#' possible to display the plots in two ways: using the \code{type = "facet"} 
+#' option, one forest plot applied to point estimates and confidence intervals 
+#' will be visualized in case there is only one model. If there is more than 
+#' one model, each one will be plotted next to the other as a separate facet;  
+#' using the \code{type = "forest"} option, coefficients from one or more  
+#' models will be grouped together and displayed as a single forest plot. 
 #'
-#' @param custom.title With this argument, a replacement text for the \code{ggtitle} 
-#'   that provides a title above the diagram can be provided. If an empty character 
-#'   object is provided (\code{custom.note = ""}), the note will be omitted completely.
-#' @param override.pval Replacement list of p-value vectors.
+#' @param custom.title With this argument, a replacement text for the \code{ggtitle}, 
+#'   which provides a title above the diagram, can be provided. If an empty character 
+#'   object is provided (\code{custom.title = ""}), the title will be omitted completely.
+#' @param override.pval Set custom values for the p-values. New p-values are
+#'   provided as a list of numeric vectors. The list contains vectors of
+#'   p-values for each model. There must be as many vectors of p-values as there
+#'   are models. For example, if there are two models with three coefficients
+#'   each, the argument could be specified as \code{override.pvalues =
+#'   list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model,
+#'   custom values can be provided as a plain vector (not embedded in a list).
+#'   For example: \code{override.pvalues = c(0.05, 0.06, 0.07)}. Overriding
+#'   p-values can be useful for the implementation of robust SEs and p-values,
+#'   for example.
 #' @param ci.level If standard errors are converted to confidence intervals
 #'   (because a model does not natively support CIs), what confidence level 
 #'   should be used for the outer confidence interval? By default, \code{0.95}
 #'   is used (i.e., an alpha value of 0.05).
+#' @param ci.inner If standard errors are converted to confidence intervals
+#'   (because a model does not natively support CIs), what confidence level 
+#'   should be used for the inner confidence interval? By default, \code{0.50} 
+#'   is used (i.e., an alpha value of 0.5). 
 #' @param use.se Use one standard error for the inner horizontal bar and two 
 #'   standard errors from the estimate for the outer horizontal bar (instead 
 #'   of confidence intervals). Only available if standard errors can be 
-#'   extracted from the model using the respective \code{\link{extract}} function.
-#' @param type The default option is \code{type = "facet"}. If one model only is 
+#'   extracted from the model using the respective \code{\link{extract}} method.
+#' @param type The default option is \code{type = "facet"}. If only one model is 
 #'   specified, it will print one forest plot applied to point estimates and 
 #'   confidence intervals. If more than one model is specified, it will print 
-#'   as many plots as the number of models in a column of plots. Alternatively,
+#'   as many facets as the number of models in a column of plots. Alternatively,
 #'   if \code{type = "forest"} is specified, coefficients from one or more models 
-#'   will be grouped together and displayed as a forest plot.
-#' @param theme The \code{\link{theme}} argument can be used to customomise 
-#'   the non data component of your plot. The default \code{\link{theme}} is
-#'   \code{theme_bw} and it can be substituted by any other theme compatible 
-#'   with \pkg{ggplot2}.
+#'   will be grouped together and displayed as a single forest plot.
+#' @param theme The \code{\link{theme}} argument can be used to customomize 
+#'   the appearance of the plot. The default theme is
+#'   \code{theme_bw} and it can be replaced by any other \pkg{ggplot2} theme.
 #' @param signif.light Color of outer confidence intervals for significant model terms.
 #' @param signif.medium Color of inner confidence intervals for significant model terms.
 #' @param signif.dark Color of point estimates and labels for significant model terms.
@@ -1986,6 +1998,7 @@ print.texregTable <- function(x, ...) {
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'   \code{\link{extract-methods}} \code{\link{texreg}}
+#'   \code{\link{matrixreg}}
 #'   
 #' @examples
 #' # example from the 'lm' help file:
@@ -1995,7 +2008,8 @@ print.texregTable <- function(x, ...) {
 #' weight <- c(ctl, trt)
 #' lm.D9 <- lm(weight ~ group)
 #' plotreg(lm.D9)    # plot model output as a diagram
-#' # plot model output as a diagram customising theme and title and automatically saving in pdf.
+#' 
+#' # customize theme and title and save as a PDF file.
 #' plotreg(lm.D9, theme = theme_dark(),  ggtitle = "my title", file = "myplot.pdf")
 #' unlink("myplot.pdf")
 #' 
@@ -2005,6 +2019,7 @@ plotreg <- function(l,
                     custom.model.names = NULL,
                     custom.title = NULL,
                     custom.coef.names = NULL,
+                    custom.coef.map = NULL,
                     custom.note = NULL,
                     override.coef = 0,
                     override.se = 0,
@@ -2014,10 +2029,10 @@ plotreg <- function(l,
                     omit.coef = NULL,
                     reorder.coef = NULL,
                     ci.level = 0.95,
+                    ci.inner = 0.5, 
                     use.se = FALSE,
                     type = "facet",
                     theme = theme_bw(),
-                    custom.coef.map = NULL,
                     signif.light = "#FBC9B9",
                     signif.medium = "#F7523A",
                     signif.dark = "#BD0017",
@@ -2072,7 +2087,7 @@ plotreg <- function(l,
                     stop(paste0("Model ", i, ": wrong number of custom coefficient names."))
                 }
             } else {
-                stop(paste("Custom coefficient names must be provided as a list of", "character vectors."))
+                stop("Custom coefficient names must be provided as a list of character vectors.")
             }
         }
         
@@ -2083,20 +2098,16 @@ plotreg <- function(l,
         label <- rep(paste0("Model", i), length(models[[i]]@coef))
         lab <- append(lab, label)
         if (length(models[[i]]@se) > 0) {
-            s.e <- models[[i]]@se
-            se <- append(se, s.e)
+            se <- append(se, models[[i]]@se)
         } 
         if (length(models[[i]]@pvalues) > 0) {
-            pvalues <- models[[i]]@pvalues
-            pv <- append(pv, pvalues)
+            pv <- append(pv, models[[i]]@pvalues)
         }
         if (length(models[[i]]@ci.low) > 0) {
-            ci.lower <- models[[i]]@ci.low
-            ci.low <- append(ci.low, ci.lower)
+            ci.low <- append(ci.low, models[[i]]@ci.low)
         }
         if (length(models[[i]]@ci.up) > 0) {
-            ci.upper <- models[[i]]@ci.up
-            ci.up <- append(ci.up, ci.upper)
+            ci.up <- append(ci.up, models[[i]]@ci.up)
         }
     }    
     dataframe <- data.frame(cbind(co.names, co, lab))
@@ -2141,7 +2152,7 @@ plotreg <- function(l,
         lower.outer <- dataframe$co - 2 * dataframe$se
         upper.outer <- dataframe$co + 2 * dataframe$se
     } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
-        z.inner <- qnorm(1 - ((1 - 0.5) / 2))
+            z.inner <- qnorm(1 - ((1 - ci.inner) / 2))
         lower.inner <- dataframe$co - (z.inner * dataframe$se)
         upper.inner <- dataframe$co + (z.inner * dataframe$se)
         z.outer <- qnorm(1 - ((1 - ci.level) / 2))
@@ -2192,7 +2203,6 @@ plotreg <- function(l,
         stop("'signif.outer' does not correspond to the intervals provided.")
     }
     
-    
     dataframe <- cbind(dataframe, signif)
     
     if (length(co) == 0) {
@@ -2241,7 +2251,7 @@ plotreg <- function(l,
             keepcoef <- paste(selectcoef, collapse = "|")
             dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
             # resize number of levels in factor to avoid error
-            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            dataframe$co.names <- ordered(dataframe$co.names, levels = unique(as.character(dataframe$co.names)))
             # rename selected coefficients
             renamedcoef <- paste(unlist(custom.coef.map), sep = ", ")
             levels(dataframe$co.names) <- renamedcoef
@@ -2255,11 +2265,11 @@ plotreg <- function(l,
                        lty = 2, lwd = 1, 
                        colour = "grey50") +
             geom_errorbar(aes(ymin = lower.outer, ymax = upper.outer), 
-                          lwd = 1, 
+                              lwd = 1, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light), 
                           width = 0) +
             geom_errorbar(aes(ymin = lower.inner, ymax = upper.inner), 
-                          lwd = 2.5, 
+                              lwd = 2.5, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium), 
                           width = 0) +
             geom_point(size = 3, 
@@ -2268,7 +2278,7 @@ plotreg <- function(l,
             coord_flip() 
         p <- p + theme
         p <- p + xlab(" ") +
-            facet_wrap(~lab, 
+            facet_wrap(~ lab, 
                        strip.position = "left", 
                        nrow = length(dataframe), 
                        scales = "free_y")
@@ -2299,7 +2309,7 @@ plotreg <- function(l,
             keepcoef <- paste(selectcoef, collapse = "|")
             dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
             # resize number of levels in factor to avoid error
-            dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
+            dataframe$co.names <- ordered(dataframe$co.names, levels = unique(as.character(dataframe$co.names)))
             # rename selected coefficients
             renamedcoef <- paste(unlist(custom.coef.map), sep = ", ")
             levels(dataframe$co.names) <- renamedcoef
@@ -2319,11 +2329,11 @@ plotreg <- function(l,
                        lwd = 1, 
                        colour = "grey50") +
             geom_errorbar(aes(ymin = lower.outer, ymax = upper.outer), 
-                          lwd = 1, 
+                              lwd = 1, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light), 
                           width = 0) +
             geom_errorbar(aes(ymin = lower.inner, ymax = upper.inner), 
-                          lwd = 2.5, 
+                              lwd = 2.5, 
                           colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
                           width = 0) +
             geom_point(size = 3, 
@@ -2332,7 +2342,7 @@ plotreg <- function(l,
             coord_flip() 
         p <- p + theme
         p <- p + xlab(" ") +
-            facet_wrap(~co.names, 
+            facet_wrap(~ co.names, 
                        strip.position = "left", 
                        nrow = length(dataframe), 
                        scales = "free_y")
