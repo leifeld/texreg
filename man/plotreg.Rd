@@ -35,9 +35,10 @@ default, the models are named "Model 1", "Model 2", etc. Specifying
 \code{model.names = c("My name 1", "My name 2")} etc. overrides the default
 behavior.}
 
-\item{custom.title}{With this argument, a replacement text for the \code{ggtitle}, 
-which provides a title above the diagram, can be provided. If an empty character 
-object is provided (\code{custom.title = ""}), the title will be omitted completely.}
+\item{custom.title}{With this argument, a replacement text for the
+\code{ggtitle}, which provides a title above the diagram, can be provided.
+If an empty character object is provided (\code{custom.title = ""}), the
+title will be omitted completely.}
 
 \item{custom.coef.names}{By default, \pkg{texreg} uses the coefficient names
   which are stored in the models. The \code{custom.coef.names} argument can
@@ -155,42 +156,48 @@ coefficient names and after omitting coefficients, so the
 original order.}
 
 \item{ci.level}{If standard errors are converted to confidence intervals
-(because a model does not natively support CIs), what confidence level 
+(because a model does not natively support CIs), what confidence level
 should be used for the outer confidence interval? By default, \code{0.95}
 is used (i.e., an alpha value of 0.05).}
 
 \item{ci.inner}{If standard errors are converted to confidence intervals
-(because a model does not natively support CIs), what confidence level 
-should be used for the inner confidence interval? By default, \code{0.50} 
+(because a model does not natively support CIs), what confidence level
+should be used for the inner confidence interval? By default, \code{0.50}
 is used (i.e., an alpha value of 0.5).}
 
-\item{use.se}{Use one standard error for the inner horizontal bar and two 
-standard errors from the estimate for the outer horizontal bar (instead 
-of confidence intervals). Only available if standard errors can be 
+\item{use.se}{Use one standard error for the inner horizontal bar and two
+standard errors from the estimate for the outer horizontal bar (instead
+of confidence intervals). Only available if standard errors can be
 extracted from the model using the respective \code{\link{extract}} method.}
 
-\item{type}{The default option is \code{type = "facet"}. If only one model is 
-specified, it will print one forest plot applied to point estimates and 
-confidence intervals. If more than one model is specified, it will print 
+\item{type}{The default option is \code{type = "facet"}. If only one model is
+specified, it will print one forest plot applied to point estimates and
+confidence intervals. If more than one model is specified, it will print
 as many facets as the number of models in a column of plots. Alternatively,
-if \code{type = "forest"} is specified, coefficients from one or more models 
-will be grouped together and displayed as a single forest plot.}
+if \code{type = "forest"} is specified, coefficients from one or more
+models will be grouped together and displayed as a single forest plot.}
 
-\item{theme}{The \code{\link{theme}} argument can be used to customomize 
+\item{theme}{The \code{\link{theme}} argument can be used to customomize
 the appearance of the plot. The default theme is
 \code{theme_bw} and it can be replaced by any other \pkg{ggplot2} theme.}
 
-\item{signif.light}{Color of outer confidence intervals for significant model terms.}
+\item{signif.light}{Color of outer confidence intervals for significant model
+terms.}
 
-\item{signif.medium}{Color of inner confidence intervals for significant model terms.}
+\item{signif.medium}{Color of inner confidence intervals for significant
+model terms.}
 
-\item{signif.dark}{Color of point estimates and labels for significant model terms.}
+\item{signif.dark}{Color of point estimates and labels for significant model
+terms.}
 
-\item{insignif.light}{Color of outer confidence intervals for insignificant model terms.}
+\item{insignif.light}{Color of outer confidence intervals for insignificant
+model terms.}
 
-\item{insignif.medium}{Color of inner confidence intervals for insignificant model terms.}
+\item{insignif.medium}{Color of inner confidence intervals for insignificant
+model terms.}
 
-\item{insignif.dark}{Color of point estimates and labels for insignificant model terms.}
+\item{insignif.dark}{Color of point estimates and labels for insignificant
+model terms.}
 
 \item{...}{Custom options to be passed on to the \code{\link{extract}}
 function. For example, most extract methods provide custom options for the
@@ -199,49 +206,54 @@ entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
 information.}
 }
 \value{
-Coefficient plot as a \pkg{ggplot2} \code{gg} object if \code{file = FALSE}. 
-  \code{NULL} otherwise.
+Coefficient plot as a \pkg{ggplot2} \code{gg} object if
+  \code{file = FALSE}. \code{NULL} otherwise.
 }
 \description{
 Create coefficient plots of \R regression output using \pkg{ggplot2}.
 }
 \details{
-The \code{plotreg} function produces coefficient plots (i.e., forest plots 
-applied to point estimates and confidence intervals) and works much like 
-the \code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}}, 
-\code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a 
-single model or multiple statistical models as input and internally 
-extracts the relevant data from the models. If confidence intervals are 
-not defined in the extract method of a statistical model (see \link{extract} 
-and \link{extract-methods}), the default standard errors are converted to 
+The \code{plotreg} function produces coefficient plots (i.e., forest plots
+applied to point estimates and confidence intervals) and works much like the
+\code{\link{screenreg}}, \code{\link{texreg}}, \code{\link{htmlreg}},
+\code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a
+single model or multiple statistical models as input and internally extracts
+the relevant data from the models. If confidence intervals are not defined in
+the extract method of a statistical model (see \link{extract} and
+\link{extract-methods}), the default standard errors are converted to
 confidence intervals. Most of the arguments work like in the
-\code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}} 
-\code{\link{matrixreg}}, and \code{\link{wordreg}} functions. It is 
-possible to display the plots in two ways: using the \code{type = "facet"} 
-option, one forest plot applied to point estimates and confidence intervals 
-will be visualized in case there is only one model. If there is more than 
-one model, each one will be plotted next to the other as a separate facet;  
-using the \code{type = "forest"} option, coefficients from one or more  
-models will be grouped together and displayed as a single forest plot.
+\code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}}
+\code{\link{matrixreg}}, and \code{\link{wordreg}} functions. It is possible
+to display the plots in two ways: using the \code{type = "facet"} argument,
+one forest plot applied to point estimates and confidence intervals will be
+visualized in case there is only one model. If there is more than one model,
+each one will be plotted next to the other as a separate facet; using the
+\code{type = "forest"} argument, coefficients from one or more models will be
+grouped together and displayed as a single forest plot.
 }
 \examples{
 # example from the 'lm' help file:
-ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
-trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
-group <- gl(2,10,20, labels = c("Ctl","Trt"))
+ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
+trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
+group <- gl(2, 10, 20, labels = c("Ctl", "Trt"))
 weight <- c(ctl, trt)
 lm.D9 <- lm(weight ~ group)
-plotreg(lm.D9)    # plot model output as a diagram
+plotreg(lm.D9) # plot model output as a diagram
 
 # customize theme and title and save as a PDF file.
-plotreg(lm.D9, theme = theme_dark(),  ggtitle = "my title", file = "myplot.pdf")
+plotreg(lm.D9,
+        theme = theme_dark(),
+        ggtitle = "my title",
+        file = "myplot.pdf")
 unlink("myplot.pdf")
+
+# group coefficients from multiple models
+plotreg(list(lm.D9, lm.D90), type = "forest")
 
 }
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
-  \code{\link{extract-methods}} \code{\link{texreg}}
-  \code{\link{matrixreg}}
+  \code{\link{extract-methods}} \code{\link{texreg}} \code{\link{matrixreg}}
 
 Other texreg: \code{\link{htmlreg}},
   \code{\link{huxtablereg}}, \code{\link{knitreg}},

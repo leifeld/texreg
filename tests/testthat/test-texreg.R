@@ -1,4 +1,4 @@
-context("Test of texreg et al. function arguments")
+context("texreg family functions")
 library("texreg")
 
 data("iris")

@@ -1,4 +1,4 @@
-context("Test of the code from the 2013 JSS article")
+context("JSS article 2013")
 library("texreg")
 
 # example models from ?lm
