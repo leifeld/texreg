@@ -38,7 +38,6 @@ test_that("plotreg works with confidence intervals using the biglm package", {
   skip_if_not_installed("biglm")
   require("biglm")
   skip_if_not_installed("DBI")
-  require("DBI")
   data("trees")
   ff <- log(Volume) ~ log(Girth) + log(Height)
   a <- biglm::bigglm(ff, data = trees, chunksize = 10, sandwich = TRUE)

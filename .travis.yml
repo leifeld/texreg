@@ -33,6 +33,7 @@ addons:
       - r-cran-amelia
 
 r_packages:
+  - biglm
   - covr
   - betareg
   - censReg
