@@ -69,8 +69,8 @@ knitreg(list(model.1, model.2), center = FALSE, caption = "", table = FALSE)
 
 Other texreg: \code{\link{htmlreg}},
   \code{\link{huxtablereg}}, \code{\link{matrixreg}},
-  \code{\link{screenreg}}, \code{\link{texreg}},
-  \code{\link{wordreg}}
+  \code{\link{plotreg}}, \code{\link{screenreg}},
+  \code{\link{texreg}}, \code{\link{wordreg}}
 }
 \author{
 Philip Leifeld, with input from David Hugh-Jones

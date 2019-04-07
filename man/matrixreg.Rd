@@ -323,8 +323,8 @@ directly.
 
 Other texreg: \code{\link{htmlreg}},
   \code{\link{huxtablereg}}, \code{\link{knitreg}},
-  \code{\link{screenreg}}, \code{\link{texreg}},
-  \code{\link{wordreg}}
+  \code{\link{plotreg}}, \code{\link{screenreg}},
+  \code{\link{texreg}}, \code{\link{wordreg}}
 }
 \author{
 Philip Leifeld
