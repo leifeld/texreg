@@ -47,7 +47,10 @@ tr1 <- texreg(list(feis1.mod, feis2.mod), digits = 3)
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,dynlm-method}},
+Other extract: \code{\link{extract,ARIMA-method}},
+  \code{\link{extract,Arima-method}},
+  \code{\link{extract,averaging-method}},
+  \code{\link{extract,dynlm-method}},
   \code{\link{extract,ivreg-method}},
   \code{\link{extract,lm-method}},
   \code{\link{extract,lme4-method}},
