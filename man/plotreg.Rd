@@ -10,10 +10,9 @@ plotreg(l, file = NULL, custom.model.names = NULL,
   override.se = 0, override.pval = 0, override.ci.low = 0,
   override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL,
   ci.level = 0.95, ci.inner = 0.5, use.se = FALSE, type = "facet",
-  theme = theme_bw(), signif.light = "#FBC9B9",
-  signif.medium = "#F7523A", signif.dark = "#BD0017",
-  insignif.light = "#C5DBE9", insignif.medium = "#5A9ECC",
-  insignif.dark = "#1C5BA6", ...)
+  theme = NULL, signif.light = "#FBC9B9", signif.medium = "#F7523A",
+  signif.dark = "#BD0017", insignif.light = "#C5DBE9",
+  insignif.medium = "#5A9ECC", insignif.dark = "#1C5BA6", ...)
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of
@@ -178,9 +177,10 @@ as many facets as the number of models in a column of plots. Alternatively,
 if \code{type = "forest"} is specified, coefficients from one or more
 models will be grouped together and displayed as a single forest plot.}
 
-\item{theme}{The \code{\link{theme}} argument can be used to customomize
-the appearance of the plot. The default theme is
-\code{theme_bw} and it can be replaced by any other \pkg{ggplot2} theme.}
+\item{theme}{The \code{theme} argument can be used to customize the
+appearance of the plot. The default theme is \code{theme_bw}. It can be
+replaced by any other \pkg{ggplot2} theme. See
+\code{\link[ggplot2]{theme_bw}} for details.}
 
 \item{signif.light}{Color of outer confidence intervals for significant model
 terms.}
@@ -233,6 +233,7 @@ each one will be plotted next to the other as a separate facet; using the
 grouped together and displayed as a single forest plot.
 }
 \examples{
+\dontrun{
 # example from the 'lm' help file:
 ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
 trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
@@ -251,6 +252,7 @@ unlink("myplot.pdf")
 
 # group coefficients from multiple models
 plotreg(list(lm.D9, lm.D90), type = "forest")
+}
 
 }
 \seealso{

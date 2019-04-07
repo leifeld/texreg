@@ -1,6 +1,9 @@
 context("plotreg")
 library("texreg")
 
+skip_if_not_installed("ggplot2")
+require("ggplot2")
+
 test_that("plotreg works", {
   # linear model p-values
   ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
@@ -14,10 +17,10 @@ test_that("plotreg works", {
   p3 <- plotreg(list(m1,m2), custom.title = "My Plot")
   p4 <- plotreg(list(m1,m2), custom.note = "My note")
 
-  expect_true(is.ggplot(p1))
-  expect_true(is.ggplot(p2))
-  expect_true(is.ggplot(p3))
-  expect_true(is.ggplot(p4))
+  expect_true(ggplot2::is.ggplot(p1))
+  expect_true(ggplot2::is.ggplot(p2))
+  expect_true(ggplot2::is.ggplot(p3))
+  expect_true(ggplot2::is.ggplot(p4))
 
   expect_equal(PlotDataFrame <- p1$data, readRDS("../files/PlotDataFrame.RDS")) # test if data frame is correctly constructed
   # saveRDS(PlotDataFrame, "../files/PlotDataFrame.RDS")

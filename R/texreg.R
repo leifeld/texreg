@@ -1980,9 +1980,10 @@ print.texregTable <- function(x, ...) {
 #'   as many facets as the number of models in a column of plots. Alternatively,
 #'   if \code{type = "forest"} is specified, coefficients from one or more
 #'   models will be grouped together and displayed as a single forest plot.
-#' @param theme The \code{\link{theme}} argument can be used to customomize
-#'   the appearance of the plot. The default theme is
-#'   \code{theme_bw} and it can be replaced by any other \pkg{ggplot2} theme.
+#' @param theme The \code{theme} argument can be used to customize the
+#'   appearance of the plot. The default theme is \code{theme_bw}. It can be
+#'   replaced by any other \pkg{ggplot2} theme. See
+#'   \code{\link[ggplot2]{theme_bw}} for details.
 #' @param signif.light Color of outer confidence intervals for significant model
 #'   terms.
 #' @param signif.medium Color of inner confidence intervals for significant
@@ -2008,6 +2009,7 @@ print.texregTable <- function(x, ...) {
 #'   \code{\link{extract-methods}} \code{\link{texreg}} \code{\link{matrixreg}}
 #'
 #' @examples
+#' \dontrun{
 #' # example from the 'lm' help file:
 #' ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
 #' trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
@@ -2026,6 +2028,7 @@ print.texregTable <- function(x, ...) {
 #'
 #' # group coefficients from multiple models
 #' plotreg(list(lm.D9, lm.D90), type = "forest")
+#' }
 #'
 #' @export
 plotreg <- function(l,
@@ -2046,7 +2049,7 @@ plotreg <- function(l,
                     ci.inner = 0.5,
                     use.se = FALSE,
                     type = "facet",
-                    theme = theme_bw(),
+                    theme = NULL,
                     signif.light = "#FBC9B9",
                     signif.medium = "#F7523A",
                     signif.dark = "#BD0017",
@@ -2054,6 +2057,15 @@ plotreg <- function(l,
                     insignif.medium = "#5A9ECC",
                     insignif.dark = "#1C5BA6",
                     ...) {
+
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("plotreg requires the 'ggplot2' package to be installed.\n",
+         "To do this, enter 'install.packages(\"ggplot2\")'.")
+  }
+
+  if (is.null(theme)) {
+    theme <- ggplot2::theme_bw()
+  }
 
   if (!is.null(omit.coef) && !is.na(omit.coef) && !is.character(omit.coef)) {
     stop("'omit.coef' must be a character string!")
@@ -2276,31 +2288,31 @@ plotreg <- function(l,
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[coeforder])
     }
 
-    p <- ggplot(dataframe, aes(co.names, co)) +
-      geom_hline(yintercept = 0,
-                 lty = 2, lwd = 1,
-                 colour = "grey50") +
-      geom_errorbar(aes(ymin = lower.outer, ymax = upper.outer),
-                    lwd = 1,
-                    colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light),
-                    width = 0) +
-      geom_errorbar(aes(ymin = lower.inner, ymax = upper.inner),
-                    lwd = 2.5,
-                    colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
-                    width = 0) +
-      geom_point(size = 3,
-                 pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22),
-                 fill = ifelse(sapply(dataframe$signif, isTRUE), signif.dark, insignif.dark)) +
-      coord_flip()
+    p <- ggplot2::ggplot(dataframe, ggplot2::aes(co.names, co)) +
+      ggplot2::geom_hline(yintercept = 0,
+                          lty = 2, lwd = 1,
+                          colour = "grey50") +
+      ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.outer, ymax = upper.outer),
+                             lwd = 1,
+                             colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light),
+                             width = 0) +
+      ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.inner, ymax = upper.inner),
+                             lwd = 2.5,
+                             colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
+                             width = 0) +
+      ggplot2::geom_point(size = 3,
+                          pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22),
+                          fill = ifelse(sapply(dataframe$signif, isTRUE), signif.dark, insignif.dark)) +
+      ggplot2::coord_flip()
     p <- p + theme
-    p <- p + xlab(" ") +
-      facet_wrap(~ lab,
-                 strip.position = "left",
-                 nrow = length(dataframe),
-                 scales = "free_y")
+    p <- p + ggplot2::xlab(" ") +
+      ggplot2::facet_wrap(~ lab,
+                          strip.position = "left",
+                          nrow = length(dataframe),
+                          scales = "free_y")
 
     if (length(custom.title) > 0) {
-      p <- p + ggtitle(custom.title)
+      p <- p + ggplot2::ggtitle(custom.title)
     }
 
   } else if (type == "forest") {
@@ -2339,40 +2351,40 @@ plotreg <- function(l,
     dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[laborder])
 
     # plot
-    p <- ggplot(dataframe, aes(lab, co)) +
-      geom_hline(yintercept = 0,
-                 lty = 2,
-                 lwd = 1,
-                 colour = "grey50") +
-      geom_errorbar(aes(ymin = lower.outer, ymax = upper.outer),
-                    lwd = 1,
-                    colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light),
-                    width = 0) +
-      geom_errorbar(aes(ymin = lower.inner, ymax = upper.inner),
-                    lwd = 2.5,
-                    colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
-                    width = 0) +
-      geom_point(size = 3,
-                 pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22),
-                 fill = ifelse(sapply(dataframe$signif, isTRUE), signif.dark, insignif.dark)) +
-      coord_flip()
+    p <- ggplot2::ggplot(dataframe, ggplot2::aes(lab, co)) +
+      ggplot2::geom_hline(yintercept = 0,
+                          lty = 2,
+                          lwd = 1,
+                          colour = "grey50") +
+      ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.outer, ymax = upper.outer),
+                             lwd = 1,
+                             colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light),
+                             width = 0) +
+      ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.inner, ymax = upper.inner),
+                             lwd = 2.5,
+                             colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
+                             width = 0) +
+      ggplot2::geom_point(size = 3,
+                          pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22),
+                          fill = ifelse(sapply(dataframe$signif, isTRUE), signif.dark, insignif.dark)) +
+      ggplot2::coord_flip()
     p <- p + theme
-    p <- p + xlab(" ") +
-      facet_wrap(~ co.names,
-                 strip.position = "left",
-                 nrow = length(dataframe),
-                 scales = "free_y")
+    p <- p + ggplot2::xlab(" ") +
+      ggplot2::facet_wrap(~ co.names,
+                          strip.position = "left",
+                          nrow = length(dataframe),
+                          scales = "free_y")
 
     if (length(custom.title) > 0) {
-      p <- p + ggtitle(custom.title)
+      p <- p + ggplot2::ggtitle(custom.title)
     }
   }
 
   # adds message to p as ylab; adds output meassages to paste that comes as R output (not in plot)
   if (isTRUE(use.se[i]) && length(models[[i]]@se) > 0) {
-    p <- p + ylab("Bars denote SEs. Circle points denote significance.")
+    p <- p + ggplot2::ylab("Bars denote SEs. Circle points denote significance.")
     if (length(custom.note) > 0) {
-      p <- p + ylab(custom.note)
+      p <- p + ggplot2::ylab(custom.note)
     }
     if (length(models) == 1) {
       message("Model: bars denote one (inner) resp. two (outer) standard errors.")
@@ -2380,9 +2392,9 @@ plotreg <- function(l,
       message("Models: bars denote one (inner) resp. two (outer) standard errors.")
     }
   } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
-    p <- p + ylab("Bars denote CIs. Circle points denote significance.")
+    p <- p + ggplot2::ylab("Bars denote CIs. Circle points denote significance.")
     if (length(custom.note) > 0) {
-      p <- p + ylab(custom.note)
+      p <- p + ggplot2::ylab(custom.note)
     }
     if (length(models) == 1) {
       message(paste0("Model: bars denote 0.5 (inner) resp. ", ci.level,
@@ -2392,9 +2404,9 @@ plotreg <- function(l,
                      " (outer) confidence intervals (computed from standard errors)."))
     }
   } else {
-    p <- p + ylab("Bars denote CIs. Circle points denote significance.")
+    p <- p + ggplot2::ylab("Bars denote CIs. Circle points denote significance.")
     if (length(custom.note) > 0) {
-      p <- p + ylab(custom.note)
+      p <- p + ggplot2::ylab(custom.note)
     }
     if (length(models) == 1) {
       message(paste0("Model: bars denote ", ci.level, " confidence intervals."))
@@ -2407,7 +2419,7 @@ plotreg <- function(l,
   if (is.null(file)) {
     return(p)
   } else {
-    ggsave(filename = file, plot = p)
+    ggplot2::ggsave(filename = file, plot = p)
   }
 }
 
