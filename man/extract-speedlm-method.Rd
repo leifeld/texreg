@@ -38,14 +38,30 @@ created by the \code{\link[speedglm]{speedglm}} function in the
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ARIMA-method}},
+Other extract: \code{\link{extract,ANY-method}},
+  \code{\link{extract,ARIMA-method}},
   \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
+  \code{\link{extract,betamfx-method}},
+  \code{\link{extract,betaor-method}},
+  \code{\link{extract,betareg-method}},
+  \code{\link{extract,bife-method}},
+  \code{\link{extract,biglm-method}},
+  \code{\link{extract,brglm-method}},
+  \code{\link{extract,btergm-method}},
+  \code{\link{extract,censReg-method}},
+  \code{\link{extract,clm-method}},
+  \code{\link{extract,clmm-method}},
+  \code{\link{extract,coxph-method}},
   \code{\link{extract,dynlm-method}},
   \code{\link{extract,feis-method}},
+  \code{\link{extract,glm-method}},
   \code{\link{extract,ivreg-method}},
   \code{\link{extract,lm-method}},
-  \code{\link{extract,lme4-method}}
+  \code{\link{extract,lme4-method}},
+  \code{\link{extract,negbin-method}},
+  \code{\link{extract,sclm-method}},
+  \code{\link{extract,speedglm-method}}
 }
 \author{
 Philip Leifeld
