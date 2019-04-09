@@ -3,7 +3,6 @@
 \docType{methods}
 \name{extract,speedlm-method}
 \alias{extract,speedlm-method}
-\alias{extract.speedglm}
 \title{\code{\link{extract}} method for \code{speedglm} objects}
 \usage{
 \S4method{extract}{speedlm}(model, include.rsquared = TRUE,
@@ -38,8 +37,7 @@ created by the \code{\link[speedglm]{speedglm}} function in the
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ANY-method}},
-  \code{\link{extract,ARIMA-method}},
+Other extract: \code{\link{extract,ARIMA-method}},
   \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betamfx-method}},
@@ -48,13 +46,20 @@ Other extract: \code{\link{extract,ANY-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
   \code{\link{extract,brglm-method}},
+  \code{\link{extract,broom-method}},
   \code{\link{extract,btergm-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,clm-method}},
   \code{\link{extract,clmm-method}},
+  \code{\link{extract,coeftest-method}},
   \code{\link{extract,coxph-method}},
   \code{\link{extract,dynlm-method}},
+  \code{\link{extract,ergm-method}},
+  \code{\link{extract,ergmm-method}},
+  \code{\link{extract,ets-method}},
+  \code{\link{extract,feglm-method}},
   \code{\link{extract,feis-method}},
+  \code{\link{extract,felm-method}},
   \code{\link{extract,glm-method}},
   \code{\link{extract,ivreg-method}},
   \code{\link{extract,lm-method}},

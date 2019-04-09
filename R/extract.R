@@ -428,7 +428,7 @@ extract.betareg <- function(model, include.precision = TRUE,
 #' \code{\link{extract}} method for \code{betareg} objects
 #'
 #' \code{\link{extract}} method for \code{betareg} objects. These objects are
-#' created by the \code{\link[mfx]{betareg}} function in the \pkg{betareg} package.
+#' created by the \code{\link[betareg]{betareg}} function in the \pkg{betareg} package.
 #'
 #' @param include.precision Report precision in the GOF block?
 #' @inheritParams extract,lm-method
@@ -641,9 +641,11 @@ extract.broom <- function(model, ...) {
 #' \code{\link{extract}} method for \code{broom} objects
 #'
 #' \code{\link{extract}} method for \code{broom} objects. These objects are
-#' created by the \code{\link[ANY]{broom}} function in the \pkg{ANY} package.
+#' created by the \code{\link[broom]{broom}} function in the \pkg{broom} package.
 #'
-#' @inheritParams extract,lm-method
+#' @param model It can be any statistical model that is not covered by the 
+#'    extract methods in the package but that is contained in the \pkg{broom} package.
+#' @param ... currently not in use.
 #' @return A \linkS4class{texreg} object.
 #'
 #' @method extract broom
@@ -653,7 +655,7 @@ extract.broom <- function(model, ...) {
 #' @author Philip Leifeld
 #'
 #' @export
-setMethod("extract", signature = className("ANY"),
+setMethod("extract", signature = className("broom","ANY"),
           definition = extract.broom)
 
 
@@ -689,8 +691,7 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
 #' \code{\link{extract}} method for \code{btergm} objects. These objects are
 #' created by the \code{\link[btergm]{btergm}} function in the \pkg{btergm} package.
 #'
-#' @param level Confidence interval has a 0.95 probability of containing 
-#'    the population mean
+#' @param level Confidence level for constructing confidence intervals.
 #' @inheritParams extract,lm-method
 #' @return A \linkS4class{texreg} object.
 #'
@@ -1077,10 +1078,10 @@ extract.coxph <- function(model, include.aic = TRUE, include.rsquared = TRUE,
 #' \code{\link{extract}} method for \code{coxph} objects. These objects are
 #' created by the \code{\link[survival]{coxph}} function in the \pkg{survival} package.
 #'
-#' @param include.maxrs Report Max. R^2 in the GOF block?
-#' @param include.events Report Num. events in the GOF block?
-#' @param include.missings Report Missings in the GOF block?
-#' @param include.zph Report PH test in the GOF block?
+#' @param include.maxrs Report maximal R^2 in the GOF block?
+#' @param include.events Report the number of events in the GOF block?
+#' @param include.missings Report number of missing data points in the GOF block?
+#' @param include.zph Report proportional hazard test in the GOF block?
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
 #' @return A \linkS4class{texreg} object.
@@ -1244,7 +1245,7 @@ setMethod("extract", signature = className("clogit", "survival"),
     definition = extract.clogit)
 
 
-# extension for coeftest objects (lmtest package)
+#' @noRd
 extract.coeftest <- function(model, ...) {
 
   names <- rownames(model)
@@ -1261,11 +1262,26 @@ extract.coeftest <- function(model, ...) {
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{coeftest} objects
+#'
+#' \code{\link{extract}} method for \code{coeftest} objects. These objects are
+#' created by the \code{\link[lmtest]{coeftest}} function in the \pkg{coeftest} package.
+#'
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract coeftest
+#' @aliases extract.coeftest
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("coeftest", "lmtest"),
     definition = extract.coeftest)
 
 
-# extension for ergm objects
+#' @noRd
 extract.ergm <- function(model, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, ...) {
   s <- summary(model, ...)
@@ -1309,11 +1325,27 @@ extract.ergm <- function(model, include.aic = TRUE, include.bic = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{ergm} objects
+#'
+#' \code{\link{extract}} method for \code{ergm} objects. These objects are
+#' created by the \code{\link[ergm]{ergm}} function in the \pkg{ergm} package.
+#'
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract ergm
+#' @aliases extract.ergm
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("ergm", "ergm"),
     definition = extract.ergm)
 
 
-# extension for ergmm objects (latentnet package)
+#' @noRd
 extract.ergmm <- function(model, include.bic = TRUE, ...) {
   s <- summary(model)
 
@@ -1344,11 +1376,27 @@ extract.ergmm <- function(model, include.bic = TRUE, ...) {
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{ergmm} objects
+#'
+#' \code{\link{extract}} method for \code{ergmm} objects. These objects are
+#' created by the \code{\link[latentnet]{ergmm}} function in the \pkg{ergmm} package.
+#'
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract ergmm
+#' @aliases extract.ergmm
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("ergmm", "latentnet"),
           definition = extract.ergmm)
 
 
-# extension for ets objects (forecast package)
+#' @noRd
 extract.ets <- function (model, include.pvalues = FALSE, include.aic = TRUE,
     include.aicc = TRUE, include.bic = TRUE, include.loglik = TRUE, ...) {
   mask <- model$mask
@@ -1404,11 +1452,28 @@ extract.ets <- function (model, include.pvalues = FALSE, include.aic = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{ets} objects
+#'
+#' \code{\link{extract}} method for \code{ets} objects. These objects are
+#' created by the \code{\link[forecast]{ets}} function in the \pkg{ets} package.
+#'
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @inheritParams extract,ARIMA-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract ets
+#' @aliases extract.ets
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("ets", "forecast"),
     definition = extract.ets)
 
 
-# extension for feglm objects (alpaca package)
+#' @noRd
 extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
                           include.groups = TRUE, ...) {
     s <- summary(model, ...)
@@ -1452,6 +1517,24 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
     )
     return(tr)
 }
+
+#' \code{\link{extract}} method for \code{feglm} objects
+#'
+#' \code{\link{extract}} method for \code{feglm} objects. These objects are
+#' created by the \code{\link[alpaca]{feglm}} function in the \pkg{feglm} package.
+#'
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @inheritParams extract,lme4-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract feglm
+#' @aliases extract.feglm
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("feglm", "alpaca"), definition = extract.feglm)
 
 
@@ -1552,7 +1635,7 @@ setMethod("extract", signature = className("feis", "feisr"),
           definition = extract.feis)
 
 
-# extension for felm objects (lfe package)
+#' @noRd
 extract.felm <- function(model, include.nobs = TRUE, include.rsquared = TRUE,
     include.adjrs = TRUE, include.fstatistic = FALSE, ...) {
 
@@ -1602,6 +1685,23 @@ extract.felm <- function(model, include.nobs = TRUE, include.rsquared = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{felm} objects
+#'
+#' \code{\link{extract}} method for \code{felm} objects. These objects are
+#' created by the \code{\link[lfe]{felm}} function in the \pkg{felm} package.
+#'
+#' @param include.fstatistic Report f statistic in the GOF block?
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract felm
+#' @aliases extract.felm
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("felm", "lfe"),
     definition = extract.felm)
 
@@ -2043,8 +2143,8 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
 #' created by the \code{\link[stats]{glm}} function in the \pkg{stats} package.
 #'
 #' @param model A model object.
-#' @param include.aic Report AIC in the GOF block?
-#' @param include.bic Report BIC in the GOF block?
+#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF block?
+#' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF block?
 #' @param include.loglik Report the log likelihood in the GOF block?
 #' @param include.deviance Report the deviance in the GOF block?
 #' @param include.nobs Report the number of observations in the GOF block?
