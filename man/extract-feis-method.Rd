@@ -47,16 +47,15 @@ tr1 <- texreg(list(feis1.mod, feis2.mod), digits = 3)
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ARIMA-method}},
+Other extract: \code{\link{extract,ANY-method}},
+  \code{\link{extract,ARIMA-method}},
   \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betamfx-method}},
-  \code{\link{extract,betaor-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
   \code{\link{extract,brglm-method}},
-  \code{\link{extract,broom-method}},
   \code{\link{extract,btergm-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,clm-method}},

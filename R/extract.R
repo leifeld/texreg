@@ -235,7 +235,7 @@ extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
 #' \code{\link{extract}} method for \code{averaging} objects
 #'
 #' \code{\link{extract}} method for \code{averaging} objects. These objects are
-#' created by the \code{\link[MuMIn]{averaging}} function in the \pkg{MuMIn} package.
+#' created by the \code{\link[MuMIn]{model.avg}} function in the \pkg{MuMIn} package.
 #'
 #' @param use.ci Report confidence intervals in the GOF block?
 #' @param adjusted.se Report adjusted standard error in the GOF block?
@@ -293,10 +293,17 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{betamfx} objects
+#' \code{\link{extract}} methods for \code{mfx.objects}, statistical models 
+#'   in the \pkg{mfx} package
 #'
-#' \code{\link{extract}} method for \code{betamfx} objects. These objects are
-#' created by the \code{\link[mfx]{betamfx}} function in the \pkg{mfx} package.
+#' \code{\link{extract}} method for statistical models in the \pkg{mfx} package,
+#'    in particular:
+#' \itemize{
+#'   \item \code{betamfx} objects created by the \code{\link[mfx]{betamfx}}
+#'     function in the \pkg{mfx} package
+#'   \item \code{betaor} objects created by the \code{\link[mfx]{betaor}}
+#'     function in the \pkg{mfx} package
+#' }
 #'
 #' @param include.pseudors Report pseudo R^2 in the GOF block?
 #' @inheritParams extract,lm-method
@@ -304,7 +311,8 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
 #' @return A \linkS4class{texreg} object.
 #'
 #' @method extract betamfx
-#' @aliases extract.betamfx
+#' @rdname extract.betamfx 
+#' @aliases extract.mfx.objects extract.betamfx
 #' @family extract
 #' @seealso \link{extract}
 #' @author Philip Leifeld
@@ -353,22 +361,10 @@ extract.betaor <- function(model, include.pseudors = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{betaor} objects
 #'
-#' \code{\link{extract}} method for \code{betaor} objects. These objects are
-#' created by the \code{\link[mfx]{betaor}} function in the \pkg{mfx} package.
-#'
-#' @inheritParams extract,lm-method
-#' @inheritParams extract,glm-method
-#' @inheritParams extract,betamfx-method
-#' @return A \linkS4class{texreg} object.
-#'
-#' @method extract betaor
-#' @aliases extract.betaor
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
+#' @rdname extract.betamfx
+#' @method extract betaor 
+#' @aliases extract.mfx.objects extract.betaor 
 #' @export
 setMethod("extract", signature = className("betaor", "mfx"),
     definition = extract.betaor)
@@ -510,7 +506,7 @@ extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE,
 #' @aliases extract.bife
 #' @family extract
 #' @seealso \link{extract}
-#' @author Philip Leifeld
+#' @author Christoph Riedl, Claudia Zucca, Philip Leifeld
 #'
 #' @export
 setMethod("extract", signature = className("bife", "bife"),
@@ -575,7 +571,7 @@ extract.biglm <- function(model, include.nobs = TRUE, include.aic = TRUE, use.ci
 #' @aliases extract.biglm
 #' @family extract
 #' @seealso \link{extract}
-#' @author Philip Leifeld
+#' @author Claudia Zucca, Philip Leifeld
 #'
 #' @export
 setMethod("extract", signature = className("biglm", "biglm"),
@@ -655,7 +651,7 @@ extract.broom <- function(model, ...) {
 #' @author Philip Leifeld
 #'
 #' @export
-setMethod("extract", signature = className("broom","ANY"),
+setMethod("extract", signature = className("ANY"),
           definition = extract.broom)
 
 
@@ -700,7 +696,7 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
 #' @family extract
 #' @seealso \link{extract}
 #' @author Philip Leifeld
-#'
+#' @importFrom btergm confint
 #' @export
 setMethod("extract", signature = className("btergm", "btergm"),
     definition = extract.btergm)
@@ -2158,7 +2154,7 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
 #' @seealso \link{extract}
 #' @author Philip Leifeld
 #'
-#' @importFrom stats nobs
+#' @importFrom stats nobs AIC BIC logLik deviance
 #' @export
 setMethod("extract", signature = className("glm", "stats"),
     definition = extract.glm)
