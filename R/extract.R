@@ -293,9 +293,8 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} methods for \code{mfx.objects}, statistical models 
-#'   in the \pkg{mfx} package
-#'
+#' \code{\link{extract}} methods for \code{betamfx} and \code{betaor}, 
+#' statistical models in the \pkg{mfx} package
 #' \code{\link{extract}} method for statistical models in the \pkg{mfx} package,
 #'    in particular:
 #' \itemize{
@@ -308,11 +307,11 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
 #' @param include.pseudors Report pseudo R^2 in the GOF block?
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
-#' @return A \linkS4class{texreg} object.
-#'
-#' @method extract betamfx
 #' @rdname extract.betamfx 
-#' @aliases extract.mfx.objects extract.betamfx
+#' 
+#' @method extract betamfx 
+#' @return A \linkS4class{texreg} object.
+#' @aliases extract.betamfx
 #' @family extract
 #' @seealso \link{extract}
 #' @author Philip Leifeld
@@ -362,9 +361,11 @@ extract.betaor <- function(model, include.pseudors = TRUE,
 }
 
 #'
+#' 
 #' @rdname extract.betamfx
 #' @method extract betaor 
-#' @aliases extract.mfx.objects extract.betaor 
+#' @aliases extract.betaor 
+#' 
 #' @export
 setMethod("extract", signature = className("betaor", "mfx"),
     definition = extract.betaor)
@@ -696,7 +697,6 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
 #' @family extract
 #' @seealso \link{extract}
 #' @author Philip Leifeld
-#' @importFrom btergm confint
 #' @export
 setMethod("extract", signature = className("btergm", "btergm"),
     definition = extract.btergm)
@@ -837,10 +837,18 @@ extract.clm <- function(model, include.thresholds = TRUE, include.aic = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{clm} objects
-#'
-#' \code{\link{extract}} method for \code{clm} objects. These objects are
-#' created by the \code{\link[ordinal]{clm}} function in the \pkg{ordinal} package.
+#' \code{\link{extract}} methods for \code{clm}, \code{sclm}, and 
+#' \code{clmm}, functions for statistical models in the \pkg{ordinal} package
+#' \code{\link{extract}} method for statistical models in the \pkg{mfx} package,
+#'    in particular:
+#' \itemize{
+#'   \item \code{clm} objects created by the \code{\link[ordinal]{clm}}
+#'     function in the \pkg{mfx} package
+#'   \item \code{sclm} objects created by the \code{\link[ordinal]{sclm}}
+#'     function in the \pkg{mfx} package
+#'    \item \code{clmm} objects created by the \code{\link[ordinal]{clmm}}
+#'     function in the \pkg{mfx} package
+#' }
 #'
 #' @param include.thresholds Report thresholds in the GOF block?
 #' @inheritParams extract,lm-method
@@ -848,7 +856,8 @@ extract.clm <- function(model, include.thresholds = TRUE, include.aic = TRUE,
 #' @return A \linkS4class{texreg} object.
 #'
 #' @method extract clm
-#' @aliases extract.clm
+#' @rdname extract.clm 
+#' @aliases extract clm
 #' @family extract
 #' @seealso \link{extract}
 #' @author Philip Leifeld
@@ -859,22 +868,10 @@ setMethod("extract", signature = className("clm", "ordinal"),
 
 extract.sclm <- extract.clm
 
-#' \code{\link{extract}} method for \code{sclm} objects
 #'
-#' \code{\link{extract}} method for \code{sclm} objects. These objects are
-#' created by the \code{\link[ordinal]{sclm}} function in the \pkg{ordinal} package.
-#'
-#' @inheritParams extract,lm-method
-#' @inheritParams extract,glm-method
-#' @inheritParams extract,clm-method
-#' @return A \linkS4class{texreg} object.
-#'
+#' @rdname extract.clm
 #' @method extract sclm
 #' @aliases extract.sclm
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
 #' @export
 setMethod("extract", signature = className("sclm", "ordinal"),
     definition = extract.clm)
@@ -970,24 +967,11 @@ extract.clmm <- function(model, include.thresholds = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{clmm} objects
-#'
-#' \code{\link{extract}} method for \code{clmm} objects. These objects are
-#' created by the \code{\link[ordinal]{clmm}} function in the \pkg{ordinal} package.
-#'
 #' @param include.groups Report groups in the GOF block?
 #' @param include.variance Report variance in the GOF block?
-#' @inheritParams extract,lm-method
-#' @inheritParams extract,glm-method
-#' @inheritParams extract,clm-method
-#' @return A \linkS4class{texreg} object.
-#'
+#' @rdname extract.clm
 #' @method extract clmm
 #' @aliases extract.clmm
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
 #' @export
 setMethod("extract", signature = className("clmm", "ordinal"),
     definition = extract.clmm)
@@ -1695,14 +1679,14 @@ extract.felm <- function(model, include.nobs = TRUE, include.rsquared = TRUE,
 #' @aliases extract.felm
 #' @family extract
 #' @seealso \link{extract}
-#' @author Philip Leifeld
+#' @author Christoph Riedl, Claudia Zucca, Philip Leifeld
 #'
 #' @export
 setMethod("extract", signature = className("felm", "lfe"),
     definition = extract.felm)
 
 
-# extension for fGARCH objects (fGarch package)
+#' @noRd
 extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE,
     include.loglik = TRUE, ...) {
   namesOfPars <- rownames(model@fit$matcoef)
@@ -1744,16 +1728,47 @@ extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{fGARCH} objects
+#'
+#' \code{\link{extract}} method for \code{fGARCH} objects. These objects are
+#' created by the \code{\link[fGarch]{garchFit}} function in the \pkg{fGarch} package.
+#'
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract fGARCH
+#' @aliases extract.fGARCH
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("fGARCH", "fGarch"),
     definition = extract.fGARCH)
 
 
-# extension for forecast objects (forecast package)
+#' @noRd
 extract.forecast <- function (model, ...) {
   model <- model$model
   return(extract(model))
 }
 
+#' \code{\link{extract}} method for \code{forecast} objects
+#'
+#' \code{\link{extract}} method for \code{forecast} objects. These objects are
+#' created by the \code{\link[forecast]{holt}} function in the \pkg{forecast} package.
+#'
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract forecast
+#' @aliases extract.forecast
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("forecast", "forecast"),
     definition = extract.forecast)
 
@@ -1861,7 +1876,7 @@ setMethod("extract", signature = className("bam", "mgcv"),
     definition = extract.bam)
 
 
-# extension for gamlss objects (gamlss package)
+#' @noRd
 extract.gamlss <- function(model, robust = FALSE, include.nobs = TRUE,
     include.nagelkerke = TRUE, include.gaic = TRUE, ...) {
 
@@ -1923,6 +1938,24 @@ extract.gamlss <- function(model, robust = FALSE, include.nobs = TRUE,
   return(tr)
 }
 
+#' \code{\link{extract}} method for \code{gamlss} objects
+#'
+#' \code{\link{extract}} method for \code{gamlss} objects. These objects are
+#' created by the \code{\link[gamlss]{gamlss}} function in the \pkg{gamlss} package.
+#' 
+#' @param robust If TRUE computes robust standard errors in the variance covariance matrix.
+#' @param include.nagelkerke Report Nagelkerke R^2 in the GOF block? 
+#' @param include.gaic Report Generalized Akaike's Information Criterion (AIC) in the GOF block?
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract gamlss
+#' @aliases extract.gamlss
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("gamlss", "gamlss"),
     definition = extract.gamlss)
 
