@@ -168,10 +168,11 @@ extract.ARIMA <- function (model, include.pvalues = FALSE, include.aic = TRUE,
 #' \code{\link{extract}} method for \code{ARIMA} objects
 #'
 #' \code{\link{extract}} method for \code{ARIMA} objects. These objects are
-#' created by the \code{\link[forecast]{ARIMA}} function in the \pkg{forecast} package.
+#' created by the \code{\link[forecast]{ARIMA}} function in the \pkg{forecast}
+#' package.
 #'
 #' @param include.aicc Report AICC in the GOF block?
-#' 
+#'
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
 #' @return A \linkS4class{texreg} object.
@@ -235,7 +236,8 @@ extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
 #' \code{\link{extract}} method for \code{averaging} objects
 #'
 #' \code{\link{extract}} method for \code{averaging} objects. These objects are
-#' created by the \code{\link[MuMIn]{model.avg}} function in the \pkg{MuMIn} package.
+#' created by the \code{\link[MuMIn]{model.avg}} function in the \pkg{MuMIn}
+#' package.
 #'
 #' @param use.ci Report confidence intervals in the GOF block?
 #' @param adjusted.se Report adjusted standard error in the GOF block?
@@ -252,6 +254,32 @@ extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
 #' @export
 setMethod("extract", signature = className("averaging", "MuMIn"),
     definition = extract.averaging)
+
+
+# mfx package ------------------------------------------------------------------
+
+#' \code{\link{extract}} methods for models in the \pkg{mfx} package
+#'
+#' \code{\link{extract}} methods for statistical models in the \pkg{mfx}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{betamfx} objects created by the \code{\link[mfx]{betamfx}}
+#'     function in the \pkg{mfx} package
+#'   \item \code{betaor} objects created by the \code{\link[mfx]{betaor}}
+#'     function in the \pkg{mfx} package
+#' }
+#'
+#' @param include.pseudors Report pseudo R^2 in the GOF block?
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.mfx
+#' @aliases extract.mfx-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
 
 
 #' @noRd
@@ -293,29 +321,9 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} methods for \code{betamfx} and \code{betaor}, 
-#' statistical models in the \pkg{mfx} package
-#' \code{\link{extract}} method for statistical models in the \pkg{mfx} package,
-#'    in particular:
-#' \itemize{
-#'   \item \code{betamfx} objects created by the \code{\link[mfx]{betamfx}}
-#'     function in the \pkg{mfx} package
-#'   \item \code{betaor} objects created by the \code{\link[mfx]{betaor}}
-#'     function in the \pkg{mfx} package
-#' }
-#'
-#' @param include.pseudors Report pseudo R^2 in the GOF block?
-#' @inheritParams extract,lm-method
-#' @inheritParams extract,glm-method
-#' @rdname extract.betamfx 
-#' 
-#' @method extract betamfx 
-#' @return A \linkS4class{texreg} object.
+#' @rdname extract.mfx
+#' @method extract betamfx
 #' @aliases extract.betamfx
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
 #' @export
 setMethod("extract", signature = className("betamfx", "mfx"),
     definition = extract.betamfx)
@@ -360,12 +368,10 @@ extract.betaor <- function(model, include.pseudors = TRUE,
   return(tr)
 }
 
+#' @rdname extract.mfx
+#' @method extract betaor
+#' @aliases extract.betaor
 #'
-#' 
-#' @rdname extract.betamfx
-#' @method extract betaor 
-#' @aliases extract.betaor 
-#' 
 #' @export
 setMethod("extract", signature = className("betaor", "mfx"),
     definition = extract.betaor)
@@ -425,7 +431,8 @@ extract.betareg <- function(model, include.precision = TRUE,
 #' \code{\link{extract}} method for \code{betareg} objects
 #'
 #' \code{\link{extract}} method for \code{betareg} objects. These objects are
-#' created by the \code{\link[betareg]{betareg}} function in the \pkg{betareg} package.
+#' created by the \code{\link[betareg]{betareg}} function in the \pkg{betareg}
+#' package.
 #'
 #' @param include.precision Report precision in the GOF block?
 #' @inheritParams extract,lm-method
@@ -561,7 +568,8 @@ extract.biglm <- function(model, include.nobs = TRUE, include.aic = TRUE, use.ci
 #' \code{\link{extract}} method for \code{biglm} objects
 #'
 #' \code{\link{extract}} method for \code{biglm} objects. These objects are
-#' created by the \code{\link[biglm]{biglm}} function in the \pkg{biglm} package.
+#' created by the \code{\link[biglm]{biglm}} function in the \pkg{biglm}
+#' package.
 #'
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
@@ -638,15 +646,18 @@ extract.broom <- function(model, ...) {
 #' \code{\link{extract}} method for \code{broom} objects
 #'
 #' \code{\link{extract}} method for \code{broom} objects. These objects are
-#' created by the \code{\link[broom]{broom}} function in the \pkg{broom} package.
+#' created by the \code{\link[broom]{broom}} function in the \pkg{broom}
+#' package.
 #'
-#' @param model It can be any statistical model that is not covered by the 
-#'    extract methods in the package but that is contained in the \pkg{broom} package.
-#' @param ... currently not in use.
+#' @param model Can be any statistical model that is not covered by the
+#'    \code{\link{extract}} methods in \pkg{texreg} but is covered by the
+#'    \pkg{broom} package.
+#' @param ... Currently not in use.
 #' @return A \linkS4class{texreg} object.
 #'
+#' @name extract.broom-method
 #' @method extract broom
-#' @aliases extract.broom
+#' @aliases extract.broom extract.ANY extract.ANY-method
 #' @family extract
 #' @seealso \link{extract}
 #' @author Philip Leifeld
@@ -655,6 +666,30 @@ extract.broom <- function(model, ...) {
 setMethod("extract", signature = className("ANY"),
           definition = extract.broom)
 
+
+# btergm package ---------------------------------------------------------------
+
+#' \code{\link{extract}} methods for models in the \pkg{btergm} package
+#'
+#' \code{\link{extract}} methods for objects created by the \pkg{btergm}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{btergm} objects, created by the \code{\link[btergm]{btergm}}
+#'     function
+#'   \item \code{mtergm} objects, created by the \code{\link[btergm]{mtergm}}
+#'     function
+#' }
+#'
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.btergm
+#' @aliases extract.btergm-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
 
 #' @noRd
 extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
@@ -683,23 +718,67 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{btergm} objects
-#'
-#' \code{\link{extract}} method for \code{btergm} objects. These objects are
-#' created by the \code{\link[btergm]{btergm}} function in the \pkg{btergm} package.
-#'
 #' @param level Confidence level for constructing confidence intervals.
-#' @inheritParams extract,lm-method
-#' @return A \linkS4class{texreg} object.
-#'
+#' @rdname extract.btergm
 #' @method extract btergm
 #' @aliases extract.btergm
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
 #' @export
 setMethod("extract", signature = className("btergm", "btergm"),
     definition = extract.btergm)
+
+
+#' @noRd
+extract.mtergm <- function(model, include.nobs = TRUE, include.aic = TRUE,
+                           include.bic = TRUE, include.loglik = TRUE, ...) {
+
+  coefficient.names <- names(model@coef)
+  coefficients <- model@coef
+  standard.errors <- model@se
+  significance <- model@pval
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    gof <- c(gof, model@nobs)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.aic == TRUE && !is.null(model@aic) && !is.nan(model@aic)) {
+    gof <- c(gof, model@aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE && !is.null(model@bic) && !is.nan(model@bic)) {
+    gof <- c(gof, model@bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE && !is.null(model@loglik) &&
+      !is.nan(model@loglik)) {
+    gof <- c(gof, model@loglik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+
+  tr <- createTexreg(
+    coef.names = coefficient.names,
+    coef = coefficients,
+    se = standard.errors,
+    pvalues = significance,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+#' @rdname extract.btergm
+#' @method extract mtergm
+#' @aliases extract.mtergm
+#' @export
+setMethod("extract", signature = className("mtergm", "btergm"),
+          definition = extract.mtergm)
 
 
 #' @noRd
@@ -752,7 +831,8 @@ extract.censReg <- function(model, include.aic = TRUE, include.bic = TRUE,
 #' \code{\link{extract}} method for \code{censReg} objects
 #'
 #' \code{\link{extract}} method for \code{censReg} objects. These objects are
-#' created by the \code{\link[censReg]{censReg}} function in the \pkg{censReg} package.
+#' created by the \code{\link[censReg]{censReg}} function in the \pkg{censReg}
+#' package.
 #'
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
@@ -768,6 +848,35 @@ extract.censReg <- function(model, include.aic = TRUE, include.bic = TRUE,
 setMethod("extract", signature = className("censReg", "censReg"),
     definition = extract.censReg)
 
+
+# ordinal package --------------------------------------------------------------
+
+#' \code{\link{extract}} methods for models in the \pkg{ordinal} package
+#'
+#' \code{\link{extract}} methods for statistical models in the \pkg{ordinal}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{clm} objects created by the \code{\link[ordinal]{clm}}
+#'     function
+#'   \item \code{sclm} objects created by the \code{\link[ordinal]{sclm}}
+#'     function
+#'   \item \code{clmm} objects created by the \code{\link[ordinal]{clmm}}
+#'     function
+#' }
+#'
+#' @param include.thresholds Report thresholds in the GOF block?
+#' @param include.groups Report groups in the GOF block?
+#' @param include.variance Report variance in the GOF block?
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.ordinal
+#' @aliases extract.ordinal-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
 
 #' @noRd
 extract.clm <- function(model, include.thresholds = TRUE, include.aic = TRUE,
@@ -837,39 +946,16 @@ extract.clm <- function(model, include.thresholds = TRUE, include.aic = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} methods for \code{clm}, \code{sclm}, and 
-#' \code{clmm}, functions for statistical models in the \pkg{ordinal} package
-#' \code{\link{extract}} method for statistical models in the \pkg{mfx} package,
-#'    in particular:
-#' \itemize{
-#'   \item \code{clm} objects created by the \code{\link[ordinal]{clm}}
-#'     function in the \pkg{mfx} package
-#'   \item \code{sclm} objects created by the \code{\link[ordinal]{sclm}}
-#'     function in the \pkg{mfx} package
-#'    \item \code{clmm} objects created by the \code{\link[ordinal]{clmm}}
-#'     function in the \pkg{mfx} package
-#' }
-#'
-#' @param include.thresholds Report thresholds in the GOF block?
-#' @inheritParams extract,lm-method
-#' @inheritParams extract,glm-method
-#' @return A \linkS4class{texreg} object.
-#'
+#' @rdname extract.ordinal
 #' @method extract clm
-#' @rdname extract.clm 
-#' @aliases extract clm
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
+#' @aliases extract.clm
 #' @export
 setMethod("extract", signature = className("clm", "ordinal"),
     definition = extract.clm)
 
 extract.sclm <- extract.clm
 
-#'
-#' @rdname extract.clm
+#' @rdname extract.ordinal
 #' @method extract sclm
 #' @aliases extract.sclm
 #' @export
@@ -967,14 +1053,48 @@ extract.clmm <- function(model, include.thresholds = TRUE,
   return(tr)
 }
 
-#' @param include.groups Report groups in the GOF block?
-#' @param include.variance Report variance in the GOF block?
-#' @rdname extract.clm
+#' @rdname extract.ordinal
 #' @method extract clmm
 #' @aliases extract.clmm
 #' @export
 setMethod("extract", signature = className("clmm", "ordinal"),
     definition = extract.clmm)
+
+
+# survival package -------------------------------------------------------------
+
+#' \code{\link{extract}} method for models in the \pkg{survival} package
+#'
+#' \code{\link{extract}} methods for statistical models defined in the
+#' \pkg{survival} package, in particular:
+#' \itemize{
+#'   \item \code{coxph} objects, which are created by the
+#'     \code{\link[survival]{coxph}} function
+#'   \item \code{coxph.penal} objects, which are created by the
+#'     \code{\link[survival]{coxph}} function
+#'   \item \code{clogit} objects, which are created by the
+#'     \code{\link[survival]{clogit}} function
+#'   \item \code{survreg} objects, which are created by the
+#'     \code{\link[survival]{survreg}} function
+#'   \item \code{survreg.penal} objects, which are created by the
+#'     \code{\link[survival]{survreg}} function
+#' }
+#'
+#' @param include.maxrs Report maximal R^2 in the GOF block?
+#' @param include.events Report the number of events in the GOF block?
+#' @param include.missings Report number of missing data points in the GOF
+#'   block?
+#' @param include.zph Report proportional hazard test in the GOF block?
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.survival
+#' @aliases extract.survival-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
 
 
 #' @noRd
@@ -1053,31 +1173,17 @@ extract.coxph <- function(model, include.aic = TRUE, include.rsquared = TRUE,
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{coxph} objects
-#'
-#' \code{\link{extract}} method for \code{coxph} objects. These objects are
-#' created by the \code{\link[survival]{coxph}} function in the \pkg{survival} package.
-#'
-#' @param include.maxrs Report maximal R^2 in the GOF block?
-#' @param include.events Report the number of events in the GOF block?
-#' @param include.missings Report number of missing data points in the GOF block?
-#' @param include.zph Report proportional hazard test in the GOF block?
-#' @inheritParams extract,lm-method
-#' @inheritParams extract,glm-method
-#' @return A \linkS4class{texreg} object.
-#'
-#' @method extract coxph
-#' @aliases extract.coxph
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
+
+#' @rdname extract.survival
+#' @method extract coxph.penal
+#' @aliases extract.coxph.penal
+#' @importFrom stats pchisq
 #' @export
 setMethod("extract", signature = className("coxph", "survival"),
     definition = extract.coxph)
 
 
-# extension for coxph.penal objects (survival package)
+#' @noRd
 extract.coxph.penal <- function(model, include.aic = TRUE,
     include.rsquared = TRUE, include.maxrs = TRUE, include.events = TRUE,
     include.nobs = TRUE, include.missings = TRUE, include.zph = TRUE, ...) {
@@ -1148,11 +1254,15 @@ extract.coxph.penal <- function(model, include.aic = TRUE,
   return(tr)
 }
 
+#' @rdname extract.survival
+#' @method extract coxph.penal
+#' @aliases extract.coxph.penal
+#' @export
 setMethod("extract", signature = className("coxph.penal", "survival"),
     definition = extract.coxph.penal)
 
 
-# extension for clogit objects (survival package)
+#' @noRd
 extract.clogit <- function(model, include.aic = TRUE, include.rsquared = TRUE,
     include.maxrs = TRUE, include.events = TRUE, include.nobs = TRUE,
     include.missings = TRUE, ...) {
@@ -1221,8 +1331,95 @@ extract.clogit <- function(model, include.aic = TRUE, include.rsquared = TRUE,
   return(tr)
 }
 
+#' @rdname extract.survival
+#' @method extract clogit
+#' @aliases extract.clogit
+#' @export
 setMethod("extract", signature = className("clogit", "survival"),
     definition = extract.clogit)
+
+
+#' @noRd
+extract.survreg <- function(model,
+                            include.aic = TRUE,
+                            include.bic = TRUE,
+                            include.loglik = TRUE,
+                            include.deviance = TRUE,
+                            include.nobs = TRUE,
+                            ...) {
+
+  s <- summary(model, ...)
+
+  names <- rownames(s$table)
+  co <- s$table[, 1]
+  se <- s$table[, 2]
+  pval <- s$table[, ncol(s$table)]
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(model)
+    if (!is.null(bic) && !is.na(bic)) {
+      gof <- c(gof, bic)
+      gof.names <- c(gof.names, "BIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    dev <- deviance(model)
+    if (!is.null(dev)) {
+      gof <- c(gof, dev)
+      gof.names <- c(gof.names, "Deviance")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+  }
+  if (include.nobs == TRUE) {
+    n <- length(model$linear.predictors)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+
+  tr <- createTexreg(
+    coef.names = names,
+    coef = co,
+    se = se,
+    pvalues = pval,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+#' @rdname extract.survival
+#' @method extract survreg
+#' @aliases extract.survreg
+#' @export
+setMethod("extract", signature = className("survreg", "survival"),
+          definition = extract.survreg)
+
+extract.survreg.penal <- extract.survreg
+
+#' @rdname extract.survival
+#' @method extract survreg.penal
+#' @aliases extract.survreg.penal
+#' @export
+setMethod("extract", signature = className("survreg.penal", "survival"),
+          definition = extract.survreg.penal)
 
 
 #' @noRd
@@ -1245,7 +1442,8 @@ extract.coeftest <- function(model, ...) {
 #' \code{\link{extract}} method for \code{coeftest} objects
 #'
 #' \code{\link{extract}} method for \code{coeftest} objects. These objects are
-#' created by the \code{\link[lmtest]{coeftest}} function in the \pkg{coeftest} package.
+#' created by the \code{\link[lmtest]{coeftest}} function in the \pkg{lmtest}
+#' package.
 #'
 #' @inheritParams extract,lm-method
 #' @return A \linkS4class{texreg} object.
@@ -1359,7 +1557,8 @@ extract.ergmm <- function(model, include.bic = TRUE, ...) {
 #' \code{\link{extract}} method for \code{ergmm} objects
 #'
 #' \code{\link{extract}} method for \code{ergmm} objects. These objects are
-#' created by the \code{\link[latentnet]{ergmm}} function in the \pkg{ergmm} package.
+#' created by the \code{\link[latentnet]{ergmm}} function in the \pkg{latentnet}
+#' package.
 #'
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
@@ -1374,83 +1573,6 @@ extract.ergmm <- function(model, include.bic = TRUE, ...) {
 #' @export
 setMethod("extract", signature = className("ergmm", "latentnet"),
           definition = extract.ergmm)
-
-
-#' @noRd
-extract.ets <- function (model, include.pvalues = FALSE, include.aic = TRUE,
-    include.aicc = TRUE, include.bic = TRUE, include.loglik = TRUE, ...) {
-  mask <- model$mask
-  nam <- names(model$par)
-  co <- model$par
-  sdev <- rep(-Inf,length(co))
-  name <- model$method
-  if (include.pvalues == TRUE) {
-    t.rat <- rep(NA, length(mask))
-    t.rat[mask] <- co[mask] / sdev
-    pt <- 2 * pnorm(-abs(t.rat))
-    setmp <- rep(NA, length(mask))
-    setmp[mask] <- sdev
-  } else {
-    pt <- numeric()
-    setmp <- sdev
-  }
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    aic <- AIC(model)
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.aicc == TRUE) {
-    gof <- c(gof, model$aicc)
-    gof.names <- c(gof.names, "AICc")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    gof <- c(gof, model$bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    lik <- model$loglik
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  tr <- createTexreg(
-      coef.names = nam,
-      coef = co,
-      se = setmp,
-      pvalues = pt,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal,
-      model.name = name
-  )
-  return(tr)
-}
-
-#' \code{\link{extract}} method for \code{ets} objects
-#'
-#' \code{\link{extract}} method for \code{ets} objects. These objects are
-#' created by the \code{\link[forecast]{ets}} function in the \pkg{ets} package.
-#'
-#' @inheritParams extract,lm-method
-#' @inheritParams extract,glm-method
-#' @inheritParams extract,ARIMA-method
-#' @return A \linkS4class{texreg} object.
-#'
-#' @method extract ets
-#' @aliases extract.ets
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
-#' @export
-setMethod("extract", signature = className("ets", "forecast"),
-    definition = extract.ets)
 
 
 #' @noRd
@@ -1501,7 +1623,8 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
 #' \code{\link{extract}} method for \code{feglm} objects
 #'
 #' \code{\link{extract}} method for \code{feglm} objects. These objects are
-#' created by the \code{\link[alpaca]{feglm}} function in the \pkg{feglm} package.
+#' created by the \code{\link[alpaca]{feglm}} function in the \pkg{alpaca}
+#' package.
 #'
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
@@ -1586,8 +1709,6 @@ extract.feis <- function(model,
 #' \code{\link{extract}} method for \code{feis} objects. These objects are
 #' created by the \code{\link[feisr]{feis}} function in the \pkg{feisr} package.
 #'
-#' @param ... Additional arguments for the \code{\link[base]{summary}} function
-#'   for \code{feis} objects.
 #' @inheritParams extract,lm-method
 #' @return A \linkS4class{texreg} object.
 #'
@@ -1668,9 +1789,8 @@ extract.felm <- function(model, include.nobs = TRUE, include.rsquared = TRUE,
 #' \code{\link{extract}} method for \code{felm} objects
 #'
 #' \code{\link{extract}} method for \code{felm} objects. These objects are
-#' created by the \code{\link[lfe]{felm}} function in the \pkg{felm} package.
+#' created by the \code{\link[lfe]{felm}} function in the \pkg{lfe} package.
 #'
-#' @param include.fstatistic Report f statistic in the GOF block?
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
 #' @return A \linkS4class{texreg} object.
@@ -1731,7 +1851,8 @@ extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE,
 #' \code{\link{extract}} method for \code{fGARCH} objects
 #'
 #' \code{\link{extract}} method for \code{fGARCH} objects. These objects are
-#' created by the \code{\link[fGarch]{garchFit}} function in the \pkg{fGarch} package.
+#' created by the \code{\link[fGarch]{garchFit}} function in the \pkg{fGarch}
+#' package.
 #'
 #' @inheritParams extract,lm-method
 #' @inheritParams extract,glm-method
@@ -1748,26 +1869,114 @@ setMethod("extract", signature = className("fGARCH", "fGarch"),
     definition = extract.fGARCH)
 
 
+# forecast package -------------------------------------------------------------
+
+#' \code{\link{extract}} methods for models in the \pkg{forecast} package
+#'
+#' \code{\link{extract}} methods for models in the \pkg{forecast} package.
+#'
+#' \code{\link{extract}} methods for objects in the \pkg{forecast} package, in
+#' particular:
+#' \itemize{
+#'   \item \code{ets} objects, which are created by the
+#'     \code{\link[forecast]{ets}} function
+#'   \item \code{forecast} objects, which are created by several functions in
+#'     the \pkg{forecast} package, including the
+#'     \code{\link[forecast]{forecast}} function and the
+#'     \code{\link[forecast]{holt}} function
+#' }
+#'
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @inheritParams extract,ARIMA-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.forecast
+#' @aliases extract.forecast-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
+
+
+#' @noRd
+extract.ets <- function (model,
+                         include.pvalues = FALSE,
+                         include.aic = TRUE,
+                         include.aicc = TRUE,
+                         include.bic = TRUE,
+                         include.loglik = TRUE,
+                         ...) {
+  mask <- model$mask
+  nam <- names(model$par)
+  co <- model$par
+  sdev <- rep(-Inf,length(co))
+  name <- model$method
+  if (include.pvalues == TRUE) {
+    t.rat <- rep(NA, length(mask))
+    t.rat[mask] <- co[mask] / sdev
+    pt <- 2 * pnorm(-abs(t.rat))
+    setmp <- rep(NA, length(mask))
+    setmp[mask] <- sdev
+  } else {
+    pt <- numeric()
+    setmp <- sdev
+  }
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.aicc == TRUE) {
+    gof <- c(gof, model$aicc)
+    gof.names <- c(gof.names, "AICc")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    gof <- c(gof, model$bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- model$loglik
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  tr <- createTexreg(
+    coef.names = nam,
+    coef = co,
+    se = setmp,
+    pvalues = pt,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal,
+    model.name = name
+  )
+  return(tr)
+}
+
+#' @rdname extract.forecast
+#' @method extract ets
+#' @aliases extract.ets
+#' @export
+setMethod("extract", signature = className("ets", "forecast"),
+          definition = extract.ets)
+
+
 #' @noRd
 extract.forecast <- function (model, ...) {
   model <- model$model
   return(extract(model))
 }
 
-#' \code{\link{extract}} method for \code{forecast} objects
-#'
-#' \code{\link{extract}} method for \code{forecast} objects. These objects are
-#' created by the \code{\link[forecast]{holt}} function in the \pkg{forecast} package.
-#'
-#' @inheritParams extract,lm-method
-#' @return A \linkS4class{texreg} object.
-#'
+#' @rdname extract.forecast
 #' @method extract forecast
 #' @aliases extract.forecast
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
 #' @export
 setMethod("extract", signature = className("forecast", "forecast"),
     definition = extract.forecast)
@@ -1942,9 +2151,9 @@ extract.gamlss <- function(model, robust = FALSE, include.nobs = TRUE,
 #'
 #' \code{\link{extract}} method for \code{gamlss} objects. These objects are
 #' created by the \code{\link[gamlss]{gamlss}} function in the \pkg{gamlss} package.
-#' 
+#'
 #' @param robust If TRUE computes robust standard errors in the variance covariance matrix.
-#' @param include.nagelkerke Report Nagelkerke R^2 in the GOF block? 
+#' @param include.nagelkerke Report Nagelkerke R^2 in the GOF block?
 #' @param include.gaic Report Generalized Akaike's Information Criterion (AIC) in the GOF block?
 #' @inheritParams extract,lm-method
 #' @return A \linkS4class{texreg} object.
@@ -2704,8 +2913,7 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
 #' @param include.fstatistic Report the F-statistic in the GOF block?
 #' @param include.rmse Report the root mean square error (RMSE; = residual
 #'   standard deviation) in the GOF block?
-#' @param ... Additional arguments for the \code{\link[base]{summary}} function
-#'   for \code{lm} objects.
+#' @param ... Additional arguments for the \code{\link[base]{summary}} function.
 #' @return A \linkS4class{texreg} object.
 #'
 #' @method extract lm
@@ -2881,6 +3089,51 @@ setMethod("extract", signature = className("glmmPQL", "MASS"),
           definition = extract.glmmPQL)
 
 
+# lme4 package -----------------------------------------------------------------
+
+
+#' \code{\link{extract}} methods for models in the \pkg{lme4} package
+#'
+#' \code{\link{extract}} methods for \code{merMod} objects in the \pkg{lme4}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{lmerMod} objects created by the \code{\link[lme4]{lmer}}
+#'     function
+#'   \item \code{glmerMod} objects created by the \code{\link[lme4]{glmer}}
+#'     function
+#'   \item \code{nlmerMod} objects created by the \code{\link[lme4]{nlmer}}
+#'     function
+#' }
+#'
+#' @param method The method used to compute confidence intervals or p-values.
+#'   The default value \code{"naive"} computes naive p-values while the other
+#'   methods compute confidence intervals using the \code{confint} function. See
+#'   \code{\link[lme4]{confint.merMod}}.
+#' @param level Confidence level (\code{1 - alpha}) for computing confidence
+#'   intervals.
+#' @param nsim In (generalized) linear mixed effects models: the MCMC sample
+#'   size or number of bootstrapping replications on the basis of which
+#'   confidence intervals are computed (only if the \code{method} argument does
+#'   not specify \code{"naive"}, which is the default behavior). Note: large
+#'   values may take considerable computing time.
+#' @param include.aic Report Akaike's information criterion (AIC)?
+#' @param include.bic Report the Bayesian information criterion (BIC)?
+#' @param include.dic Report the deviance information criterion (DIC)?
+#' @param include.deviance Report the deviance?
+#' @param include.loglik Report the log-likelihood?
+#' @param include.groups Report the number of groups or alternatives?
+#' @param include.variance Report group variances?
+#' @param ... Additional arguments for the \code{\link[lme4]{fixef}} function.
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.lme4
+#' @aliases extract.lme4-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
+
 #' @noRd
 extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
     level = 0.95, nsim = 1000, include.aic = TRUE, include.bic = TRUE,
@@ -3039,46 +3292,9 @@ extract.lme4 <- function(model, method = c("naive", "profile", "boot", "Wald"),
 }
 
 
-#' \code{\link{extract}} method for \code{merMod} objects
-#'
-#' \code{\link{extract}} method for \code{merMod} objects, in particular:
-#' \itemize{
-#'   \item \code{lmerMod} objects created by the \code{\link[lme4]{lmer}}
-#'     function in the \pkg{lme4} package
-#'   \item \code{glmerMod} objects created by the \code{\link[lme4]{glmer}}
-#'     function in the \pkg{lme4} package
-#'   \item \code{nlmerMod} objects created by the \code{\link[lme4]{nlmer}}
-#'     function in the \pkg{lme4} package
-#' }
-#'
-#' @param method The method used to compute confidence intervals or p-values.
-#'   The default value \code{"naive"} computes naive p-values while the other
-#'   methods compute confidence intervals using the \code{confint} function. See
-#'   \code{\link[lme4]{confint.merMod}}.
-#' @param level Confidence level (\code{1 - alpha}) for computing confidence
-#'   intervals.
-#' @param nsim In (generalized) linear mixed effects models: the MCMC sample
-#'   size or number of bootstrapping replications on the basis of which
-#'   confidence intervals are computed (only if the \code{method} argument does
-#'   not specify \code{"naive"}, which is the default behavior). Note: large
-#'   values may take considerable computing time.
-#' @param include.aic Report Akaike's information criterion (AIC)?
-#' @param include.bic Report the Bayesian information criterion (BIC)?
-#' @param include.dic Report the deviance information criterion (DIC)?
-#' @param include.deviance Report the deviance?
-#' @param include.loglik Report the log-likelihood?
-#' @param include.groups Report the number of groups or alternatives?
-#' @param include.variance Report group variances?
-#' @param ... Additional arguments for the \code{\link[lme4]{fixef}} function.
-#' @inheritParams extract,lm-method
-#' @return A \linkS4class{texreg} object.
-#'
-#' @method extract lme4
 #' @rdname extract.lme4
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
+#' @method extract lme4
+#' @aliases extract.lme4
 #' @export
 setMethod("extract", signature = className("lme4", "lme4"),
     definition = extract.lme4)
@@ -3871,56 +4087,6 @@ extract.model.selection <- function(model, include.loglik = TRUE,
 
 setMethod("extract", signature = className("model.selection", "MuMIn"),
     definition = extract.model.selection)
-
-
-# extension for mtergm objects (btergm package)
-extract.mtergm <- function(model, include.nobs = TRUE, include.aic = TRUE,
-    include.bic = TRUE, include.loglik = TRUE, ...) {
-
-  coefficient.names <- names(model@coef)
-  coefficients <- model@coef
-  standard.errors <- model@se
-  significance <- model@pval
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.nobs == TRUE) {
-    gof <- c(gof, model@nobs)
-    gof.names <- c(gof.names, "Num.\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  if (include.aic == TRUE && !is.null(model@aic) && !is.nan(model@aic)) {
-    gof <- c(gof, model@aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE && !is.null(model@bic) && !is.nan(model@bic)) {
-    gof <- c(gof, model@bic)
-    gof.names <- c(gof.names, "BIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE && !is.null(model@loglik) &&
-      !is.nan(model@loglik)) {
-    gof <- c(gof, model@loglik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-
-  tr <- createTexreg(
-      coef.names = coefficient.names,
-      coef = coefficients,
-      se = standard.errors,
-      pvalues = significance,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-  )
-  return(tr)
-}
-
-setMethod("extract", signature = className("mtergm", "btergm"),
-    definition = extract.mtergm)
 
 
 # extension for multinom objects (nnet package)
@@ -5355,75 +5521,6 @@ extract.summary.lm <- function (model, include.rsquared = TRUE, include.adjrs = 
 
 setMethod("extract",  signature = className("summary.lm", "stats"),
           definition = extract.summary.lm)
-
-
-# extension for survreg objects (survival package)
-extract.survreg <- function(model, include.aic = TRUE, include.bic = TRUE,
-    include.loglik = TRUE, include.deviance = TRUE, include.nobs = TRUE, ...) {
-
-  s <- summary(model, ...)
-
-  names <- rownames(s$table)
-  co <- s$table[, 1]
-  se <- s$table[, 2]
-  pval <- s$table[, ncol(s$table)]
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    aic <- AIC(model)
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    bic <- BIC(model)
-    if (!is.null(bic) && !is.na(bic)) {
-      gof <- c(gof, bic)
-      gof.names <- c(gof.names, "BIC")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-  }
-  if (include.loglik == TRUE) {
-    lik <- logLik(model)[1]
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.deviance == TRUE) {
-    dev <- deviance(model)
-    if (!is.null(dev)) {
-      gof <- c(gof, dev)
-      gof.names <- c(gof.names, "Deviance")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-  }
-  if (include.nobs == TRUE) {
-    n <- length(model$linear.predictors)
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-  tr <- createTexreg(
-      coef.names = names,
-      coef = co,
-      se = se,
-      pvalues = pval,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-  )
-  return(tr)
-}
-
-setMethod("extract", signature = className("survreg", "survival"),
-    definition = extract.survreg)
-
-extract.survreg.penal <- extract.survreg
-setMethod("extract", signature = className("survreg.penal", "survival"),
-    definition = extract.survreg.penal)
 
 
 # extension for svyglm objects (survey package)
