@@ -24,8 +24,7 @@
 \item{include.rmse}{Report the root mean square error (RMSE; = residual
 standard deviation) in the GOF block?}
 
-\item{...}{Additional arguments for the \code{\link[base]{summary}} function
-for \code{lm} objects.}
+\item{...}{Additional arguments for the \code{\link[base]{summary}} function.}
 }
 \value{
 A \linkS4class{texreg} object.
@@ -37,11 +36,34 @@ created by the \code{\link[stats]{lm}} function in the \pkg{stats} package.
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,dynlm-method}},
+Other extract: \code{\link{extract,ARIMA-method}},
+  \code{\link{extract,Arima-method}},
+  \code{\link{extract,averaging-method}},
+  \code{\link{extract,betareg-method}},
+  \code{\link{extract,bife-method}},
+  \code{\link{extract,biglm-method}},
+  \code{\link{extract,brglm-method}},
+  \code{\link{extract,censReg-method}},
+  \code{\link{extract,coeftest-method}},
+  \code{\link{extract,dynlm-method}},
+  \code{\link{extract,ergm-method}},
+  \code{\link{extract,ergmm-method}},
+  \code{\link{extract,fGARCH-method}},
+  \code{\link{extract,feglm-method}},
   \code{\link{extract,feis-method}},
+  \code{\link{extract,felm-method}},
+  \code{\link{extract,gamlss-method}},
+  \code{\link{extract,glm-method}},
   \code{\link{extract,ivreg-method}},
-  \code{\link{extract,lme4-method}},
-  \code{\link{extract,speedlm-method}}
+  \code{\link{extract,negbin-method}},
+  \code{\link{extract,speedglm-method}},
+  \code{\link{extract,speedlm-method}},
+  \code{\link{extract.broom-method}},
+  \code{\link{extract.btergm}},
+  \code{\link{extract.forecast}},
+  \code{\link{extract.lme4}}, \code{\link{extract.mfx}},
+  \code{\link{extract.ordinal}},
+  \code{\link{extract.survival}}
 }
 \author{
 Philip Leifeld
