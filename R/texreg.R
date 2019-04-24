@@ -1261,7 +1261,6 @@ matrixreg <- function(l,
     m <- m[idx, , drop = FALSE]
     row.names(m) <- custom.coef.names
   }
-  m <- as.data.frame(m)
 
   # reorder GOF block using reorder.gof argument
   gof.matrix <- reorder(gof.matrix, reorder.gof)
