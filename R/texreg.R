@@ -831,8 +831,8 @@ knitreg <- function(...) {
 #'   for each model separately whether the model should be forced to report
 #'   confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}).
 #'   Confidence intervals are computed using the standard normal distribution
-#'   (z-values based on the \code{\link{qnorm}} function). The t-distribution is
-#'   currently not supported because this would require each
+#'   (z-values based on the \code{\link[stats]{qnorm}} function). The
+#'   t-distribution is currently not supported because this would require each
 #'   \code{\link{extract}} method to have an additional argument for the degrees
 #'   of freedom.
 #' @param ci.force.level If the \code{ci.force} argument is used to convert
@@ -908,6 +908,7 @@ knitreg <- function(...) {
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
 #'   \code{\link{extract-methods}} \code{\link{texreg}}
 #'
+#' @importFrom stats qnorm
 #' @export
 matrixreg <- function(l,
                       single.row = FALSE,
@@ -1008,7 +1009,7 @@ matrixreg <- function(l,
   }
   for (i in 1:length(models)) {
     if (ci.force[i] == TRUE && length(models[[i]]@se) > 0) {
-      z <- qnorm(1 - ((1 - ci.force.level) / 2))
+      z <- stats::qnorm(1 - ((1 - ci.force.level) / 2))
       upper <- models[[i]]@coef + (z * models[[i]]@se)
       lower <- models[[i]]@coef - (z * models[[i]]@se)
       models[[i]]@ci.low <- lower
@@ -2029,6 +2030,7 @@ print.texregTable <- function(x, ...) {
 #' plotreg(list(lm.D9, lm.D90), type = "forest")
 #' }
 #'
+#' @importFrom stats qnorm
 #' @export
 plotreg <- function(l,
                     file = NULL,
@@ -2181,10 +2183,10 @@ plotreg <- function(l,
     lower.outer <- dataframe$co - 2 * dataframe$se
     upper.outer <- dataframe$co + 2 * dataframe$se
   } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
-    z.inner <- qnorm(1 - ((1 - ci.inner) / 2))
+    z.inner <- stats::qnorm(1 - ((1 - ci.inner) / 2))
     lower.inner <- dataframe$co - (z.inner * dataframe$se)
     upper.inner <- dataframe$co + (z.inner * dataframe$se)
-    z.outer <- qnorm(1 - ((1 - ci.level) / 2))
+    z.outer <- stats::qnorm(1 - ((1 - ci.level) / 2))
     lower.outer <- dataframe$co - (z.outer * dataframe$se)
     upper.outer <- dataframe$co + (z.outer * dataframe$se)
   } else if (length(models[[i]]@se) == 0 && length(models[[i]]@pvalues) > 0) {
@@ -3254,7 +3256,7 @@ wordreg <- function(l,
                     custom.col.pos = NULL,
                     ...) {
 
-  if (!"rmarkdown" %in% row.names(installed.packages())) {
+  if (!requireNamespace("rmarkdown", quietly = TRUE)) {
     stop(paste("The wordreg function requires the 'rmarkdown' package.",
                "Install it and try again."))
   }
@@ -3304,9 +3306,10 @@ wordreg <- function(l,
 # Internal helpers -------------------------------------------------------------
 
 #' Display version number and date when the package is loaded.
+#' @importFrom utils packageDescription
 #' @noRd
 .onAttach <- function(libname, pkgname) {
-  desc  <- packageDescription(pkgname, libname)
+  desc  <- utils::packageDescription(pkgname, libname)
   packageStartupMessage(
     "Version:  ", desc$Version, "\n",
     "Date:     ", desc$Date, "\n",
@@ -4058,6 +4061,7 @@ reorder <- function(mat, new.order) {
 #'                    gof = gof,
 #'                    gof.decimal = decimal.places)
 #'
+#' @importFrom methods new
 #' @export
 createTexreg <- function(coef.names,
                          coef,
@@ -4069,7 +4073,7 @@ createTexreg <- function(coef.names,
                          gof = numeric(0),
                          gof.decimal = logical(0),
                          model.name = character(0)) {
-  new("texreg",
+  methods::new("texreg",
       coef.names = coef.names,
       coef = coef,
       se = se,
@@ -4100,7 +4104,7 @@ createTexreg <- function(coef.names,
 #' @slot gof The goodness-of-fit statistics.
 #' @slot gof.decimal A vector describing for each GOF statistic whether it is a
 #'   decimal value (\code{TRUE}) or an integer value (\code{FALSE}).
-#' @slot An optional model name. Can be of length zero.
+#' @slot model.name An optional model name. Can be of length zero.
 #'
 #' @author Philip Leifeld
 #' @seealso \code{\link{extract}} \code{\link{createTexreg}}
@@ -4172,6 +4176,7 @@ setClass(Class = "texreg",
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
 #'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
 #'
+#' @importFrom methods show
 #' @export
 setMethod(f = "show", signature = "texreg", definition = function(object) {
   if (length(object@model.name) == 1) {

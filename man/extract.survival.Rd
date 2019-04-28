@@ -4,17 +4,22 @@
 \name{extract.survival}
 \alias{extract.survival}
 \alias{extract.survival-methods}
+\alias{extract,clogit-method}
+\alias{extract.clogit}
 \alias{extract,coxph-method}
 \alias{extract.coxph.penal}
 \alias{extract,coxph.penal-method}
-\alias{extract,clogit-method}
-\alias{extract.clogit}
 \alias{extract,survreg-method}
 \alias{extract.survreg}
 \alias{extract,survreg.penal-method}
 \alias{extract.survreg.penal}
 \title{\code{\link{extract}} method for models in the \pkg{survival} package}
 \usage{
+\S4method{extract}{clogit}(model, include.aic = TRUE,
+  include.rsquared = TRUE, include.maxrs = TRUE,
+  include.events = TRUE, include.nobs = TRUE,
+  include.missings = TRUE, ...)
+
 \S4method{extract}{coxph}(model, include.aic = TRUE,
   include.rsquared = TRUE, include.maxrs = TRUE,
   include.events = TRUE, include.nobs = TRUE,
@@ -24,11 +29,6 @@
   include.rsquared = TRUE, include.maxrs = TRUE,
   include.events = TRUE, include.nobs = TRUE,
   include.missings = TRUE, include.zph = TRUE, ...)
-
-\S4method{extract}{clogit}(model, include.aic = TRUE,
-  include.rsquared = TRUE, include.maxrs = TRUE,
-  include.events = TRUE, include.nobs = TRUE,
-  include.missings = TRUE, ...)
 
 \S4method{extract}{survreg}(model, include.aic = TRUE,
   include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE,
@@ -54,9 +54,9 @@
 \item{include.missings}{Report number of missing data points in the GOF
 block?}
 
-\item{include.zph}{Report proportional hazard test in the GOF block?}
-
 \item{...}{Additional arguments for the \code{\link[base]{summary}} function.}
+
+\item{include.zph}{Report proportional hazard test in the GOF block?}
 
 \item{include.bic}{Report the Bayesian Information Criterion (BIC) in the GOF block?}
 
@@ -86,13 +86,13 @@ A \linkS4class{texreg} object.
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ARIMA-method}},
-  \code{\link{extract,Arima-method}},
+Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
   \code{\link{extract,brglm-method}},
+  \code{\link{extract,brmsfit-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,coeftest-method}},
   \code{\link{extract,dynlm-method}},

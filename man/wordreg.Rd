@@ -231,8 +231,8 @@ report confidence intervals (\code{ci.force = TRUE} for all and
 for each model separately whether the model should be forced to report
 confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}).
 Confidence intervals are computed using the standard normal distribution
-(z-values based on the \code{\link{qnorm}} function). The t-distribution is
-currently not supported because this would require each
+(z-values based on the \code{\link[stats]{qnorm}} function). The
+t-distribution is currently not supported because this would require each
 \code{\link{extract}} method to have an additional argument for the degrees
 of freedom.}
 

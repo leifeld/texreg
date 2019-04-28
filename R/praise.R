@@ -57,9 +57,9 @@
 #'   example about the way it was designed, the user support you have received,
 #'   or just how much you enjoy using it. While this is useful, however, we
 #'   would be even more interested in receiving statements in how \pkg{texreg}
-#'   makes you more productive (in the \link{increase_productivity} argument) or
+#'   makes you more productive (in the \code{increase_productivity} argument) or
 #'   how it increases the quality of your work or your reports (through the
-#'   \link{increase_quality} function). Note: you need to provide at least one
+#'   \code{increase_quality} argument). Note: you need to provide at least one
 #'   of these three free-form text arguments.
 #' @param increase_productivity This is one of the fields we are most interested
 #'   in. Please use this field to tell us how \pkg{texreg} is making you more

@@ -1,6 +1,31 @@
 context("extract methods")
 library("texreg")
 
+# brmsfit (brms) ----
+test_that("extract brmsfit objects from the brms package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("brms", minimum_version = "2.8.8")
+  skip_if_not_installed("sjstats", minimum_version = "0.17.4")
+  require("brms")
+  require("sjstats")
+
+  # example from brm help page; see ?brm
+  sink("/dev/null")
+  suppressMessages(fit2 <- brm(rating ~ period + carry + cs(treat),
+                               data = inhaler, family = sratio("logit"),
+                               prior = set_prior("normal(0,5)"), chains = 1))
+  sink()
+
+  suppressWarnings(tr <- extract(fit2))
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef, 8)
+  expect_length(tr@se, 8)
+  expect_length(tr@pvalues, 0)
+  expect_length(tr@ci.low, 8)
+  expect_length(tr@ci.up, 8)
+  expect_equivalent(which(tr@gof.decimal), c(1, 3, 4))
+})
+
 # dynlm (dynlm) ----
 test_that("extract dynlm objects from the dynlm package", {
   skip_if_not_installed("dynlm")

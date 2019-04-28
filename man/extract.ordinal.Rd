@@ -53,8 +53,7 @@ package, in particular:
 \itemize{
   \item \code{clm} objects created by the \code{\link[ordinal]{clm}}
     function
-  \item \code{sclm} objects created by the \code{\link[ordinal]{sclm}}
-    function
+  \item \code{sclm} objects
   \item \code{clmm} objects created by the \code{\link[ordinal]{clmm}}
     function
 }
@@ -62,13 +61,13 @@ package, in particular:
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ARIMA-method}},
-  \code{\link{extract,Arima-method}},
+Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
   \code{\link{extract,brglm-method}},
+  \code{\link{extract,brmsfit-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,coeftest-method}},
   \code{\link{extract,dynlm-method}},

@@ -6,6 +6,7 @@
 \alias{extract.broom}
 \alias{extract.ANY}
 \alias{extract.ANY-method}
+\alias{extract,ANY-method}
 \title{\code{\link{extract}} method for \code{broom} objects}
 \usage{
 \S4method{extract}{ANY}(model, ...)
@@ -28,13 +29,13 @@ package.
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ARIMA-method}},
-  \code{\link{extract,Arima-method}},
+Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
   \code{\link{extract,brglm-method}},
+  \code{\link{extract,brmsfit-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,coeftest-method}},
   \code{\link{extract,dynlm-method}},

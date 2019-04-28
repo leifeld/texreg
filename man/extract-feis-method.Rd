@@ -19,6 +19,8 @@
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
+\item{include.groups}{Report the number of groups or alternatives?}
+
 \item{include.rmse}{Report the root mean square error (RMSE; = residual
 standard deviation) in the GOF block?}
 
@@ -46,13 +48,13 @@ tr1 <- texreg(list(feis1.mod, feis2.mod), digits = 3)
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ARIMA-method}},
-  \code{\link{extract,Arima-method}},
+Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
   \code{\link{extract,brglm-method}},
+  \code{\link{extract,brmsfit-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,coeftest-method}},
   \code{\link{extract,dynlm-method}},

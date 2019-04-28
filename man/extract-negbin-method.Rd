@@ -31,19 +31,19 @@ A \linkS4class{texreg} object.
 }
 \description{
 \code{\link{extract}} method for \code{negbin} objects. These objects are
-created by the \code{\link[MASS]{negbin}} function in the \pkg{negbin}
+created by the \code{\link[MASS]{glm.nb}} function in the \pkg{MASS}
 package.
 }
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,ARIMA-method}},
-  \code{\link{extract,Arima-method}},
+Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
   \code{\link{extract,brglm-method}},
+  \code{\link{extract,brmsfit-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,coeftest-method}},
   \code{\link{extract,dynlm-method}},
