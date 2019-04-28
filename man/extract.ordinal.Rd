@@ -78,6 +78,9 @@ Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,feis-method}},
   \code{\link{extract,felm-method}},
   \code{\link{extract,gamlss-method}},
+  \code{\link{extract,gee-method}},
+  \code{\link{extract,geeglm-method}},
+  \code{\link{extract,gel-method}},
   \code{\link{extract,glm-method}},
   \code{\link{extract,ivreg-method}},
   \code{\link{extract,lm-method}},
@@ -88,6 +91,7 @@ Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract.btergm}},
   \code{\link{extract.forecast}},
   \code{\link{extract.lme4}}, \code{\link{extract.mfx}},
+  \code{\link{extract.mgcv}},
   \code{\link{extract.survival}}
 }
 \author{
