@@ -6,12 +6,24 @@
 \alias{extract.brmsfit}
 \title{\code{\link{extract}} method for \code{brmsfit} objects}
 \usage{
-\S4method{extract}{brmsfit}(model, include.rsquared = TRUE,
-  include.nobs = TRUE, include.loo.ic = TRUE, include.waic = TRUE,
-  ...)
+\S4method{extract}{brmsfit}(model, use.HDI = TRUE, level = 0.9,
+  include.random = TRUE, include.rsquared = TRUE,
+  include.nobs = TRUE, include.loo.ic = TRUE, reloo = FALSE,
+  include.waic = TRUE, ...)
 }
 \arguments{
 \item{model}{A model object.}
+
+\item{use.HDI}{Report highest posterior density (HPD) intervals (HDI) using
+the \code{\link[coda]{HPDinterval}} function in the \pkg{coda} package,
+with the probability given in the \code{level} argument, instead of the
+default 95 percent posterior quantiles?}
+
+\item{level}{Significance level (\code{1 - alpha}) for the \code{use.HDI}
+argument.}
+
+\item{include.random}{Include random effects (standard deviations) in the GOF
+block of the table?}
 
 \item{include.rsquared}{Report R^2 in the GOF block?}
 

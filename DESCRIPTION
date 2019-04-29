@@ -1,6 +1,6 @@
 Package: texreg
 Version: 1.36.24
-Date: 2019-04-28
+Date: 2019-04-29
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Author: Philip Leifeld
 Maintainer: Philip Leifeld <philip.leifeld@essex.ac.uk>
@@ -9,6 +9,7 @@ URL: http://github.com/leifeld/texreg/
 BugReports: https://github.com/leifeld/texreg/issues
 Suggests:
   broom (>= 0.4.2),
+  coda (>= 0.19.2),
   ggplot2 (>= 3.1.0),
   huxtable (>= 4.2.0),
   knitr (>= 1.22),
@@ -18,7 +19,6 @@ Suggests:
   plm (>= 1.4.0),
   rmarkdown (>= 1.12),
   sandwich (>= 2.3-1),
-  sjstats (>= 0.17.4),
   survival,
   testthat (>= 2.0.0),
   Zelig (>= 5.0-16)
