@@ -2412,6 +2412,30 @@ extract.geeglm <- function(model, include.scale = TRUE,
 setMethod("extract", signature = className("geeglm", "geepack"),
           definition = extract.geeglm)
 
+# gmm package ------------------------------------------------------------------
+#' \code{\link{extract}} methods for models in the \pkg{gmm} package
+#'
+#' \code{\link{extract}} methods for statistical models in the \pkg{gmm}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{gel} objects created by the \code{\link[gmm]{gel}}
+#'     function in the \pkg{speedglm} package
+#'   \item \code{gmm} objects created by the \code{\link[gmm]{gmm}}
+#'     function in the \pkg{gmm} package
+#' }
+#' 
+#' @param include.obj.fcn Report the Criterion Function in the GOF block?
+#' @param include.overidentification Report the Overidentification tests in the GOF block?
+#' @param overIdentTest LR, LM, J 
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.gmm
+#' @aliases extract.gmm-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
 
 #' @noRd
 extract.gel <- function (model, include.obj.fcn = TRUE,
@@ -2462,26 +2486,65 @@ extract.gel <- function (model, include.obj.fcn = TRUE,
     return(tr)
 }
 
-#' \code{\link{extract}} method for \code{gel} objects
-#'
-#' \code{\link{extract}} method for \code{gel} objects. These objects are
-#' created by the \code{\link[gmm]{gel}} function in the \pkg{gmm} package.
-#'
-#' @param include.obj.fcn Report the Criterion Function in the GOF block?
-#' @param include.overidentification Report the Overidentification tests in the GOF block?
-#' @param overIdentTest LR, LM, J 
-#' @inheritParams extract,lm-method
-#' @return A \linkS4class{texreg} object.
-#'
+#' @rdname extract.gmm
 #' @method extract gel
 #' @aliases extract.gel
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
 #' @export
 setMethod("extract", signature = className("gel", "gmm"),
           definition = extract.gel)
+
+#' @noRd
+extract.gmm <- function(model, include.obj.fcn = TRUE,
+                        include.overidentification = FALSE, include.nobs = TRUE, ...) {
+    
+    s <- summary(model, ...)
+    
+    coefs <- s$coefficients
+    names <- rownames(coefs)
+    coef <- coefs[, 1]
+    se <- coefs[, 2]
+    pval <- coefs[, 4]
+    
+    n <- model$n  # number of observations
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.obj.fcn == TRUE) {
+        obj.fcn <- model$objective * 10^5  # the value of the objective function
+        gof <- c(gof, obj.fcn)
+        gof.names <- c(gof.names, "Criterion function")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.overidentification == TRUE) {
+        jtest <- s$stest$test[1]
+        gof <- c(gof, jtest)
+        gof.names <- c(gof.names, "J-Test")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names,
+        coef = coef,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+#' @rdname extract.gmm
+#' @method extract gmm
+#' @aliases extract.gmm
+#' @export
+setMethod("extract", signature = className("gmm", "gmm"),
+          definition = extract.gmm)
 
 #' @noRd
 extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
@@ -2586,49 +2649,8 @@ extract.brglm <- extract.glm
 setMethod("extract", signature = className("brglm", "brglm"),
     definition = extract.glm)
 
-extract.negbin <- extract.glm
 
-#' \code{\link{extract}} method for \code{negbin} objects
-#'
-#' \code{\link{extract}} method for \code{negbin} objects. These objects are
-#' created by the \code{\link[MASS]{glm.nb}} function in the \pkg{MASS}
-#' package.
-#'
-#' @inheritParams extract,glm-method
-#' @return A \linkS4class{texreg} object.
-#'
-#' @method extract negbin
-#' @aliases extract.negbin
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
-#' @export
-setMethod("extract", signature = className("negbin", "MASS"),
-    definition = extract.negbin)
-
-extract.speedglm <- extract.glm
-
-#' \code{\link{extract}} method for \code{speedglm} objects
-#'
-#' \code{\link{extract}} method for \code{speedglm} objects. These objects are
-#' created by the \code{\link[speedglm]{speedglm}} function in the \pkg{speedglm}
-#' package.
-#'
-#' @inheritParams extract,glm-method
-#' @return A \linkS4class{texreg} object.
-#'
-#' @method extract speedglm
-#' @aliases extract.speedglm
-#' @family extract
-#' @seealso \link{extract}
-#' @author Philip Leifeld
-#'
-#' @export
-setMethod("extract",  signature = className("speedglm", "speedglm"),
-          definition = extract.speedglm)
-
-
+# NOT ON CRAN ANYMORE 
 # extension for glmmadmb objects (glmmADMB package)
 extract.glmmadmb <- function(model, include.variance = TRUE,
     include.dispersion = TRUE, include.zero = TRUE, include.aic = TRUE,
@@ -2728,7 +2750,30 @@ setMethod("extract", signature = className("glmmadmb", "glmmADMB"),
     definition = extract.glmmadmb)
 
 
-# extension for gls objects (nlme package)
+# nlme package ------------------------------------------------------------------
+#' \code{\link{extract}} methods for models in the \pkg{nlme} package
+#'
+#' \code{\link{extract}} methods for statistical models in the \pkg{nlme}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{gls} objects created by the \code{\link[nlme]{gls}}
+#'     function in the \pkg{nlme} package
+#'   \item \code{gls} objects created by the \code{\link[nlme]{gls}}
+#'     function in the \pkg{nlme} package
+#' }
+#' 
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.nlme
+#' @aliases extract.nlme-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
+
+#' @noRd
 extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
     include.loglik = TRUE, include.nobs = TRUE, ...) {
   s <- summary(model, ...)
@@ -2779,65 +2824,24 @@ extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
   return(tr)
 }
 
+#' @rdname extract.nlme
+#' @method extract gls
+#' @aliases extract.gls
+#' @export
 setMethod("extract", signature = className("gls", "nlme"),
     definition = extract.gls)
 
 extract.gnls <- extract.gls
+
+#' @rdname extract.nlme
+#' @method extract gnls
+#' @aliases extract.gnls
+#' @export
 setMethod("extract", signature = className("gnls", "nlme"),
           definition = extract.gnls)
 
 
-# extension for gmm objects (gmm package)
-extract.gmm <- function(model, include.obj.fcn = TRUE,
-    include.overidentification = FALSE, include.nobs = TRUE, ...) {
-
-  s <- summary(model, ...)
-
-  coefs <- s$coefficients
-  names <- rownames(coefs)
-  coef <- coefs[, 1]
-  se <- coefs[, 2]
-  pval <- coefs[, 4]
-
-  n <- model$n  # number of observations
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.obj.fcn == TRUE) {
-    obj.fcn <- model$objective * 10^5  # the value of the objective function
-    gof <- c(gof, obj.fcn)
-    gof.names <- c(gof.names, "Criterion function")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.overidentification == TRUE) {
-    jtest <- s$stest$test[1]
-    gof <- c(gof, jtest)
-    gof.names <- c(gof.names, "J-Test")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-  tr <- createTexreg(
-      coef.names = names,
-      coef = coef,
-      se = se,
-      pvalues = pval,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-  )
-  return(tr)
-}
-
-setMethod("extract", signature = className("gmm", "gmm"),
-    definition = extract.gmm)
-
-
-# extension for gnm objects (gnm package)
+#' @noRd
 extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
                         include.loglik = TRUE, include.deviance = TRUE,
                         include.nobs = TRUE, include.df = FALSE,
@@ -2922,6 +2926,22 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
     return(tr)
 }
 
+#' \code{\link{extract}} method for \code{gnm} objects
+#'
+#' \code{\link{extract}} method for \code{gnm} objects. These objects are
+#' created by the \code{\link[gnm]{gnm}} function in the \pkg{gnm} package.
+#'
+#' @param include.delta Report the Dissimilarity index in the GOF block?
+#' @inheritParams extract,lm-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @method extract gnm
+#' @aliases extract.gnm
+#' @family extract
+#' @seealso \link{extract}
+#' @author Claudia Zucca, Philip Leifeld
+#'
+#' @export
 setMethod("extract", signature = className("gnm", "gnm"),
           definition = extract.gnm)
 
@@ -3133,27 +3153,45 @@ extract.ivreg <- extract.lm
 setMethod("extract", signature = className("ivreg", "AER"),
     definition = extract.ivreg)
 
-extract.speedlm <- extract.lm
-
-#' \code{\link{extract}} method for \code{speedglm} objects
+# speedglm package ------------------------------------------------------------------
+#' \code{\link{extract}} methods for models in the \pkg{speedglm} package
 #'
-#' \code{\link{extract}} method for \code{speedglm} objects. These objects are
-#' created by the \code{\link[speedglm]{speedglm}} function in the
-#' \pkg{speedglm} package.
-#'
+#' \code{\link{extract}} methods for statistical models in the \pkg{speedglm}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{speedglm} objects created by the \code{\link[speedglm]{speedglm}}
+#'     function in the \pkg{speedglm} package
+#'   \item \code{speedlm} objects created by the \code{\link[speedglm]{speedlm}}
+#'     function in the \pkg{speedlm} package
+#' }
 #' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
 #' @return A \linkS4class{texreg} object.
 #'
-#' @method extract speedglm
-#' @aliases extract.speedglm
+#' @name extract.speedglm
+#' @aliases extract.speedglm-methods
 #' @family extract
 #' @seealso \link{extract}
 #' @author Philip Leifeld
-#'
+NULL
+
+extract.speedglm <- extract.glm
+
+#' @rdname extract.speedglm
+#' @method extract speedglm
+#' @aliases extract.speedglm
+#' @export
+setMethod("extract",  signature = className("speedglm", "speedglm"),
+          definition = extract.speedglm)
+
+extract.speedlm <- extract.lm
+
+#' @rdname extract.speedglm
+#' @method extract speedlm
+#' @aliases extract.speedlm
 #' @export
 setMethod("extract",  signature = className("speedlm", "speedglm"),
           definition = extract.speedlm)
-
 
 # extension for lme objects
 extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
@@ -3248,9 +3286,7 @@ extract.nlme <- extract.lme
 setMethod("extract", signature = className("nlme", "nlme"),
           definition = extract.nlme)
 
-extract.glmmPQL <- extract.lme
-setMethod("extract", signature = className("glmmPQL", "MASS"),
-          definition = extract.glmmPQL)
+
 
 
 # lme4 package -----------------------------------------------------------------
@@ -4016,6 +4052,192 @@ extract.maBina <- function(model, ...) {
 
 setMethod("extract", signature = className("maBina", "erer"),
     definition = extract.maBina)
+
+
+# MASS package -----------------------------------------------------------------
+
+#' \code{\link{extract}} methods for models in the \pkg{MASS} package
+#'
+#' \code{\link{extract}} methods for statistical models in the \pkg{MASS}
+#' package, in particular:
+#' \itemize{
+#'   \item \code{glmmPQL} objects created by the \code{\link[MASS]{glmmPQL}}
+#'     function in the \pkg{MASS} package
+#'   \item \code{negbin} objects created by the \code{\link[MASS]{negbin}}
+#'     function in the \pkg{MASS} package
+#'   \item \code{polr} objects created by the \code{\link[MASS]{polr}}
+#'     function in the \pkg{MASS} package
+#'   \item \code{rlm} objects created by the \code{\link[MASS]{rlm}}
+#'     function in the \pkg{MASS} package
+#' }
+#' 
+#' @param include.thresholds Report thresholds in the GOF block?
+#' @inheritParams extract,lm-method
+#' @inheritParams extract,glm-method
+#' @inheritParams extract,lme4-method
+#' @return A \linkS4class{texreg} object.
+#'
+#' @name extract.MASS
+#' @aliases extract.MASS-methods
+#' @family extract
+#' @seealso \link{extract}
+#' @author Philip Leifeld
+NULL
+
+extract.glmmPQL <- extract.lme
+
+#' @rdname extract.MASS
+#' @method extract glmmPQL
+#' @aliases extract.glmmPQL
+#' @export
+setMethod("extract", signature = className("glmmPQL", "MASS"),
+          definition = extract.glmmPQL)
+
+
+extract.negbin <- extract.glm
+
+#' @rdname extract.MASS
+#' @method extract negbin
+#' @aliases extract.negbin
+#' @export
+setMethod("extract", signature = className("negbin", "MASS"),
+          definition = extract.negbin)
+
+#' @noRd
+extract.polr <- function(model, include.thresholds = FALSE, include.aic = TRUE,
+                         include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE,
+                         include.nobs = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    tab <- s$coefficients
+    zeta.names <- names(s$zeta)
+    beta <- tab[!rownames(tab) %in% zeta.names, ]
+    thresh <- tab[rownames(tab) %in% zeta.names, ]
+    
+    if (sum(!rownames(tab) %in% zeta.names) == 1) {
+        beta <- t(beta)
+        rownames(beta) <- rownames(tab)[!rownames(tab) %in% zeta.names]
+    }
+    if (sum(rownames(tab) %in% zeta.names) == 1) {
+        thresh <- t(thresh)
+        rownames(thresh) <- rownames(tab)[rownames(tab) %in% zeta.names]
+    }
+    
+    threshold.names <- rownames(thresh)
+    threshold.coef <- thresh[, 1]
+    threshold.se <- thresh[, 2]
+    threshold.zval <- thresh[, 1] / thresh[, 2]
+    threshold.pval <- 2 * pnorm(abs(threshold.zval), lower.tail = FALSE)
+    
+    beta.names <- rownames(beta)
+    beta.coef <- beta[, 1]
+    beta.se <- beta[, 2]
+    beta.zval <- beta[, 1] / beta[, 2]
+    beta.pval <- 2 * pnorm(abs(beta.zval), lower.tail = FALSE)
+    
+    if (include.thresholds == TRUE) {
+        names <- c(beta.names, threshold.names)
+        coef <- c(beta.coef, threshold.coef)
+        se <- c(beta.se, threshold.se)
+        pval <- c(beta.pval, threshold.pval)
+    } else {
+        names <- beta.names
+        coef <- beta.coef
+        se <- beta.se
+        pval <- beta.pval
+    }
+    
+    n <- nobs(model)
+    lik <- logLik(model)[1]
+    aic <- AIC(model)
+    bic <- BIC(model)
+    dev <- deviance(model)
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.aic == TRUE) {
+        gof <- c(gof, aic)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.bic == TRUE) {
+        gof <- c(gof, bic)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.loglik == TRUE) {
+        gof <- c(gof, lik)
+        gof.names <- c(gof.names, "Log Likelihood")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.deviance == TRUE) {
+        gof <- c(gof, dev)
+        gof.names <- c(gof.names, "Deviance")
+        gof.decimal <- c(gof.decimal, TRUE)
+    }
+    if (include.nobs == TRUE) {
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names,
+        coef = coef,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+#' @rdname extract.MASS
+#' @method extract polr
+#' @aliases extract.polr
+#' @export
+setMethod("extract", signature = className("polr", "MASS"),
+          definition = extract.polr)
+
+#' @noRd
+extract.rlm <- function (model, include.nobs = TRUE, ...) {
+    s <- summary(model, ...)
+    
+    names <- rownames(s$coef)
+    co <- s$coef[, 1]
+    se <- s$coef[, 2]
+    pval <- 1 - pchisq((co / se)^2, 1)
+    
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.nobs == TRUE) {
+        n <- nobs(model)
+        gof <- c(gof, n)
+        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    
+    tr <- createTexreg(
+        coef.names = names,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+
+#' @rdname extract.MASS
+#' @method extract rlm
+#' @aliases extract.rlm
+#' @export
+setMethod("extract", signature = className("rlm", "MASS"),
+          definition = extract.rlm)
 
 
 # extension for mhurdle objects (mhurdle package)
