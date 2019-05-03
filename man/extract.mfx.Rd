@@ -8,6 +8,20 @@
 \alias{extract.betamfx}
 \alias{extract,betaor-method}
 \alias{extract.betaor}
+\alias{extract,logitmfx-method}
+\alias{extract.logitmfx}
+\alias{extract,probitmfx-method}
+\alias{extract.probitmfx}
+\alias{extract,logitor-method}
+\alias{extract.logitor}
+\alias{extract,negbinirr-method}
+\alias{extract.negbinirr}
+\alias{extract,poissonirr-method}
+\alias{extract.poissonirr}
+\alias{extract,negbinmfx-method}
+\alias{extract.negbinmfx}
+\alias{extract,poissonmfx-method}
+\alias{extract.poissonmfx}
 \title{\code{\link{extract}} methods for models in the \pkg{mfx} package}
 \usage{
 \S4method{extract}{betamfx}(model, include.pseudors = TRUE,
@@ -15,6 +29,34 @@
 
 \S4method{extract}{betaor}(model, include.pseudors = TRUE,
   include.loglik = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{logitmfx}(model, include.nobs = TRUE,
+  include.loglik = TRUE, include.deviance = TRUE, include.aic = TRUE,
+  include.bic = TRUE, ...)
+
+\S4method{extract}{probitmfx}(model, include.nobs = TRUE,
+  include.loglik = TRUE, include.deviance = TRUE, include.aic = TRUE,
+  include.bic = TRUE, ...)
+
+\S4method{extract}{logitor}(model, include.nobs = TRUE,
+  include.loglik = TRUE, include.deviance = TRUE, include.aic = TRUE,
+  include.bic = TRUE, ...)
+
+\S4method{extract}{negbinirr}(model, include.nobs = TRUE,
+  include.loglik = TRUE, include.deviance = TRUE, include.aic = TRUE,
+  include.bic = TRUE, ...)
+
+\S4method{extract}{poissonirr}(model, include.nobs = TRUE,
+  include.loglik = TRUE, include.deviance = TRUE, include.aic = TRUE,
+  include.bic = TRUE, ...)
+
+\S4method{extract}{negbinmfx}(model, include.nobs = TRUE,
+  include.loglik = TRUE, include.deviance = TRUE, include.aic = TRUE,
+  include.bic = TRUE, ...)
+
+\S4method{extract}{poissonmfx}(model, include.nobs = TRUE,
+  include.loglik = TRUE, include.deviance = TRUE, include.aic = TRUE,
+  include.bic = TRUE, ...)
 }
 \arguments{
 \item{model}{A model object.}
@@ -26,6 +68,12 @@
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
 \item{...}{Additional arguments for the \code{\link[base]{summary}} function.}
+
+\item{include.deviance}{Report the deviance in the GOF block?}
+
+\item{include.aic}{Report Akaike's Information Criterion (AIC) in the GOF block?}
+
+\item{include.bic}{Report the Bayesian Information Criterion (BIC) in the GOF block?}
 }
 \value{
 A \linkS4class{texreg} object.
@@ -38,12 +86,27 @@ package, in particular:
     function in the \pkg{mfx} package
   \item \code{betaor} objects created by the \code{\link[mfx]{betaor}}
     function in the \pkg{mfx} package
+  \item \code{logitmfx} objects created by the \code{\link[mfx]{logitmfx}}
+    function in the \pkg{mfx} package
+  \item \code{logitor} objects created by the \code{\link[mfx]{logitor}}
+    function in the \pkg{mfx} package
+  \item \code{negbinirr} objects created by the \code{\link[mfx]{negbinirr}}
+    function in the \pkg{mfx} package
+  \item \code{negbinmfx} objects created by the \code{\link[mfx]{negbinmfx}}
+    function in the \pkg{mfx} package
+  \item \code{poissonirr} objects created by the \code{\link[mfx]{poissonirr}}
+    function in the \pkg{mfx} package
+  \item \code{poissonmfx} objects created by the \code{\link[mfx]{poissonmfx}}
+    function in the \pkg{mfx} package
+  \item \code{probitmfx} objects created by the \code{\link[mfx]{probitmfx}}
+    function in the \pkg{mfx} package
 }
 }
 \seealso{
 \link{extract}
 
 Other extract: \code{\link{extract,Arima-method}},
+  \code{\link{extract,H2OBinomialModel-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
@@ -63,15 +126,17 @@ Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,gee-method}},
   \code{\link{extract,geeglm-method}},
   \code{\link{extract,glm-method}},
-  \code{\link{extract,ivreg-method}},
+  \code{\link{extract,gnm-method}},
   \code{\link{extract,lm-method}},
-  \code{\link{extract.MASS}},
+  \code{\link{extract,lmRob-method}},
+  \code{\link{extract,lqmm-method}},
+  \code{\link{extract.AER}}, \code{\link{extract.MASS}},
   \code{\link{extract.broom-method}},
   \code{\link{extract.btergm}},
   \code{\link{extract.forecast}},
   \code{\link{extract.gmm}}, \code{\link{extract.lme4}},
   \code{\link{extract.mgcv}}, \code{\link{extract.nlme}},
-  \code{\link{extract.ordinal}},
+  \code{\link{extract.ordinal}}, \code{\link{extract.sna}},
   \code{\link{extract.speedglm}},
   \code{\link{extract.survival}}
 }

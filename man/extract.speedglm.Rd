@@ -58,6 +58,7 @@ package, in particular:
 \link{extract}
 
 Other extract: \code{\link{extract,Arima-method}},
+  \code{\link{extract,H2OBinomialModel-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
@@ -77,16 +78,18 @@ Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,gee-method}},
   \code{\link{extract,geeglm-method}},
   \code{\link{extract,glm-method}},
-  \code{\link{extract,ivreg-method}},
+  \code{\link{extract,gnm-method}},
   \code{\link{extract,lm-method}},
-  \code{\link{extract.MASS}},
+  \code{\link{extract,lmRob-method}},
+  \code{\link{extract,lqmm-method}},
+  \code{\link{extract.AER}}, \code{\link{extract.MASS}},
   \code{\link{extract.broom-method}},
   \code{\link{extract.btergm}},
   \code{\link{extract.forecast}},
   \code{\link{extract.gmm}}, \code{\link{extract.lme4}},
   \code{\link{extract.mfx}}, \code{\link{extract.mgcv}},
   \code{\link{extract.nlme}},
-  \code{\link{extract.ordinal}},
+  \code{\link{extract.ordinal}}, \code{\link{extract.sna}},
   \code{\link{extract.survival}}
 }
 \author{

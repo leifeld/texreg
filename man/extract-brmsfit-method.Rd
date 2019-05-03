@@ -31,6 +31,11 @@ block of the table?}
 
 \item{include.loo.ic}{Report Leave-One-Out Information Criterion?}
 
+\item{reloo}{Recompute exact cross-validation for problematic observations
+for which approximate leave-one-out cross-validation may return incorrect
+results? This is done using the \code{\link[brms]{reloo}} function and may
+take some time to compute.}
+
 \item{include.waic}{Report Widely Applicable Information Criterion (WAIC)?}
 
 \item{...}{Additional arguments for the \code{\link[base]{summary}} function.}
@@ -46,6 +51,7 @@ created by the \code{\link[brms]{brm}} function in the \pkg{brms} package.
 \link{extract}
 
 Other extract: \code{\link{extract,Arima-method}},
+  \code{\link{extract,H2OBinomialModel-method}},
   \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
@@ -64,16 +70,18 @@ Other extract: \code{\link{extract,Arima-method}},
   \code{\link{extract,gee-method}},
   \code{\link{extract,geeglm-method}},
   \code{\link{extract,glm-method}},
-  \code{\link{extract,ivreg-method}},
+  \code{\link{extract,gnm-method}},
   \code{\link{extract,lm-method}},
-  \code{\link{extract.MASS}},
+  \code{\link{extract,lmRob-method}},
+  \code{\link{extract,lqmm-method}},
+  \code{\link{extract.AER}}, \code{\link{extract.MASS}},
   \code{\link{extract.broom-method}},
   \code{\link{extract.btergm}},
   \code{\link{extract.forecast}},
   \code{\link{extract.gmm}}, \code{\link{extract.lme4}},
   \code{\link{extract.mfx}}, \code{\link{extract.mgcv}},
   \code{\link{extract.nlme}},
-  \code{\link{extract.ordinal}},
+  \code{\link{extract.ordinal}}, \code{\link{extract.sna}},
   \code{\link{extract.speedglm}},
   \code{\link{extract.survival}}
 }
