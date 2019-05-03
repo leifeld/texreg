@@ -5,11 +5,11 @@ library("texreg")
 test_that("extract brmsfit objects from the brms package", {
   testthat::skip_on_cran()
   skip_if_not_installed("brms", minimum_version = "2.8.8")
-  skip_if_not_installed("sjstats", minimum_version = "0.17.4")
+  skip_if_not_installed("coda", minimum_version = "0.19.2")
   require("brms")
-  require("sjstats")
+  require("coda")
 
-  # example from brm help page; see ?brm
+  # example 2 from brm help page; see ?brm
   sink("/dev/null")
   suppressMessages(fit2 <- brm(rating ~ period + carry + cs(treat),
                                data = inhaler, family = sratio("logit"),
@@ -24,6 +24,24 @@ test_that("extract brmsfit objects from the brms package", {
   expect_length(tr@ci.low, 8)
   expect_length(tr@ci.up, 8)
   expect_equivalent(which(tr@gof.decimal), c(1, 3, 4))
+
+  # example 1 from brm help page; see ?brm
+  bprior1 <- prior(student_t(5,0,10), class = b) + prior(cauchy(0,2), class = sd)
+  sink("/dev/null")
+  fit1 <- suppressMessages(brm(count ~ zAge + zBase * Trt + (1|patient),
+                               data = epilepsy,
+                               family = poisson(),
+                               prior = bprior1))
+  sink()
+
+  suppressMessages(tr <- extract(fit1, use.HDI = TRUE, reloo = TRUE))
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 5)
+  expect_length(tr@se, 5)
+  expect_length(tr@pvalues, 0)
+  expect_length(tr@ci.low, 5)
+  expect_length(tr@ci.up, 5)
+  expect_equivalent(which(tr@gof.decimal), c(1:2, 4:5))
 })
 
 # dynlm (dynlm) ----
@@ -70,6 +88,7 @@ test_that("extract feis objects from the feisr package", {
 
 # glmerMod (lme4) ----
 test_that("extract glmerMod objects from the lme4 package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("lme4")
   require("lme4")
   set.seed(12345)
@@ -148,6 +167,7 @@ test_that("extract lm objects from the stats package", {
 
 # lmerMod (lme4) ----
 test_that("extract lmerMod objects from the lme4 package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("lme4")
   require("lme4")
   set.seed(12345)

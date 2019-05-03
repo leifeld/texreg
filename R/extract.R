@@ -514,22 +514,45 @@ setMethod("extract", signature = className("biglm", "biglm"),
 
 #' @noRd
 extract.brmsfit <- function (model,
+                             use.HDI = TRUE,
+                             level = 0.9,
+                             include.random = TRUE,
                              include.rsquared = TRUE,
                              include.nobs = TRUE,
                              include.loo.ic = TRUE,
+                             reloo = FALSE,
                              include.waic = TRUE,
                              ...) {
-  s <- summary(model, ...)$fixed
-  coefnames <- rownames(s)
-  coefs <- s[, 1]
-  se <- s[, 2]
-
-  hdis <- sjstats::hdi(model, ...)
-  hdis <- hdis[seq(1:length(coefnames)), ]
+  sf <- summary(model, ...)$fixed
+  coefnames <- rownames(sf)
+  coefs <- sf[, 1]
+  se <- sf[, 2]
+  if (isTRUE(use.HDI)) {
+    hdis <- coda::HPDinterval(brms::as.mcmc(model, prob = level, combine_chains = TRUE))
+    hdis <- hdis[seq(1:length(coefnames)), ]
+    ci.low = hdis[, "lower"]
+    ci.up = hdis[, "upper"]
+  } else { # default using 95% posterior quantiles from summary.brmsfit
+    ci.low = sf[, 3]
+    ci.up = sf[, 4]
+  }
 
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
+  if (isTRUE(include.random) & isFALSE(!nrow(model$ranef))) {
+    sr <- summary(model, ...)$random
+    sd.names <- character()
+    sd.values <- numeric()
+    for (i in 1:length(sr)) {
+      sd <- sr[[i]][, 1]
+      sd.names <- c(sd.names, paste0("SD: ", names(sr)[[i]], names(sd)))
+      sd.values <- c(sd.values, sd)
+    }
+    gof <- c(gof, sd.values)
+    gof.names <- c(gof.names, sd.names)
+    gof.decimal <- c(gof.decimal, rep(TRUE, length(sd.values)))
+  }
   if (isTRUE(include.rsquared)) {
     rs <- brms::bayes_R2(model)[1]
     gof <- c(gof, rs)
@@ -543,7 +566,7 @@ extract.brmsfit <- function (model,
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (isTRUE(include.loo.ic)) {
-    looic <- brms::loo(model)$estimates["looic", "Estimate"]
+    looic <- brms::loo(model, reloo = reloo)$estimates["looic", "Estimate"]
     gof <- c(gof, looic)
     gof.names <- c(gof.names, "loo IC")
     gof.decimal <- c(gof.decimal, TRUE)
@@ -558,8 +581,8 @@ extract.brmsfit <- function (model,
   tr <- createTexreg(coef.names = coefnames,
                      coef = coefs,
                      se = se,
-                     ci.low = hdis$hdi.low,
-                     ci.up = hdis$hdi.high,
+                     ci.low = ci.low,
+                     ci.up = ci.up,
                      gof.names = gof.names,
                      gof = gof,
                      gof.decimal = gof.decimal)
@@ -571,7 +594,19 @@ extract.brmsfit <- function (model,
 #' \code{\link{extract}} method for \code{brmsfit} objects. These objects are
 #' created by the \code{\link[brms]{brm}} function in the \pkg{brms} package.
 #'
+#' @param use.HDI Report highest posterior density (HPD) intervals (HDI) using
+#'   the \code{\link[coda]{HPDinterval}} function in the \pkg{coda} package,
+#'   with the probability given in the \code{level} argument, instead of the
+#'   default 95 percent posterior quantiles?
+#' @param level Significance level (\code{1 - alpha}) for the \code{use.HDI}
+#'   argument.
+#' @param include.random Include random effects (standard deviations) in the GOF
+#'   block of the table?
 #' @param include.loo.ic Report Leave-One-Out Information Criterion?
+#' @param reloo Recompute exact cross-validation for problematic observations
+#'   for which approximate leave-one-out cross-validation may return incorrect
+#'   results? This is done using the \code{\link[brms]{reloo}} function and may
+#'   take some time to compute.
 #' @param include.waic Report Widely Applicable Information Criterion (WAIC)?
 #' @inheritParams extract,lm-method
 #' @return A \linkS4class{texreg} object.
