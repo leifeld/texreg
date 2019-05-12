@@ -8,6 +8,8 @@
 \alias{extract.gls}
 \alias{extract,gnls-method}
 \alias{extract.gnls}
+\alias{extract,lme-method}
+\alias{extract.lme}
 \title{\code{\link{extract}} methods for models in the \pkg{nlme} package}
 \usage{
 \S4method{extract}{gls}(model, include.aic = TRUE, include.bic = TRUE,
@@ -15,6 +17,14 @@
 
 \S4method{extract}{gnls}(model, include.aic = TRUE, include.bic = TRUE,
   include.loglik = TRUE, include.nobs = TRUE, ...)
+
+\S4method{extract}{lme}(model, include.aic = TRUE, include.bic = TRUE,
+  include.loglik = TRUE, include.nobs = TRUE, include.groups = TRUE,
+  include.variance = FALSE, ...)
+
+\method{extract}{nlme}(model, include.aic = TRUE, include.bic = TRUE,
+  include.loglik = TRUE, include.nobs = TRUE, include.groups = TRUE,
+  include.variance = FALSE, ...)
 }
 \arguments{
 \item{model}{A model object.}
@@ -28,6 +38,10 @@
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
 \item{...}{Additional arguments for the \code{\link[base]{summary}} function.}
+
+\item{include.groups}{Report groups in the GOF block?}
+
+\item{include.variance}{Report variance in the GOF block?}
 }
 \value{
 A \linkS4class{texreg} object.
@@ -38,46 +52,46 @@ package, in particular:
 \itemize{
   \item \code{gls} objects created by the \code{\link[nlme]{gls}}
     function in the \pkg{nlme} package
-  \item \code{gls} objects created by the \code{\link[nlme]{gls}}
+  \item \code{gnls} objects created by the \code{\link[nlme]{gnls}}
+    function in the \pkg{nlme} package
+  \item \code{lme} objects created by the \code{\link[nlme]{lme}}
+    function in the \pkg{nlme} package
+  \item \code{nlme} objects created by the \code{\link[nlme]{nlme}}
     function in the \pkg{nlme} package
 }
 }
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,Arima-method}},
-  \code{\link{extract,H2OBinomialModel-method}},
-  \code{\link{extract,averaging-method}},
+Other extract: \code{\link{extract,averaging-method}},
   \code{\link{extract,betareg-method}},
   \code{\link{extract,bife-method}},
   \code{\link{extract,biglm-method}},
-  \code{\link{extract,brglm-method}},
   \code{\link{extract,brmsfit-method}},
   \code{\link{extract,censReg-method}},
   \code{\link{extract,coeftest-method}},
   \code{\link{extract,dynlm-method}},
-  \code{\link{extract,ergm-method}},
-  \code{\link{extract,ergmm-method}},
-  \code{\link{extract,fGARCH-method}},
-  \code{\link{extract,feglm-method}},
-  \code{\link{extract,feis-method}},
-  \code{\link{extract,felm-method}},
-  \code{\link{extract,gamlss-method}},
-  \code{\link{extract,gee-method}},
-  \code{\link{extract,geeglm-method}},
-  \code{\link{extract,glm-method}},
-  \code{\link{extract,gnm-method}},
-  \code{\link{extract,lm-method}},
   \code{\link{extract,lmRob-method}},
   \code{\link{extract,lqmm-method}},
   \code{\link{extract.AER}}, \code{\link{extract.MASS}},
+  \code{\link{extract.alpaca}},
+  \code{\link{extract.brglm}},
   \code{\link{extract.broom-method}},
-  \code{\link{extract.btergm}},
+  \code{\link{extract.btergm}}, \code{\link{extract.ergm}},
+  \code{\link{extract.fGarch}},
+  \code{\link{extract.feisr}},
   \code{\link{extract.forecast}},
-  \code{\link{extract.gmm}}, \code{\link{extract.lme4}},
+  \code{\link{extract.gamlss}},
+  \code{\link{extract.geepack}}, \code{\link{extract.gee}},
+  \code{\link{extract.gmm}}, \code{\link{extract.gnm}},
+  \code{\link{extract.h2o}},
+  \code{\link{extract.latentnet}},
+  \code{\link{extract.lfe}}, \code{\link{extract.lme4}},
   \code{\link{extract.mfx}}, \code{\link{extract.mgcv}},
-  \code{\link{extract.ordinal}}, \code{\link{extract.sna}},
+  \code{\link{extract.ordinal}}, \code{\link{extract.rms}},
+  \code{\link{extract.sna}},
   \code{\link{extract.speedglm}},
+  \code{\link{extract.stats}},
   \code{\link{extract.survival}}
 }
 \author{
