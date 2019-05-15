@@ -51,8 +51,7 @@
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
-\item{include.missings}{Report number of missing data points in the GOF
-block?}
+\item{include.missings}{Report number of missing data points in the GOF block?}
 
 \item{...}{Additional arguments for the \code{\link[base]{summary}} function.}
 
@@ -71,12 +70,12 @@ A \linkS4class{texreg} object.
 \code{\link{extract}} methods for statistical models defined in the
 \pkg{survival} package, in particular:
 \itemize{
+  \item \code{clogit} objects, which are created by the
+    \code{\link[survival]{clogit}} function
   \item \code{coxph} objects, which are created by the
     \code{\link[survival]{coxph}} function
   \item \code{coxph.penal} objects, which are created by the
     \code{\link[survival]{coxph}} function
-  \item \code{clogit} objects, which are created by the
-    \code{\link[survival]{clogit}} function
   \item \code{survreg} objects, which are created by the
     \code{\link[survival]{survreg}} function
   \item \code{survreg.penal} objects, which are created by the
@@ -86,22 +85,19 @@ A \linkS4class{texreg} object.
 \seealso{
 \link{extract}
 
-Other extract: \code{\link{extract,averaging-method}},
-  \code{\link{extract,betareg-method}},
-  \code{\link{extract,bife-method}},
-  \code{\link{extract,biglm-method}},
-  \code{\link{extract,brmsfit-method}},
-  \code{\link{extract,censReg-method}},
-  \code{\link{extract,coeftest-method}},
-  \code{\link{extract,dynlm-method}},
-  \code{\link{extract,lmRob-method}},
-  \code{\link{extract,lqmm-method}},
+Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.AER}}, \code{\link{extract.MASS}},
+  \code{\link{extract.MuMIn}},
+  \code{\link{extract.RSiena}},
   \code{\link{extract.alpaca}},
-  \code{\link{extract.brglm}},
-  \code{\link{extract.broom-method}},
-  \code{\link{extract.btergm}}, \code{\link{extract.ergm}},
-  \code{\link{extract.fGarch}},
+  \code{\link{extract.betareg}},
+  \code{\link{extract.bife}}, \code{\link{extract.biglm}},
+  \code{\link{extract.brglm}}, \code{\link{extract.brms}},
+  \code{\link{extract.broom}},
+  \code{\link{extract.btergm}},
+  \code{\link{extract.censReg}},
+  \code{\link{extract.dynlm}}, \code{\link{extract.erer}},
+  \code{\link{extract.ergm}}, \code{\link{extract.fGarch}},
   \code{\link{extract.feisr}},
   \code{\link{extract.forecast}},
   \code{\link{extract.gamlss}},
@@ -110,12 +106,21 @@ Other extract: \code{\link{extract,averaging-method}},
   \code{\link{extract.h2o}},
   \code{\link{extract.latentnet}},
   \code{\link{extract.lfe}}, \code{\link{extract.lme4}},
-  \code{\link{extract.mfx}}, \code{\link{extract.mgcv}},
-  \code{\link{extract.nlme}},
-  \code{\link{extract.ordinal}}, \code{\link{extract.rms}},
-  \code{\link{extract.sna}},
+  \code{\link{extract.lqmm}}, \code{\link{extract.mfx}},
+  \code{\link{extract.mgcv}},
+  \code{\link{extract.mhurdle}},
+  \code{\link{extract.mlogit}},
+  \code{\link{extract.mnlogit}},
+  \code{\link{extract.nlme}}, \code{\link{extract.nnet}},
+  \code{\link{extract.oglmx}},
+  \code{\link{extract.ordinal}},
+  \code{\link{extract.panelAR}},
+  \code{\link{extract.pglm}}, \code{\link{extract.plm}},
+  \code{\link{extract.rms}},
+  \code{\link{extract.robustbase}},
+  \code{\link{extract.robust}}, \code{\link{extract.sna}},
   \code{\link{extract.speedglm}},
-  \code{\link{extract.stats}}
+  \code{\link{extract.stats}}, \code{\link{extract.survey}}
 }
 \author{
 Philip Leifeld
