@@ -29,6 +29,7 @@ addons:
       - r-cran-rmarkdown
       - r-cran-pscl
       - r-cran-rms
+      - r-cran-sf
       - r-cran-spdep
       - r-cran-amelia
 
