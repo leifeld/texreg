@@ -29,10 +29,7 @@ addons:
       - r-cran-rmarkdown
       - r-cran-pscl
       - r-cran-rms
-      - r-cran-sf
-      - r-cran-spdep
       - r-cran-amelia
-      - gdal-abi-2-1-3
 
 r_packages:
   - biglm
@@ -53,6 +50,7 @@ r_packages:
   - relevent
   - sampleSelection
   - simex
+  - spdep
   - systemfit
   - tergm
   - xergm
