@@ -50,7 +50,6 @@ r_packages:
   - relevent
   - sampleSelection
   - simex
-  - spdep
   - systemfit
   - tergm
   - xergm
