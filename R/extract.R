@@ -1167,7 +1167,7 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
         gof.decimal <- c(gof.decimal, TRUE)
     }
     if (include.nobs == TRUE) {
-        n <- s$nobs
+        n <- s$nobs[["nobs"]]
         gof <- c(gof, n)
         gof.names <- c(gof.names, "Num.\\ obs.")
         gof.decimal <- c(gof.decimal, FALSE)
