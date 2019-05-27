@@ -30,8 +30,8 @@ A \linkS4class{texreg} object.
 \code{\link{extract}} methods for statistical models in the \pkg{robust}
 package, in particular:
 \itemize{
-  \item \code{speedglm} objects created by the \code{\link[robust]{speedglm}}
-    function in the \pkg{speedglm} package
+  \item \code{lmRob} objects created by the \code{\link[robust]{lmRob}}
+    function in the \pkg{robust} package
 }
 }
 \seealso{
@@ -41,6 +41,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.AER}}, \code{\link{extract.MASS}},
   \code{\link{extract.MuMIn}},
   \code{\link{extract.RSiena}}, \code{\link{extract.VGAM}},
+  \code{\link{extract.Zelig}},
   \code{\link{extract.alpaca}},
   \code{\link{extract.betareg}},
   \code{\link{extract.bife}}, \code{\link{extract.biglm}},
@@ -70,6 +71,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.ordinal}},
   \code{\link{extract.panelAR}},
   \code{\link{extract.pglm}}, \code{\link{extract.plm}},
+  \code{\link{extract.pscl}},
   \code{\link{extract.quantreg}},
   \code{\link{extract.relevent}},
   \code{\link{extract.rms}},

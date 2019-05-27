@@ -5,7 +5,7 @@
 \alias{extract.broom}
 \alias{extract.broom-methods}
 \alias{extract,ANY-method}
-\title{\code{\link{extract}} methods for models in the \pkg{speedglm} package}
+\title{\code{\link{extract}} methods for models in the \pkg{broom} package}
 \usage{
 \S4method{extract}{ANY}(model, ...)
 }
@@ -20,7 +20,7 @@
 A \linkS4class{texreg} object.
 }
 \description{
-\code{\link{extract}} methods for \code{broom} objects in the \pkg{speedglm}
+\code{\link{extract}} methods for \code{broom} objects in the \pkg{broom}
 package, in particular:
 \itemize{
   \item These objects are created by the \code{\link[broom]{broom}} function 
@@ -34,6 +34,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.AER}}, \code{\link{extract.MASS}},
   \code{\link{extract.MuMIn}},
   \code{\link{extract.RSiena}}, \code{\link{extract.VGAM}},
+  \code{\link{extract.Zelig}},
   \code{\link{extract.alpaca}},
   \code{\link{extract.betareg}},
   \code{\link{extract.bife}}, \code{\link{extract.biglm}},
@@ -62,6 +63,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.ordinal}},
   \code{\link{extract.panelAR}},
   \code{\link{extract.pglm}}, \code{\link{extract.plm}},
+  \code{\link{extract.pscl}},
   \code{\link{extract.quantreg}},
   \code{\link{extract.relevent}},
   \code{\link{extract.rms}},

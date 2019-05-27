@@ -22,6 +22,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.AER}}, \code{\link{extract.MASS}},
   \code{\link{extract.MuMIn}},
   \code{\link{extract.RSiena}}, \code{\link{extract.VGAM}},
+  \code{\link{extract.Zelig}},
   \code{\link{extract.alpaca}},
   \code{\link{extract.betareg}},
   \code{\link{extract.bife}}, \code{\link{extract.biglm}},
@@ -50,6 +51,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.oglmx}},
   \code{\link{extract.ordinal}},
   \code{\link{extract.panelAR}}, \code{\link{extract.plm}},
+  \code{\link{extract.pscl}},
   \code{\link{extract.quantreg}},
   \code{\link{extract.relevent}},
   \code{\link{extract.rms}},
@@ -66,6 +68,6 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.tergm}}, \code{\link{extract.texreg}}
 }
 \author{
-Philip Leifeld
+Claudia Zucca, Philip Leifeld
 }
 \concept{extract}

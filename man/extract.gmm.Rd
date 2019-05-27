@@ -37,7 +37,7 @@ A \linkS4class{texreg} object.
 package, in particular:
 \itemize{
   \item \code{gel} objects created by the \code{\link[gmm]{gel}}
-    function in the \pkg{speedglm} package
+    function in the \pkg{gmm} package
   \item \code{gmm} objects created by the \code{\link[gmm]{gmm}}
     function in the \pkg{gmm} package
 }
@@ -49,6 +49,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.AER}}, \code{\link{extract.MASS}},
   \code{\link{extract.MuMIn}},
   \code{\link{extract.RSiena}}, \code{\link{extract.VGAM}},
+  \code{\link{extract.Zelig}},
   \code{\link{extract.alpaca}},
   \code{\link{extract.betareg}},
   \code{\link{extract.bife}}, \code{\link{extract.biglm}},
@@ -77,6 +78,7 @@ Other extract: \code{\link{extract,coeftest-method}},
   \code{\link{extract.ordinal}},
   \code{\link{extract.panelAR}},
   \code{\link{extract.pglm}}, \code{\link{extract.plm}},
+  \code{\link{extract.pscl}},
   \code{\link{extract.quantreg}},
   \code{\link{extract.relevent}},
   \code{\link{extract.rms}},
