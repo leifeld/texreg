@@ -2584,6 +2584,90 @@ setMethod("extract", signature = className("brglm", "brglm"),
           definition = extract.glm)
 
 
+# -- extract.glm.cluster (miceadds) --------------------------------------------
+
+#' @noRd
+extract.glm.cluster <- function (model,
+                                 include.aic = TRUE,
+                                 include.bic = TRUE,
+                                 include.loglik = TRUE,
+                                 include.deviance = TRUE,
+                                 include.nobs = TRUE,
+                                 ...) {
+  glm_model <- model$glm_res
+  coefficient.names <- names(glm_model$coefficients)
+  coefficients <- glm_model$coefficients
+  standard.errors <- sqrt(diag(model$vcov))
+  significance <- 2 * pnorm(-abs(coefficients / standard.errors))
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(glm_model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(glm_model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(glm_model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    dev <- deviance(glm_model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(glm_model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  tr <- createTexreg(coef.names = coefficient.names,
+                     coef = coefficients,
+                     se = standard.errors,
+                     pvalues = significance,
+                     gof.names = gof.names,
+                     gof = gof,
+                     gof.decimal = gof.decimal)
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{glm.cluster} objects
+#'
+#' \code{\link{extract}} method for \code{glm.cluster} objects created by the
+#' \code{\link[miceadds]{glm.cluster}} function in the \pkg{miceadds} package.
+#'
+#' @param model A statistical model object.
+#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
+#'   block?
+#' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF
+#'   block?
+#' @param include.loglik Report the log likelihood in the GOF block?
+#' @param include.deviance Report the deviance?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the \code{summary} method for the object.
+#'
+#' @method extract glm.cluster
+#' @aliases extract.glm.cluster
+#' @author Alexander Staudt, Philip Leifeld
+#' @importFrom stats nobs AIC BIC logLik deviance
+#' @export
+setMethod("extract", signature = className("glm.cluster", "miceadds"),
+          definition = extract.glm.cluster)
+
+
 # -- extract.glmmadb (glmmADB) -------------------------------------------------
 
 #' @noRd
@@ -3222,6 +3306,94 @@ extract.ivreg <- extract.lm
 #' @export
 setMethod("extract", signature = className("ivreg", "AER"),
           definition = extract.ivreg)
+
+
+# -- extract.lm.cluster (miceadds) ---------------------------------------------
+
+#' @noRd
+extract.lm.cluster <- function(model,
+                               include.rsquared = TRUE,
+                               include.adjrs = TRUE,
+                               include.nobs = TRUE,
+                               include.fstatistic = FALSE,
+                               include.rmse = FALSE,
+                               ...) {
+
+  s <- summary(model$lm_res)
+  lm_model <- model$lm_res
+  nam <- names(lm_model$coefficients)
+  co <- lm_model$coefficients
+  se <- sqrt(diag(model$vcov))
+  pval <- 2 * pnorm(-abs(co / se))
+
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.rsquared == TRUE) {
+    rs <- s$r.squared  # extract R-squared
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.adjrs == TRUE) {
+    adj <- s$adj.r.squared  # extract adjusted R-squared
+    gof <- c(gof, adj)
+    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(lm_model)  # extract number of observations
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.fstatistic == TRUE) {
+    fstat <- s$fstatistic[[1]]
+    gof <- c(gof, fstat)
+    gof.names <- c(gof.names, "F statistic")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.rmse == TRUE && !is.null(s$sigma[[1]])) {
+    rmse <- s$sigma[[1]]
+    gof <- c(gof, rmse)
+    gof.names <- c(gof.names, "RMSE")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+
+  tr <- createTexreg(
+    coef.names = nam,
+    coef = co,
+    se = se,
+    pvalues = pval,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{lm.cluster} objects
+#'
+#' \code{\link{extract}} method for \code{lm.cluster} objects created by the
+#' \code{\link[miceadds]{lm.cluster}} function in the \pkg{miceadds} package.
+#'
+#' @param model A statistical model object.
+#' @param include.rsquared Report R^2 in the GOF block?
+#' @param include.adjrs Report adjusted R^2 in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.fstatistic Report the F-statistic in the GOF block?
+#' @param include.rmse Report the root mean square error (RMSE; = residual
+#'   standard deviation) in the GOF block?
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the \code{summary} method for the object.
+#'
+#' @method extract lm.cluster
+#' @aliases extract.lm.cluster
+#' @author Alexander Staudt, Philip Leifeld
+#' @export
+setMethod("extract", signature = className("lm.cluster", "miceadds"),
+          definition = extract.lm.cluster)
 
 
 # -- extract.lme (nlme) --------------------------------------------------------
