@@ -1741,6 +1741,7 @@ extract.felm <- function(model,
                          include.rsquared = TRUE,
                          include.adjrs = TRUE,
                          include.fstatistic = FALSE,
+                         include.groups = TRUE,
                          ...) {
 
   s <- summary(model, ...)
@@ -1775,6 +1776,13 @@ extract.felm <- function(model,
                    "F (full model): p-value", "F statistic (proj model)",
                    "F (proj model): p-value")
     gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE, TRUE)
+  }
+  if (include.groups == TRUE) {
+    grp <- sapply(s$fe, function(x) length(levels(x)))
+    grp.names <- paste0("Num. groups: ", names(grp))
+    gof <- c(gof, grp)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
   }
 
   tr <- createTexreg(
@@ -1979,7 +1987,7 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
   }
   if (include.groups == TRUE) {
     grp <- s$lvls.k
-    grp.names <- paste0("Num groups:", names(grp))
+    grp.names <- paste0("Num. groups: ", names(grp))
     gof <- c(gof, grp)
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))

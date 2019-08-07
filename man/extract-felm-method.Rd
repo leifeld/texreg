@@ -11,6 +11,7 @@
   include.rsquared = TRUE,
   include.adjrs = TRUE,
   include.fstatistic = FALSE,
+  include.groups = TRUE,
   ...
 )
 }
