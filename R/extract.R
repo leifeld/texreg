@@ -2273,6 +2273,82 @@ setMethod("extract", signature = className("gamlss", "gamlss"),
           definition = extract.gamlss)
 
 
+extract.gamlssZadj <- function(model, type = c('qr', 'vcov'), robust = FALSE,
+                               include.nobs = TRUE, #include.nagelkerke = TRUE,
+                               include.gaic = TRUE, ...) {
+
+  type <- match.arg(type)
+  # VCOV extraction; create coefficient block
+  if (type == 'vcov'){
+    covmat <- suppressWarnings(stats::vcov(model, type = "all", robust = robust,
+                                           ...))
+    cf <- covmat$coef  # coefficients
+    namesOfPars <- names(cf)  # names of coefficients
+    se <- covmat$se  # standard errors
+  }
+  if (type == 'qr'){
+    invisible(capture.output(covmat <- summary(model, type = "qr")))
+
+    cf <- covmat[,1]
+    namesOfPars <- row.names(covmat)
+    se <- covmat[,2]
+  }
+  tvalue <- cf / se
+  pvalue <-  2 * pt(-abs(tvalue), model$df.res)  # p values
+  #add the parameter names to coefficients
+  possiblePars <- c("$\\mu$", "$\\sigma$", "$\\nu$", "$\\tau$",
+                    "$\\mu$ (Zero model)")
+  parIndex <- 0
+  parVector <- character()
+  for (i in 1:length(namesOfPars)) {
+    if (namesOfPars[i] == "(Intercept)") {
+      parIndex <- parIndex + 1
+    }
+    parName <- possiblePars[parIndex]
+    parVector <- c(parVector, parName)
+  }
+  namesOfPars <- paste(parVector, namesOfPars)
+
+  # GOF block
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  # if (include.nagelkerke == TRUE) {
+  #   nk <- gamlss::Rsq(model)
+  #   gof <- c(gof, nk)
+  #   gof.names <- c(gof.names, "Nagelkerke R$^2$")
+  #   gof.decimal <- c(gof.decimal, TRUE)
+  # }
+  if (include.gaic == TRUE) {
+    gaic <- gamlss::GAIC(model)
+    gof <- c(gof, gaic)
+    gof.names <- c(gof.names, "Generalized AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+
+  # create and return texreg object
+  tr <- createTexreg(
+    coef.names = namesOfPars,
+    coef = cf,
+    se = se,
+    pvalues = pvalue,
+    gof.names = gof.names,
+    gof.decimal = gof.decimal,
+    gof = gof
+  )
+  return(tr)
+}
+
+setMethod("extract", signature = className("gamlssZadj", "gamlss.inf"),
+          definition = extract.gamlssZadj)
+
+
 # -- extract.gee (gee) ---------------------------------------------------------
 
 #' @noRd
@@ -2808,6 +2884,134 @@ extract.glmmadmb <- function(model,
 #' @export
 setMethod("extract", signature = className("glmmadmb", "glmmADMB"),
           definition = extract.glmmadmb)
+
+
+# extension for glmmTMB objects (glmmTMB package)
+extract.glmmTMB <- function(model, beside = FALSE, include.count = TRUE,
+                            include.zero = TRUE, include.aic = TRUE,
+                            include.groups = TRUE, include.variance = TRUE,
+                            include.loglik = TRUE, include.nobs = TRUE, ...) {
+  s <- summary(model, ...)
+  if (model$modelInfo$allForm$ziformula == '~0') {
+    include.zero = FALSE
+  }
+  if (length(model$modelInfo$reTrms$cond$flist) == 0) {
+    include.groups = FALSE
+  }
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.groups == TRUE) {
+    grps <- sapply(model$modelInfo$reTrms$cond$flist,
+                   function(x) length(levels(x)))
+    grp.names <- names(grps)
+    grp.names <- paste("Num.\ groups:", grp.names)
+    gof <- c(gof, grps)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
+  }
+  if (include.variance == TRUE && !is.na(s$ngrps)) {
+    vc <- glmmTMB::VarCorr(model)
+    vc <- as.data.frame(rapply(vc, function(x) attr(x, 'stddev')))^2
+    rownames(vc) <- gsub('\\.', ' ', rownames(vc))
+    if (include.zero == TRUE) {
+      for (i in grep('cond', rownames(vc), value = TRUE)) {
+        gof.names <- c(gof.names, paste("Var (count model):",
+                                        sub('cond ', '', i)))
+      }
+      for (i in grep('zi', rownames(vc), value = TRUE)) {
+        gof.names <- c(gof.names, paste("Var (zero model):",
+                                        sub('zi ', '', i)))
+      }
+    }
+    else {
+      for (i in grep('cond', rownames(vc), value = TRUE)) {
+        gof.names <- c(gof.names, paste("Var:",
+                                        sub('cond ', '', i)))
+      }
+    }
+    gof <- c(gof, vc[,1])
+    gof.decimal <- c(gof.decimal, rep(TRUE, nrow(vc)))
+  }
+  count <- coef(s)$cond
+  zero <- coef(s)$zi
+  if (beside == FALSE) {
+    if (include.count == TRUE && include.zero == TRUE) {
+      rownames(count) <- paste("Count model:", rownames(count))
+      rownames(zero) <- paste("Zero model:", rownames(zero))
+      coef.block <- rbind(count, zero)
+    }
+    else if (include.count == TRUE) {
+      coef.block <- count
+    }
+    else if (include.zero == TRUE) {
+      coef.block <- zero
+    }
+    else {
+      stop(paste("Either the include.count or the include.zero argument",
+                 "must be TRUE."))
+    }
+    names <- rownames(coef.block)
+    co <- coef.block[, 1]
+    se <- coef.block[, 2]
+    pval <- coef.block[, 4]
+    tr <- createTexreg(coef.names = names, coef = co, se = se,
+                       pvalues = pval, gof.names = gof.names, gof = gof,
+                       gof.decimal = gof.decimal)
+    return(tr)
+  }
+  else {
+    trList <- list()
+    c.names <- rownames(count)
+    c.co <- count[, 1]
+    c.se <- count[, 2]
+    c.pval <- count[, 4]
+    z.names <- rownames(zero)
+    z.co <- zero[, 1]
+    z.se <- zero[, 2]
+    z.pval <- zero[, 4]
+    if (include.count == TRUE) {
+      tr <- createTexreg(coef.names = c.names, coef = c.co,
+                         se = c.se, pvalues = c.pval, gof.names = gof.names,
+                         gof = gof, gof.decimal = gof.decimal,
+                         model.name = "Count model")
+      trList[[length(trList) + 1]] <- tr
+    }
+    if (include.zero == TRUE) {
+      tr <- createTexreg(coef.names = z.names, coef = z.co,
+                         se = z.se, pvalues = z.pval, gof.names = gof.names,
+                         gof = gof, gof.decimal = gof.decimal,
+                         model.name = "Zero model")
+      trList[[length(trList) + 1]] <- tr
+    }
+    if (length(trList) == 0) {
+      stop(paste("Either the include.count or the include.zero argument",
+                 "must be TRUE."))
+    }
+    return(trList)
+  }
+}
+
+setMethod("extract", signature = className("glmmTMB", "glmmTMB"),
+          definition = extract.glmmTMB)
 
 
 # -- extract.gls (nlme) --------------------------------------------------------
