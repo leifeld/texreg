@@ -4888,7 +4888,7 @@ setMethod("extract", signature = className("pmg", "plm"),
 
 
 # extension for polr objects (MASS package)
-extract.polr <- function(model, include.thresholds = FALSE, include.aic = TRUE,
+extract.polr <- function(model, include.thresholds = TRUE, include.aic = TRUE,
     include.bic = TRUE, include.loglik = TRUE, include.deviance = TRUE,
     include.nobs = TRUE, ...) {
   s <- summary(model, ...)
