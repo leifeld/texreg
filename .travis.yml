@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 
 language: r
 
@@ -17,16 +17,8 @@ addons:
     packages:
       - ghostscript
       - r-cran-ggplot2
-      - r-cran-brglm
-      - r-cran-dynlm
-      - r-cran-fgarch
-      - r-cran-gee
-      - r-cran-gmm
       - r-cran-knitr
       - r-cran-rmarkdown
-      - r-cran-pscl
-      - r-cran-rms
-      - r-cran-broom
       - r-cran-sandwich
       - r-cran-testthat
       - r-cran-nlme
