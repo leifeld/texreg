@@ -22,6 +22,7 @@ addons:
       - r-cran-sandwich
       - r-cran-testthat
       - r-cran-nlme
+      - r-cran-httr
 
 r_packages:
   - covr
