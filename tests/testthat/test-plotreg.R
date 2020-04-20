@@ -1,5 +1,5 @@
 context("plotreg")
-library("texreg")
+suppressPackageStartupMessages(library("texreg"))
 
 skip_if_not_installed("ggplot2")
 require("ggplot2")

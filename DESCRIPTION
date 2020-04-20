@@ -1,6 +1,6 @@
 Package: texreg
-Version: 1.36.24
-Date: 2019-04-29
+Version: 1.36.25
+Date: 2020-04-19
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Author: Philip Leifeld
 Maintainer: Philip Leifeld <philip.leifeld@essex.ac.uk>
@@ -63,6 +63,7 @@ Enhances: AER,
   simex,
   sna,
   spdep,
+  speedglm,
   survey,
   systemfit,
   tergm,
@@ -71,5 +72,4 @@ Enhances: AER,
 Additional_repositories: 
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 6.1.1
-
+RoxygenNote: 7.1.0

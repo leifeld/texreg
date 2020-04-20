@@ -4,8 +4,14 @@
 \alias{override}
 \title{Replace coefs, SEs, p-values, and/or CIs by custom values if provided}
 \usage{
-override(models, override.coef = 0, override.se = 0,
-  override.pvalues = 0, override.ci.low = 0, override.ci.up = 0)
+override(
+  models,
+  override.coef = 0,
+  override.se = 0,
+  override.pvalues = 0,
+  override.ci.low = 0,
+  override.ci.up = 0
+)
 }
 \arguments{
 \item{models}{A list of \linkS4class{texreg} objects (e.g., as returned by

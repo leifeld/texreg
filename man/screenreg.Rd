@@ -4,17 +4,40 @@
 \alias{screenreg}
 \title{Convert regression output to an ASCII table}
 \usage{
-screenreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 0.01,
-  0.05), custom.model.names = NULL, custom.coef.names = NULL,
-  custom.coef.map = NULL, custom.gof.names = NULL,
-  custom.gof.rows = NULL, custom.note = NULL, digits = 2,
-  leading.zero = TRUE, star.symbol = "*", symbol = ".",
-  override.coef = 0, override.se = 0, override.pvalues = 0,
-  override.ci.low = 0, override.ci.up = 0, omit.coef = NULL,
-  reorder.coef = NULL, reorder.gof = NULL, ci.force = FALSE,
-  ci.force.level = 0.95, ci.test = 0, groups = NULL,
-  custom.columns = NULL, custom.col.pos = NULL, column.spacing = 2,
-  outer.rule = "=", inner.rule = "-", ...)
+screenreg(
+  l,
+  file = NULL,
+  single.row = FALSE,
+  stars = c(0.001, 0.01, 0.05),
+  custom.model.names = NULL,
+  custom.coef.names = NULL,
+  custom.coef.map = NULL,
+  custom.gof.names = NULL,
+  custom.gof.rows = NULL,
+  custom.note = NULL,
+  digits = 2,
+  leading.zero = TRUE,
+  star.symbol = "*",
+  symbol = ".",
+  override.coef = 0,
+  override.se = 0,
+  override.pvalues = 0,
+  override.ci.low = 0,
+  override.ci.up = 0,
+  omit.coef = NULL,
+  reorder.coef = NULL,
+  reorder.gof = NULL,
+  ci.force = FALSE,
+  ci.force.level = 0.95,
+  ci.test = 0,
+  groups = NULL,
+  custom.columns = NULL,
+  custom.col.pos = NULL,
+  column.spacing = 2,
+  outer.rule = "=",
+  inner.rule = "-",
+  ...
+)
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of
@@ -80,7 +103,7 @@ behavior.}
   variable", "y" = NA, "z" = "Third variable")}. With that particular example
   of \code{custom.coef.map},
   \enumerate{
-   \item coefficients will presented in order: \code{"x"}, \code{"y"},
+   \item coefficients will be presented in order: \code{"x"}, \code{"y"},
      \code{"z"}.
    \item variable \code{"x"} will appear as \code{"First variable"}, variable
      \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
@@ -204,7 +227,7 @@ argument is processed after the \code{custom.coef.names} argument, so the
 regular expression should refer to the custom coefficient names. To omit
 GOF entries instead of coefficient entries, use the custom arguments of the
 extract functions instead (see the help entry of the \code{\link{extract}}
-function or \code{\link{extract-methods}}.}
+function.}
 
 \item{reorder.coef}{Reorder the rows of the coefficient block of the
 resulting table in a custom way. The argument takes a vector of the same
@@ -306,8 +329,7 @@ Recommended values are \code{""}, \code{"-"}, or \code{"_"}.}
 \item{...}{Custom options to be passed on to the \code{\link{extract}}
 function. For example, most extract methods provide custom options for the
 inclusion or exclusion of specific goodness-of-fit statistics. See the help
-entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
-information.}
+entries of \code{\link{extract}} for more information.}
 }
 \description{
 Conversion of \R regression output to an ASCII table for display on screen.
@@ -339,10 +361,14 @@ Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
 
-Other texreg: \code{\link{htmlreg}},
-  \code{\link{huxtablereg}}, \code{\link{knitreg}},
-  \code{\link{matrixreg}}, \code{\link{plotreg}},
-  \code{\link{texreg}}, \code{\link{wordreg}}
+Other texreg: 
+\code{\link{htmlreg}()},
+\code{\link{huxtablereg}()},
+\code{\link{knitreg}()},
+\code{\link{matrixreg}()},
+\code{\link{plotreg}()},
+\code{\link{texreg}},
+\code{\link{wordreg}()}
 }
 \author{
 Philip Leifeld

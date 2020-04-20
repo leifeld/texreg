@@ -2,14 +2,23 @@
 % Please edit documentation in R/praise.R
 \name{praise}
 \alias{praise}
-\alias{praise,}
 \alias{feedback}
 \title{Publish praise about \pkg{texreg}}
 \usage{
-praise(academic_user, organization, name = NULL, general_praise = NULL,
-  increase_productivity = NULL, increase_quality = NULL,
-  start_using = NULL, where_learn = NULL, contact_details = NULL,
-  models = NULL, num_users = NULL, return.response = FALSE)
+praise(
+  academic_user,
+  organization,
+  name = NULL,
+  general_praise = NULL,
+  increase_productivity = NULL,
+  increase_quality = NULL,
+  start_using = NULL,
+  where_learn = NULL,
+  contact_details = NULL,
+  models = NULL,
+  num_users = NULL,
+  return.response = FALSE
+)
 }
 \arguments{
 \item{academic_user}{Should be \code{TRUE} if you are at a university or

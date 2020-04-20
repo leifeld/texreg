@@ -4,15 +4,34 @@
 \alias{plotreg}
 \title{Create coefficient plots from statistical model output using \pkg{ggplot2}.}
 \usage{
-plotreg(l, file = NULL, custom.model.names = NULL,
-  custom.title = NULL, custom.coef.names = NULL,
-  custom.coef.map = NULL, custom.note = NULL, override.coef = 0,
-  override.se = 0, override.pval = 0, override.ci.low = 0,
-  override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL,
-  ci.level = 0.95, ci.inner = 0.5, use.se = FALSE, type = "facet",
-  theme = NULL, signif.light = "#FBC9B9", signif.medium = "#F7523A",
-  signif.dark = "#BD0017", insignif.light = "#C5DBE9",
-  insignif.medium = "#5A9ECC", insignif.dark = "#1C5BA6", ...)
+plotreg(
+  l,
+  file = NULL,
+  custom.model.names = NULL,
+  custom.title = NULL,
+  custom.coef.names = NULL,
+  custom.coef.map = NULL,
+  custom.note = NULL,
+  override.coef = 0,
+  override.se = 0,
+  override.pval = 0,
+  override.ci.low = 0,
+  override.ci.up = 0,
+  omit.coef = NULL,
+  reorder.coef = NULL,
+  ci.level = 0.95,
+  ci.inner = 0.5,
+  use.se = FALSE,
+  type = "facet",
+  theme = NULL,
+  signif.light = "#FBC9B9",
+  signif.medium = "#F7523A",
+  signif.dark = "#BD0017",
+  insignif.light = "#C5DBE9",
+  insignif.medium = "#5A9ECC",
+  insignif.dark = "#1C5BA6",
+  ...
+)
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of
@@ -67,7 +86,7 @@ title will be omitted completely.}
   variable", "y" = NA, "z" = "Third variable")}. With that particular example
   of \code{custom.coef.map},
   \enumerate{
-   \item coefficients will presented in order: \code{"x"}, \code{"y"},
+   \item coefficients will be presented in order: \code{"x"}, \code{"y"},
      \code{"z"}.
    \item variable \code{"x"} will appear as \code{"First variable"}, variable
      \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
@@ -140,7 +159,7 @@ argument is processed after the \code{custom.coef.names} argument, so the
 regular expression should refer to the custom coefficient names. To omit
 GOF entries instead of coefficient entries, use the custom arguments of the
 extract functions instead (see the help entry of the \code{\link{extract}}
-function or \code{\link{extract-methods}}.}
+function.}
 
 \item{reorder.coef}{Reorder the rows of the coefficient block of the
 resulting table in a custom way. The argument takes a vector of the same
@@ -203,8 +222,7 @@ model terms.}
 \item{...}{Custom options to be passed on to the \code{\link{extract}}
 function. For example, most extract methods provide custom options for the
 inclusion or exclusion of specific goodness-of-fit statistics. See the help
-entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
-information.}
+entries of \code{\link{extract}} for more information.}
 }
 \value{
 Coefficient plot as a \pkg{ggplot2} \code{gg} object if
@@ -220,17 +238,17 @@ applied to point estimates and confidence intervals) and works much like the
 \code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a
 single model or multiple statistical models as input and internally extracts
 the relevant data from the models. If confidence intervals are not defined in
-the extract method of a statistical model (see \link{extract} and
-\link{extract-methods}), the default standard errors are converted to
-confidence intervals. Most of the arguments work like in the
-\code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}}
-\code{\link{matrixreg}}, and \code{\link{wordreg}} functions. It is possible
-to display the plots in two ways: using the \code{type = "facet"} argument,
-one forest plot applied to point estimates and confidence intervals will be
-visualized in case there is only one model. If there is more than one model,
-each one will be plotted next to the other as a separate facet; using the
-\code{type = "forest"} argument, coefficients from one or more models will be
-grouped together and displayed as a single forest plot.
+the extract method of a statistical model (see \link{extract}), the default
+standard errors are converted to confidence intervals. Most of the arguments
+work like in the \code{\link{screenreg}}, \code{\link{texreg}}, and
+\code{\link{htmlreg}} \code{\link{matrixreg}}, and \code{\link{wordreg}}
+functions. It is possible to display the plots in two ways: using the
+\code{type = "facet"} argument, one forest plot applied to point estimates
+and confidence intervals will be visualized in case there is only one model.
+If there is more than one model, each one will be plotted next to the other
+as a separate facet; using the \code{type = "forest"} argument, coefficients
+from one or more models will be grouped together and displayed as a single
+forest plot.
 }
 \examples{
 \dontrun{
@@ -257,12 +275,16 @@ plotreg(list(lm.D9, lm.D90), type = "forest")
 }
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
-  \code{\link{extract-methods}} \code{\link{texreg}} \code{\link{matrixreg}}
+  \code{\link{texreg}} \code{\link{matrixreg}}
 
-Other texreg: \code{\link{htmlreg}},
-  \code{\link{huxtablereg}}, \code{\link{knitreg}},
-  \code{\link{matrixreg}}, \code{\link{screenreg}},
-  \code{\link{texreg}}, \code{\link{wordreg}}
+Other texreg: 
+\code{\link{htmlreg}()},
+\code{\link{huxtablereg}()},
+\code{\link{knitreg}()},
+\code{\link{matrixreg}()},
+\code{\link{screenreg}()},
+\code{\link{texreg}},
+\code{\link{wordreg}()}
 }
 \author{
 Claudia Zucca, Philip Leifeld

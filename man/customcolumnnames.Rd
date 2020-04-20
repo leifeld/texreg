@@ -4,8 +4,7 @@
 \alias{customcolumnnames}
 \title{Determine column names or column types if custom columns are present}
 \usage{
-customcolumnnames(modelnames, custom.columns, custom.col.pos,
-  types = FALSE)
+customcolumnnames(modelnames, custom.columns, custom.col.pos, types = FALSE)
 }
 \arguments{
 \item{modelnames}{A \code{character} vector of original model names, before

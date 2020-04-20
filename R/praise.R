@@ -113,7 +113,7 @@
 #'   free to e-mail your praise to the package maintainer directly.
 #'
 #' @author Philip Leifeld
-#' @aliases praise, feedback
+#' @aliases praise feedback
 #'
 #' @examples
 #' \dontrun{

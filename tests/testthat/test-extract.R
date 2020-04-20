@@ -1,5 +1,5 @@
 context("extract methods")
-library("texreg")
+suppressPackageStartupMessages(library("texreg"))
 
 # brmsfit (brms) ----
 test_that("extract brmsfit objects from the brms package", {
@@ -223,6 +223,27 @@ test_that("extract nlmerMod objects from the lme4 package", {
   expect_length(tr_wald@se, 0)
   expect_length(tr_wald@ci.low, 3)
   expect_length(tr_wald@ci.up, 3)
+})
+
+# speedglm (speedglm) ----
+test_that("extract speedglm objects from the speedglm package", {
+  skip_if_not_installed("speedglm")
+  require("speedglm")
+  set.seed(12345)
+  n <- 50000
+  k <- 80
+  y <- rgamma(n, 1.5, 1)
+  x <-round( matrix(rnorm(n * k), n, k), digits = 3)
+  colnames(x) <-paste("s", 1:k, sep = "")
+  da <- data.frame(y, x)
+  fo <- as.formula(paste("y ~", paste(paste("s", 1:k, sep = ""), collapse = " + ")))
+  m3 <- speedglm(fo, data = da, family = Gamma(log))
+  tr <- extract(m3)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 81)
+  expect_equivalent(tr@gof.names, c("AIC", "BIC", "Log Likelihood", "Deviance", "Num. obs."))
+  expect_equivalent(which(tr@pvalues < 0.05), integer())
+  expect_equivalent(which(tr@gof.decimal), c(1, 2, 3, 4))
 })
 
 # speedlm (speedglm) ----

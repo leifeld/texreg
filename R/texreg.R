@@ -694,7 +694,7 @@ knitreg <- function(...) {
 #'   variable", "y" = NA, "z" = "Third variable")}. With that particular example
 #'   of \code{custom.coef.map},
 #'   \enumerate{
-#'    \item coefficients will presented in order: \code{"x"}, \code{"y"},
+#'    \item coefficients will be presented in order: \code{"x"}, \code{"y"},
 #'      \code{"z"}.
 #'    \item variable \code{"x"} will appear as \code{"First variable"}, variable
 #'      \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
@@ -796,7 +796,7 @@ knitreg <- function(...) {
 #'   regular expression should refer to the custom coefficient names. To omit
 #'   GOF entries instead of coefficient entries, use the custom arguments of the
 #'   extract functions instead (see the help entry of the \code{\link{extract}}
-#'   function or \code{\link{extract-methods}}.
+#'   function.
 #' @param reorder.coef Reorder the rows of the coefficient block of the
 #'   resulting table in a custom way. The argument takes a vector of the same
 #'   length as the number of coefficients. For example, if there are three
@@ -898,15 +898,14 @@ knitreg <- function(...) {
 #' @param ... Custom options to be passed on to the \code{\link{extract}}
 #'   function. For example, most extract methods provide custom options for the
 #'   inclusion or exclusion of specific goodness-of-fit statistics. See the help
-#'   entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
-#'   information.
+#'   entries of \code{\link{extract}} for more information.
 #' @return A \code{character} matrix with the coefficients and goodness-of-fit
 #'   statistics and their column names.
 #'
 #' @author Philip Leifeld
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
-#'   \code{\link{extract-methods}} \code{\link{texreg}}
+#'   \code{\link{texreg}}
 #'
 #' @importFrom stats qnorm
 #' @export
@@ -1935,17 +1934,17 @@ print.texregTable <- function(x, ...) {
 #' \code{\link{matrixreg}} and \code{\link{wordreg}} functions. It accepts a
 #' single model or multiple statistical models as input and internally extracts
 #' the relevant data from the models. If confidence intervals are not defined in
-#' the extract method of a statistical model (see \link{extract} and
-#' \link{extract-methods}), the default standard errors are converted to
-#' confidence intervals. Most of the arguments work like in the
-#' \code{\link{screenreg}}, \code{\link{texreg}}, and \code{\link{htmlreg}}
-#' \code{\link{matrixreg}}, and \code{\link{wordreg}} functions. It is possible
-#' to display the plots in two ways: using the \code{type = "facet"} argument,
-#' one forest plot applied to point estimates and confidence intervals will be
-#' visualized in case there is only one model. If there is more than one model,
-#' each one will be plotted next to the other as a separate facet; using the
-#' \code{type = "forest"} argument, coefficients from one or more models will be
-#' grouped together and displayed as a single forest plot.
+#' the extract method of a statistical model (see \link{extract}), the default
+#' standard errors are converted to confidence intervals. Most of the arguments
+#' work like in the \code{\link{screenreg}}, \code{\link{texreg}}, and
+#' \code{\link{htmlreg}} \code{\link{matrixreg}}, and \code{\link{wordreg}}
+#' functions. It is possible to display the plots in two ways: using the
+#' \code{type = "facet"} argument, one forest plot applied to point estimates
+#' and confidence intervals will be visualized in case there is only one model.
+#' If there is more than one model, each one will be plotted next to the other
+#' as a separate facet; using the \code{type = "forest"} argument, coefficients
+#' from one or more models will be grouped together and displayed as a single
+#' forest plot.
 #'
 #' @param custom.title With this argument, a replacement text for the
 #'   \code{ggtitle}, which provides a title above the diagram, can be provided.
@@ -2006,7 +2005,7 @@ print.texregTable <- function(x, ...) {
 #' @author Claudia Zucca, Philip Leifeld
 #' @family texreg
 #' @seealso \code{\link{texreg-package}} \code{\link{extract}}
-#'   \code{\link{extract-methods}} \code{\link{texreg}} \code{\link{matrixreg}}
+#'   \code{\link{texreg}} \code{\link{matrixreg}}
 #'
 #' @examples
 #' \dontrun{
@@ -4036,7 +4035,6 @@ reorder <- function(mat, new.order) {
 #'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
 #'
 #' @examples
-#'
 #' library("nlme")  # load library for fitting linear mixed effects models
 #' model <- lme(distance ~ age, data = Orthodont, random = ~ 1)  # estimate
 #' coefficient.names <- rownames(summary(model)$tTable)  # extract coef names

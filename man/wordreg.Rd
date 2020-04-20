@@ -4,16 +4,36 @@
 \alias{wordreg}
 \title{Export regression output to an MS Word file}
 \usage{
-wordreg(l, file = NULL, single.row = FALSE, stars = c(0.001, 0.01,
-  0.05), custom.model.names = NULL, custom.coef.names = NULL,
-  custom.coef.map = NULL, custom.gof.names = NULL,
-  custom.gof.rows = NULL, digits = 2, leading.zero = TRUE,
-  star.symbol = star.symbol, symbol = ".", override.coef = 0,
-  override.se = 0, override.pvalues = 0, override.ci.low = 0,
-  override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL,
-  reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95,
-  ci.test = 0, groups = NULL, custom.columns = NULL,
-  custom.col.pos = NULL, ...)
+wordreg(
+  l,
+  file = NULL,
+  single.row = FALSE,
+  stars = c(0.001, 0.01, 0.05),
+  custom.model.names = NULL,
+  custom.coef.names = NULL,
+  custom.coef.map = NULL,
+  custom.gof.names = NULL,
+  custom.gof.rows = NULL,
+  digits = 2,
+  leading.zero = TRUE,
+  star.symbol = star.symbol,
+  symbol = ".",
+  override.coef = 0,
+  override.se = 0,
+  override.pvalues = 0,
+  override.ci.low = 0,
+  override.ci.up = 0,
+  omit.coef = NULL,
+  reorder.coef = NULL,
+  reorder.gof = NULL,
+  ci.force = FALSE,
+  ci.force.level = 0.95,
+  ci.test = 0,
+  groups = NULL,
+  custom.columns = NULL,
+  custom.col.pos = NULL,
+  ...
+)
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of
@@ -79,7 +99,7 @@ behavior.}
   variable", "y" = NA, "z" = "Third variable")}. With that particular example
   of \code{custom.coef.map},
   \enumerate{
-   \item coefficients will presented in order: \code{"x"}, \code{"y"},
+   \item coefficients will be presented in order: \code{"x"}, \code{"y"},
      \code{"z"}.
    \item variable \code{"x"} will appear as \code{"First variable"}, variable
      \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
@@ -193,7 +213,7 @@ argument is processed after the \code{custom.coef.names} argument, so the
 regular expression should refer to the custom coefficient names. To omit
 GOF entries instead of coefficient entries, use the custom arguments of the
 extract functions instead (see the help entry of the \code{\link{extract}}
-function or \code{\link{extract-methods}}.}
+function.}
 
 \item{reorder.coef}{Reorder the rows of the coefficient block of the
 resulting table in a custom way. The argument takes a vector of the same
@@ -280,8 +300,7 @@ usually contains the coefficient names.}
 \item{...}{Custom options to be passed on to the \code{\link{extract}}
 function. For example, most extract methods provide custom options for the
 inclusion or exclusion of specific goodness-of-fit statistics. See the help
-entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
-information.}
+entries of \code{\link{extract}} for more information.}
 }
 \description{
 Export regression output to an MS Word file.
@@ -305,10 +324,14 @@ unlink("testfile.doc")
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
 
-Other texreg: \code{\link{htmlreg}},
-  \code{\link{huxtablereg}}, \code{\link{knitreg}},
-  \code{\link{matrixreg}}, \code{\link{plotreg}},
-  \code{\link{screenreg}}, \code{\link{texreg}}
+Other texreg: 
+\code{\link{htmlreg}()},
+\code{\link{huxtablereg}()},
+\code{\link{knitreg}()},
+\code{\link{matrixreg}()},
+\code{\link{plotreg}()},
+\code{\link{screenreg}()},
+\code{\link{texreg}}
 }
 \author{
 Vincent Arel-Bundock

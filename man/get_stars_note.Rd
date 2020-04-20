@@ -4,9 +4,15 @@
 \alias{get_stars_note}
 \title{Create a legend for the stars in a regression table}
 \usage{
-get_stars_note(stars = c(0.01, 0.05, 0.1), star.symbol = "*",
-  symbol = ".", ci = FALSE, ci.test = NULL, css.sup = NULL,
-  output = "ascii")
+get_stars_note(
+  stars = c(0.01, 0.05, 0.1),
+  star.symbol = "*",
+  symbol = ".",
+  ci = FALSE,
+  ci.test = NULL,
+  css.sup = NULL,
+  output = "ascii"
+)
 }
 \arguments{
 \item{stars}{A numeric vector of cut-offs, with a maximum of four numbers.}
