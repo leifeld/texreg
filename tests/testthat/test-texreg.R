@@ -133,7 +133,7 @@ test_that("knitreg function works", {
 test_that("matrixreg function works", {
   expect_equal(nrow(matrixreg(model1)), 8)
   expect_equal(ncol(matrixreg(model1)), 2)
-  expect_equal(class(matrixreg(model1)), "matrix")
+  expect_equal(class(matrixreg(model1))[1], "matrix")
   expect_error(matrixreg(model1, custom.coef.map = list("Intercept" = "My intercept")), "None of the coefficient")
   mr <- matrixreg(model1, custom.coef.map = list("(Intercept)" = "My intercept"))
   expect_equal(nrow(mr), 6)

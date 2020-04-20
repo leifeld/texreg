@@ -4779,7 +4779,7 @@ extract.multinom <- function(model,
   co <- s$coefficients
   se <- s$standard.errors
 
-  if (class(co) != "matrix") {
+  if (!"matrix" %in% class(co)) {
     co <- t(as.matrix(co))
     se <- t(as.matrix(se))
   }

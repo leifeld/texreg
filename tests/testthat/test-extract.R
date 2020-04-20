@@ -95,7 +95,7 @@ test_that("extract glmerMod objects from the lme4 package", {
   gm1 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
                data = cbpp,
                family = binomial)
-  expect_equivalent(class(gm1), "glmerMod")
+  expect_equivalent(class(gm1)[1], "glmerMod")
   tr <- extract(gm1, include.dic = TRUE, include.deviance = TRUE)
   expect_equivalent(tr@coef, c(-1.40, -0.99, -1.13, -1.58), tolerance = 1e-2)
   expect_equivalent(tr@se, c(0.23, 0.30, 0.32, 0.42), tolerance = 1e-2)
@@ -179,7 +179,7 @@ test_that("extract lmerMod objects from the lme4 package", {
   tr2_profile <- extract(fm2, method = "profile", nsim = 5)
   tr2_boot <- suppressWarnings(extract(fm2, method = "boot", nsim = 5))
   tr2_wald <- extract(fm2, method = "Wald")
-  expect_equivalent(class(fm1), "lmerMod")
+  expect_equivalent(class(fm1)[1], "lmerMod")
   expect_equivalent(tr1@coef, c(251.41, 10.47), tolerance = 1e-2)
   expect_equivalent(tr1@coef, tr1_ML@coef, tolerance = 1e-2)
   expect_equivalent(tr1@se, c(6.82, 1.55), tolerance = 1e-2)
@@ -208,7 +208,7 @@ test_that("extract nlmerMod objects from the lme4 package", {
   nm1 <- nlmer(circumference ~ SSlogis(age, Asym, xmid, scal) ~ Asym|Tree,
                Orange,
                start = startvec)
-  expect_equivalent(class(nm1), "nlmerMod")
+  expect_equivalent(class(nm1)[1], "nlmerMod")
   expect_warning(extract(nm1, include.dic = TRUE, include.deviance = TRUE),
                  "falling back to var-cov estimated from RX")
   tr <- suppressWarnings(extract(nm1, include.dic = TRUE, include.deviance = TRUE))
