@@ -197,6 +197,7 @@ extract.ARIMA <- function (model,
 #' @method extract ARIMA
 #' @aliases extract.ARIMA
 #' @family extract
+#' @rdname extract-Arima-method
 #' @export
 setMethod("extract",
           signature = className("ARIMA", "forecast"),
@@ -1051,7 +1052,6 @@ extract.clogit <- function(model,
 #'   block?
 #' @param include.rsquared Report R^2 in the GOF block?
 #' @param include.maxrs Report maximal R^2 in the GOF block?
-#' @param include.loglik Report the log likelihood in the GOF block?
 #' @param include.events Report the number of events in the GOF block?
 #' @param include.nobs Report the number of observations in the GOF block?
 #' @param include.missings Report number of missing data points in the GOF
@@ -2162,7 +2162,6 @@ extract.gam <- function(model,
 #' @param include.rsquared Report R^2 in the GOF block?
 #' @param include.gcv Report the GCV score?
 #' @param include.nobs Report the number of observations in the GOF block?
-#' @param include.groups Report the number of groups?
 #' @param include.nsmooth Report the number of smooth terms?
 #' @param ... Custom parameters, which are handed over to subroutines, in this
 #'   case to the \code{summary} method for the object.
@@ -3116,6 +3115,8 @@ extract.H2OBinomialModel <- function(model,
 #' the \code{\link[h2o]{h2o.glm}} function in the \pkg{h2o} package.
 #'
 #' @param model A statistical model object.
+#' @param standardized Report standardized coefficients instead of raw
+#'   coefficients?
 #' @param include.mse Report the mean squared error in the GOF block?
 #' @param include.rsquared Report R^2 in the GOF block?
 #' @param include.logloss Report the log loss?
@@ -3742,8 +3743,8 @@ extract.glmrob <- extract.lmrob
 #'
 #' @inheritParams extract,lmrob-method
 #'
-#' @method extract lmrob
-#' @aliases extract.lmrob
+#' @method extract glmrob
+#' @aliases extract.glmrob
 #' @family extract
 #' @export
 setMethod("extract", signature = className("glmrob", "robustbase"),
@@ -3813,6 +3814,7 @@ extract.lmRob <- function(model, include.rsquared = TRUE,
 #' @method extract lmRob
 #' @aliases extract.lmRob
 #' @family extract
+#' @rdname extract-lmrob-method
 #' @export
 setMethod("extract", signature = className("lmRob", "robust"),
           definition = extract.lmRob)
@@ -6036,7 +6038,6 @@ extract.rem.dyad <- function(model,
 #' @param model A statistical model object.
 #' @param include.nvertices Report the number of vertices in a STERGM?
 #' @param include.events Report the number of events in the GOF block?
-#' @param include.thresholds Report thresholds in the GOF block?
 #' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
 #'   block?
 #' @param include.aicc Report AICC in the GOF block?
@@ -6891,6 +6892,7 @@ extract.summary.lm <- function (model,
 #'
 #' @param model A statistical model object.
 #' @param include.rsquared Report R^2 in the GOF block?
+#' @param include.adjrs Report adjusted R^2 in the GOF block?
 #' @param include.nobs Report the number of observations in the GOF block?
 #' @param include.fstatistic Report the F-statistic in the GOF block?
 #' @param include.rmse Report the root mean square error (RMSE; = residual
@@ -7919,6 +7921,7 @@ extract.zelig <- function(model,
 #' @method extract zelig
 #' @aliases extract.zelig
 #' @family extract
+#' @rdname extract-Zelig-method
 #' @importFrom stats pt AIC BIC logLik deviance
 #' @export
 setMethod("extract", signature = className("zelig", "Zelig"),

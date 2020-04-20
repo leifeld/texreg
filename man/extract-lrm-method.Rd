@@ -43,10 +43,8 @@ not in use.}
 \seealso{
 Other extract: 
 \code{\link{extract,ANY-method}},
-\code{\link{extract,ARIMA-method}},
 \code{\link{extract,Arima-method}},
 \code{\link{extract,H2OBinomialModel-method}},
-\code{\link{extract,Zelig-method}},
 \code{\link{extract,aftreg-method}},
 \code{\link{extract,averaging-method}},
 \code{\link{extract,bam-method}},
@@ -91,7 +89,6 @@ Other extract:
 \code{\link{extract,gnm-method}},
 \code{\link{extract,hurdle-method}},
 \code{\link{extract,lm-method}},
-\code{\link{extract,lmRob-method}},
 \code{\link{extract,lme-method}},
 \code{\link{extract,lme4-method}},
 \code{\link{extract,lmerMod-method}},
@@ -153,10 +150,8 @@ Other extract:
 
 Other extract: 
 \code{\link{extract,ANY-method}},
-\code{\link{extract,ARIMA-method}},
 \code{\link{extract,Arima-method}},
 \code{\link{extract,H2OBinomialModel-method}},
-\code{\link{extract,Zelig-method}},
 \code{\link{extract,aftreg-method}},
 \code{\link{extract,averaging-method}},
 \code{\link{extract,bam-method}},
@@ -201,7 +196,6 @@ Other extract:
 \code{\link{extract,gnm-method}},
 \code{\link{extract,hurdle-method}},
 \code{\link{extract,lm-method}},
-\code{\link{extract,lmRob-method}},
 \code{\link{extract,lme-method}},
 \code{\link{extract,lme4-method}},
 \code{\link{extract,lmerMod-method}},

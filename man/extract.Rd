@@ -11,8 +11,7 @@ extract(model, ...)
 
 \item{...}{Custom parameters, which are handed over to subroutines. The
 arguments are usually passed to the \code{summary} function, but in some
-cases to other functions, such as the \code{\link[lme4]{fixef}} function in
-the \pkg{lme4} package.}
+cases to other functions.}
 }
 \value{
 The function returns a \linkS4class{texreg} object.
@@ -53,10 +52,8 @@ Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 
 Other extract: 
 \code{\link{extract,ANY-method}},
-\code{\link{extract,ARIMA-method}},
 \code{\link{extract,Arima-method}},
 \code{\link{extract,H2OBinomialModel-method}},
-\code{\link{extract,Zelig-method}},
 \code{\link{extract,aftreg-method}},
 \code{\link{extract,averaging-method}},
 \code{\link{extract,bam-method}},
@@ -101,7 +98,6 @@ Other extract:
 \code{\link{extract,gnm-method}},
 \code{\link{extract,hurdle-method}},
 \code{\link{extract,lm-method}},
-\code{\link{extract,lmRob-method}},
 \code{\link{extract,lme-method}},
 \code{\link{extract,lme4-method}},
 \code{\link{extract,lmerMod-method}},
