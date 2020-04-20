@@ -52,7 +52,6 @@ r_packages:
   - simex
   - systemfit
   - tergm
-  - xergm
 
 notifications:
   email:
