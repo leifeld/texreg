@@ -16,9 +16,6 @@ addons:
   apt:
     packages:
       - ghostscript
-      - r-cran-rcpp
-      - r-cran-mcmcpack
-      - libudunits2-dev
       - r-cran-ggplot2
       - r-cran-brglm
       - r-cran-dynlm
@@ -29,29 +26,13 @@ addons:
       - r-cran-rmarkdown
       - r-cran-pscl
       - r-cran-rms
-      - r-cran-amelia
+      - r-cran-broom
+      - r-cran-sandwich
+      - r-cran-testthat
+      - r-cran-nlme
 
 r_packages:
-  - biglm
   - covr
-  - betareg
-  - censReg
-  - eha
-  - erer
-  - gamlss
-  - h2o
-  - latentnet
-  - lqmm
-  - mfx
-  - mlogit
-  - MuMIn
-  - ordinal
-  - panelAR
-  - relevent
-  - sampleSelection
-  - simex
-  - systemfit
-  - tergm
 
 notifications:
   email:
