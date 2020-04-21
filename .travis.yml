@@ -20,12 +20,12 @@ addons:
       - r-cran-knitr
       - r-cran-rmarkdown
       - r-cran-sandwich
-      - r-cran-testthat
       - r-cran-nlme
       - r-cran-lmtest
+      - r-cran-httr
 
 r_packages:
-  - httr
+  - testthat
   - covr
 
 notifications:
