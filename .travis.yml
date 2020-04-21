@@ -16,15 +16,15 @@ addons:
   apt:
     packages:
       - ghostscript
-      - r-cran-ggplot2
-      - r-cran-rmarkdown
       - r-cran-sandwich
       - r-cran-nlme
       - r-cran-lmtest
-      - r-cran-httr
 
 r_packages:
   - knitr
+  - rmarkdown
+  - httr
+  - ggplot2
   - testthat
   - covr
 
