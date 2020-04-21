@@ -4356,29 +4356,6 @@ setMethod("extract", signature = className("lrm", "rms"),
           definition = extract.lrm)
 
 
-# -- extract.lrm (Design) ------------------------------------------------------
-
-#' \code{\link{extract}} method for \code{lrm} objects
-#'
-#' \code{\link{extract}} method for \code{lrm} objects created by the
-#' \code{lrm} function in the \pkg{Design} package.
-#'
-#' @param model A statistical model object.
-#' @param include.pseudors Report pseudo R^2 in the GOF block?
-#' @param include.lr Report likelihood ratio test?
-#' @param include.nobs Report the number of observations in the GOF block?
-#' @param ... Custom parameters, which are handed over to subroutines. Currently
-#'   not in use.
-#'
-#' @method extract lrm
-#' @aliases extract.lrm
-#' @family extract
-#' @importFrom stats pnorm
-#' @export
-setMethod("extract", signature = className("lrm", "Design"),
-          definition = extract.lrm)
-
-
 # -- extract.maBina (erer) -----------------------------------------------------
 
 #' @noRd

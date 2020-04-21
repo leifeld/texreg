@@ -27,7 +27,6 @@ Enhances: AER,
   brms (>= 2.8.8),
   btergm,
   censReg,
-  Design,
   dynlm,
   eha,
   erer,
@@ -81,7 +80,8 @@ Enhances: AER,
   tergm,
   VGAM,
   Zelig
-Additional_repositories: 
+Additional_repositories: http://r-forge.r-project.org/
+System_Requirements: tikz/pgf
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0
