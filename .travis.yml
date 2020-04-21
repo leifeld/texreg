@@ -22,10 +22,10 @@ addons:
       - r-cran-sandwich
       - r-cran-testthat
       - r-cran-nlme
-      - r-cran-httr
       - r-cran-lmtest
 
 r_packages:
+  - httr
   - covr
 
 notifications:
