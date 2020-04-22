@@ -8,6 +8,8 @@ r:
 
 sudo: false
 
+cache: packages
+
 r_check_args: --as-cran
 
 addons:
@@ -33,6 +35,9 @@ notifications:
       - claudia.zucca@glasgow.ac.uk
     on_success: change
     on_failure: change
-
+    
+before_script:
+   - Rscript -e "install.packages('lmtest')
+   
 after_success:
-- Rscript -e 'library(covr); codecov()'
+   - Rscript -e 'library(covr); codecov()'
