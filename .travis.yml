@@ -8,8 +8,6 @@ r:
 
 sudo: false
 
-cache: packages
-
 r_check_args: --as-cran
 
 addons:
