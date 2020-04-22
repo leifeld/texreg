@@ -18,14 +18,6 @@ addons:
       - ghostscript
 
 r_packages:
-  - lmtest
-  - sandwich
-  - nlme
-  - knitr
-  - rmarkdown
-  - httr
-  - ggplot2
-  - testthat
   - covr
 
 notifications:
