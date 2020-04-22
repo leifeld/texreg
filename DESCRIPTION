@@ -15,7 +15,8 @@ Suggests:
   knitr (>= 1.22),
   rmarkdown (>= 1.12),
   sandwich (>= 2.3-1),
-  testthat (>= 2.0.0)
+  testthat (>= 2.0.0),
+  lmtest (>= 0.9-34)
 Depends: R (>= 3.5)
 Imports: methods, grDevices, stats, httr
 Enhances: AER,
@@ -44,7 +45,6 @@ Enhances: AER,
   latentnet,
   lfe,
   lme4,
-  lmtest,
   lqmm,
   MASS,
   metaSEM,

@@ -35,9 +35,6 @@ notifications:
       - claudia.zucca@glasgow.ac.uk
     on_success: change
     on_failure: change
-    
-before_script:
-   - Rscript -e "install.packages('lmtest')
-   
+
 after_success:
    - Rscript -e 'library(covr); codecov()'
