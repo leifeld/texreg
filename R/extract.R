@@ -3,8 +3,8 @@
 #' Extract details from statistical models for table construction
 #'
 #' Extract details from statistical models for table construction. The function
-#' has methods for a range of statistical models, which are listed at the bottom
-#' of this help page.
+#' has methods for a range of statistical models, which are listed on the help
+#' page of the \pkg{texreg} package, by typing \code{help(package = "texreg")}.
 #'
 #' The \code{\link{extract}} function serves to retrieve coefficients, standard
 #' errors, p-values, confidence intervals, and goodness-of-fit statistics from
@@ -31,7 +31,6 @@
 #'   cases to other functions.
 #' @return The function returns a \linkS4class{texreg} object.
 #'
-#' @family extract
 #' @author Philip Leifeld
 #' @seealso \code{\link{createTexreg}}, \code{\link{matrixreg}},
 #'   \code{\link{screenreg}}, \code{\link{texreg}}
@@ -110,7 +109,6 @@ extract.Arima <- function(model, include.pvalues = TRUE, include.aic = TRUE,
 #'
 #' @method extract Arima
 #' @aliases extract.Arima
-#' @family extract
 #' @importFrom stats pnorm
 #' @export
 setMethod("extract", signature = className("Arima", "stats"),
@@ -196,7 +194,6 @@ extract.ARIMA <- function (model,
 #'
 #' @method extract ARIMA
 #' @aliases extract.ARIMA
-#' @family extract
 #' @rdname extract-Arima-method
 #' @export
 setMethod("extract",
@@ -265,7 +262,6 @@ extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
 #'
 #' @method extract averaging
 #' @aliases extract.averaging
-#' @family extract
 #' @importFrom stats confint
 #' @export
 setMethod("extract", signature = className("averaging", "MuMIn"),
@@ -327,7 +323,6 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
 #'
 #' @method extract betamfx
 #' @aliases extract.betamfx
-#' @family extract
 #' @export
 setMethod("extract", signature = className("betamfx", "mfx"),
           definition = extract.betamfx)
@@ -388,7 +383,6 @@ extract.betaor <- function(model, include.pseudors = TRUE,
 #'
 #' @method extract betaor
 #' @aliases extract.betaor
-#' @family extract
 #' @export
 setMethod("extract", signature = className("betaor", "mfx"),
           definition = extract.betaor)
@@ -463,7 +457,6 @@ extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE,
 #'
 #' @method extract bife
 #' @aliases extract.bife
-#' @family extract
 #' @author Christoph Riedl, Claudia Zucca, Philip Leifeld
 #' @export
 setMethod("extract", signature = className("bife", "bife"),
@@ -547,7 +540,6 @@ extract.broom <- function(model, ...) {
 #'
 #' @method extract broom
 #' @aliases extract.broom extract.ANY extract.ANY-method extract,ANY-method
-#' @family extract
 #' @importFrom stats na.omit
 #' @export
 setMethod("extract", signature = className("ANY"), definition = extract.broom)
@@ -616,7 +608,6 @@ extract.biglm <- function(model, include.nobs = TRUE, include.aic = TRUE,
 #' @method extract biglm
 #' @aliases extract.biglm
 #' @author Claudia Zucca, Philip Leifeld
-#' @family extract
 #' @export
 setMethod("extract", signature = className("biglm", "biglm"),
           definition = extract.biglm)
@@ -665,7 +656,6 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
 #'
 #' @method extract btergm
 #' @aliases extract.btergm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("btergm", "btergm"),
           definition = extract.btergm)
@@ -737,7 +727,6 @@ extract.censReg <- function(model, include.aic = TRUE, include.bic = TRUE,
 #'
 #' @method extract censReg
 #' @aliases extract.censReg
-#' @family extract
 #' @export
 setMethod("extract", signature = className("censReg", "censReg"),
           definition = extract.censReg)
@@ -836,7 +825,6 @@ extract.clm <- function(model,
 #'
 #' @method extract clm
 #' @aliases extract.clm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("clm", "ordinal"),
           definition = extract.clm)
@@ -960,7 +948,6 @@ extract.clmm <- function(model,
 #'
 #' @method extract clmm
 #' @aliases extract.clmm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("clmm", "ordinal"),
           definition = extract.clmm)
@@ -1061,7 +1048,6 @@ extract.clogit <- function(model,
 #'
 #' @method extract clogit
 #' @aliases extract.clogit
-#' @family extract
 #' @importFrom stats extractAIC
 #' @export
 setMethod("extract", signature = className("clogit", "survival"),
@@ -1098,7 +1084,6 @@ extract.coeftest <- function(model, ...) {
 #'
 #' @method extract coeftest
 #' @aliases extract.coeftest
-#' @family extract
 #' @export
 setMethod("extract", signature = className("coeftest", "lmtest"),
           definition = extract.coeftest)
@@ -1208,7 +1193,6 @@ extract.coxph <- function(model,
 #'
 #' @method extract coxph
 #' @aliases extract.coxph
-#' @family extract
 #' @importFrom stats extractAIC pchisq
 #' @export
 setMethod("extract", signature = className("coxph", "survival"),
@@ -1303,7 +1287,6 @@ extract.coxph.penal <- function(model,
 #'
 #' @method extract coxph.penal
 #' @aliases extract.coxph.penal
-#' @family extract
 #' @export
 setMethod("extract", signature = className("coxph.penal", "survival"),
           definition = extract.coxph.penal)
@@ -1371,7 +1354,6 @@ extract.ergm <- function(model, include.aic = TRUE, include.bic = TRUE,
 #'
 #' @method extract ergm
 #' @aliases extract.ergm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("ergm", "ergm"),
           definition = extract.ergm)
@@ -1424,7 +1406,6 @@ extract.ergmm <- function(model, include.bic = TRUE, ...) {
 #'
 #' @method extract ergmm
 #' @aliases extract.ergmm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("ergmm", "latentnet"),
           definition = extract.ergmm)
@@ -1511,7 +1492,6 @@ extract.ets <- function (model,
 #'
 #' @method extract ets
 #' @aliases extract.ets
-#' @family extract
 #' @export
 setMethod("extract",
           signature = className("ets", "forecast"),
@@ -1577,7 +1557,6 @@ extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE,
 #'
 #' @method extract fGARCH
 #' @aliases extract.fGARCH
-#' @family extract
 #' @export
 setMethod("extract", signature = className("fGARCH", "fGarch"),
           definition = extract.fGARCH)
@@ -1665,7 +1644,6 @@ extract.feis <- function(model,
 #'
 #' @method extract feis
 #' @aliases extract.feis
-#' @family extract
 #' @author Tobias Rüttenauer, Philip Leifeld
 #' @importFrom stats nobs coef
 #' @export
@@ -1742,7 +1720,6 @@ extract.betareg <- function(model, include.precision = TRUE,
 #'
 #' @method extract betareg
 #' @aliases extract.betareg
-#' @family extract
 #' @export
 setMethod("extract", signature = className("betareg", "betareg"),
           definition = extract.betareg)
@@ -1819,7 +1796,6 @@ extract.felm <- function(model,
 #'
 #' @method extract felm
 #' @aliases extract.felm
-#' @family extract
 #' @author Christoph Riedl, Claudia Zucca, Philip Leifeld
 #' @export
 setMethod("extract", signature = className("felm", "lfe"),
@@ -1846,7 +1822,6 @@ extract.forecast <- function (model, ...) {
 #'
 #' @method extract forecast
 #' @aliases extract.forecast
-#' @family extract
 #' @export
 setMethod("extract", signature = className("forecast", "forecast"),
           definition = extract.forecast)
@@ -1959,7 +1934,6 @@ extract.brmsfit <- function (model,
 #'
 #' @method extract brmsfit
 #' @aliases extract.brmsfit
-#' @family extract
 #' @author Hyunjin (Jin) Song, Philip Leifeld
 #' @importFrom stats nobs
 #' @export
@@ -2029,7 +2003,6 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
 #'
 #' @method extract feglm
 #' @aliases extract.feglm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("feglm", "alpaca"),
           definition = extract.feglm)
@@ -2168,7 +2141,6 @@ extract.gam <- function(model,
 #'
 #' @method extract gam
 #' @aliases extract.gam
-#' @family extract
 #' @export
 setMethod("extract", signature = className("gam", "mgcv"),
           definition = extract.gam)
@@ -2188,7 +2160,6 @@ extract.bam <- extract.gam
 #'
 #' @method extract bam
 #' @aliases extract.bam
-#' @family extract
 #' @export
 setMethod("extract", signature = className("bam", "mgcv"),
           definition = extract.bam)
@@ -2278,7 +2249,6 @@ extract.gamlss <- function(model,
 #'
 #' @method extract gamlss
 #' @aliases extract.gamlss
-#' @family extract
 #' @importFrom stats nobs pt vcov
 #' @export
 setMethod("extract", signature = className("gamlss", "gamlss"),
@@ -2350,7 +2320,6 @@ extract.gee <- function(model,
 #'
 #' @method extract gee
 #' @aliases extract.gee
-#' @family extract
 #' @importFrom stats pnorm
 #' @export
 setMethod("extract", signature = className("gee", "gee"),
@@ -2429,7 +2398,6 @@ extract.gel <- function (model,
 #'
 #' @method extract gel
 #' @aliases extract.gel
-#' @family extract
 #' @export
 setMethod("extract", signature = className("gel", "gmm"),
           definition = extract.gel)
@@ -2499,7 +2467,6 @@ extract.geeglm <- function(model,
 #'
 #' @method extract geeglm
 #' @aliases extract.geeglm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("geeglm", "geepack"),
           definition = extract.geeglm)
@@ -2583,7 +2550,6 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
 #'
 #' @method extract glm
 #' @aliases extract.glm
-#' @family extract
 #' @importFrom stats nobs AIC BIC logLik deviance
 #' @export
 setMethod("extract", signature = className("glm", "stats"),
@@ -2604,7 +2570,6 @@ extract.brglm <- extract.glm
 #'
 #' @method extract brglm
 #' @aliases extract.brglm
-#' @family extract
 #' @importFrom stats pnorm
 #' @export
 setMethod("extract", signature = className("brglm", "brglm"),
@@ -2737,7 +2702,6 @@ extract.glmmadmb <- function(model,
 #'
 #' @method extract glmmadmb
 #' @aliases extract.glmmadmb
-#' @family extract
 #' @importFrom stats pnorm
 #' @export
 setMethod("extract", signature = className("glmmadmb", "glmmADMB"),
@@ -2814,7 +2778,6 @@ extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
 #'
 #' @method extract gls
 #' @aliases extract.gls
-#' @family extract
 #' @export
 setMethod("extract", signature = className("gls", "nlme"),
           definition = extract.gls)
@@ -2880,7 +2843,6 @@ extract.gmm <- function(model,
 #'
 #' @method extract gmm
 #' @aliases extract.gmm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("gmm", "gmm"),
           definition = extract.gmm)
@@ -2900,7 +2862,6 @@ extract.gnls <- extract.gls
 #'
 #' @method extract gnls
 #' @aliases extract.gnls
-#' @family extract
 #' @export
 setMethod("extract", signature = className("gnls", "nlme"),
           definition = extract.gnls)
@@ -3014,7 +2975,6 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
 #'
 #' @method extract gnm
 #' @aliases extract.gnm
-#' @family extract
 #' @importFrom stats nobs AIC BIC residuals logLik na.omit fitted
 #' @export
 setMethod("extract", signature = className("gnm", "gnm"),
@@ -3131,7 +3091,6 @@ extract.H2OBinomialModel <- function(model,
 #'
 #' @method extract H2OBinomialModel
 #' @aliases extract.H2OBinomialModel
-#' @family extract
 #' @export
 setMethod("extract", signature = className("H2OBinomialModel", "h2o"),
           definition = extract.H2OBinomialModel)
@@ -3213,7 +3172,6 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
 #'
 #' @method extract lm
 #' @aliases extract.lm
-#' @family extract
 #' @importFrom stats nobs
 #' @export
 setMethod("extract", signature = className("lm", "stats"),
@@ -3234,7 +3192,6 @@ extract.dynlm <- extract.lm
 #'
 #' @method extract dynlm
 #' @aliases extract.dynlm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("dynlm", "dynlm"),
           definition = extract.dynlm)
@@ -3366,7 +3323,6 @@ extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
 #'
 #' @method extract lme
 #' @aliases extract.lme
-#' @family extract
 #' @export
 setMethod("extract", signature = className("lme", "nlme"),
           definition = extract.lme)
@@ -3386,7 +3342,6 @@ extract.glmmPQL <- extract.lme
 #'
 #' @method extract glmmPQL
 #' @aliases extract.glmmPQL
-#' @family extract
 #' @export
 setMethod("extract", signature = className("glmmPQL", "MASS"),
           definition = extract.glmmPQL)
@@ -3591,7 +3546,6 @@ extract.lme4 <- function(model,
 #'
 #' @method extract lme4
 #' @aliases extract.lme4
-#' @family extract
 #' @importFrom stats confint model.frame vcov
 #' @importFrom utils methods packageVersion
 #' @export
@@ -3613,7 +3567,6 @@ extract.merMod <- extract.lme4
 #'
 #' @method extract merMod
 #' @aliases extract.merMod
-#' @family extract
 #' @export
 setMethod("extract", signature = className("merMod", "lme4"),
           definition = extract.merMod)
@@ -3633,7 +3586,6 @@ extract.lmerMod <- extract.lme4
 #'
 #' @method extract lmerMod
 #' @aliases extract.lmerMod
-#' @family extract
 #' @export
 setMethod("extract", signature = className("lmerMod", "lme4"),
           definition = extract.lmerMod)
@@ -3653,7 +3605,6 @@ extract.glmerMod <- extract.lme4
 #'
 #' @method extract glmerMod
 #' @aliases extract.glmerMod
-#' @family extract
 #' @export
 setMethod("extract", signature = className("glmerMod", "lme4"),
           definition = extract.glmerMod)
@@ -3673,7 +3624,6 @@ extract.nlmerMod <- extract.lme4
 #'
 #' @method extract nlmerMod
 #' @aliases extract.nlmerMod
-#' @family extract
 #' @export
 setMethod("extract", signature = className("nlmerMod", "lme4"),
           definition = extract.nlmerMod)
@@ -3725,7 +3675,6 @@ extract.lmrob <- function(model, include.nobs = TRUE, ...) {
 #'
 #' @method extract lmrob
 #' @aliases extract.lmrob
-#' @family extract
 #' @export
 setMethod("extract", signature = className("lmrob", "robustbase"),
           definition = extract.lmrob)
@@ -3745,7 +3694,6 @@ extract.glmrob <- extract.lmrob
 #'
 #' @method extract glmrob
 #' @aliases extract.glmrob
-#' @family extract
 #' @export
 setMethod("extract", signature = className("glmrob", "robustbase"),
           definition = extract.glmrob)
@@ -3813,7 +3761,6 @@ extract.lmRob <- function(model, include.rsquared = TRUE,
 #'
 #' @method extract lmRob
 #' @aliases extract.lmRob
-#' @family extract
 #' @rdname extract-lmrob-method
 #' @export
 setMethod("extract", signature = className("lmRob", "robust"),
@@ -3903,7 +3850,6 @@ extract.lnam <- function(model,
 #'
 #' @method extract lnam
 #' @aliases extract.lnam
-#' @family extract
 #' @importFrom stats pnorm
 #' @export
 setMethod("extract", signature = className("lnam", "sna"),
@@ -3988,7 +3934,6 @@ extract.logitmfx <- function(model,
 #'
 #' @method extract logitmfx
 #' @aliases extract.logitmfx
-#' @family extract
 #' @export
 setMethod("extract", signature = className("logitmfx", "mfx"),
           definition = extract.logitmfx)
@@ -4008,7 +3953,6 @@ extract.probitmfx <- extract.logitmfx
 #'
 #' @method extract probitmfx
 #' @aliases extract.probitmfx
-#' @family extract
 #' @export
 setMethod("extract", signature = className("probitmfx", "mfx"),
           definition = extract.probitmfx)
@@ -4084,7 +4028,6 @@ extract.logitor <- function(model,
 #'
 #' @method extract logitor
 #' @aliases extract.logitor
-#' @family extract
 #' @export
 setMethod("extract", signature = className("logitor", "mfx"),
           definition = extract.logitor)
@@ -4280,7 +4223,6 @@ extract.lqmm <- function(model,
 #'
 #' @method extract lqmm
 #' @aliases extract.lqmm
-#' @family extract
 #' @importFrom stats AIC BIC
 #' @export
 setMethod("extract", signature = className("lqmm", "lqmm"),
@@ -4348,7 +4290,6 @@ extract.lrm <- function(model, include.pseudors = TRUE, include.lr = TRUE,
 #'
 #' @method extract lrm
 #' @aliases extract.lrm
-#' @family extract
 #' @author Fabrice Le Lec
 #' @importFrom stats pnorm
 #' @export
@@ -4393,7 +4334,6 @@ extract.maBina <- function(model, ...) {
 #'
 #' @method extract maBina
 #' @aliases extract.maBina
-#' @family extract
 #' @export
 setMethod("extract", signature = className("maBina", "erer"),
           definition = extract.maBina)
@@ -4452,7 +4392,6 @@ extract.mhurdle <- function (model,
 #'
 #' @method extract mhurdle
 #' @aliases extract.mhurdle
-#' @family extract
 #' @export
 setMethod("extract", signature = className("mhurdle", "mhurdle"),
           definition = extract.mhurdle)
@@ -4525,7 +4464,6 @@ extract.mlogit <- function(model,
 #'
 #' @method extract mlogit
 #' @aliases extract.mlogit
-#' @family extract
 #' @importFrom stats AIC logLik
 #' @export
 setMethod("extract", signature = className("mlogit", "mlogit"),
@@ -4654,7 +4592,6 @@ extract.mnlogit <- function(model,
 #'
 #' @method extract mnlogit
 #' @aliases extract.mnlogit
-#' @family extract
 #' @export
 setMethod("extract", signature = className("mnlogit", "mnlogit"),
           definition = extract.mnlogit)
@@ -4730,7 +4667,6 @@ extract.model.selection <- function(model,
 #'
 #' @method extract model.selection
 #' @aliases extract.model.selection
-#' @family extract
 #' @export
 setMethod("extract", signature = className("model.selection", "MuMIn"),
           definition = extract.model.selection)
@@ -4872,7 +4808,6 @@ extract.multinom <- function(model,
 #'
 #' @method extract multinom
 #' @aliases extract.multinom
-#' @family extract
 #' @importFrom stats AIC BIC logLik deviance pnorm
 #' @export
 setMethod("extract", signature = className("multinom", "nnet"),
@@ -4893,7 +4828,6 @@ extract.negbin <- extract.glm
 #'
 #' @method extract negbin
 #' @aliases extract.negbin
-#' @family extract
 #' @export
 setMethod("extract", signature = className("negbin", "MASS"),
           definition = extract.negbin)
@@ -4980,7 +4914,6 @@ extract.negbinirr <- function(model,
 #'
 #' @method extract negbinirr
 #' @aliases extract.negbinirr
-#' @family extract
 #' @export
 setMethod("extract", signature = className("negbinirr", "mfx"),
           definition = extract.negbinirr)
@@ -5001,7 +4934,6 @@ extract.poissonirr <- extract.negbinirr
 #'
 #' @method extract poissonirr
 #' @aliases extract.poissonirr
-#' @family extract
 #' @export
 setMethod("extract", signature = className("poissonirr", "mfx"),
           definition = extract.poissonirr)
@@ -5080,7 +5012,6 @@ extract.negbinmfx <- function(model,
 #'
 #' @method extract negbinmfx
 #' @aliases extract.negbinmfx
-#' @family extract
 #' @export
 setMethod("extract", signature = className("negbinmfx", "mfx"),
           definition = extract.negbinmfx)
@@ -5100,7 +5031,6 @@ extract.poissonmfx <- extract.negbinmfx
 #'
 #' @method extract poissonmfx
 #' @aliases extract.poissonmfx
-#' @family extract
 #' @export
 setMethod("extract", signature = className("poissonmfx", "mfx"),
           definition = extract.poissonmfx)
@@ -5171,7 +5101,6 @@ extract.mtergm <- function(model, include.nobs = TRUE, include.aic = TRUE,
 #'
 #' @method extract mtergm
 #' @aliases extract.mtergm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("mtergm", "btergm"),
           definition = extract.mtergm)
@@ -5250,7 +5179,6 @@ extract.netlogit <- function(model,
 #'
 #' @method extract netlogit
 #' @aliases extract.netlogit
-#' @family extract
 #' @export
 setMethod("extract", signature = className("netlogit", "sna"),
           definition = extract.netlogit)
@@ -5270,7 +5198,6 @@ extract.nlme <- extract.lme
 #'
 #' @method extract nlme
 #' @aliases extract.nlme
-#' @family extract
 #' @export
 setMethod("extract", signature = className("nlme", "nlme"),
           definition = extract.nlme)
@@ -5359,7 +5286,6 @@ extract.oglmx <- function(model,
 #'
 #' @method extract oglmx
 #' @aliases extract.oglmx
-#' @family extract
 #' @export
 setMethod("extract", signature = className("oglmx", "oglmx"),
           definition = extract.oglmx)
@@ -5447,7 +5373,6 @@ extract.ols <- function(model,
 #'
 #' @method extract ols
 #' @aliases extract.ols
-#' @family extract
 #' @importFrom stats pnorm summary.lm
 #' @export
 setMethod("extract", signature = className("ols", "rms"),
@@ -5516,7 +5441,6 @@ extract.panelAR <- function(model,
 #'
 #' @method extract panelAR
 #' @aliases extract.panelAR
-#' @family extract
 #' @export
 setMethod("extract", signature = className("panelAR", "panelAR"),
           definition = extract.panelAR)
@@ -5587,7 +5511,6 @@ extract.pglm <- function(model,
 #'
 #' @method extract pglm
 #' @aliases extract.pglm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("pglm", "pglm"),
           definition = extract.pglm)
@@ -5679,7 +5602,6 @@ extract.pgmm <- function(model, include.nobs = TRUE, include.sargan = TRUE,
 #'
 #' @method extract pgmm
 #' @aliases extract.pgmm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("pgmm", "plm"),
           definition = extract.pgmm)
@@ -5759,7 +5681,6 @@ extract.plm <- function(model,
 #'
 #' @method extract plm
 #' @aliases extract.plm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("plm", "plm"),
           definition = extract.plm)
@@ -5813,7 +5734,6 @@ extract.pmg <- function(model, include.nobs = TRUE, ...) {
 #'
 #' @method extract pmg
 #' @aliases extract.pmg
-#' @family extract
 #' @importFrom stats pt
 #' @export
 setMethod("extract", signature = className("pmg", "plm"),
@@ -5937,7 +5857,6 @@ extract.polr <- function(model,
 #'
 #' @method extract polr
 #' @aliases extract.polr
-#' @family extract
 #' @importFrom stats pnorm AIC BIC logLik deviance
 #' @export
 setMethod("extract", signature = className("polr", "MASS"),
@@ -6025,7 +5944,6 @@ extract.rem.dyad <- function(model,
 #'
 #' @method extract rem.dyad
 #' @aliases extract.rem.dyad
-#' @family extract
 #' @importFrom stats pnorm
 #' @export
 setMethod("extract", signature = className("rem.dyad", "relevent"),
@@ -6077,7 +5995,6 @@ extract.rlm <- function (model, include.nobs = TRUE, ...) {
 #'
 #' @method extract rlm
 #' @aliases extract.rlm
-#' @family extract
 #' @importFrom stats pchisq
 #' @export
 setMethod("extract", signature = className("rlm", "MASS"),
@@ -6140,7 +6057,6 @@ extract.rq <- function(model,
 #'
 #' @method extract rq
 #' @aliases extract.rq
-#' @family extract
 #' @export
 setMethod("extract", signature = className("rq", "quantreg"),
           definition = extract.rq)
@@ -6266,7 +6182,6 @@ extract.sarlm <- function(model,
 #'
 #' @method extract sarlm
 #' @aliases extract.sarlm
-#' @family extract
 #' @export
 #' @importFrom stats pnorm AIC
 setMethod("extract", signature = className("sarlm", "spdep"),
@@ -6287,7 +6202,6 @@ extract.sclm <- extract.clm
 #'
 #' @method extract sclm
 #' @aliases extract.sclm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("sclm", "ordinal"),
           definition = extract.sclm)
@@ -6424,7 +6338,6 @@ extract.selection <- function(model,
 #'
 #' @method extract selection
 #' @aliases extract.selection
-#' @family extract
 #' @export
 setMethod("extract", signature = className("selection", "sampleSelection"),
           definition = extract.selection)
@@ -6490,7 +6403,6 @@ extract.sienaFit <- function(model, include.iterations = TRUE, ...) {
 #'
 #' @method extract sienaFit
 #' @aliases extract.sienaFit
-#' @family extract
 #' @importFrom stats pnorm
 #' @export
 setMethod("extract", signature = className("sienaFit", "RSiena"),
@@ -6550,7 +6462,6 @@ extract.simex <- function(model, jackknife = TRUE, include.nobs = TRUE, ...) {
 #'
 #' @method extract simex
 #' @aliases extract.simex
-#' @family extract
 #' @export
 setMethod("extract", signature = className("simex", "simex"),
           definition = extract.simex)
@@ -6571,7 +6482,6 @@ extract.speedglm <- extract.glm
 #'
 #' @method extract speedglm
 #' @aliases extract.speedglm
-#' @family extract
 #' @export
 setMethod("extract",  signature = className("speedglm", "speedglm"),
           definition = extract.speedglm)
@@ -6592,7 +6502,6 @@ extract.speedlm <- extract.lm
 #'
 #' @method extract speedlm
 #' @aliases extract.speedlm
-#' @family extract
 #' @export
 setMethod("extract",  signature = className("speedlm", "speedglm"),
           definition = extract.speedlm)
@@ -6792,7 +6701,6 @@ extract.stergm <- function(model,
 #'
 #' @method extract stergm
 #' @aliases extract.stergm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("stergm", "tergm"),
           definition = extract.stergm)
@@ -6879,7 +6787,6 @@ extract.summary.lm <- function (model,
 #'
 #' @method extract summary.lm
 #' @aliases extract.summary.lm
-#' @family extract
 #' @export
 setMethod("extract",  signature = className("summary.lm", "stats"),
           definition = extract.summary.lm)
@@ -6971,7 +6878,6 @@ extract.survreg <- function(model,
 #'
 #' @method extract survreg
 #' @aliases extract.survreg
-#' @family extract
 #' @importFrom stats AIC BIC
 #' @export
 setMethod("extract", signature = className("survreg", "survival"),
@@ -6992,7 +6898,6 @@ extract.survreg.penal <- extract.survreg
 #'
 #' @method extract survreg.penal
 #' @aliases extract.survreg.penal
-#' @family extract
 #' @export
 setMethod("extract", signature = className("survreg.penal", "survival"),
           definition = extract.survreg.penal)
@@ -7099,7 +7004,6 @@ extract.svyglm <- function(model,
 #'
 #' @method extract svyglm
 #' @aliases extract.svyglm
-#' @family extract
 #' @export
 setMethod("extract", signature = className("svyglm", "survey"),
           definition = extract.svyglm)
@@ -7240,7 +7144,6 @@ extract.systemfit <- function(model,
 #'
 #' @method extract systemfit
 #' @aliases extract.systemfit
-#' @family extract
 #' @export
 setMethod("extract", signature = className("systemfit", "systemfit"),
           definition = extract.systemfit)
@@ -7275,7 +7178,6 @@ extract.texreg <- function(model, ...) {
 #'
 #' @method extract texreg
 #' @aliases extract.texreg
-#' @family extract
 #' @export
 setMethod("extract", signature = className("texreg", "texreg"),
           definition = extract.texreg)
@@ -7380,7 +7282,6 @@ extract.tobit <- function(model,
 #'
 #' @method extract tobit
 #' @aliases extract.tobit
-#' @family extract
 #' @importFrom stats AIC BIC logLik deviance nobs
 #' @export
 setMethod("extract", signature = className("tobit", "AER"),
@@ -7447,7 +7348,6 @@ extract.vglm <- function(model,
 #'
 #' @method extract vglm
 #' @aliases extract.vglm
-#' @family extract
 #' @author Christoph Riedl <c.riedl@neu.edu>
 #' @export
 setMethod("extract", signature = className("vglm", "VGAM"),
@@ -7541,7 +7441,6 @@ extract.weibreg <- function(model,
 #'
 #' @method extract weibreg
 #' @aliases extract.weibreg
-#' @family extract
 #' @importFrom stats pchisq nobs
 #' @export
 setMethod("extract", signature = className("weibreg", "eha"),
@@ -7562,7 +7461,6 @@ extract.phreg <- extract.weibreg
 #'
 #' @method extract phreg
 #' @aliases extract.phreg
-#' @family extract
 #' @importFrom stats pchisq nobs
 #' @export
 setMethod("extract", signature = className("phreg", "eha"),
@@ -7583,7 +7481,6 @@ extract.aftreg <- extract.weibreg
 #'
 #' @method extract aftreg
 #' @aliases extract.aftreg
-#' @family extract
 #' @importFrom stats pchisq nobs
 #' @export
 setMethod("extract", signature = className("aftreg", "eha"),
@@ -7604,7 +7501,6 @@ extract.coxreg <- extract.weibreg
 #'
 #' @method extract coxreg
 #' @aliases extract.coxreg
-#' @family extract
 #' @importFrom stats pchisq nobs
 #' @export
 setMethod("extract", signature = className("coxreg", "eha"),
@@ -7682,7 +7578,6 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
 #'
 #' @method extract wls
 #' @aliases extract.wls
-#' @family extract
 #' @author Christoph Riedl <c.riedl@neu.edu>
 #' @export
 setMethod("extract", signature = className("wls", "metaSEM"),
@@ -7897,7 +7792,6 @@ extract.zelig <- function(model,
 #'
 #' @method extract zelig
 #' @aliases extract.zelig
-#' @family extract
 #' @rdname extract-Zelig-method
 #' @importFrom stats pt AIC BIC logLik deviance
 #' @export
@@ -7981,7 +7875,6 @@ extract.Zelig <- function(model,
 #'
 #' @method extract Zelig
 #' @aliases extract.Zelig
-#' @family extract
 #' @export
 setMethod("extract", signature = className("Zelig", "Zelig"),
           definition = extract.Zelig)
@@ -8123,7 +8016,6 @@ extract.zeroinfl <- function(model,
 #'
 #' @method extract zeroinfl
 #' @aliases extract.zeroinfl
-#' @family extract
 #' @importFrom stats AIC logLik
 #' @export
 setMethod("extract", signature = className("zeroinfl", "pscl"),
@@ -8144,7 +8036,6 @@ extract.hurdle <- extract.zeroinfl
 #'
 #' @method extract hurdle
 #' @aliases extract.hurdle
-#' @family extract
 #' @importFrom stats AIC logLik
 #' @export
 setMethod("extract", signature = className("hurdle", "pscl"),

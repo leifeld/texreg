@@ -1,6 +1,6 @@
 Package: texreg
 Version: 1.36.25
-Date: 2020-04-20
+Date: 2020-04-27
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
              person(given = "Claudia", family = "Zucca", email = "claudia.zucca@glasgow.ac.uk", role = "ctb"))
@@ -81,7 +81,7 @@ Enhances: AER,
   VGAM,
   Zelig
 Additional_repositories: http://r-forge.r-project.org/
-System_Requirements: tikz/pgf
+SystemRequirements: tikz/pgf
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0
