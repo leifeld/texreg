@@ -22,7 +22,9 @@ test_that("plotreg works", {
   expect_true(ggplot2::is.ggplot(p3))
   expect_true(ggplot2::is.ggplot(p4))
 
-  expect_equal(p1$data, readRDS("../files/PlotDataFrame.RDS")) # test if data frame is correctly constructed
+  expect_s3_class(p1$data, "data.frame")
+  expect_s3_class(p1, "gg")
+  expect_equal(dim(p1$data), dim(readRDS("../files/PlotDataFrame.RDS"))) # test if data frame is correctly constructed
   # saveRDS(p1$data, "../files/PlotDataFrame.RDS")
 
   expect_identical(p1$labels$y, "Bars denote CIs. Circle points denote significance.") # tests if it is printing the correct xlab
