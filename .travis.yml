@@ -19,6 +19,7 @@ addons:
 
 r_packages:
   - covr
+  - ggplot2
 
 notifications:
   email:

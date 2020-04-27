@@ -12,22 +12,22 @@ test_that("plotreg works", {
   weight <- c(ctl, trt)
   m1 <- lm(weight ~ group)
   m2 <- lm(weight ~ group - 1)
-  p1 <- plotreg(list(m1,m2))
-  p2 <- plotreg(list(m1,m2), use.se = TRUE)
-  p3 <- plotreg(list(m1,m2), custom.title = "My Plot")
-  p4 <- plotreg(list(m1,m2), custom.note = "My note")
+  p1 <- plotreg(list(m1, m2))
+  p2 <- plotreg(list(m1, m2), use.se = TRUE)
+  p3 <- plotreg(list(m1, m2), custom.title = "My plot")
+  p4 <- plotreg(list(m1, m2), custom.note = "My note")
 
   expect_true(ggplot2::is.ggplot(p1))
   expect_true(ggplot2::is.ggplot(p2))
   expect_true(ggplot2::is.ggplot(p3))
   expect_true(ggplot2::is.ggplot(p4))
 
-  expect_equal(PlotDataFrame <- p1$data, readRDS("../files/PlotDataFrame.RDS")) # test if data frame is correctly constructed
-  # saveRDS(PlotDataFrame, "../files/PlotDataFrame.RDS")
+  expect_equal(p1$data, readRDS("../files/PlotDataFrame.RDS")) # test if data frame is correctly constructed
+  # saveRDS(p1$data, "../files/PlotDataFrame.RDS")
 
   expect_identical(p1$labels$y, "Bars denote CIs. Circle points denote significance.") # tests if it is printing the correct xlab
   expect_identical(p2$labels$y, "Bars denote SEs. Circle points denote significance.") # tests if it is printing the correct xlab
-  expect_identical(p3$labels$title, "My Plot") # test if title is printed
+  expect_identical(p3$labels$title, "My plot") # test if title is printed
   expect_identical(p4$labels$y, "My note") # test if note is printed
 
   p5 <- plotreg(list(m1, m2), ci.inner = 0)
@@ -45,7 +45,7 @@ test_that("plotreg works with confidence intervals using the biglm package", {
   b <- biglm::bigglm(gg, data = trees, chunksize = 10, sandwich = TRUE)
   p6 <- plotreg(list(a, b))
   expect_true(is.ggplot(p6))
-  expect_equal(PlotDataFrameCI <- p6$data, readRDS("../files/PlotDataFrameCI.RDS"))
-  # saveRDS(PlotDataFrameCI, "../files/PlotDataFrameCI.RDS")
+  expect_equal(p6$data, readRDS("../files/PlotDataFrameCI.RDS"))
+  # saveRDS(p6$data, "../files/PlotDataFrameCI.RDS")
   expect_identical(p6$labels$y, "Bars denote CIs. Circle points denote significance.")
 })
