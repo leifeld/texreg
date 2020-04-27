@@ -3,8 +3,7 @@
 #' Extract details from statistical models for table construction
 #'
 #' Extract details from statistical models for table construction. The function
-#' has methods for a range of statistical models, which are listed on the help
-#' page of the \pkg{texreg} package, by typing \code{help(package = "texreg")}.
+#' has methods for a range of statistical models.
 #'
 #' The \code{\link{extract}} function serves to retrieve coefficients, standard
 #' errors, p-values, confidence intervals, and goodness-of-fit statistics from
@@ -18,6 +17,15 @@
 #' function if it encounters a model known to be handled by the specific method.
 #' The output is a \linkS4class{texreg} object, which is subsequently used by
 #' the \code{\link{texreg}} function and related functions.
+#'
+#' To list the model classes for which extract methods exist, type
+#' \code{showMethods("extract")} or \code{methods("extract")}. To show the
+#' method definition (i.e., the function body) of a specific extract method, use
+#' the \code{getMethod} function, for example \code{getMethod("extract", "lm")}
+#' for linear models. To get help on a specific extract method, type something
+#' like \code{?`extract,lm-method`} (or something similar for other models,
+#' where \code{"lm"} needs to be replaced by the class name of the respective
+#' model).
 #'
 #' Users can contribute their own extensions for additional statistical models.
 #' Examples are contained in the article in the Journal of Statistical Software
