@@ -66,7 +66,6 @@ test_that("extract dynlm objects from the dynlm package", {
 
 # feglm (alpaca) ----
 test_that("extract feglm objects from the alpaca package", {
-  testthat::skip_on_cran()
   skip_if_not_installed("alpaca", minimum_version = "0.3.2")
   require("alpaca")
 
@@ -110,7 +109,6 @@ test_that("extract feis objects from the feisr package", {
 
 # felm (lfe) ----
 test_that("extract felm objects from the lfe package", {
-  testthat::skip_on_cran()
   skip_if_not_installed("lfe", minimum_version = "2.8-5")
   require("lfe")
 
@@ -137,9 +135,38 @@ test_that("extract felm objects from the lfe package", {
   expect_equivalent(which(tr@gof.decimal), 2:5)
 })
 
+# gamlssZadj (gamlss.inf) ----
+test_that("extract gamlssZadj objects from the gamlss.inf package", {
+  skip_if_not_installed("gamlss.inf", minimum_version = "1.0.1")
+  require("gamlss.inf")
+
+  set.seed(12345)
+  sink("/dev/null")
+  y0 <- rZAGA(1000, mu = .3, sigma = .4, nu = .15)
+  g0 <- gamlss(y0 ~ 1, family = ZAGA)
+  t0 <- gamlssZadj(y = y0, mu.formula = ~1, family = GA, trace = TRUE)
+  sink()
+
+  expect_warning(extract(t0, robust = TRUE, type = "qr"),
+                 "robust = TRUE works only in conjunction with type = 'vcov'")
+
+  tr <- extract(t0)
+  expect_length(tr@gof.names, 2)
+  expect_length(tr@coef, 3)
+  expect_length(tr@se, 3)
+  expect_length(tr@pvalues, 3)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_equivalent(which(tr@gof.decimal), 2)
+  expect_equivalent(tr@coef.names, c("$\\mu$ (Intercept)",
+                                     "$\\sigma$ (Intercept)",
+                                     "$\\nu$ (Intercept)"))
+
+  tr <- extract(t0, robust = TRUE, type = "vcov")
+})
+
 # glm.cluster (miceadds) ----
 test_that("extract glm.cluster objects from the miceadds package", {
-  testthat::skip_on_cran()
   skip_if_not_installed("miceadds", minimum_version = "3.8.9")
   require("miceadds")
 
@@ -195,6 +222,37 @@ test_that("extract glmerMod objects from the lme4 package", {
   expect_length(tr_wald@ci.up, 4)
 })
 
+# glmmTMB (glmmTMB) ----
+test_that("extract glmmTMB objects from the glmmTMB package", {
+  skip_if_not_installed("glmmTMB", minimum_version = "1.0.1")
+  require("glmmTMB")
+
+  set.seed(12345)
+  m2 <- glmmTMB(count ~ spp + mined + (1|site),
+                zi = ~ spp + mined,
+                family = nbinom2, data = Salamanders)
+
+  tr <- extract(m2)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 16)
+  expect_length(tr@se, 16)
+  expect_length(tr@pvalues, 16)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_equivalent(which(tr@gof.decimal), c(1, 2, 5))
+
+  tr <- extract(m2, beside = TRUE)
+  expect_length(tr[[1]]@gof.names, 5)
+  expect_length(tr[[1]]@coef, 8)
+  expect_length(tr[[2]]@coef, 8)
+  expect_length(tr[[1]]@se, 8)
+  expect_length(tr[[2]]@se, 8)
+  expect_length(tr[[1]]@pvalues, 8)
+  expect_length(tr[[2]]@pvalues, 8)
+  expect_length(tr, 2)
+  expect_equivalent(which(tr[[2]]@gof.decimal), c(1, 2, 5))
+})
+
 # ivreg (AER) ----
 test_that("extract ivreg objects from the AER package", {
   skip_if_not_installed("AER")
@@ -244,7 +302,6 @@ test_that("extract lm objects from the stats package", {
 
 # lm.cluster (miceadds) ----
 test_that("extract lm.cluster objects from the miceadds package", {
-  testthat::skip_on_cran()
   skip_if_not_installed("miceadds", minimum_version = "3.8.9")
   require("miceadds")
 
