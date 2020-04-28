@@ -1,56 +1,6 @@
 context("extract methods")
 suppressPackageStartupMessages(library("texreg"))
 
-# glm.cluster (miceadds) ----
-test_that("extract glm.cluster objects from the miceadds package", {
-  testthat::skip_on_cran()
-  skip_if_not_installed("miceadds", minimum_version = "3.8.9")
-  require("miceadds")
-
-  data(data.ma01)
-  dat <- data.ma01
-
-  dat$highmath <- 1 * (dat$math > 600)
-  mod2 <- miceadds::glm.cluster(data = dat,
-                                formula = highmath ~ hisei + female,
-                                cluster = "idschool",
-                                family = "binomial")
-  tr <- extract(mod2)
-
-  expect_equivalent(tr@coef, c(-2.76, 0.03, -0.15), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.25, 0.00, 0.10), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.00, 0.00, 0.13), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(3108.095, 3126.432, -1551.047, 3102.095, 3336.000), tolerance = 1e-2)
-  expect_length(tr@gof.names, 5)
-  expect_length(tr@coef, 3)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
-  expect_equivalent(which(tr@gof.decimal), 1:4)
-})
-
-# lm.cluster (miceadds) ----
-test_that("extract lm.cluster objects from the miceadds package", {
-  testthat::skip_on_cran()
-  skip_if_not_installed("miceadds", minimum_version = "3.8.9")
-  require("miceadds")
-
-  data(data.ma01)
-  dat <- data.ma01
-
-  mod1 <- miceadds::lm.cluster(data = dat,
-                               formula = read ~ hisei + female,
-                               cluster = "idschool")
-  tr <- extract(mod1)
-
-  expect_equivalent(tr@coef, c(418.80, 1.54, 35.70), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(6.45, 0.11, 3.81), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.00, 0.00, 0.00), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(0.15, 0.15, 3180), tolerance = 1e-2)
-  expect_length(tr@gof.names, 3)
-  expect_length(tr@coef, 3)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
-  expect_equivalent(which(tr@gof.decimal), 1:2)
-})
-
 # brmsfit (brms) ----
 test_that("extract brmsfit objects from the brms package", {
   testthat::skip_on_cran()
@@ -114,6 +64,28 @@ test_that("extract dynlm objects from the dynlm package", {
   expect_equivalent(which(tr@gof.decimal), c(1, 2, 4))
 })
 
+# feglm (alpaca) ----
+test_that("extract feglm objects from the alpaca package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("alpaca", minimum_version = "0.3.2")
+  require("alpaca")
+
+  set.seed(12345)
+  data <- simGLM(1000L, 20L, 1805L, model = "logit")
+  mod <- feglm(y ~ x1 + x2 + x3 | i + t, data)
+
+  tr <- extract(mod)
+
+  expect_equivalent(tr@coef, c(1.091, -1.106, 1.123), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.024, 0.024, 0.024), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0, 0, 0), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(15970.75, 19940.00, 997.00, 20.00), tolerance = 1e-2)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(which(tr@gof.decimal), 1)
+})
+
 # feis (feisr) ----
 test_that("extract feis objects from the feisr package", {
   skip_if_not_installed("feisr", minimum_version = "1.0.1")
@@ -134,6 +106,61 @@ test_that("extract feis objects from the feisr package", {
   expect_length(tr2@coef, 6)
   expect_length(which(tr2@pvalues < 0.05), 2)
   expect_length(which(tr2@gof.decimal), 3)
+})
+
+# felm (lfe) ----
+test_that("extract felm objects from the lfe package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("lfe", minimum_version = "2.8-5")
+  require("lfe")
+
+  set.seed(12345)
+  x <- rnorm(1000)
+  x2 <- rnorm(length(x))
+  id <- factor(sample(20, length(x), replace = TRUE))
+  firm <- factor(sample(13, length(x),replace = TRUE))
+  id.eff <- rnorm(nlevels(id))
+  firm.eff <- rnorm(nlevels(firm))
+  u <- rnorm(length(x))
+  y <- x + 0.5 * x2 + id.eff[id] + firm.eff[firm] + u
+  est <- felm(y ~ x + x2 | id + firm)
+
+  tr <- extract(est)
+
+  expect_equivalent(tr@coef, c(1.0188, 0.5182), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.032, 0.032), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(1000, 0.7985, 0.575, 0.792, 0.560), tolerance = 1e-2)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 2)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(which(tr@gof.decimal), 2:5)
+})
+
+# glm.cluster (miceadds) ----
+test_that("extract glm.cluster objects from the miceadds package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("miceadds", minimum_version = "3.8.9")
+  require("miceadds")
+
+  data(data.ma01)
+  dat <- data.ma01
+
+  dat$highmath <- 1 * (dat$math > 600)
+  mod2 <- miceadds::glm.cluster(data = dat,
+                                formula = highmath ~ hisei + female,
+                                cluster = "idschool",
+                                family = "binomial")
+  tr <- extract(mod2)
+
+  expect_equivalent(tr@coef, c(-2.76, 0.03, -0.15), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.25, 0.00, 0.10), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00, 0.13), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(3108.095, 3126.432, -1551.047, 3102.095, 3336.000), tolerance = 1e-2)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(which(tr@gof.decimal), 1:4)
 })
 
 # glmerMod (lme4) ----
@@ -213,6 +240,30 @@ test_that("extract lm objects from the stats package", {
   expect_length(tr2@coef, 2)
   expect_length(which(tr2@pvalues < 0.05), 2)
   expect_length(which(tr2@gof.decimal), 3)
+})
+
+# lm.cluster (miceadds) ----
+test_that("extract lm.cluster objects from the miceadds package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("miceadds", minimum_version = "3.8.9")
+  require("miceadds")
+
+  data(data.ma01)
+  dat <- data.ma01
+
+  mod1 <- miceadds::lm.cluster(data = dat,
+                               formula = read ~ hisei + female,
+                               cluster = "idschool")
+  tr <- extract(mod1)
+
+  expect_equivalent(tr@coef, c(418.80, 1.54, 35.70), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(6.45, 0.11, 3.81), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(0.15, 0.15, 3180), tolerance = 1e-2)
+  expect_length(tr@gof.names, 3)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(which(tr@gof.decimal), 1:2)
 })
 
 # lmerMod (lme4) ----

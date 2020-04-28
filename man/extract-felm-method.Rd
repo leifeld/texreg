@@ -26,6 +26,8 @@
 
 \item{include.fstatistic}{Report the F-statistic in the GOF block?}
 
+\item{include.groups}{Report the number of groups?}
+
 \item{...}{Custom parameters, which are handed over to subroutines, in this
 case to the \code{summary} method for the object.}
 }
@@ -34,5 +36,5 @@ case to the \code{summary} method for the object.}
 \code{\link[lfe]{felm}} function in the \pkg{lfe} package.
 }
 \author{
-Christoph Riedl, Claudia Zucca, Philip Leifeld
+Christoph Riedl, Claudia Zucca, Oliver Reiter, Philip Leifeld
 }

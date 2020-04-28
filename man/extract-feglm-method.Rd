@@ -29,3 +29,6 @@ case to the \code{summary} method for the object.}
 \code{\link{extract}} method for \code{feglm} objects created by the
 \code{\link[alpaca]{feglm}} function in the \pkg{alpaca} package.
 }
+\author{
+Christoph Riedl, Oliver Reiter, Philip Leifeld
+}
