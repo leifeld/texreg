@@ -1741,6 +1741,7 @@ extract.felm <- function(model,
                          include.rsquared = TRUE,
                          include.adjrs = TRUE,
                          include.fstatistic = FALSE,
+                         include.groups = TRUE,
                          ...) {
 
   s <- summary(model, ...)
@@ -1776,6 +1777,13 @@ extract.felm <- function(model,
                    "F (proj model): p-value")
     gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE, TRUE)
   }
+  if (include.groups == TRUE) {
+    grp <- sapply(s$fe, function(x) length(levels(x)))
+    grp.names <- paste0("Num. groups: ", names(grp))
+    gof <- c(gof, grp)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
+  }
 
   tr <- createTexreg(
     coef.names = nam,
@@ -1799,12 +1807,13 @@ extract.felm <- function(model,
 #' @param include.rsquared Report R^2 in the GOF block?
 #' @param include.adjrs Report adjusted R^2 in the GOF block?
 #' @param include.fstatistic Report the F-statistic in the GOF block?
+#' @param include.groups Report the number of groups?
 #' @param ... Custom parameters, which are handed over to subroutines, in this
 #'   case to the \code{summary} method for the object.
 #'
 #' @method extract felm
 #' @aliases extract.felm
-#' @author Christoph Riedl, Claudia Zucca, Philip Leifeld
+#' @author Christoph Riedl, Claudia Zucca, Oliver Reiter, Philip Leifeld
 #' @export
 setMethod("extract", signature = className("felm", "lfe"),
           definition = extract.felm)
@@ -1972,14 +1981,14 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
-    n <- s$nobs
+    n <- s$nobs["nobs"]
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
     grp <- s$lvls.k
-    grp.names <- paste0("Num groups:", names(grp))
+    grp.names <- paste0("Num. groups: ", names(grp))
     gof <- c(gof, grp)
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
@@ -2011,6 +2020,7 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
 #'
 #' @method extract feglm
 #' @aliases extract.feglm
+#' @author Christoph Riedl, Oliver Reiter, Philip Leifeld
 #' @export
 setMethod("extract", signature = className("feglm", "alpaca"),
           definition = extract.feglm)
