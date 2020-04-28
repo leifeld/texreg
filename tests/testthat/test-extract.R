@@ -1,6 +1,56 @@
 context("extract methods")
 suppressPackageStartupMessages(library("texreg"))
 
+# glm.cluster (miceadds) ----
+test_that("extract glm.cluster objects from the miceadds package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("miceadds", minimum_version = "3.8.9")
+  require("miceadds")
+
+  data(data.ma01)
+  dat <- data.ma01
+
+  dat$highmath <- 1 * (dat$math > 600)
+  mod2 <- miceadds::glm.cluster(data = dat,
+                                formula = highmath ~ hisei + female,
+                                cluster = "idschool",
+                                family = "binomial")
+  tr <- extract(mod2)
+
+  expect_equivalent(tr@coef, c(-2.76, 0.03, -0.15), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.25, 0.00, 0.10), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00, 0.13), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(3108.095, 3126.432, -1551.047, 3102.095, 3336.000), tolerance = 1e-2)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(which(tr@gof.decimal), 1:4)
+})
+
+# lm.cluster (miceadds) ----
+test_that("extract lm.cluster objects from the miceadds package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("miceadds", minimum_version = "3.8.9")
+  require("miceadds")
+
+  data(data.ma01)
+  dat <- data.ma01
+
+  mod1 <- miceadds::lm.cluster(data = dat,
+                               formula = read ~ hisei + female,
+                               cluster = "idschool")
+  tr <- extract(mod1)
+
+  expect_equivalent(tr@coef, c(418.80, 1.54, 35.70), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(6.45, 0.11, 3.81), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(0.15, 0.15, 3180), tolerance = 1e-2)
+  expect_length(tr@gof.names, 3)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(which(tr@gof.decimal), 1:2)
+})
+
 # brmsfit (brms) ----
 test_that("extract brmsfit objects from the brms package", {
   testthat::skip_on_cran()
