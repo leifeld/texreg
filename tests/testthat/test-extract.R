@@ -1,6 +1,28 @@
 context("extract methods")
 suppressPackageStartupMessages(library("texreg"))
 
+
+# bife (bife) ----
+test_that("extract bife objects from the bife package", {
+  skip_if_not_installed("bife", minimum_version = "0.7")
+  require("bife")
+
+  set.seed(12345)
+  mod <- bife(LFP ~ I(AGE^2) + log(INCH) + KID1 + KID2 + KID3 + factor(TIME) | ID, psid)
+
+  tr <- extract(mod)
+
+  expect_equivalent(sum(tr@coef), 4.61698, tolerance = 1e-2)
+  expect_equivalent(sum(tr@se), 2.443803, tolerance = 1e-2)
+  expect_equivalent(sum(tr@pvalues), 1.359822, tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(-3026.476, 6052.951, 5976), tolerance = 1e-2)
+  expect_length(tr@gof.names, 3)
+  expect_length(tr@coef, 13)
+  expect_equivalent(which(tr@pvalues < 0.05), c(1:4, 8:13))
+  expect_equivalent(which(tr@gof.decimal), 1:2)
+  expect_equivalent(dim(matrixreg(mod)), c(30, 2))
+})
+
 # brmsfit (brms) ----
 test_that("extract brmsfit objects from the brms package", {
   testthat::skip_on_cran()

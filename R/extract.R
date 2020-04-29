@@ -399,38 +399,33 @@ setMethod("extract", signature = className("betaor", "mfx"),
 # -- extract.bife (bife) ----------------------------------------------------
 
 #' @noRd
-extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE,
-                         include.bic = TRUE, include.nobs = TRUE, ...) {
+extract.bife <- function(model,
+                         include.loglik = TRUE,
+                         include.deviance = TRUE,
+                         include.nobs = TRUE,
+                         ...) {
   s <- summary(model)
-  coefficient.names <- rownames(s$coef)
-  co <- s$coef[, 1]
-  se <- s$coef[, 2]
-  pval <- s$coef[, 4]
+  coefficient.names <- rownames(s$cm)
+  co <- s$cm[, 1]
+  se <- s$cm[, 2]
+  pval <- s$cm[, 4]
 
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
-
   if (include.loglik == TRUE) {
-    lik	<- s$loglik
+    lik	<- logLik(model)
     gof <- c(gof, lik)
     gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
-  if (include.aic == TRUE) {
-    aic <- s$AIC
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.bic == TRUE) {
-    bic <- s$BIC
-    gof <- c(gof, bic)
-    gof.names <- c(gof.names, "BIC")
+  if (include.deviance == TRUE) {
+    gof <- c(gof, deviance(model))
+    gof.names <- c(gof.names, "Deviance")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
-    n <- s$nobs
+    n <- s$nobs["nobs"]
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num.\\ obs.")
     gof.decimal <- c(gof.decimal, FALSE)
@@ -455,17 +450,15 @@ extract.bife <- function(model, include.loglik = TRUE, include.aic = TRUE,
 #'
 #' @param model A statistical model object.
 #' @param include.loglik Report the log likelihood in the GOF block?
-#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
-#'   block?
-#' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF
-#'   block?
+#' @param include.deviance Report the residual deviance?
 #' @param include.nobs Report the number of observations in the GOF block?
 #' @param ... Custom parameters, which are handed over to subroutines. Currently
 #'   not in use.
 #'
 #' @method extract bife
 #' @aliases extract.bife
-#' @author Christoph Riedl, Claudia Zucca, Philip Leifeld
+#' @author Philip Leifeld, Christoph Riedl, Claudia Zucca
+#' @importFrom stats logLik
 #' @export
 setMethod("extract", signature = className("bife", "bife"),
           definition = extract.bife)

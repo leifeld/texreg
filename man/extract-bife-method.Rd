@@ -8,8 +8,7 @@
 \S4method{extract}{bife}(
   model,
   include.loglik = TRUE,
-  include.aic = TRUE,
-  include.bic = TRUE,
+  include.deviance = TRUE,
   include.nobs = TRUE,
   ...
 )
@@ -19,11 +18,7 @@
 
 \item{include.loglik}{Report the log likelihood in the GOF block?}
 
-\item{include.aic}{Report Akaike's Information Criterion (AIC) in the GOF
-block?}
-
-\item{include.bic}{Report the Bayesian Information Criterion (BIC) in the GOF
-block?}
+\item{include.deviance}{Report the residual deviance?}
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
@@ -35,5 +30,5 @@ not in use.}
 \code{\link[bife]{bife}} function in the \pkg{bife} package.
 }
 \author{
-Christoph Riedl, Claudia Zucca, Philip Leifeld
+Philip Leifeld, Christoph Riedl, Claudia Zucca
 }
