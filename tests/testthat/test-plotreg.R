@@ -46,7 +46,7 @@ test_that("plotreg works with confidence intervals using the biglm package", {
   gg <- log(Volume) ~ log(Girth) + log(Height) + offset(2 * log(Girth) + log(Height))
   b <- biglm::bigglm(gg, data = trees, chunksize = 10, sandwich = TRUE)
   p6 <- plotreg(list(a, b))
-  expect_true(is.ggplot(p6))
+  expect_true(ggplot2::is.ggplot(p6))
   expect_equal(p6$data, readRDS("../files/PlotDataFrameCI.RDS"))
   # saveRDS(p6$data, "../files/PlotDataFrameCI.RDS")
   expect_identical(p6$labels$y, "Bars denote CIs. Circle points denote significance.")

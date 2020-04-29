@@ -30,8 +30,8 @@ block?}
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
-\item{...}{Custom parameters, which are handed over to subroutines, in this
-case to the \code{summary} method for the object.}
+\item{...}{Custom parameters, which are handed over to subroutines. Currently
+not in use.}
 }
 \description{
 \code{\link{extract}} method for \code{glm.cluster} objects created by the

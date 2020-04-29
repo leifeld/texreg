@@ -2273,6 +2273,98 @@ setMethod("extract", signature = className("gamlss", "gamlss"),
           definition = extract.gamlss)
 
 
+# -- extract.gamlssZadj (gamlss.inf) -------------------------------------------
+
+#' @noRd
+extract.gamlssZadj <- function(model,
+                               type = c("qr", "vcov"),
+                               include.nobs = TRUE,
+                               include.gaic = TRUE,
+                               ...) {
+
+  type <- match.arg(type)
+  # VCOV extraction; create coefficient block
+  if (type == "vcov") {
+    covmat <- suppressWarnings(stats::vcov(model, type = "all", ...))
+    cf <- covmat$coef  # coefficients
+    namesOfPars <- names(cf)  # names of coefficients
+    se <- covmat$se  # standard errors
+  }
+  if (type == "qr") {
+    invisible(utils::capture.output(covmat <- summary(model, type = "qr")))
+    cf <- covmat[, 1]
+    namesOfPars <- row.names(covmat)
+    se <- covmat[, 2]
+  }
+  tvalue <- cf / se
+  pvalue <-  2 * pt(-abs(tvalue), model$df.res)  # p-values
+  # add the parameter names to coefficients
+  possiblePars <- c("$\\mu$", "$\\sigma$", "$\\nu$", "$\\tau$",
+                    "$\\mu$ (Zero model)")
+  parIndex <- 0
+  parVector <- character()
+  for (i in 1:length(namesOfPars)) {
+    if (namesOfPars[i] == "(Intercept)") {
+      parIndex <- parIndex + 1
+    }
+    parName <- possiblePars[parIndex]
+    parVector <- c(parVector, parName)
+  }
+  namesOfPars <- paste(parVector, namesOfPars)
+
+  # GOF block
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.gaic == TRUE) {
+    gaic <- gamlss::GAIC(model)
+    gof <- c(gof, gaic)
+    gof.names <- c(gof.names, "Generalized AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+
+  # create and return texreg object
+  tr <- createTexreg(
+    coef.names = namesOfPars,
+    coef = cf,
+    se = se,
+    pvalues = pvalue,
+    gof.names = gof.names,
+    gof.decimal = gof.decimal,
+    gof = gof
+  )
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{gamlssZadj} objects
+#'
+#' \code{\link{extract}} method for \code{gamlssZadj} objects created by the
+#' \code{\link[gamlss.inf]{gamlssZadj}} function in the \pkg{gamlss.inf}
+#' package.
+#'
+#' @param model A statistical model object.
+#' @param type The type.
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.gaic Report Generalized Akaike's Information Criterion (AIC)
+#'   in the GOF block?
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the \code{vcov} method for the object.
+#'
+#' @method extract gamlssZadj
+#' @aliases extract.gamlssZadj
+#' @author Ricardo Graiff Garcia, Philip Leifeld
+#' @importFrom stats nobs pt vcov
+#' @export
+setMethod("extract", signature = className("gamlssZadj", "gamlss.inf"),
+          definition = extract.gamlssZadj)
+
+
 # -- extract.gee (gee) ---------------------------------------------------------
 
 #' @noRd
@@ -2666,8 +2758,8 @@ extract.glm.cluster <- function (model,
 #' @param include.loglik Report the log likelihood in the GOF block?
 #' @param include.deviance Report the deviance?
 #' @param include.nobs Report the number of observations in the GOF block?
-#' @param ... Custom parameters, which are handed over to subroutines, in this
-#'   case to the \code{summary} method for the object.
+#' @param ... Custom parameters, which are handed over to subroutines. Currently
+#'   not in use.
 #'
 #' @method extract glm.cluster
 #' @aliases extract.glm.cluster
@@ -2808,6 +2900,168 @@ extract.glmmadmb <- function(model,
 #' @export
 setMethod("extract", signature = className("glmmadmb", "glmmADMB"),
           definition = extract.glmmadmb)
+
+
+
+# -- extract.glmmTMB (glmmTMB) -------------------------------------------------
+
+#' @noRd
+extract.glmmTMB <- function(model, beside = FALSE, include.count = TRUE,
+                            include.zero = TRUE, include.aic = TRUE,
+                            include.groups = TRUE, include.variance = TRUE,
+                            include.loglik = TRUE, include.nobs = TRUE, ...) {
+  s <- summary(model, ...)
+  if (model$modelInfo$allForm$ziformula == '~0') {
+    include.zero <- FALSE
+  }
+  if (length(model$modelInfo$reTrms$cond$flist) == 0) {
+    include.groups <- FALSE
+  }
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.groups == TRUE) {
+    grps <- sapply(model$modelInfo$reTrms$cond$flist,
+                   function(x) length(levels(x)))
+    grp.names <- names(grps)
+    grp.names <- paste("Num.\ groups:", grp.names)
+    gof <- c(gof, grps)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
+  }
+  if (include.variance == TRUE && !is.na(s$ngrps)) {
+    vc <- glmmTMB::VarCorr(model)
+    vc <- as.data.frame(rapply(vc, function(x) attr(x, "stddev")))^2
+    rownames(vc) <- gsub("\\.", " ", rownames(vc))
+    if (include.zero == TRUE) {
+      for (i in grep("cond", rownames(vc), value = TRUE)) {
+        gof.names <- c(gof.names,
+                       paste("Var (count model):", sub("cond ", "", i)))
+      }
+      for (i in grep("zi", rownames(vc), value = TRUE)) {
+        gof.names <- c(gof.names, paste("Var (zero model):", sub("zi ", "", i)))
+      }
+    } else {
+      for (i in grep("cond", rownames(vc), value = TRUE)) {
+        gof.names <- c(gof.names, paste("Var:", sub("cond ", "", i)))
+      }
+    }
+    gof <- c(gof, vc[, 1])
+    gof.decimal <- c(gof.decimal, rep(TRUE, nrow(vc)))
+  }
+  count <- coef(s)$cond
+  zero <- coef(s)$zi
+  if (beside == FALSE) {
+    if (include.count == TRUE && include.zero == TRUE) {
+      rownames(count) <- paste("Count model:", rownames(count))
+      rownames(zero) <- paste("Zero model:", rownames(zero))
+      coef.block <- rbind(count, zero)
+    } else if (include.count == TRUE) {
+      coef.block <- count
+    } else if (include.zero == TRUE) {
+      coef.block <- zero
+    } else {
+      stop(paste("Either the 'include.count' or the 'include.zero' argument",
+                 "must be TRUE."))
+    }
+    names <- rownames(coef.block)
+    co <- coef.block[, 1]
+    se <- coef.block[, 2]
+    pval <- coef.block[, 4]
+    tr <- createTexreg(coef.names = names,
+                       coef = co, se = se,
+                       pvalues = pval,
+                       gof.names = gof.names,
+                       gof = gof,
+                       gof.decimal = gof.decimal)
+    return(tr)
+  } else {
+    trList <- list()
+    c.names <- rownames(count)
+    c.co <- count[, 1]
+    c.se <- count[, 2]
+    c.pval <- count[, 4]
+    z.names <- rownames(zero)
+    z.co <- zero[, 1]
+    z.se <- zero[, 2]
+    z.pval <- zero[, 4]
+    if (include.count == TRUE) {
+      tr <- createTexreg(coef.names = c.names,
+                         coef = c.co,
+                         se = c.se,
+                         pvalues = c.pval,
+                         gof.names = gof.names,
+                         gof = gof,
+                         gof.decimal = gof.decimal,
+                         model.name = "Count model")
+      trList[[length(trList) + 1]] <- tr
+    }
+    if (include.zero == TRUE) {
+      tr <- createTexreg(coef.names = z.names,
+                         coef = z.co,
+                         se = z.se,
+                         pvalues = z.pval,
+                         gof.names = gof.names,
+                         gof = gof,
+                         gof.decimal = gof.decimal,
+                         model.name = "Zero model")
+      trList[[length(trList) + 1]] <- tr
+    }
+    if (length(trList) == 0) {
+      stop(paste("Either the 'include.count' or the 'include.zero' argument",
+                 "must be TRUE."))
+    }
+    return(trList)
+  }
+}
+
+#' \code{\link{extract}} method for \code{glmmTMB} objects
+#'
+#' \code{\link{extract}} method for \code{glmmTMB} objects created by the
+#' \code{\link[glmmTMB]{glmmTMB}} function in the \pkg{glmmTMB} package.
+#'
+#' @param model A statistical model object.
+#' @param beside Arrange the model terms below each other or beside each other?
+#'   The binary model parameters and the count parameters can be displayed in
+#'   two separate columns of the table.
+#' @param include.count Report the count parameters in the coefficients block
+#'   (before the binary part for the zeros)?
+#' @param include.zero Should the binary part of the model be included in the
+#'   coefficients block (after the count parameters)?
+#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
+#'   block?
+#' @param include.groups Report the number of groups?
+#' @param include.variance Report group variances?
+#' @param include.loglik Report the log likelihood in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the \code{summary} method for the object.
+#'
+#' @method extract glmmTMB
+#' @aliases extract.glmmTMB
+#' @author Ricardo Graiff Garcia, Philip Leifeld
+#' @importFrom stats AIC logLik nobs
+#' @export
+setMethod("extract", signature = className("glmmTMB", "glmmTMB"),
+          definition = extract.glmmTMB)
 
 
 # -- extract.gls (nlme) --------------------------------------------------------
@@ -3395,8 +3649,8 @@ extract.lm.cluster <- function(model,
 #' @param include.fstatistic Report the F-statistic in the GOF block?
 #' @param include.rmse Report the root mean square error (RMSE; = residual
 #'   standard deviation) in the GOF block?
-#' @param ... Custom parameters, which are handed over to subroutines, in this
-#'   case to the \code{summary} method for the object.
+#' @param ... Custom parameters, which are handed over to subroutines. Currently
+#'   not in use.
 #'
 #' @method extract lm.cluster
 #' @aliases extract.lm.cluster

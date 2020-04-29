@@ -1,6 +1,6 @@
 Package: texreg
 Version: 1.36.25
-Date: 2020-04-28
+Date: 2020-04-29
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
              person(given = "Claudia", family = "Zucca", email = "claudia.zucca@glasgow.ac.uk", role = "ctb"))
@@ -36,9 +36,11 @@ Enhances: AER,
   fGarch,
   forecast,
   gamlss,
+  gamlss.inf,
   gee,
   geepack,
   glmmADMB,
+  glmmTMB,
   gmm,
   gnm,
   h2o,

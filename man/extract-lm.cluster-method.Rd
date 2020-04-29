@@ -29,8 +29,8 @@
 \item{include.rmse}{Report the root mean square error (RMSE; = residual
 standard deviation) in the GOF block?}
 
-\item{...}{Custom parameters, which are handed over to subroutines, in this
-case to the \code{summary} method for the object.}
+\item{...}{Custom parameters, which are handed over to subroutines. Currently
+not in use.}
 }
 \description{
 \code{\link{extract}} method for \code{lm.cluster} objects created by the
