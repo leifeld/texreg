@@ -147,9 +147,6 @@ test_that("extract gamlssZadj objects from the gamlss.inf package", {
   t0 <- gamlssZadj(y = y0, mu.formula = ~1, family = GA, trace = TRUE)
   sink()
 
-  expect_warning(extract(t0, robust = TRUE, type = "qr"),
-                 "robust = TRUE works only in conjunction with type = 'vcov'")
-
   tr <- extract(t0)
   expect_length(tr@gof.names, 2)
   expect_length(tr@coef, 3)
@@ -161,8 +158,6 @@ test_that("extract gamlssZadj objects from the gamlss.inf package", {
   expect_equivalent(tr@coef.names, c("$\\mu$ (Intercept)",
                                      "$\\sigma$ (Intercept)",
                                      "$\\nu$ (Intercept)"))
-
-  tr <- extract(t0, robust = TRUE, type = "vcov")
 })
 
 # glm.cluster (miceadds) ----

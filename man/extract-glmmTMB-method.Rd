@@ -49,3 +49,6 @@ case to the \code{summary} method for the object.}
 \code{\link{extract}} method for \code{glmmTMB} objects created by the
 \code{\link[glmmTMB]{glmmTMB}} function in the \pkg{glmmTMB} package.
 }
+\author{
+Ricardo Graiff Garcia, Philip Leifeld
+}

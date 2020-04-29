@@ -8,7 +8,6 @@
 \S4method{extract}{gamlssZadj}(
   model,
   type = c("qr", "vcov"),
-  robust = FALSE,
   include.nobs = TRUE,
   include.gaic = TRUE,
   ...
@@ -18,9 +17,6 @@
 \item{model}{A statistical model object.}
 
 \item{type}{The type.}
-
-\item{robust}{If TRUE computes robust standard errors in the
-variance-covariance matrix.}
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
@@ -34,4 +30,7 @@ case to the \code{vcov} method for the object.}
 \code{\link{extract}} method for \code{gamlssZadj} objects created by the
 \code{\link[gamlss.inf]{gamlssZadj}} function in the \pkg{gamlss.inf}
 package.
+}
+\author{
+Ricardo Graiff Garcia, Philip Leifeld
 }

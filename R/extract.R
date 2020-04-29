@@ -2276,8 +2276,11 @@ setMethod("extract", signature = className("gamlss", "gamlss"),
 # -- extract.gamlssZadj (gamlss.inf) -------------------------------------------
 
 #' @noRd
-extract.gamlssZadj <- function(model, type = c("qr", "vcov"),
-                               include.nobs = TRUE, include.gaic = TRUE, ...) {
+extract.gamlssZadj <- function(model,
+                               type = c("qr", "vcov"),
+                               include.nobs = TRUE,
+                               include.gaic = TRUE,
+                               ...) {
 
   type <- match.arg(type)
   # VCOV extraction; create coefficient block
@@ -2347,8 +2350,6 @@ extract.gamlssZadj <- function(model, type = c("qr", "vcov"),
 #'
 #' @param model A statistical model object.
 #' @param type The type.
-#' @param robust If TRUE computes robust standard errors in the
-#'   variance-covariance matrix.
 #' @param include.nobs Report the number of observations in the GOF block?
 #' @param include.gaic Report Generalized Akaike's Information Criterion (AIC)
 #'   in the GOF block?
@@ -2357,6 +2358,7 @@ extract.gamlssZadj <- function(model, type = c("qr", "vcov"),
 #'
 #' @method extract gamlssZadj
 #' @aliases extract.gamlssZadj
+#' @author Ricardo Graiff Garcia, Philip Leifeld
 #' @importFrom stats nobs pt vcov
 #' @export
 setMethod("extract", signature = className("gamlssZadj", "gamlss.inf"),
@@ -3055,6 +3057,7 @@ extract.glmmTMB <- function(model, beside = FALSE, include.count = TRUE,
 #'
 #' @method extract glmmTMB
 #' @aliases extract.glmmTMB
+#' @author Ricardo Graiff Garcia, Philip Leifeld
 #' @importFrom stats AIC logLik nobs
 #' @export
 setMethod("extract", signature = className("glmmTMB", "glmmTMB"),
