@@ -2276,23 +2276,18 @@ setMethod("extract", signature = className("gamlss", "gamlss"),
 # -- extract.gamlssZadj (gamlss.inf) -------------------------------------------
 
 #' @noRd
-extract.gamlssZadj <- function(model, type = c("qr", "vcov"), robust = FALSE,
+extract.gamlssZadj <- function(model, type = c("qr", "vcov"),
                                include.nobs = TRUE, include.gaic = TRUE, ...) {
 
   type <- match.arg(type)
   # VCOV extraction; create coefficient block
   if (type == "vcov") {
-    covmat <- suppressWarnings(stats::vcov(model, type = "all", robust = robust,
-                                           ...))
+    covmat <- suppressWarnings(stats::vcov(model, type = "all", ...))
     cf <- covmat$coef  # coefficients
     namesOfPars <- names(cf)  # names of coefficients
     se <- covmat$se  # standard errors
   }
   if (type == "qr") {
-    if (robust == TRUE) {
-      warning("robust = TRUE works only in conjunction with type = 'vcov'. ",
-              "Using robust = FALSE.")
-    }
     invisible(utils::capture.output(covmat <- summary(model, type = "qr")))
     cf <- covmat[, 1]
     namesOfPars <- row.names(covmat)
