@@ -3959,8 +3959,6 @@ override <- function(models,
 #' @keywords internal
 #' @author Philip Leifeld
 #' @seealso \code{\link{matrixreg}}
-#'
-#' @export
 reorder <- function(mat, new.order) {
   if (is.null(new.order)) {
     return(mat)
