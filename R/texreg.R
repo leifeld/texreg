@@ -1188,6 +1188,8 @@ matrixreg <- function(l,
         newValues <- sapply(custom.gof.rows[[i]], function(x) { # format the different values of the new row
           if (is.character(x) && output.type[1] == "latex" && isTRUE(dcolumn)) {
             paste0("\\multicolumn{1}{c}{", x, "}")
+          } else if (is.character(x) && output.type[1] == "latex" && !isTRUE(dcolumn)) {
+            coeftostring(x, leading.zero, digits = dec) # omit dollars around value if character and no dcolumn (would otherwise be printed in italics)
           } else {
             paste0(dollar, coeftostring(x, leading.zero, digits = dec), dollar)
           }
@@ -3425,6 +3427,12 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   }
   if (isTRUE(left)) {
     left.side <- sub("\\\\; ", "", left.side)
+    # correct for custom.gof.rows with text, which is set as \multicolumn
+    mc_indices <- grepl("\\\\multicolumn[{]1[}][{]c[}][{]", left.side)
+    for (i in mc_indices) {
+      left.side[i] <- sub("\\\\multicolumn[{]1[}][{]c[}][{]", "", left.side[i])
+      left.side[i] <- sub("[}]$", "", left.side[i])
+    }
     v.length <- max(c(0, nchar(left.side)), na.rm = TRUE)
   } else {
     right.side <- sub("\\^\\{", "", right.side)

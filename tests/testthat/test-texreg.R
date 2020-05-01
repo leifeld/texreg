@@ -86,6 +86,18 @@ test_that("sanity checks and arguments work in texreg function", {
                " & column 1 & \\\\multicolumn\\{1\\}{c}{Model 1} \\\\\\\\\n",
                perl = TRUE)
   expect_match(capture.output(print(texreg(model1)))[22], "\\\\end\\{table\\}")
+
+  # custom.gof.rows with correct dcolumn width and without dollar signs for text
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = 12345)), "Fixed effects \\& 12345       \\\\")
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = 12345)), "\\\\begin[{]tabular[}][{]l D[{]\\.[}][{]\\.[}][{]5\\.5[}][}]")
+  expect_match(texreg(model1, dcolumn = FALSE, custom.gof.rows = list("Fixed effects" = 12345)), "Fixed effects \\& \\$12345\\$       \\\\")
+  expect_match(texreg(model1, dcolumn = FALSE, custom.gof.rows = list("Fixed effects" = TRUE)), "Fixed effects \\& TRUE          \\\\")
+  expect_match(texreg(model1, dcolumn = FALSE, custom.gof.rows = list("Fixed effects" = "yes")), "Fixed effects \\& yes           \\\\")
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = TRUE)), "Fixed effects \\& \\\\multicolumn\\{1\\}\\{c\\}\\{TRUE\\} \\\\")
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = TRUE)), "4\\.5")
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = "yes")), "Fixed effects \\& \\\\multicolumn\\{1\\}\\{c\\}\\{yes\\} \\\\")
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = "yes")), "3\\.5")
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = 1234567)), "7\\.5")
 })
 
 test_that("arguments work in screenreg function", {
