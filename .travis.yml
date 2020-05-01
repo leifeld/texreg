@@ -20,6 +20,69 @@ addons:
 r_packages:
   - covr
   - ggplot2
+  - AER
+  - alpaca
+  - betareg
+  - bife
+  - biglm
+  - brglm
+  - brms
+  - btergm
+  - censReg
+  - dynlm
+  - eha
+  - erer
+  - ergm
+  - feisr
+  - fGarch
+  - forecast
+  - gamlss
+  - gamlss.inf
+  - gee
+  - geepack
+  - glmmADMB
+  - glmmTMB
+  - gmm
+  - gnm
+  - h2o
+  - latentnet
+  - lfe
+  - lme4
+  - lqmm
+  - MASS
+  - metaSEM
+  - mfx
+  - mgcv
+  - mhurdle
+  - miceadds
+  - mlogit
+  - mnlogit
+  - MuMIn
+  - nlme
+  - nnet
+  - oglmx
+  - ordinal
+  - panelAR
+  - pglm
+  - pgmm
+  - plm
+  - pscl
+  - quantreg
+  - relevent
+  - rms
+  - robust
+  - robustbase
+  - RSiena
+  - sampleSelection
+  - simex
+  - sna
+  - spdep
+  - speedglm
+  - survey
+  - survival
+  - systemfit
+  - tergm
+  - VGAM
 
 notifications:
   email:
