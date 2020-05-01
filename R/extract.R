@@ -55,23 +55,28 @@ setGeneric("extract", function(model, ...) standardGeneric("extract"),
 # -- extract.Arima (stats) -----------------------------------------------------
 
 #' @noRd
-extract.Arima <- function(model, include.pvalues = TRUE, include.aic = TRUE,
-                          include.loglik = TRUE, ...) {
+extract.Arima <- function(model,
+                          include.pvalues = TRUE,
+                          include.aic = TRUE,
+                          include.bic = TRUE,
+                          include.loglik = TRUE,
+                          include.nobs = TRUE,
+                          ...) {
 
   mask <- model$mask
   nam <- names(model$coef)
   co <- model$coef
-  sdev <- sqrt(diag(model$var.coef))
+  se <- sqrt(diag(model$var.coef))
 
   if (include.pvalues == TRUE) {
     t.rat <- rep(NA, length(mask))
-    t.rat[mask] <- co[mask] / sdev
-    pt <- 2 * pnorm(-abs(t.rat))
+    t.rat[mask] <- co[mask] / se
+    p <- 2 * pnorm(-abs(t.rat))
     setmp <- rep(NA, length(mask))
-    setmp[mask] <- sdev
+    setmp[mask] <- se
   } else {
-    pt <- numeric()
-    setmp <- sdev
+    p <- numeric()
+    setmp <- se
   }
 
   gof <- numeric()
@@ -83,18 +88,28 @@ extract.Arima <- function(model, include.pvalues = TRUE, include.aic = TRUE,
     gof.names <- c(gof.names, "AIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
+  if (include.bic == TRUE) {
+    gof <- c(gof, BIC(model))
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
   if (include.loglik == TRUE) {
     lik <- model$loglik
     gof <- c(gof, lik)
     gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, model$nobs)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
 
   tr <- createTexreg(
     coef.names = nam,
     coef = co,
     se = setmp,
-    pvalues = pt,
+    pvalues = p,
     gof.names = gof.names,
     gof = gof,
     gof.decimal = gof.decimal
@@ -111,47 +126,52 @@ extract.Arima <- function(model, include.pvalues = TRUE, include.aic = TRUE,
 #' @param include.pvalues Report p-values?
 #' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
 #'   block?
+#' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF
+#'   block?
 #' @param include.loglik Report the log likelihood in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
 #' @param ... Custom parameters, which are handed over to subroutines. Currently
 #'   not in use.
 #'
 #' @method extract Arima
 #' @aliases extract.Arima
-#' @importFrom stats pnorm
+#' @importFrom stats pnorm BIC
 #' @export
 setMethod("extract", signature = className("Arima", "stats"),
           definition = extract.Arima)
 
 
-# -- extract.ARIMA (forecast) --------------------------------------------------
+# -- extract.forecast_ARIMA (forecast) -----------------------------------------
 
 #' @noRd
-extract.ARIMA <- function (model,
-                           include.pvalues = FALSE,
-                           include.aic = TRUE,
-                           include.aicc = TRUE,
-                           include.bic = TRUE,
-                           include.loglik = TRUE,
-                           ...) {
+extract.forecast_ARIMA <- function (model,
+                                    include.pvalues = TRUE,
+                                    include.aic = TRUE,
+                                    include.aicc = TRUE,
+                                    include.bic = TRUE,
+                                    include.loglik = TRUE,
+                                    include.nobs = TRUE,
+                                    ...) {
   mask <- model$mask
   nam <- names(model$coef)
   co <- model$coef
-  sdev <- sqrt(diag(model$var.coef))
+  se <- sqrt(diag(model$var.coef))
   if (include.pvalues == TRUE) {
     t.rat <- rep(NA, length(mask))
-    t.rat[mask] <- co[mask] / sdev
-    pt <- 2 * pnorm(-abs(t.rat))
+    t.rat[mask] <- co[mask] / se
+    p <- 2 * pnorm(-abs(t.rat))
     setmp <- rep(NA, length(mask))
-    setmp[mask] <- sdev
+    setmp[mask] <- se
   } else {
-    pt <- numeric()
-    setmp <- sdev
+    p <- numeric()
+    setmp <- se
   }
+
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
   if (include.aic == TRUE) {
-    aic <- AIC(model)
+    aic <- model$aic
     gof <- c(gof, aic)
     gof.names <- c(gof.names, "AIC")
     gof.decimal <- c(gof.decimal, TRUE)
@@ -172,11 +192,16 @@ extract.ARIMA <- function (model,
     gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, model$nobs)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
   tr <- createTexreg(
     coef.names = nam,
     coef = co,
     se = setmp,
-    pvalues = pt,
+    pvalues = p,
     gof.names = gof.names,
     gof = gof,
     gof.decimal = gof.decimal
@@ -184,9 +209,9 @@ extract.ARIMA <- function (model,
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{ARIMA} objects
+#' \code{\link{extract}} method for \code{forecast_ARIMA} objects
 #'
-#' \code{\link{extract}} method for \code{ARIMA} objects created by the
+#' \code{\link{extract}} method for \code{forecast_ARIMA} objects created by the
 #' \code{\link[forecast]{Arima}} function in the \pkg{forecast} package.
 #'
 #' @param model A statistical model object.
@@ -197,16 +222,17 @@ extract.ARIMA <- function (model,
 #' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF
 #'   block?
 #' @param include.loglik Report the log likelihood in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
 #' @param ... Custom parameters, which are handed over to subroutines. Currently
 #'   not in use.
 #'
-#' @method extract ARIMA
-#' @aliases extract.ARIMA
-#' @rdname extract-Arima-method
+#' @method extract forecast_ARIMA
+#' @aliases extract.forecast_ARIMA
+#' @importFrom stats pnorm
 #' @export
 setMethod("extract",
-          signature = className("ARIMA", "forecast"),
-          definition = extract.ARIMA)
+          signature = className("forecast_ARIMA", "forecast"),
+          definition = extract.forecast_ARIMA)
 
 
 # -- extract.averaging (MuMIn) -------------------------------------------------

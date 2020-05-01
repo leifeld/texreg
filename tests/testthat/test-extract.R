@@ -2,6 +2,57 @@ context("extract methods")
 suppressPackageStartupMessages(library("texreg"))
 
 
+# Arima (stats) ----
+test_that("extract Arima objects from the stats package", {
+  set.seed(12345)
+  m <- arima(USAccDeaths,
+             order = c(0, 1, 1),
+             seasonal = list(order = c(0, 1, 1)))
+  tr <- extract(m)
+  expect_equivalent(tr@coef, c(-0.43, -0.55), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.12, 0.178), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(856.88, 863.1126, -425.44, 59), tolerance = 1e-2)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef, 2)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(which(tr@gof.decimal), 1:3)
+})
+
+# forecast_ARIMA (forecast) ----
+test_that("extract forecast_ARIMA objects from the forecast package", {
+  skip_if_not_installed("forecast")
+  require("forecast")
+  set.seed(12345)
+  air.model <- Arima(window(AirPassengers, end = 1956 + 11 / 12),
+                     order = c(0, 1, 1),
+                     seasonal = list(order = c(0, 1, 1), period = 12),
+                     lambda = 0)
+  tr <- extract(air.model)
+  expect_equivalent(tr@coef, c(-0.39, -0.61), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.117, 0.1075829), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(-291.5260, -291.2222, -284.2695, 148.7630, 83), tolerance = 1e-2)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 2)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(which(tr@gof.decimal), 1:4)
+
+  m1 <- arima(USAccDeaths,
+              order = c(0, 1, 1),
+              seasonal = list(order = c(0, 1, 1)))
+  m2 <- Arima(USAccDeaths,
+              order = c(0, 1, 1),
+              seasonal = list(order = c(0, 1, 1)))
+  expect_s3_class(m1, "Arima")
+  expect_s3_class(m2, "Arima")
+  expect_s3_class(m2, "forecast_ARIMA")
+  m <- matrixreg(list(m1, m2))
+  expect_equivalent(dim(m), c(10, 3))
+  expect_equivalent(m[2:9, 2], m[2:9, 3])
+  expect_equivalent(m[10, 1], "AICc")
+})
+
 # bife (bife) ----
 test_that("extract bife objects from the bife package", {
   skip_if_not_installed("bife", minimum_version = "0.7")
