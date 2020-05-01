@@ -3428,11 +3428,7 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
   if (isTRUE(left)) {
     left.side <- sub("\\\\; ", "", left.side)
     # correct for custom.gof.rows with text, which is set as \multicolumn
-    mc_indices <- grepl("\\\\multicolumn[{]1[}][{]c[}][{]", left.side)
-    for (i in mc_indices) {
-      left.side[i] <- sub("\\\\multicolumn[{]1[}][{]c[}][{]", "", left.side[i])
-      left.side[i] <- sub("[}]$", "", left.side[i])
-    }
+    left.side <- left.side[!grepl("\\\\multicolumn[{]1[}][{]c[}][{]", left.side)]
     v.length <- max(c(0, nchar(left.side)), na.rm = TRUE)
   } else {
     right.side <- sub("\\^\\{", "", right.side)

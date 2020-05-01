@@ -94,7 +94,7 @@ test_that("sanity checks and arguments work in texreg function", {
   expect_match(texreg(model1, dcolumn = FALSE, custom.gof.rows = list("Fixed effects" = TRUE)), "Fixed effects \\& TRUE          \\\\")
   expect_match(texreg(model1, dcolumn = FALSE, custom.gof.rows = list("Fixed effects" = "yes")), "Fixed effects \\& yes           \\\\")
   expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = TRUE)), "Fixed effects \\& \\\\multicolumn\\{1\\}\\{c\\}\\{TRUE\\} \\\\")
-  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = TRUE)), "4\\.5")
+  expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = TRUE)), "3\\.5")
   expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = "yes")), "Fixed effects \\& \\\\multicolumn\\{1\\}\\{c\\}\\{yes\\} \\\\")
   expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = "yes")), "3\\.5")
   expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = 1234567)), "7\\.5")
