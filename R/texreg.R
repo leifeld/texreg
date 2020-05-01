@@ -1629,7 +1629,13 @@ matrixreg <- function(l,
 
   # add groups to the output matrix using 'groups' argument
   if (!is.null(groups)) {
-    indentation <- "    "
+    if (output.type[1] == "latex") {
+      indentation <- "\\quad "
+    } else if (output.type[1] == "html") {
+      indentation <- "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+    } else {
+      indentation <- "    "
+    }
     prefix <- ""
     suffix <- ""
     if (!"list" %in% class(groups)) {

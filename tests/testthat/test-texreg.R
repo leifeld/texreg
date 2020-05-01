@@ -98,6 +98,12 @@ test_that("sanity checks and arguments work in texreg function", {
   expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = "yes")), "Fixed effects \\& \\\\multicolumn\\{1\\}\\{c\\}\\{yes\\} \\\\")
   expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = "yes")), "3\\.5")
   expect_match(texreg(model1, dcolumn = TRUE, custom.gof.rows = list("Fixed effects" = 1234567)), "7\\.5")
+
+  # groups
+  expect_match(texreg(model1, groups = list("First group" = 1, "Second group" = 2), single.row = FALSE),
+               "Second group      \\&               \\\\")
+  expect_match(texreg(model1, groups = list("First group" = 1, "Second group" = 2), single.row = FALSE),
+               "\n\\\\quad Petal\\.Width")
 })
 
 test_that("arguments work in screenreg function", {
@@ -122,6 +128,12 @@ test_that("arguments work in screenreg function", {
                                                 "test 2" = 4:5,
                                                 "test 3" = c(2.4, 3.7))),
                          "--\ntest\\s+yes\\s+no\\s+\ntest 2\\s+4\\s+5\\s+\ntest 3\\s+2.40\\s+3.70\\s+\nR\\^2")
+
+  # groups
+  expect_match(screenreg(model1, groups = list("First group" = 1, "Second group" = 2), single.row = FALSE),
+               "\\nFirst group                \\n")
+  expect_match(screenreg(model1, groups = list("First group" = 1, "Second group" = 2), single.row = FALSE),
+               "\\n    Petal\\.Width")
 })
 
 test_that("knitreg function works", {
@@ -150,4 +162,12 @@ test_that("matrixreg function works", {
   mr <- matrixreg(model1, custom.coef.map = list("(Intercept)" = "My intercept"))
   expect_equal(nrow(mr), 6)
   expect_match(mr[2, 1], "My intercept")
+})
+
+test_that("htmlreg function works", {
+  # groups
+  expect_match(htmlreg(model1, groups = list("First group" = 1, "Second group" = 2), single.row = FALSE),
+               "\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;Petal\\.Width")
+  expect_match(htmlreg(model1, groups = list("First group" = 1, "Second group" = 2), single.row = FALSE),
+               "Second group")
 })
