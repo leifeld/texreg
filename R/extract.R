@@ -6933,7 +6933,65 @@ setMethod("extract", signature = className("simex", "simex"),
 # -- extract.speedglm (speedglm) -----------------------------------------------
 
 #' @noRd
-extract.speedglm <- extract.glm
+extract.speedglm <- function(model, include.aic = TRUE, include.bic = TRUE,
+                             include.loglik = TRUE, include.deviance = TRUE,
+                             include.nobs = TRUE, ...) {
+  s <- summary(model, ...)
+  coefficient.names <- rownames(s$coefficients)
+  coefficients <- model$coefficients
+  standard.errors <- s$coefficients[, 2]
+  tval <- model$coefficients / standard.errors
+  if (model$family$family %in% c("binomial", "poisson")) {
+    significance <- 2 * pnorm(abs(tval), lower.tail = FALSE)
+  } else {
+    significance <- 2 * pt(abs(tval), df = model$df, lower.tail = FALSE)
+  }
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.aic == TRUE) {
+    aic <- AIC(model)
+    gof <- c(gof, aic)
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+    bic <- BIC(model)
+    gof <- c(gof, bic)
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.loglik == TRUE) {
+    lik <- logLik(model)[1]
+    gof <- c(gof, lik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.deviance == TRUE) {
+    dev <- deviance(model)
+    gof <- c(gof, dev)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+
+  tr <- createTexreg(
+    coef.names = coefficient.names,
+    coef = coefficients,
+    se = standard.errors,
+    pvalues = significance,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
 
 #' \code{\link{extract}} method for \code{speedglm} objects
 #'

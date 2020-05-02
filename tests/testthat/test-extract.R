@@ -182,7 +182,7 @@ test_that("extract feis objects from the feisr package", {
 
 # felm (lfe) ----
 test_that("extract felm objects from the lfe package", {
-  skip_if_not_installed("lfe", minimum_version = "2.8-5")
+  skip_if_not_installed("lfe", minimum_version = "2.8.5")
   require("lfe")
 
   set.seed(12345)
@@ -453,7 +453,7 @@ test_that("extract nlmerMod objects from the lme4 package", {
 
 # speedglm (speedglm) ----
 test_that("extract speedglm objects from the speedglm package", {
-  skip_if_not_installed("speedglm")
+  skip_if_not_installed("speedglm", minimum_version = "0.3.2")
   require("speedglm")
   set.seed(12345)
   n <- 50000
@@ -468,13 +468,13 @@ test_that("extract speedglm objects from the speedglm package", {
   expect_length(tr@gof.names, 5)
   expect_length(tr@coef, 81)
   expect_equivalent(tr@gof.names, c("AIC", "BIC", "Log Likelihood", "Deviance", "Num. obs."))
-  expect_equivalent(which(tr@pvalues < 0.05), integer())
-  expect_equivalent(which(tr@gof.decimal), c(1, 2, 3, 4))
+  expect_equivalent(which(tr@pvalues < 0.05), c(1, 4, 5, 17, 20, 21, 43, 65, 68, 73, 80))
+  expect_equivalent(which(tr@gof.decimal), 1:4)
 })
 
 # speedlm (speedglm) ----
 test_that("extract speedlm objects from the speedglm package", {
-  skip_if_not_installed("speedglm")
+  skip_if_not_installed("speedglm", minimum_version = "0.3.2")
   require("speedglm")
   set.seed(12345)
   n <- 1000
