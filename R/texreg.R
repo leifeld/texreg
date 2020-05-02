@@ -1199,6 +1199,9 @@ matrixreg <- function(l,
     }
   }
   colnames(gof.matrix) <- NULL
+  if (output.type[1] == "latex") { # if LaTeX, replace underscores etc in GOF labels
+    gof.matrix[, 1] <- names2latex(gof.matrix[, 1])
+  }
 
   # apply custom coefficient map using 'custom.coef.map' argument
   if (!is.null(custom.coef.map)) {
@@ -3742,18 +3745,20 @@ get_stars_note <- function(stars = c(0.01, 0.05, 0.1),
 names2latex <- function(x) {
   if (is.null(x)) {
     return(NULL)
-  } else if (is.na(x)) {
-    return(NA)
-  } else if (!grepl("\\$", x)) {
-    x <- gsub("_", "\\\\_", x)
-    x <- gsub("<", "\\$<\\$", x)
-    x <- gsub(">", "\\$>\\$", x)
-    x <- gsub("%", "\\\\%", x)
-    x <- gsub("\\^2", "\\$^2\\$", x)
-    x <- gsub("\\^3", "\\$^3\\$", x)
-    x <- gsub("\\^4", "\\$^4\\$", x)
-    x <- gsub("\\^5", "\\$^5\\$", x)
   }
+  x <- sapply(x, function(a) {
+    if (!is.na(a) && !grepl("\\$", a)) {
+      a <- gsub("_", "\\\\_", a)
+      a <- gsub("<", "\\$<\\$", a)
+      a <- gsub(">", "\\$>\\$", a)
+      a <- gsub("%", "\\\\%", a)
+      a <- gsub("\\^2", "\\$^2\\$", a)
+      a <- gsub("\\^3", "\\$^3\\$", a)
+      a <- gsub("\\^4", "\\$^4\\$", a)
+      a <- gsub("\\^5", "\\$^5\\$", a)
+    }
+    return(a)
+  })
   return(x)
 }
 

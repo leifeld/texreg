@@ -4,6 +4,35 @@ library("texreg")
 data("iris")
 model1 <- lm(Sepal.Width ~ Petal.Width, data = iris)
 
+
+test_that("duplicate row labels in custom.coef.names are merged when feasible", {
+  skip_if_not_installed("nlme")
+  require("nlme")
+  model.1 <- lme(distance ~ age, data = Orthodont, random = ~ 1)
+  model.2 <- lme(distance ~ Sex, data = Orthodont, random = ~ 1)
+
+
+  screenreg(list(model.1, model.2), custom.coef.names = c("Intercept", "sex", "sex"))
+
+  expect_equivalent(dim(matrixreg(list(model.1, model.2))), c(12, 3))
+  expect_equivalent(dim(matrixreg(list(model.1, model.2),
+                                  custom.coef.names = c("Intercept", "sex", "sex"))),
+                    c(10, 3))
+})
+
+test_that("LaTeX code is escaped in GOF labels", {
+  skip_if_not_installed("lme4")
+  require("lme4")
+  iris$species_variable <- iris$Species
+  fit <- lmer(Sepal.Length ~ Sepal.Width + (1 | species_variable), data = iris)
+  expect_match(texreg(fit),
+               regexp = "Num. groups: species\\\\_variable",
+               perl = TRUE)
+  expect_match(screenreg(fit),
+               regexp = "Num. groups: species_variable",
+               perl = TRUE)
+})
+
 test_that("no stars, single.row, and dcolumn work together", {
   expect_match(texreg(model1,
                       single.row = TRUE,
