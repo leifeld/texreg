@@ -169,12 +169,12 @@ test_that("knitreg function works", {
   with_mock(requireNamespace = function (package, ...) {
     ifelse(package == "knitr", return(FALSE), return(TRUE))
   }, {
-    expect_error(knitreg(list(model1, model1)), regex = "knitreg requires the 'knitr' package to be installed")
+    expect_error(knitreg(list(model1, model1)), regexp = "knitreg requires the 'knitr' package to be installed")
   })
   with_mock(requireNamespace = function (package, ...) {
       ifelse(package == "rmarkdown", return(FALSE), return(TRUE))
     }, {
-    expect_error(knitreg(list(model1, model1)), regex = "knitreg requires the 'rmarkdown' package to be installed")
+    expect_error(knitreg(list(model1, model1)), regexp = "knitreg requires the 'rmarkdown' package to be installed")
   })
   skip_if_not_installed("knitr", minimum_version = "1.22")
   require("knitr")
