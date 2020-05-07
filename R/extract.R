@@ -101,7 +101,7 @@ extract.Arima <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, model$nobs)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -194,7 +194,7 @@ extract.forecast_ARIMA <- function (model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, model$nobs)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   tr <- createTexreg(
@@ -249,7 +249,7 @@ extract.averaging <- function(model, use.ci = FALSE, adjusted.se = FALSE,
 
   if (include.nobs == TRUE) {
     gof <- as.numeric(attr(model, "nobs"))
-    gof.names <- "Num.\\ obs."
+    gof.names <- "Num. obs."
     gof.decimal <- FALSE
   } else {
     gof <- numeric(0L)
@@ -317,7 +317,7 @@ extract.betamfx <- function(model, include.pseudors = TRUE,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, model$fit$nobs)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -377,7 +377,7 @@ extract.betaor <- function(model, include.pseudors = TRUE,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, model$fit$nobs)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -453,7 +453,7 @@ extract.bife <- function(model,
   if (include.nobs == TRUE) {
     n <- s$nobs["nobs"]
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -517,7 +517,7 @@ extract.broom <- function(model, ...) {
                       stringsAsFactors = FALSE)
     # rename
     gof_dict <- c(
-      "adj.r.squared" = "Adj.\ R$^2$",
+      "adj.r.squared" = "Adj. R$^2$",
       "deviance" = "Deviance",
       "df" = "DF",
       "df.residual" = "DF Resid.",
@@ -585,7 +585,7 @@ extract.biglm <- function(model, include.nobs = TRUE, include.aic = TRUE,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, model$n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.aic == TRUE) {
@@ -767,7 +767,7 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, model@nobs)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -830,12 +830,12 @@ extract.censReg <- function(model, include.aic = TRUE, include.bic = TRUE,
   }
   if (include.loglik == TRUE) {
     gof <- c(gof, logLik(model)[1])
-    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, s$nObs)
-    gof.names <- c(gof.names, "Num.\ obs.", "Left-censored", "Uncensored",
+    gof.names <- c(gof.names, "Num. obs.", "Left-censored", "Uncensored",
                    "Right-censored")
     gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE, FALSE)
   }
@@ -933,7 +933,7 @@ extract.clm <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -1034,7 +1034,7 @@ extract.clmm <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
@@ -1140,17 +1140,17 @@ extract.clogit <- function(model,
   }
   if (include.maxrs == TRUE) {
     gof <- c(gof, maxrs)
-    gof.names <- c(gof.names, "Max.\ R$^2$")
+    gof.names <- c(gof.names, "Max. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.events == TRUE) {
     gof <- c(gof, event)
-    gof.names <- c(gof.names, "Num.\ events")
+    gof.names <- c(gof.names, "Num. events")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.missings == TRUE) {
@@ -1277,17 +1277,17 @@ extract.coxph <- function(model,
   }
   if (include.maxrs == TRUE) {
     gof <- c(gof, maxrs)
-    gof.names <- c(gof.names, "Max.\ R$^2$")
+    gof.names <- c(gof.names, "Max. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.events == TRUE) {
     gof <- c(gof, event)
-    gof.names <- c(gof.names, "Num.\ events")
+    gof.names <- c(gof.names, "Num. events")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.missings == TRUE) {
@@ -1382,17 +1382,17 @@ extract.coxph.penal <- function(model,
   }
   if (include.maxrs == TRUE) {
     gof <- c(gof, maxrs)
-    gof.names <- c(gof.names, "Max.\ R$^2$")
+    gof.names <- c(gof.names, "Max. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.events == TRUE) {
     gof <- c(gof, event)
-    gof.names <- c(gof.names, "Num.\ events")
+    gof.names <- c(gof.names, "Num. events")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.missings == TRUE) {
@@ -1656,7 +1656,7 @@ extract.fGARCH <- function(model, include.nobs = TRUE, include.aic = TRUE,
   if (include.nobs == TRUE) {
     n <- length(model@data)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.aic == TRUE) {
@@ -1733,19 +1733,19 @@ extract.feis <- function(model,
   if (isTRUE(include.adjrs)) {
     adj <- s$r.squared[2]
     gof <- c(gof, adj)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.names <- c(gof.names, "Adj. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (isTRUE(include.nobs)) {
     n <- length(model$residuals)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (isTRUE(include.groups)) {
     grps <-length(unique(model$id))
     grp.names <- model$call[[match(c("id"), names(model$call))]]
-    grp.names <- paste("Num.\ groups:", grp.names)
+    grp.names <- paste("Num. groups:", grp.names)
     gof <- c(gof, grps)
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, FALSE)
@@ -1831,7 +1831,7 @@ extract.betareg <- function(model, include.precision = TRUE,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -1889,7 +1889,7 @@ extract.felm <- function(model,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, s$N)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.rsquared == TRUE) {
@@ -1899,8 +1899,8 @@ extract.felm <- function(model,
   }
   if (include.adjrs == TRUE) {
     gof <- c(gof, s$r2adj, s$P.adj.r.squared)
-    gof.names <- c(gof.names, "Adj.\ R$^2$ (full model)",
-                   "Adj.\ R$^2$ (proj model)")
+    gof.names <- c(gof.names, "Adj. R$^2$ (full model)",
+                   "Adj. R$^2$ (proj model)")
     gof.decimal <- c(gof.decimal, TRUE, TRUE)
   }
   if (include.fstatistic == TRUE) {
@@ -2002,7 +2002,7 @@ extract.feglm <- function(model, include.deviance = TRUE, include.nobs = TRUE,
   if (include.nobs == TRUE) {
     n <- s$nobs["nobs"]
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
@@ -2093,7 +2093,7 @@ extract.gam <- function(model,
   if (include.loglik == TRUE) {
     lik <- logLik(model)[1]
     gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.deviance == TRUE) {
@@ -2105,7 +2105,7 @@ extract.gam <- function(model,
   if (include.dev.expl == TRUE) {
     dev.expl <- s$dev.expl
     gof <- c(gof, dev.expl)
-    gof.names <- c(gof.names, "Deviance\ explained")
+    gof.names <- c(gof.names, "Deviance explained")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.dispersion == TRUE) {
@@ -2123,19 +2123,19 @@ extract.gam <- function(model,
   if (include.gcv == TRUE) {
     gcv <- model$gcv.ubre
     gof <- c(gof, gcv)
-    gof.names <- c(gof.names, "GCV\ score")
+    gof.names <- c(gof.names, "GCV score")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.nsmooth == TRUE) {
     m <- s$m
     gof <- c(gof, m)
-    gof.names <- c(gof.names, "Num.\ smooth\ terms")
+    gof.names <- c(gof.names, "Num. smooth terms")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -2240,7 +2240,7 @@ extract.gamlss <- function(model,
   if (include.nobs == TRUE) {
     n <- stats::nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.nagelkerke == TRUE) {
@@ -2338,7 +2338,7 @@ extract.gamlssZadj <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.gaic == TRUE) {
@@ -2418,7 +2418,7 @@ extract.gee <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -2493,7 +2493,7 @@ extract.gel <- function (model,
   if (include.nobs == TRUE) {
     n <- NROW(model$gt)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -2565,7 +2565,7 @@ extract.geeglm <- function(model,
     n <- nrow(model.frame(model))
     nclust <- length(s$geese$clusz)
     gof = c(gof, n, nclust)
-    gof.names = c(gof.names, "Num.\ obs.", "Num.\ clust.")
+    gof.names = c(gof.names, "Num. obs.", "Num. clust.")
     gof.decimal = c(gof.decimal, FALSE, FALSE)
   }
 
@@ -2645,7 +2645,7 @@ extract.glm <- function(model, include.aic = TRUE, include.bic = TRUE,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -2868,14 +2868,14 @@ extract.glmmadmb <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE && !is.null(model$q)) {
     groups <- model$q
     for (i in 1:length(groups)) {
       gof <- c(gof, groups[i])
-      gof.names <- c(gof.names, paste("Num.\ groups:", names(groups)[i]))
+      gof.names <- c(gof.names, paste("Num. groups:", names(groups)[i]))
       gof.decimal <- c(gof.decimal, FALSE)
     }
   }
@@ -2954,14 +2954,14 @@ extract.glmmTMB <- function(model, beside = FALSE, include.count = TRUE,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
     grps <- sapply(model$modelInfo$reTrms$cond$flist,
                    function(x) length(levels(x)))
     grp.names <- names(grps)
-    grp.names <- paste("Num.\ groups:", grp.names)
+    grp.names <- paste("Num. groups:", grp.names)
     gof <- c(gof, grps)
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
@@ -3120,7 +3120,7 @@ extract.gls <- function(model, include.aic = TRUE, include.bic = TRUE,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -3193,7 +3193,7 @@ extract.gmm <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -3270,7 +3270,7 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
   if (include.df == TRUE) {
     df <- model$df.residual
     gof <- c(gof, df)
-    gof.names <- c(gof.names, "df.\ residuals")
+    gof.names <- c(gof.names, "df. residuals")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -3307,13 +3307,13 @@ extract.gnm <- function(model, include.aic = TRUE, include.bic = TRUE,
     delta <- sum(na.omit(c(abs(residuals(model,"response"))))) /
       sum(na.omit(c(abs(fitted(model))))) / 2 * 100 # Dissimilarity index
     gof <- c(gof, delta)
-    gof.names <- c(gof.names, "Dissim.\ Index")
+    gof.names <- c(gof.names, "Dissim. Index")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     nobs <- length(model$y)
     gof <- c(gof, nobs)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -3496,13 +3496,13 @@ extract.lm <- function(model, include.rsquared = TRUE, include.adjrs = TRUE,
   if (isTRUE(include.adjrs)) {
     adj <- s$adj.r.squared  # extract adjusted R-squared
     gof <- c(gof, adj)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.names <- c(gof.names, "Adj. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (isTRUE(include.nobs)) {
     n <- nobs(model)  # extract number of observations
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (isTRUE(include.fstatistic)) {
@@ -3622,13 +3622,13 @@ extract.lm.cluster <- function(model,
   if (include.adjrs == TRUE) {
     adj <- s$adj.r.squared  # extract adjusted R-squared
     gof <- c(gof, adj)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.names <- c(gof.names, "Adj. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     n <- nobs(lm_model)  # extract number of observations
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.fstatistic == TRUE) {
@@ -3717,14 +3717,14 @@ extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
     grp <- model$dims$ngrps[1:model$dims$Q]
     for(i in 1:length(grp)){
       gof <- c(gof, grp[i])
-      gof.names <- c(gof.names, paste("Num.\ groups:", names(grp)[i]))
+      gof.names <- c(gof.names, paste("Num. groups:", names(grp)[i]))
       gof.decimal <- c(gof.decimal, FALSE)
     }
   }
@@ -3741,7 +3741,7 @@ extract.lme <- function(model, include.aic = TRUE, include.bic = TRUE,
       sig.RE <- as.numeric(vc["(Intercept)", "StdDev"])
       if (!is.null(sig.RE) && !is.na(sig.RE)) {
         gof <- c(gof, sig.RE)
-        gof.names <- c(gof.names, "sigma.\ RE")
+        gof.names <- c(gof.names, "sigma. RE")
         gof.decimal <- c(gof.decimal, TRUE)
       }
     }
@@ -3873,13 +3873,13 @@ extract.lme4 <- function(model,
   if (include.nobs == TRUE) {
     n <- dim(stats::model.frame(model))[1]
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
     grps <- sapply(model@flist, function(x) length(levels(x)))
     grp.names <- names(grps)
-    grp.names <- paste("Num.\ groups:", grp.names)
+    grp.names <- paste("Num. groups:", grp.names)
     gof <- c(gof, grps)
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
@@ -4110,7 +4110,7 @@ extract.lmrob <- function(model, include.nobs = TRUE, ...) {
   if (include.nobs == TRUE) {
     n <- length(model$residuals)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -4187,7 +4187,7 @@ extract.lmRob <- function(model, include.rsquared = TRUE,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.rmse == TRUE && !is.null(s$sigma)) {
@@ -4264,7 +4264,7 @@ extract.lnam <- function(model,
   }
   if (include.adjrs == TRUE) {
     gof <- c(gof, adj.rsquared)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.names <- c(gof.names, "Adj. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.aic == TRUE) {
@@ -4342,7 +4342,7 @@ extract.logitmfx <- function(model,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -4445,7 +4445,7 @@ extract.logitor <- function(model,
 
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -4550,12 +4550,12 @@ extract.lqmm <- function(model,
       if (include.nobs == TRUE) {
         n <- nobs(model)
         gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.names <- c(gof.names, "Num. obs.")
         gof.decimal <- c(gof.decimal, FALSE)
       }
       if (include.groups == TRUE) {
         gof <- c(gof, model$ngroups)
-        gof.names <- c(gof.names, "Num.\ groups")
+        gof.names <- c(gof.names, "Num. groups")
         gof.decimal <- c(gof.decimal, FALSE)
       }
       if (include.tau == TRUE) {
@@ -4630,12 +4630,12 @@ extract.lqmm <- function(model,
     if (include.nobs == TRUE) {
       n <- nobs(model)
       gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.names <- c(gof.names, "Num. obs.")
       gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.groups == TRUE) {
       gof <- c(gof, model$ngroups)
-      gof.names <- c(gof.names, "Num.\ groups")
+      gof.names <- c(gof.names, "Num. groups")
       gof.decimal <- c(gof.decimal, FALSE)
     }
 
@@ -4711,7 +4711,7 @@ extract.lrm <- function(model, include.pseudors = TRUE, include.lr = TRUE,
   if (include.nobs == TRUE) {
     n <- model$stats[1]  # extract number of observations
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.pseudors == TRUE) {
@@ -4828,7 +4828,7 @@ extract.mhurdle <- function (model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, length(s$model[, 1]))
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -4890,12 +4890,12 @@ extract.mlogit <- function(model,
   }
   if (include.loglik == TRUE) {
     gof <- c(gof, logLik(model)[1])
-    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, nrow(s$residuals))
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -4962,13 +4962,13 @@ extract.mnlogit <- function(model,
   if (include.loglik == TRUE) {
     lik <- s$logLik
     gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     N <- s$model.size$N
     gof <- c(gof, N)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.groups == TRUE) {
@@ -4989,7 +4989,7 @@ extract.mnlogit <- function(model,
     diffLike <- s$est.stats$funcDiff
     gof <- c(gof, iter, gradNorm, diffLike)
     gof.names <- c(gof.names, "Iterations", "Gradient 2-norm",
-                   "Diff.\ Likelihood")
+                   "Diff. Likelihood")
     gof.decimal <- c(gof.decimal, c(FALSE, TRUE, TRUE))
   }
 
@@ -5082,7 +5082,7 @@ extract.model.selection <- function(model,
   gofnames <- as.character(c(loglik = "Log Likelihood",
                              ic = colnames(model)[colidx["ic"]],
                              delta = "Delta", weight = "Weight",
-                             nobs = "Num.\\ obs.")[include])
+                             nobs = "Num. obs.")[include])
 
   coeftables <- MuMIn::coefTable(model)
 
@@ -5178,7 +5178,7 @@ extract.multinom <- function(model,
   if (include.loglik == TRUE) {
     lik <- logLik(model)[1]
     gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log\\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.deviance == TRUE) {
@@ -5190,7 +5190,7 @@ extract.multinom <- function(model,
   if (include.nobs == TRUE) {
     n <- nrow(s$fitted.values)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -5323,7 +5323,7 @@ extract.negbinirr <- function(model,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -5429,7 +5429,7 @@ extract.negbinmfx <- function(model,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -5515,7 +5515,7 @@ extract.mtergm <- function(model, include.nobs = TRUE, include.aic = TRUE,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, model@nobs)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.aic == TRUE && !is.null(model@aic) && !is.nan(model@aic)) {
@@ -5599,7 +5599,7 @@ extract.netlogit <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, model$n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, TRUE)
   }
 
@@ -5702,7 +5702,7 @@ extract.oglmx <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -5776,7 +5776,7 @@ extract.ols <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.rsquared == TRUE) {
@@ -5788,7 +5788,7 @@ extract.ols <- function(model,
   if (include.adjrs == TRUE) {
     adj <- 1 - (1 - model$stats["R2"]) * (n - 1) / (n - model$stats["d.f."] - 1)
     gof <- c(gof, adj)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.names <- c(gof.names, "Adj. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.fstatistic == TRUE) {
@@ -5870,13 +5870,13 @@ extract.panelAR <- function(model,
   if (include.nobs == TRUE){
     nobs <- length(s$residuals)
     gof <- c(gof, nobs)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.groups == TRUE){
     ngroups <- sqrt(length(s$Sigma))
     gof <- c(gof, ngroups)
-    gof.names <- c(gof.names, "Num.\\ panels")
+    gof.names <- c(gof.names, "Num. panels")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -5943,7 +5943,7 @@ extract.pglm <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -6000,7 +6000,7 @@ extract.pgmm <- function(model, include.nobs = TRUE, include.sargan = TRUE,
     N <- attr(s, "pdim")$nT$N
     ntot <- sum(unlist(s$residuals) != 0)
     gof <- c(gof, n, T, N, ntot)
-    gof.names <- c(gof.names, "n", "T", "Num.\ obs.", "Num.\ obs.\ used")
+    gof.names <- c(gof.names, "n", "T", "Num. obs.", "Num. obs. used")
     gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE, FALSE)
   }
   if (include.sargan == TRUE) {
@@ -6108,12 +6108,12 @@ extract.plm <- function(model,
   }
   if (include.adjrs == TRUE) {
     gof <- c(gof, adj)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.names <- c(gof.names, "Adj. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -6169,7 +6169,7 @@ extract.pmg <- function(model, include.nobs = TRUE, ...) {
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -6285,7 +6285,7 @@ extract.polr <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -6349,13 +6349,13 @@ extract.rem.dyad <- function(model,
   if (include.nvertices == TRUE) {
     num.nodes <- model$n
     gof <- c(gof, num.nodes)
-    gof.names <- c(gof.names, "Num.\ nodes")
+    gof.names <- c(gof.names, "Num. nodes")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.events == TRUE) {
     num.events <- model$m
     gof <- c(gof, num.events)
-    gof.names <- c(gof.names, "Num.\ events")
+    gof.names <- c(gof.names, "Num. events")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.aic == TRUE) {
@@ -6430,7 +6430,7 @@ extract.rlm <- function (model, include.nobs = TRUE, ...) {
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -6486,7 +6486,7 @@ extract.rq <- function(model,
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.percentile == TRUE) {
@@ -6587,7 +6587,7 @@ extract.sarlm <- function(model,
     n <- length(s$fitted.values)
     param <- s$parameters
     gof <- c(gof, n, param)
-    gof.names <- c(gof.names, "Num.\ obs.", "Parameters")
+    gof.names <- c(gof.names, "Num. obs.", "Parameters")
     gof.decimal <- c(gof.decimal, FALSE, FALSE)
   }
   if (include.loglik == TRUE) {
@@ -6739,7 +6739,7 @@ extract.selection <- function(model,
   }
   if (include.loglik == TRUE && "loglik" %in% names(s)) {
     gof <- c(gof, logLik(model)[1])
-    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.rsquared == TRUE && "rSquared" %in% names(s)) {
@@ -6749,7 +6749,7 @@ extract.selection <- function(model,
   }
   if (include.adjrs == TRUE && "rSquared" %in% names(s)) {
     gof <- c(gof, s$rSquared$R2adj)
-    gof.names <- c(gof.names, "Adj.\ R$^2$")
+    gof.names <- c(gof.names, "Adj. R$^2$")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
@@ -6758,7 +6758,7 @@ extract.selection <- function(model,
     } else if(model$tobitType == 2) {
       gof <- c(gof, s$param$nObs, s$param$N0, s$param$N1)
     }
-    gof.names <- c(gof.names, "Num.\ obs.", "Censored", "Observed")
+    gof.names <- c(gof.names, "Num. obs.", "Censored", "Observed")
     gof.decimal <- c(gof.decimal, FALSE, FALSE, FALSE)
   }
 
@@ -6896,7 +6896,7 @@ extract.simex <- function(model, jackknife = TRUE, include.nobs = TRUE, ...) {
   if (include.nobs == TRUE) {
     n <- length(model$model$residuals)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -6977,7 +6977,7 @@ extract.speedglm <- function(model, include.aic = TRUE, include.bic = TRUE,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -7066,7 +7066,7 @@ extract.stergm <- function(model,
     if (include.nvertices == TRUE) {
       nvertices <- model$formation.fit$network$gal$n
       gof <- c(gof, nvertices)
-      gof.names <- c(gof.names, "Num.\ vertices")
+      gof.names <- c(gof.names, "Num. vertices")
       gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.aic == TRUE) {
@@ -7130,10 +7130,10 @@ extract.stergm <- function(model,
     if (include.nvertices == TRUE) {
       nvertices <- model$formation.fit$network$gal$n
       f.gof <- c(f.gof, nvertices)
-      f.gof.names <- c(f.gof.names, "Num.\ vertices")
+      f.gof.names <- c(f.gof.names, "Num. vertices")
       f.gof.decimal <- c(f.gof.decimal, FALSE)
       d.gof <- c(d.gof, nvertices)
-      d.gof.names <- c(d.gof.names, "Num.\ vertices")
+      d.gof.names <- c(d.gof.names, "Num. vertices")
       d.gof.decimal <- c(d.gof.decimal, FALSE)
     }
     if (include.aic == TRUE) {
@@ -7365,7 +7365,7 @@ extract.survreg <- function(model,
   if (include.nobs == TRUE) {
     n <- length(model$linear.predictors)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -7490,7 +7490,7 @@ extract.svyglm <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -7561,13 +7561,13 @@ extract.systemfit <- function(model,
       if (include.adjrs == TRUE) {
         adj <- s$adj.r.squared  # extract adjusted r-squared
         gof <- c(gof, adj)
-        gof.names <- c(gof.names, "Adj.\ R$^2$")
+        gof.names <- c(gof.names, "Adj. R$^2$")
         gof.decimal <- c(gof.decimal, TRUE)
       }
       if (include.nobs == TRUE) {
         n <- length(s$residuals)  # extract number of observations
         gof <- c(gof, n)
-        gof.names <- c(gof.names, "Num.\ obs.")
+        gof.names <- c(gof.names, "Num. obs.")
         gof.decimal <- c(gof.decimal, FALSE)
       }
 
@@ -7622,15 +7622,15 @@ extract.systemfit <- function(model,
         adj <- s$adj.r.squared  # extract adjusted r-squared
         gof <- c(gof, adj)
         gof.names <- c(gof.names, ifelse(include.suffix == TRUE,
-            paste0("Adj.\ R$^2$ (", eq$eqnLabel, ")"),
-            paste0(eq$eqnLabel, ": Adj.\ R$^2$")))
+            paste0("Adj. R$^2$ (", eq$eqnLabel, ")"),
+            paste0(eq$eqnLabel, ": Adj. R$^2$")))
         gof.decimal <- c(gof.decimal, TRUE)
       }
     }
 
     if (include.nobs == TRUE) {  # number of observations
       gof <- c(gof, nobs(model))
-      gof.names <- c(gof.names, "Num.\ obs.\ (total)")
+      gof.names <- c(gof.names, "Num. obs. (total)")
       gof.decimal <- c(gof.decimal, FALSE)
     }
 
@@ -7753,7 +7753,7 @@ extract.tobit <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.censnobs == TRUE) {
@@ -7839,7 +7839,7 @@ extract.vglm <- function(model,
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, length(VGAM::residuals(s)))
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -7916,13 +7916,13 @@ extract.weibreg <- function(model,
   if (include.nobs == TRUE) {
     n <- nobs(model)
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.events == TRUE) {
     ev <- model$events
     gof <- c(gof, ev)
-    gof.names <- c(gof.names, "Num.\ events")
+    gof.names <- c(gof.names, "Num. events")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.trisk == TRUE) {
@@ -8071,7 +8071,7 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, summary(model)$stat["Sample size", 1])
-    gof.names <- c(gof.names, "Num.\\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 
@@ -8166,7 +8166,7 @@ extract.zelig <- function(model,
     if (include.nobs == TRUE) {
       n <- nrow(model$data)
       gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.names <- c(gof.names, "Num. obs.")
       gof.decimal <- c(gof.decimal, FALSE)
     }
     if (include.rsquared == TRUE) {
@@ -8181,7 +8181,7 @@ extract.zelig <- function(model,
       adj <- s$adj.r.squared  #extract adjusted R-squared
       if (!is.null(adj)) {
         gof <- c(gof, adj)
-        gof.names <- c(gof.names, "Adj.\ R$^2$")
+        gof.names <- c(gof.names, "Adj. R$^2$")
         gof.decimal <- c(gof.decimal, TRUE)
       }
     }
@@ -8231,7 +8231,7 @@ extract.zelig <- function(model,
     if (include.nobs == TRUE) {
       n <- nrow(model$data)
       gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.names <- c(gof.names, "Num. obs.")
       gof.decimal <- c(gof.decimal, FALSE)
     }
 
@@ -8274,7 +8274,7 @@ extract.zelig <- function(model,
     if (include.nobs == TRUE) {
       n <- nrow(model$data)
       gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num.\ obs.")
+      gof.names <- c(gof.names, "Num. obs.")
       gof.decimal <- c(gof.decimal, FALSE)
     }
     tr <- createTexreg(coef.names = coefficient.names,
@@ -8427,13 +8427,13 @@ extract.zeroinfl <- function(model,
   if (include.loglik == TRUE) {
     lik <- logLik(model)[1]
     gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log\ Likelihood")
+    gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     n <- s$n
     gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\ obs.")
+    gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
 

@@ -45,6 +45,7 @@ test_that("texreg returns output as in the JSS 2013 article", {
 
   # GLS example; custom names, reordering, single.row, 'extract' arguments
   # (difference to JSS: the paper reports results using 'no.margin = TRUE', but it's not in the code example)
+  # (difference to JSS: the version used in the paper counts 11 places left of the right bracket; this is now correctly counted as 9)
   expect_equal({
       library("nlme")
       m3 <- gls(follicles ~ sin(2 * pi * Time) + cos(2 * pi * Time), Ovary,

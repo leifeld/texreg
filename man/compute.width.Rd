@@ -13,15 +13,15 @@ table.}
 \item{left}{Should the width left of the separator/bracket be calculated? If
 \code{FALSE}, the width right of the separator/bracket is computed.}
 
+\item{single.row}{Was the \code{single.row} argument used to construct the
+regression table? I.e., are both the coefficient and uncertainty measure
+(SE or CI) in the same rows of the matrix?}
+
 \item{bracket}{The separator symbol to match. These can be closing
 parentheses (in the case of standard errors when \code{single.row} is
 switched on), closing square brackets (in the case of confidence
 intervals), or dots (in the case of \code{single.row = FALSE}, for decimal
 alignment at the actual decimal separator).}
-
-\item{Was}{the \code{single.row} argument used to construct the regression
-table? I.e., are both the coefficient and uncertainty measure (SE or CI) in
-the same rows of the matrix?}
 }
 \value{
 A number indicating the maximal width left or right of the separator.
@@ -34,8 +34,8 @@ This function takes a vector of \code{character} objects with coefficients,
 usually a column of a regression table, and computes the maximal width left
 or right of the decimal separator or bracket at which the cells are aligned
 vertically. This is useful in the context of the \code{\link{texreg}}
-function when the \code{dcolumn} argument is used for vertical decimal point
-alignment.
+function when the \code{dcolumn} or \code{siunitx} arguments are used for
+vertical decimal point alignment.
 }
 \seealso{
 \code{\link{texreg}}

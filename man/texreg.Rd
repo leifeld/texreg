@@ -39,6 +39,7 @@ texreg(
   label = "table:coefficients",
   booktabs = FALSE,
   dcolumn = FALSE,
+  siunitx = FALSE,
   lyx = FALSE,
   sideways = FALSE,
   longtable = FALSE,
@@ -316,12 +317,13 @@ usually contains the coefficient names.}
 \item{bold}{The p-value threshold below which the coefficient shall be
 formatted in a bold font. For example, \code{bold = 0.05} will cause all
 coefficients that are significant at the 95\% level to be formatted in
-bold. Note that this is not compatible with the \code{dcolumn} argument in
-the \code{\link{texreg}} function. If both are \code{TRUE}, \code{dcolumn}
-is switched off, and a warning message appears. Note also that it is
-advisable to use \code{stars = FALSE} together with the \code{bold}
-argument because having both bolded coefficients and significance stars
-usually does not make any sense.}
+bold. Note that this is not compatible with the \code{dcolumn} or
+\code{siunitx} arguments in the \code{\link{texreg}} function. If both
+\code{bold} and \code{dcolumn} or \code{siunitx} are \code{TRUE},
+\code{dcolumn} and \code{siunitx} are switched off, and a warning message
+appears. Note also that it is advisable to use \code{stars = FALSE}
+together with the \code{bold} argument because having both bolded
+coefficients and significance stars usually does not make any sense.}
 
 \item{center}{Should the table be horizontally aligned at the center of the
 page?}
@@ -338,7 +340,15 @@ rules in the output table (recommended).}
 
 \item{dcolumn}{Use the \pkg{dcolumn} LaTeX package to get a nice alignment of
 the coefficients at the decimal separator (recommended for use with the
-\code{\link{texreg}} function).}
+\code{\link{texreg}} function). Note that only one of the three arguments
+\code{bold}, \code{dcolumn}, and \code{siunitx} can be used at a time as
+they are mutually incompatible.}
+
+\item{siunitx}{Use the \pkg{siunitx} LaTeX package to get a nice alignment of
+the coefficients at the decimal separator (recommended for use with the
+\code{\link{texreg}} function). Note that only one of the three arguments
+\code{bold}, \code{dcolumn}, and \code{siunitx} can be used at a time as
+they are mutually incompatible.}
 
 \item{lyx}{\code{logical}; if \code{TRUE}, each new line in the output is
 doubled, which facilitates transferring the output into the LyX document

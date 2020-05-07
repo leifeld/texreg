@@ -849,12 +849,13 @@ knitreg <- function(...) {
 #' @param bold The p-value threshold below which the coefficient shall be
 #'   formatted in a bold font. For example, \code{bold = 0.05} will cause all
 #'   coefficients that are significant at the 95\% level to be formatted in
-#'   bold. Note that this is not compatible with the \code{dcolumn} argument in
-#'   the \code{\link{texreg}} function. If both are \code{TRUE}, \code{dcolumn}
-#'   is switched off, and a warning message appears. Note also that it is
-#'   advisable to use \code{stars = FALSE} together with the \code{bold}
-#'   argument because having both bolded coefficients and significance stars
-#'   usually does not make any sense.
+#'   bold. Note that this is not compatible with the \code{dcolumn} or
+#'   \code{siunitx} arguments in the \code{\link{texreg}} function. If both
+#'   \code{bold} and \code{dcolumn} or \code{siunitx} are \code{TRUE},
+#'   \code{dcolumn} and \code{siunitx} are switched off, and a warning message
+#'   appears. Note also that it is advisable to use \code{stars = FALSE}
+#'   together with the \code{bold} argument because having both bolded
+#'   coefficients and significance stars usually does not make any sense.
 #' @param groups This argument can be used to group the rows of the table into
 #'   blocks. For example, there could be one block for hypotheses and another
 #'   block for control variables. Each group has a heading, and the row labels
@@ -882,7 +883,14 @@ knitreg <- function(...) {
 #'   usually contains the coefficient names.
 #' @param dcolumn Use the \pkg{dcolumn} LaTeX package to get a nice alignment of
 #'   the coefficients at the decimal separator (recommended for use with the
-#'   \code{\link{texreg}} function).
+#'   \code{\link{texreg}} function). Note that only one of the three arguments
+#'   \code{bold}, \code{dcolumn}, and \code{siunitx} can be used at a time as
+#'   they are mutually incompatible.
+#' @param siunitx Use the \pkg{siunitx} LaTeX package to get a nice alignment of
+#'   the coefficients at the decimal separator (recommended for use with the
+#'   \code{\link{texreg}} function). Note that only one of the three arguments
+#'   \code{bold}, \code{dcolumn}, and \code{siunitx} can be used at a time as
+#'   they are mutually incompatible.
 #' @param output.type Which type of output should be produced? Valid values are
 #'   \code{"ascii"} (for plain text tables), \code{"latex"} (for LaTeX markup)
 #'   in the resulting table), and \code{"html"} (for HTML markup in the
@@ -937,6 +945,7 @@ matrixreg <- function(l,
                       custom.columns = NULL,
                       custom.col.pos = NULL,
                       dcolumn = TRUE,
+                      siunitx = FALSE,
                       output.type = c("ascii", "latex", "html"),
                       include.attributes = FALSE,
                       trim = FALSE,
@@ -1149,7 +1158,7 @@ matrixreg <- function(l,
   }
 
   # add row names as first column to GOF block and format values as character strings
-  if (dcolumn == FALSE && output.type[1] == "latex") {
+  if (dcolumn == FALSE && siunitx == FALSE && output.type[1] == "latex") {
     dollar <- "$"
   } else {
     dollar <- ""
@@ -1188,8 +1197,10 @@ matrixreg <- function(l,
         newValues <- sapply(custom.gof.rows[[i]], function(x) { # format the different values of the new row
           if (is.character(x) && output.type[1] == "latex" && isTRUE(dcolumn)) {
             paste0("\\multicolumn{1}{c}{", x, "}")
-          } else if (is.character(x) && output.type[1] == "latex" && !isTRUE(dcolumn)) {
-            coeftostring(x, leading.zero, digits = dec) # omit dollars around value if character and no dcolumn (would otherwise be printed in italics)
+          } else if (is.character(x) && output.type[1] == "latex" && isTRUE(siunitx)) {
+            paste0("{", x, "}")
+          } else if (is.character(x) && output.type[1] == "latex" && !isTRUE(dcolumn) && !isTRUE(siunitx)) {
+            coeftostring(x, leading.zero, digits = dec) # omit dollars around value if character and no dcolumn/siunitx (would otherwise be printed in italics)
           } else {
             paste0(dollar, coeftostring(x, leading.zero, digits = dec), dollar)
           }
@@ -1471,7 +1482,7 @@ matrixreg <- function(l,
             }
           }
 
-          if (isTRUE(dcolumn)) {
+          if (isTRUE(dcolumn) || isTRUE(siunitx)) {
             dollar <- ""
           } else {
             dollar <- "$"
@@ -1572,7 +1583,7 @@ matrixreg <- function(l,
             }
           }
 
-          if (isTRUE(dcolumn)) {
+          if (isTRUE(dcolumn) || isTRUE(siunitx)) {
             dollar <- ""
           } else {
             dollar <- "$"
@@ -2804,6 +2815,7 @@ texreg <- function(l,
                    label = "table:coefficients",
                    booktabs = FALSE,
                    dcolumn = FALSE,
+                   siunitx = FALSE,
                    lyx = FALSE,
                    sideways = FALSE,
                    longtable = FALSE,
@@ -2815,11 +2827,31 @@ texreg <- function(l,
                    float.pos = "",
                    ...) {
 
+  # check dcolumn vs. siunitx
+  if (isTRUE(dcolumn) && isTRUE(siunitx)) {
+    dcolumn <- FALSE
+    msg <- paste("The dcolumn and siunitx packages cannot be used at",
+                 "the same time. Switching off 'dcolumn'.")
+    warning(msg)
+  }
+
   # check dcolumn vs. bold
   if (isTRUE(dcolumn) && bold > 0) {
     dcolumn <- FALSE
     msg <- paste("The dcolumn package and the 'bold' argument cannot be used at",
                  "the same time. Switching off 'dcolumn'.")
+    if (length(stars) > 1 || (length(stars) > 0 && (stars == TRUE || stars != 0))) {
+      warning(paste(msg, "You should also consider setting stars = 0."))
+    } else {
+      warning(msg)
+    }
+  }
+
+  # check siunitx vs. bold
+  if (isTRUE(siunitx) && bold > 0) {
+    siunitx <- FALSE
+    msg <- paste("The siunitx package and the 'bold' argument cannot be used at",
+                 "the same time. Switching off 'siunitx'.")
     if (length(stars) > 1 || (length(stars) > 0 && (stars == TRUE || stars != 0))) {
       warning(paste(msg, "You should also consider setting stars = 0."))
     } else {
@@ -2870,6 +2902,7 @@ texreg <- function(l,
                              custom.columns = custom.columns,
                              custom.col.pos = custom.col.pos,
                              dcolumn = dcolumn,
+                             siunitx = siunitx,
                              bold = bold,
                              output.type = "latex",
                              include.attributes = TRUE,
@@ -2900,7 +2933,7 @@ texreg <- function(l,
     if (coltypes[i] == "coef") {
       coefcount <- coefcount + 1
     }
-    if (isTRUE(single.row) && coltypes[i] == "coef") {
+    if (isTRUE(single.row) && coltypes[i] == "coef" && !isTRUE(siunitx)) {
       if (isTRUE(ci[coefcount])) {
         separator <- "]"
       } else {
@@ -2929,6 +2962,20 @@ texreg <- function(l,
         coldef <- paste0(coldef, "D{", separator, "}{", separator, "}{",
                          dl, separator, dr, "}", margin.arg, " ")
       }
+    } else if (isTRUE(siunitx)) {
+      if (coltypes[i] != "coef") {
+        coldef <- paste0(coldef, alignmentletter, margin.arg, " ")
+      } else {
+        dl <- compute.width(output.matrix[, i],
+                            left = TRUE,
+                            single.row = single.row,
+                            bracket = separator)
+        dr <- compute.width(output.matrix[, i],
+                            left = FALSE,
+                            single.row = single.row,
+                            bracket = separator)
+        coldef <- paste0(coldef, "S[table-format=", dl, separator, dr, "]", margin.arg, " ")
+      }
     } else {
       coldef <- paste0(coldef, alignmentletter, margin.arg, " ")
     }
@@ -2952,10 +2999,13 @@ texreg <- function(l,
     if (isTRUE(dcolumn)) {
       string <- paste0(string, "\\usepackage{dcolumn}", linesep)
     }
+    if (isTRUE(siunitx)) {
+      string <- paste0(string, "\\usepackage{siunitx}", linesep)
+    }
     if (isTRUE(longtable)) {
       string <- paste0(string, "\\usepackage{longtable}", linesep)
     }
-    if (!is.null(scalebox) || isTRUE(dcolumn) || isTRUE(booktabs) || isTRUE(sideways) || isTRUE(longtable)) {
+    if (!is.null(scalebox) || isTRUE(dcolumn) || isTRUE(siunitx) || isTRUE(booktabs) || isTRUE(sideways) || isTRUE(longtable)) {
       string <- paste0(string, linesep)
     }
   }
@@ -2995,8 +3045,11 @@ texreg <- function(l,
         string <- paste0(string, "\\begin{", fontsize, "}", linesep)
       }
       if (!is.null(scalebox)) {
-        string <- paste0(string, "\\scalebox{", scalebox, "}{\n")
+        string <- paste0(string, "\\scalebox{", scalebox, "}{", linesep)
       }
+    }
+    if (isTRUE(siunitx)) {
+      string <- paste0(string, "\\sisetup{parse-numbers=false, table-text-alignment=centre}", linesep)
     }
     string <- paste0(string, "\\begin{tabular}{", coldef, "}", linesep)
   }
@@ -3017,6 +3070,14 @@ texreg <- function(l,
         tablehead <- paste0(tablehead, " & ", mod.names[i])
       } else {
         tablehead <- paste0(tablehead, " & \\multicolumn{1}{c}{", mod.names[i], "}")
+      }
+    }
+  } else if (isTRUE(siunitx)) {
+    for (i in 2:length(mod.names)) {
+      if (coltypes[i] != "coef") {
+        tablehead <- paste0(tablehead, " & ", mod.names[i])
+      } else {
+        tablehead <- paste0(tablehead, " & {", mod.names[i], "}")
       }
     }
   } else {
@@ -3384,16 +3445,16 @@ coeftostring <- function(x, lead.zero = FALSE, digits = 2) {
 #' usually a column of a regression table, and computes the maximal width left
 #' or right of the decimal separator or bracket at which the cells are aligned
 #' vertically. This is useful in the context of the \code{\link{texreg}}
-#' function when the \code{dcolumn} argument is used for vertical decimal point
-#' alignment.
+#' function when the \code{dcolumn} or \code{siunitx} arguments are used for
+#' vertical decimal point alignment.
 #'
 #' @param v A \code{character} vector representing a column in a regression
 #'   table.
 #' @param left Should the width left of the separator/bracket be calculated? If
 #'   \code{FALSE}, the width right of the separator/bracket is computed.
-#' @param Was the \code{single.row} argument used to construct the regression
-#'   table? I.e., are both the coefficient and uncertainty measure (SE or CI) in
-#'   the same rows of the matrix?
+#' @param single.row Was the \code{single.row} argument used to construct the
+#'   regression table? I.e., are both the coefficient and uncertainty measure
+#'   (SE or CI) in the same rows of the matrix?
 #' @param bracket The separator symbol to match. These can be closing
 #'   parentheses (in the case of standard errors when \code{single.row} is
 #'   switched on), closing square brackets (in the case of confidence
@@ -3430,18 +3491,28 @@ compute.width <- function(v, left = TRUE, single.row = FALSE, bracket = ")") {
         # do nothing because empty cell
       } else {
         left.side <- append(left.side, ssp[[i]][1])
-        right.side <- append(right.side, ssp[[i]][2])
+        if (length(ssp[[i]]) > 1) {
+          r <- ""
+          for (j in 2:length(ssp[[i]])) {
+            r <- paste(r, ssp[[i]][j], sep = ".")
+          }
+          right.side <- append(right.side, r)
+        }
       }
     }
   }
   if (isTRUE(left)) {
-    left.side <- sub("\\\\; ", "", left.side)
-    # correct for custom.gof.rows with text, which is set as \multicolumn
+    left.side <- sub(" \\\\; ", " ", left.side)
+    left.side <- gsub("[.]", "", left.side) # do not count decimal separators on RHS because they are quite narrow
+    # correct for custom.gof.rows with text, which is set as \multicolumn or {}
     left.side <- left.side[!grepl("\\\\multicolumn[{]1[}][{]c[}][{]", left.side)]
+    left.side <- left.side[!grepl("^\\{", left.side)]
     v.length <- max(c(0, nchar(left.side)), na.rm = TRUE)
   } else {
-    right.side <- sub("\\^\\{", "", right.side)
+    right.side <- sub("\\^\\{", "", right.side) # only count stars, not the ^{} around them
     right.side <- sub("\\}", "", right.side)
+    right.side <- gsub(" \\\\; ", " ", right.side) # replace guaranteed space by normal space for counting purposes
+    right.side <- gsub("[.]", "", right.side) # do not count decimal separators on RHS because they are quite narrow
     v.length <- max(c(0, nchar(right.side)), na.rm = TRUE)
   }
   return(v.length)

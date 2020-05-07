@@ -33,6 +33,7 @@ matrixreg(
   custom.columns = NULL,
   custom.col.pos = NULL,
   dcolumn = TRUE,
+  siunitx = FALSE,
   output.type = c("ascii", "latex", "html"),
   include.attributes = FALSE,
   trim = FALSE,
@@ -266,12 +267,13 @@ the \code{ci.force} argument is used.}
 \item{bold}{The p-value threshold below which the coefficient shall be
 formatted in a bold font. For example, \code{bold = 0.05} will cause all
 coefficients that are significant at the 95\% level to be formatted in
-bold. Note that this is not compatible with the \code{dcolumn} argument in
-the \code{\link{texreg}} function. If both are \code{TRUE}, \code{dcolumn}
-is switched off, and a warning message appears. Note also that it is
-advisable to use \code{stars = FALSE} together with the \code{bold}
-argument because having both bolded coefficients and significance stars
-usually does not make any sense.}
+bold. Note that this is not compatible with the \code{dcolumn} or
+\code{siunitx} arguments in the \code{\link{texreg}} function. If both
+\code{bold} and \code{dcolumn} or \code{siunitx} are \code{TRUE},
+\code{dcolumn} and \code{siunitx} are switched off, and a warning message
+appears. Note also that it is advisable to use \code{stars = FALSE}
+together with the \code{bold} argument because having both bolded
+coefficients and significance stars usually does not make any sense.}
 
 \item{groups}{This argument can be used to group the rows of the table into
 blocks. For example, there could be one block for hypotheses and another
@@ -303,7 +305,15 @@ usually contains the coefficient names.}
 
 \item{dcolumn}{Use the \pkg{dcolumn} LaTeX package to get a nice alignment of
 the coefficients at the decimal separator (recommended for use with the
-\code{\link{texreg}} function).}
+\code{\link{texreg}} function). Note that only one of the three arguments
+\code{bold}, \code{dcolumn}, and \code{siunitx} can be used at a time as
+they are mutually incompatible.}
+
+\item{siunitx}{Use the \pkg{siunitx} LaTeX package to get a nice alignment of
+the coefficients at the decimal separator (recommended for use with the
+\code{\link{texreg}} function). Note that only one of the three arguments
+\code{bold}, \code{dcolumn}, and \code{siunitx} can be used at a time as
+they are mutually incompatible.}
 
 \item{output.type}{Which type of output should be produced? Valid values are
 \code{"ascii"} (for plain text tables), \code{"latex"} (for LaTeX markup)

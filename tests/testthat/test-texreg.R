@@ -4,6 +4,20 @@ library("texreg")
 data("iris")
 model1 <- lm(Sepal.Width ~ Petal.Width, data = iris)
 
+test_that("siunitx argument works in the texreg function", {
+  tr <- texreg(list(model1, model1), single.row = TRUE, siunitx = TRUE, custom.gof.rows = list(abc = c("abcdefg hijklmn", "abc")))
+  expect_match(tr, "\\& 3\\.31 \\\\; \\(0\\.06\\)\\^\\{\\*\\*\\*\\}  \\&", perl = TRUE)
+  expect_match(tr, "l S\\[table-format=3\\.11\\]", perl = TRUE)
+  expect_match(tr, "\\n\\\\usepackage\\{siunitx\\}\\n", perl = TRUE)
+  expect_match(tr, "abc         \\& \\{abcdefg hijklmn\\}     \\& \\{abc\\}", perl = TRUE)
+  expect_match(tr, "\\n\\\\sisetup\\{parse-numbers=false, table-text-alignment=centre\\}\\n", perl = TRUE)
+  tr <- texreg(list(model1, model1), siunitx = TRUE, custom.gof.rows = list(abc = c("abcdefg hijklmn", "abc")))
+  expect_match(tr, "l S\\[table-format=3\\.5\\]", perl = TRUE)
+  expect_match(tr, "\\{Model 1\\}", perl = TRUE)
+  expect_warning(texreg(model1, siunitx = TRUE, dcolumn = TRUE), "The dcolumn and siunitx packages cannot be used at the same time. Switching off 'dcolumn'.")
+  expect_warning(texreg(model1, siunitx = TRUE, bold = TRUE), "The siunitx package and the 'bold' argument cannot be used at the same time. Switching off 'siunitx'.")
+  expect_warning(texreg(model1, dcolumn = TRUE, bold = TRUE), "The dcolumn package and the 'bold' argument cannot be used at the same time. Switching off 'dcolumn'.")
+})
 
 test_that("duplicate row labels in custom.coef.names are merged when feasible", {
   skip_if_not_installed("nlme")
@@ -38,7 +52,7 @@ test_that("no stars, single.row, and dcolumn work together", {
                       single.row = TRUE,
                       dcolumn = TRUE,
                       stars = numeric()),
-               regexp = "l D{\\)}{\\)}{11\\)0}}",
+               regexp = "l D{\\)}{\\)}{9\\)0}}",
                perl = TRUE)
 })
 
