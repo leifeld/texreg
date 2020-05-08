@@ -740,13 +740,14 @@ knitreg <- function(...) {
 #' @param symbol If four threshold values are handed over to the \code{stars}
 #'   argument, p-values smaller than the largest threshold value but larger than
 #'   the second-largest threshold value are denoted by this symbol. The default
-#'   symbol is \code{"\\cdot"} for the LaTeX dot, \code{"&middot;"} for the HTML
-#'   dot, or simply \code{"."} for the ASCII dot. If the \code{\link{texreg}}
-#'   function is used, any other mathematical LaTeX symbol or plain text symbol
-#'   can be used, for example \code{symbol = "\\circ"} for a small circle (note
-#'   that backslashes must be escaped). If the \code{\link{htmlreg}} function is
-#'   used, any other HTML character or symbol can be used. For the
-#'   \code{screenreg} function, only plain text characters can be used.
+#'   symbol is \code{"\\\\cdot"} for the LaTeX dot, \code{"&middot;"} for the
+#'   HTML dot, or simply \code{"."} for the ASCII dot. If the
+#'   \code{\link{texreg}} function is used, any other mathematical LaTeX symbol
+#'   or plain text symbol can be used, for example \code{symbol = "\\\\circ"}
+#'   for a small circle (note that backslashes must be escaped). If the
+#'   \code{\link{htmlreg}} function is used, any other HTML character or symbol
+#'   can be used. For the \code{screenreg} function, only plain text characters
+#'   can be used.
 #' @param override.coef Set custom values for the coefficients. New coefficients
 #'   are provided as a list of numeric vectors. The list contains vectors of
 #'   coefficients for each model. There must be as many vectors of coefficients
@@ -2702,6 +2703,14 @@ screenreg <- function(l,
 #'   inserting the \code{\%stars} wildcard. For example, a custom note can be
 #'   added right after the significance legend by providing \code{custom.note =
 #'   "\%stars. My note."}.
+#'
+#'   If the \code{threeparttable} argument is used, any note should be preceded
+#'   by \code{"\\\\item"}, for example
+#'   \code{"\\\\item \%stars. \\\\item Second note. \\\\item Third note."}, and
+#'   it is possible to create line breaks in the formatted table by including
+#'   \code{"\\\\\\\\"} and line breaks in the LaTeX code by including
+#'   \code{"\\n"}, for example
+#'   \code{"\\n\\\\item \%stars.\\\\\\\\\\n\\\\item Second line.\\n"}.
 #' @param center Should the table be horizontally aligned at the center of the
 #'   page?
 #' @param caption Set the caption of the table.
@@ -2722,6 +2731,14 @@ screenreg <- function(l,
 #'   across multiple pages. Note that this argument is not compatible with the
 #'   \code{sideways} and \code{scalebox} arguments. These arguments will be
 #'   automatically switched off when \code{longtable = TRUE} is set.
+#' @param threeparttable If \code{threeparttable = TRUE} is set, the
+#'   \code{threeparttable} environment will be used to enclose the
+#'   \code{tabular} environment in the LaTeX code, and the significance note
+#'   will be enclosed in a \code{tablenotes} environment. This permits word
+#'   wrapping of long table notes and adequate spacing between multiple notes.
+#'   See also the \code{custom.note} argument. If \code{longtable} is used,
+#'   the \code{threeparttablex} LaTeX package is used instead of the
+#'   \code{threeparttable} package.
 #' @param use.packages If this argument is set to \code{TRUE} (= the default
 #'   behavior), the required LaTeX packages are loaded in the beginning. If set
 #'   to \code{FALSE}, the use package statements are omitted from the output.
@@ -2819,6 +2836,7 @@ texreg <- function(l,
                    lyx = FALSE,
                    sideways = FALSE,
                    longtable = FALSE,
+                   threeparttable = FALSE,
                    use.packages = TRUE,
                    table = TRUE,
                    no.margin = FALSE,
@@ -2857,6 +2875,15 @@ texreg <- function(l,
     } else {
       warning(msg)
     }
+  }
+
+  # check siunitx vs. threeparttable
+  if (isTRUE(siunitx) && isTRUE(threeparttable)) {
+    siunitx <- FALSE
+    msg <- paste("The siunitx package and the threeparttable package cannot be",
+                 "used together. Switching off 'siunitx'. Consider using
+                 'dcolumn = TRUE' instead for decimal point alignment.")
+    warning(msg)
   }
 
   # check longtable vs. sideways
@@ -3005,8 +3032,71 @@ texreg <- function(l,
     if (isTRUE(longtable)) {
       string <- paste0(string, "\\usepackage{longtable}", linesep)
     }
-    if (!is.null(scalebox) || isTRUE(dcolumn) || isTRUE(siunitx) || isTRUE(booktabs) || isTRUE(sideways) || isTRUE(longtable)) {
+    if (isTRUE(threeparttable)) {
+      if (isTRUE(longtable)) {
+        string <- paste0(string, "\\usepackage{threeparttablex}", linesep)
+      } else {
+        string <- paste0(string, "\\usepackage{threeparttable}", linesep)
+      }
+    }
+    if (!is.null(scalebox) || isTRUE(dcolumn) || isTRUE(siunitx) || isTRUE(booktabs) || isTRUE(sideways) || isTRUE(longtable) || isTRUE(threeparttable)) {
       string <- paste0(string, linesep)
+    }
+  }
+
+  # stars note (define now, add later)
+  snote <- get_stars_note(stars = stars,
+                          star.symbol = "*",
+                          symbol = symbol,
+                          ci = ci,
+                          ci.test = ci.test,
+                          output = "latex")
+
+  if (is.null(fontsize)) {
+    notesize <- "scriptsize"
+  } else if (fontsize == "tiny" ||
+             fontsize == "scriptsize" ||
+             fontsize == "footnotesize" ||
+             fontsize == "small") {
+    notesize <- "tiny"
+  } else if (fontsize == "normalsize") {
+    notesize <- "scriptsize"
+  } else if (fontsize == "large") {
+    notesize <- "footnotesize"
+  } else if (fontsize == "Large") {
+    notesize <- "small"
+  } else if (fontsize == "LARGE") {
+    notesize <- "normalsize"
+  } else if (fontsize == "huge") {
+    notesize <- "large"
+  } else if (fontsize == "Huge") {
+    notesize <- "Large"
+  }
+  if (is.null(custom.note)) {
+    if (snote == "") {
+      note <- ""
+    } else if (!isTRUE(threeparttable)) {
+      note <- paste0("\\multicolumn{", length(mod.names),
+                     "}{l}{\\", notesize, "{", snote, "}}")
+    } else {
+      note <- paste0("\\", notesize, "{\\item ", snote, "}")
+    }
+  } else if (custom.note == "") {
+    note <- ""
+  } else {
+    if (!isTRUE(threeparttable)) {
+      note <- paste0("\\multicolumn{", length(mod.names),
+                     "}{l}{\\", notesize, "{", custom.note, "}}")
+    } else {
+      note <- paste0("\\", notesize, "{", custom.note, "}")
+    }
+    note <- gsub("%stars", snote, note, perl = TRUE)
+  }
+  if (note != "") {
+    if (isTRUE(longtable) && !isTRUE(threeparttable)) {  # longtable requires line break after note/caption
+      note <- paste0(note, "\\\\", linesep)
+    } else {
+      note <- paste0(note, linesep)
     }
   }
 
@@ -3016,6 +3106,16 @@ texreg <- function(l,
     }
     if (!is.null(fontsize)) {
       string <- paste0(string, "\\begin{", fontsize, "}", linesep)
+    }
+    if (isTRUE(threeparttable)) {
+      string <- paste0(string,
+                       "\\begin{ThreePartTable}",
+                       linesep,
+                       "\\begin{TableNotes}[flushleft]",
+                       linesep,
+                       note,
+                       "\\end{TableNotes}",
+                       linesep)
     }
     if (float.pos == "") {
       string <- paste0(string, "\\begin{longtable}{", coldef, "}", linesep)
@@ -3050,6 +3150,9 @@ texreg <- function(l,
     }
     if (isTRUE(siunitx)) {
       string <- paste0(string, "\\sisetup{parse-numbers=false, table-text-alignment=centre}", linesep)
+    }
+    if (isTRUE(threeparttable)) {
+      string <- paste0(string, "\\begin{threeparttable}", linesep)
     }
     string <- paste0(string, "\\begin{tabular}{", coldef, "}", linesep)
   }
@@ -3096,56 +3199,6 @@ texreg <- function(l,
     string <- paste0(string, tablehead)
   }
 
-  # stars note (define now, add later)
-  snote <- get_stars_note(stars = stars,
-                          star.symbol = "*",
-                          symbol = symbol,
-                          ci = ci,
-                          ci.test = ci.test,
-                          output = "latex")
-
-  if (is.null(fontsize)) {
-    notesize <- "scriptsize"
-  } else if (fontsize == "tiny" ||
-             fontsize == "scriptsize" ||
-             fontsize == "footnotesize" ||
-             fontsize == "small") {
-    notesize <- "tiny"
-  } else if (fontsize == "normalsize") {
-    notesize <- "scriptsize"
-  } else if (fontsize == "large") {
-    notesize <- "footnotesize"
-  } else if (fontsize == "Large") {
-    notesize <- "small"
-  } else if (fontsize == "LARGE") {
-    notesize <- "normalsize"
-  } else if (fontsize == "huge") {
-    notesize <- "large"
-  } else if (fontsize == "Huge") {
-    notesize <- "Large"
-  }
-  if (is.null(custom.note)) {
-    if (snote == "") {
-      note <- ""
-    } else {
-      note <- paste0("\\multicolumn{", length(mod.names),
-                     "}{l}{\\", notesize, "{", snote, "}}")
-    }
-  } else if (custom.note == "") {
-    note <- ""
-  } else {
-    note <- paste0("\\multicolumn{", length(mod.names),
-                   "}{l}{\\", notesize, "{", custom.note, "}}")
-    note <- gsub("%stars", snote, note, perl = TRUE)
-  }
-  if (note != "") {
-    if (longtable == TRUE) {  # longtable requires line break after note/caption
-      note <- paste0(note, "\\\\", linesep)
-    } else {
-      note <- paste0(note, linesep)
-    }
-  }
-
   # bottom rule (define now, add later)
   if (isTRUE(booktabs)) {
     bottomline <- paste0("\\bottomrule", linesep)
@@ -3159,11 +3212,13 @@ texreg <- function(l,
       string <- paste0(string, "\\caption{", caption, "}", linesep, "\\label{",
                        label, "}\\\\", linesep, tablehead, "\\endfirsthead", linesep,
                        tablehead, "\\endhead", linesep, bottomline, "\\endfoot", linesep,
-                       bottomline, note, "\\endlastfoot", linesep)
+                       bottomline, ifelse(isTRUE(threeparttable), "\\insertTableNotes\\\\\n", note),
+                       "\\endlastfoot", linesep)
     } else {
       string <- paste0(string, tablehead, "\\endfirsthead", linesep, tablehead,
                        "\\endhead", linesep, bottomline, "\\endfoot", linesep, bottomline,
-                       note, "\\caption{", caption, "}", linesep, "\\label{", label, "}",
+                       ifelse(isTRUE(threeparttable), "\\insertTableNotes\\\\\n", note),
+                       "\\caption{", caption, "}", linesep, "\\label{", label, "}",
                        linesep, "\\endlastfoot \\\\", linesep)
     }
   }
@@ -3225,12 +3280,29 @@ texreg <- function(l,
   # write table footer
   if (isFALSE(longtable)) {
     string <- paste0(string, bottomline)
-    string <- paste0(string, note, "\\end{tabular}", linesep)
+    if (isTRUE(threeparttable)) {
+      string <- paste0(string,
+                       "\\end{tabular}",
+                       linesep,
+                       "\\begin{tablenotes}[flushleft]",
+                       linesep,
+                       note,
+                       "\\end{tablenotes}",
+                       linesep,
+                       "\\end{threeparttable}",
+                       linesep
+                       )
+    } else {
+      string <- paste0(string, note, "\\end{tabular}", linesep)
+    }
   }
 
   # take care of center, scalebox and table environment
   if (isTRUE(longtable)) {
     string <- paste0(string, "\\end{longtable}", linesep)
+    if (isTRUE(threeparttable)) {
+      string <- paste0(string, "\\end{ThreePartTable}", linesep)
+    }
     if (!is.null(fontsize)) {
       string <- paste0(string, "\\end{", fontsize, "}", linesep)
     }

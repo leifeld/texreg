@@ -96,14 +96,22 @@ title will be omitted completely.}
   }}
 
 \item{custom.note}{With this argument, a replacement text for the
-significance note below the table can be provided. If an empty
-\code{character} object is provided (\code{custom.note = ""}), the note
-will be omitted completely. If some character string is provided (e.g.,
-\code{custom.note = "My note"}), the significance legend is replaced by
-\code{My note}. The original significance legend can be included by
-inserting the \code{\%stars} wildcard. For example, a custom note can be
-added right after the significance legend by providing \code{custom.note =
-"\%stars. My note."}.}
+  significance note below the table can be provided. If an empty
+  \code{character} object is provided (\code{custom.note = ""}), the note
+  will be omitted completely. If some character string is provided (e.g.,
+  \code{custom.note = "My note"}), the significance legend is replaced by
+  \code{My note}. The original significance legend can be included by
+  inserting the \code{\%stars} wildcard. For example, a custom note can be
+  added right after the significance legend by providing \code{custom.note =
+  "\%stars. My note."}.
+
+  If the \code{threeparttable} argument is used, any note should be preceded
+  by \code{"\\\\item"}, for example
+  \code{"\\\\item \%stars. \\\\item Second note. \\\\item Third note."}, and
+  it is possible to create line breaks in the formatted table by including
+  \code{"\\\\\\\\"} and line breaks in the LaTeX code by including
+  \code{"\\n"}, for example
+  \code{"\\n\\\\item \%stars.\\\\\\\\\\n\\\\item Second line.\\n"}.}
 
 \item{override.coef}{Set custom values for the coefficients. New coefficients
 are provided as a list of numeric vectors. The list contains vectors of

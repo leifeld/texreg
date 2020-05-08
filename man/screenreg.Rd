@@ -132,14 +132,22 @@ values for the new custom GOF rows). Arguments for custom columns are not
 affected because they only insert columns into the coefficient block.}
 
 \item{custom.note}{With this argument, a replacement text for the
-significance note below the table can be provided. If an empty
-\code{character} object is provided (\code{custom.note = ""}), the note
-will be omitted completely. If some character string is provided (e.g.,
-\code{custom.note = "My note"}), the significance legend is replaced by
-\code{My note}. The original significance legend can be included by
-inserting the \code{\%stars} wildcard. For example, a custom note can be
-added right after the significance legend by providing \code{custom.note =
-"\%stars. My note."}.}
+  significance note below the table can be provided. If an empty
+  \code{character} object is provided (\code{custom.note = ""}), the note
+  will be omitted completely. If some character string is provided (e.g.,
+  \code{custom.note = "My note"}), the significance legend is replaced by
+  \code{My note}. The original significance legend can be included by
+  inserting the \code{\%stars} wildcard. For example, a custom note can be
+  added right after the significance legend by providing \code{custom.note =
+  "\%stars. My note."}.
+
+  If the \code{threeparttable} argument is used, any note should be preceded
+  by \code{"\\\\item"}, for example
+  \code{"\\\\item \%stars. \\\\item Second note. \\\\item Third note."}, and
+  it is possible to create line breaks in the formatted table by including
+  \code{"\\\\\\\\"} and line breaks in the LaTeX code by including
+  \code{"\\n"}, for example
+  \code{"\\n\\\\item \%stars.\\\\\\\\\\n\\\\item Second line.\\n"}.}
 
 \item{digits}{Set the number of decimal places for coefficients, standard
 errors and goodness-of-fit statistics. Do not use negative values! The
@@ -165,13 +173,14 @@ arguments in the \code{\link{htmlreg}} function).}
 \item{symbol}{If four threshold values are handed over to the \code{stars}
 argument, p-values smaller than the largest threshold value but larger than
 the second-largest threshold value are denoted by this symbol. The default
-symbol is \code{"\\cdot"} for the LaTeX dot, \code{"&middot;"} for the HTML
-dot, or simply \code{"."} for the ASCII dot. If the \code{\link{texreg}}
-function is used, any other mathematical LaTeX symbol or plain text symbol
-can be used, for example \code{symbol = "\\circ"} for a small circle (note
-that backslashes must be escaped). If the \code{\link{htmlreg}} function is
-used, any other HTML character or symbol can be used. For the
-\code{screenreg} function, only plain text characters can be used.}
+symbol is \code{"\\\\cdot"} for the LaTeX dot, \code{"&middot;"} for the
+HTML dot, or simply \code{"."} for the ASCII dot. If the
+\code{\link{texreg}} function is used, any other mathematical LaTeX symbol
+or plain text symbol can be used, for example \code{symbol = "\\\\circ"}
+for a small circle (note that backslashes must be escaped). If the
+\code{\link{htmlreg}} function is used, any other HTML character or symbol
+can be used. For the \code{screenreg} function, only plain text characters
+can be used.}
 
 \item{override.coef}{Set custom values for the coefficients. New coefficients
 are provided as a list of numeric vectors. The list contains vectors of

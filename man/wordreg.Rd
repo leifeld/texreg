@@ -151,13 +151,14 @@ arguments in the \code{\link{htmlreg}} function).}
 \item{symbol}{If four threshold values are handed over to the \code{stars}
 argument, p-values smaller than the largest threshold value but larger than
 the second-largest threshold value are denoted by this symbol. The default
-symbol is \code{"\\cdot"} for the LaTeX dot, \code{"&middot;"} for the HTML
-dot, or simply \code{"."} for the ASCII dot. If the \code{\link{texreg}}
-function is used, any other mathematical LaTeX symbol or plain text symbol
-can be used, for example \code{symbol = "\\circ"} for a small circle (note
-that backslashes must be escaped). If the \code{\link{htmlreg}} function is
-used, any other HTML character or symbol can be used. For the
-\code{screenreg} function, only plain text characters can be used.}
+symbol is \code{"\\\\cdot"} for the LaTeX dot, \code{"&middot;"} for the
+HTML dot, or simply \code{"."} for the ASCII dot. If the
+\code{\link{texreg}} function is used, any other mathematical LaTeX symbol
+or plain text symbol can be used, for example \code{symbol = "\\\\circ"}
+for a small circle (note that backslashes must be escaped). If the
+\code{\link{htmlreg}} function is used, any other HTML character or symbol
+can be used. For the \code{screenreg} function, only plain text characters
+can be used.}
 
 \item{override.coef}{Set custom values for the coefficients. New coefficients
 are provided as a list of numeric vectors. The list contains vectors of
