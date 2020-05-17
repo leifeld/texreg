@@ -1911,7 +1911,7 @@ extract.felm <- function(model,
                    "F (proj model): p-value")
     gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE, TRUE)
   }
-  if (include.groups == TRUE) {
+  if (include.groups == TRUE && length(s$fe) > 0) {
     grp <- sapply(s$fe, function(x) length(levels(x)))
     grp.names <- paste0("Num. groups: ", names(grp))
     gof <- c(gof, grp)

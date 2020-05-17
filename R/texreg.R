@@ -561,6 +561,7 @@ huxtablereg <- function(l,
 #'       \item HTML documents
 #'       \item PDF documents
 #'       \item Word documents
+#'       \item Powerpoint presentations
 #'       \item Presentations (\code{.Rpres} extension, not \code{.Rmd})
 #'     }
 #'   \item \R Notebooks, including preview
@@ -615,7 +616,7 @@ knitreg <- function(...) {
       htmlreg(..., doctype = FALSE, star.symbol = "\\*") # the '*' symbol must be escaped in Markdown
     } else if (output == "pdf_document") { # .Rmd with PDF LaTeX rendering via the rmarkdown package
       texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
-    } else if (output == "word_document") { # .Rmd with Word rendering through the rmarkdown package
+    } else if (output %in% c("word_document", "powerpoint_presentation")) { # .Rmd with Word/Powerpoint rendering through the rmarkdown package
       mr <- matrixreg(..., output.type = "ascii", include.attributes = FALSE, trim = TRUE)
       colnames(mr) <- mr[1, ] # set column names because we want 'kable' to draw a horizontal  line under the model names
       mr <- mr[-1, ] # remove the first row because we already set the model names as column names

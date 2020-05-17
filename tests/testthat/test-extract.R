@@ -206,6 +206,11 @@ test_that("extract felm objects from the lfe package", {
   expect_length(tr@coef, 2)
   expect_equivalent(which(tr@pvalues < 0.05), 1:2)
   expect_equivalent(which(tr@gof.decimal), 2:5)
+
+  # without fixed effects
+  OLS1 <- felm(Sepal.Length ~ Sepal.Width |0|0|0, data = iris)
+  tr1 <- extract(OLS1)
+  expect_length(tr1@gof, 5)
 })
 
 # gamlssZadj (gamlss.inf) ----

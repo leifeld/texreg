@@ -39,6 +39,7 @@ document when a different output format is selected.
       \item HTML documents
       \item PDF documents
       \item Word documents
+      \item Powerpoint presentations
       \item Presentations (\code{.Rpres} extension, not \code{.Rmd})
     }
   \item \R Notebooks, including preview
