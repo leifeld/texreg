@@ -7683,7 +7683,8 @@ extract.texreg <- function(model, ...) {
     ci.up = model@ci.up,
     gof.names = model@gof.names,
     gof = model@gof,
-    gof.decimal = model@gof.decimal
+    gof.decimal = model@gof.decimal,
+    model.name = model@model.name
   )
   return(tr)
 }

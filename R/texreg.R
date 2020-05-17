@@ -843,10 +843,13 @@ knitreg <- function(...) {
 #'   argument specifies the reference value to establish whether a
 #'   coefficient/CI is significant. The default value \code{ci.test = 0}, for
 #'   example, will attach a significance star to coefficients if the confidence
-#'   interval does not contain \code{0}. If no star should be printed at all,
-#'   \code{ci.test = NULL} can be used. The \code{ci.test} argument works both
-#'   for models with native support for confidence intervals and in cases where
-#'   the \code{ci.force} argument is used.
+#'   interval does not contain \code{0}. A value of \code{ci.test = 1} could be
+#'   useful if coefficients are provided on the odds-ratio scale, for example.
+#'   If no star should be printed at all, \code{ci.test = NA} can be used. It is
+#'   possible to provide a single value for all models or a vector with a
+#'   separate value for each model. The \code{ci.test} argument works both for
+#'   models with native support for confidence intervals and in cases where the
+#'   \code{ci.force} argument is used.
 #' @param bold The p-value threshold below which the coefficient shall be
 #'   formatted in a bold font. For example, \code{bold = 0.05} will cause all
 #'   coefficients that are significant at the 95\% level to be formatted in
@@ -1026,6 +1029,19 @@ matrixreg <- function(l,
       models[[i]]@se <- numeric(0)
       models[[i]]@pvalues <- numeric(0)
     }
+  }
+
+  # check (and adjust) ci.test argument
+  if (is.null(ci.test) || (length(ci.test) == 1 && is.na(ci.test))) {
+    ci.test <- NA
+  } else if (!is.numeric(ci.test) && !all(is.na(ci.test))) {
+    stop("'ci.test' must be numeric or NA.")
+  }
+  if (length(ci.test) != 1 && length(ci.test) != length(models)) {
+    stop("'ci.test' must be either a single value for all models or one value per model or NA.")
+  }
+  if (length(ci.test) == 1) {
+    ci.test <- rep(ci.test, length(models))
   }
 
   # extract names of the goodness-of-fit statistics (before adding any GOF rows)
@@ -1475,8 +1491,8 @@ matrixreg <- function(l,
               }
             }
           } else { # significance from confidence interval
-            if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
-                (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
+            if (!is.na(ci.test[k - 1]) && bold == 0 &&
+                (m[i, j + 1] > ci.test[k - 1] || m[i, j + 2] < ci.test[k - 1])) {
               p <- paste0(star.prefix, star.symbol, star.suffix)
             } else {
               p <- ""
@@ -1576,8 +1592,8 @@ matrixreg <- function(l,
               }
             }
           } else { # significance from confidence interval
-            if (is.numeric(ci.test) && !is.na(ci.test) && bold == 0 &&
-                (m[i, j + 1] > ci.test || m[i, j + 2] < ci.test)) {
+            if (!is.na(ci.test[k - 1]) && bold == 0 &&
+                (m[i, j + 1] > ci.test[k - 1] || m[i, j + 2] < ci.test[k - 1])) {
               p <- paste0(star.prefix, star.symbol, star.suffix)
             } else {
               p <- ""
@@ -3766,8 +3782,8 @@ get_stars_note <- function(stars = c(0.01, 0.05, 0.1),
   if (!output %in% c("ascii", "latex", "html")) {
     stop("'output' argument must be 'ascii', 'latex', or 'html'.")
   }
-  if (!is.numeric(ci.test) && !is.null(ci.test)) {
-    stop("The argument 'ci.test' must be NULL or numeric.")
+  if (!is.numeric(ci.test) && !is.null(ci.test) && !is.na(ci.test)) {
+    stop("The argument 'ci.test' must be NULL, NA, or numeric.")
   }
   if (!is.logical(ci)) {
     stop("The argument 'ci' must be logical.")
@@ -3838,8 +3854,12 @@ get_stars_note <- function(stars = c(0.01, 0.05, 0.1),
 
   # ci_note
   if (ci_note_flag) {  # ci calculated for at least one model -> build ci note
-    if (is.numeric(ci.test) && !is.na(ci.test)) { # sanity check
-      ci_note <- paste(ci.test, "outside the confidence interval")
+    if (is.numeric(ci.test) && all(!is.na(ci.test))) { # sanity check
+      if (length(ci.test) == 1) {
+        ci_note <- paste(ci.test, "outside the confidence interval")
+      } else {
+        ci_note <- "Null hypothesis value outside the confidence interval"
+      }
     } else {
       ci_note <- ""
     }

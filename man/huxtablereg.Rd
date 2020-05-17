@@ -254,10 +254,13 @@ used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 argument specifies the reference value to establish whether a
 coefficient/CI is significant. The default value \code{ci.test = 0}, for
 example, will attach a significance star to coefficients if the confidence
-interval does not contain \code{0}. If no star should be printed at all,
-\code{ci.test = NULL} can be used. The \code{ci.test} argument works both
-for models with native support for confidence intervals and in cases where
-the \code{ci.force} argument is used.}
+interval does not contain \code{0}. A value of \code{ci.test = 1} could be
+useful if coefficients are provided on the odds-ratio scale, for example.
+If no star should be printed at all, \code{ci.test = NA} can be used. It is
+possible to provide a single value for all models or a vector with a
+separate value for each model. The \code{ci.test} argument works both for
+models with native support for confidence intervals and in cases where the
+\code{ci.force} argument is used.}
 
 \item{groups}{This argument can be used to group the rows of the table into
 blocks. For example, there could be one block for hypotheses and another
