@@ -11,7 +11,6 @@
   include.loglik = TRUE,
   include.nobs = TRUE,
   include.groups = TRUE,
-  include.intercept = TRUE,
   include.iterations = FALSE,
   beside = FALSE,
   ...
@@ -28,8 +27,6 @@ block?}
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
 \item{include.groups}{Report the number of groups?}
-
-\item{include.intercept}{Report the intercept in the GOF block?}
 
 \item{include.iterations}{Report the number of iterations?}
 

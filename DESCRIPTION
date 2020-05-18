@@ -16,7 +16,8 @@ Suggests:
   rmarkdown (>= 1.12),
   sandwich (>= 2.3-1),
   testthat (>= 2.0.0),
-  lmtest (>= 0.9-34)
+  lmtest (>= 0.9-34),
+  carData (>= 3.0-2)
 Depends: R (>= 3.5)
 Imports: methods, grDevices, stats, httr
 Enhances: AER,

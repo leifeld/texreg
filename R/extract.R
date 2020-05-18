@@ -4867,7 +4867,10 @@ extract.mlogit <- function(model,
                            include.aic = TRUE,
                            include.loglik = TRUE,
                            include.nobs = TRUE,
+                           include.groups = TRUE,
                            include.order = FALSE,
+                           include.iterations = FALSE,
+                           beside = FALSE,
                            ...) {
   s <- summary(model, ...)
 
@@ -4898,17 +4901,57 @@ extract.mlogit <- function(model,
     gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
+  if (include.groups == TRUE) {
+    K <- ncol(s$residuals)
+    gof <- c(gof, K)
+    gof.names <- c(gof.names, "K")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.iterations == TRUE) {
+    iter <- s$est.stat$nb.iter
+    gradNorm <- s$est.stat$eps[1, 1]
+    gof <- c(gof, iter, gradNorm)
+    gof.names <- c(gof.names, "Iterations", "Gradient 2-norm")
+    gof.decimal <- c(gof.decimal, c(FALSE, TRUE))
+  }
 
-  tr <- createTexreg(
-    coef.names = rn,
-    coef = coefs,
-    se = se,
-    pvalues = pval,
-    gof.names = gof.names,
-    gof = gof,
-    gof.decimal = gof.decimal
-  )
-  return(tr)
+  if (isTRUE(beside)) {
+    models <- attributes(model$freq)$dimnames[[1]][-1]
+    trlist <- list()
+    for (i in 1:length(models)) {
+      rows <- which(grepl(paste0("^", models[i]), rn))
+      coeftable <- s$CoefTable[rows, ]
+      cn <- rn[rows]
+      cn <- gsub(paste0("^", models[i], ":"), "", cn)
+      co <- coeftable[, 1]
+      se <- coeftable[, 2]
+      pval <- coeftable[, 4]
+
+      tr <- createTexreg(
+        coef.names = cn,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal,
+        model.name = models[i]
+      )
+      trlist[[i]] <- tr
+    }
+    return(trlist)
+  } else {
+    tr <- createTexreg(
+      coef.names = rn,
+      coef = coefs,
+      se = se,
+      pvalues = pval,
+      gof.names = gof.names,
+      gof = gof,
+      gof.decimal = gof.decimal
+    )
+    return(tr)
+  }
 }
 
 #' \code{\link{extract}} method for \code{mlogit} objects
@@ -4921,7 +4964,10 @@ extract.mlogit <- function(model,
 #'   block?
 #' @param include.loglik Report the log likelihood in the GOF block?
 #' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.groups Report the number of groups?
 #' @param include.order Report coefficient names in alphabetical order?
+#' @param include.iterations Report the number of iterations?
+#' @param beside Arrange the model terms below each other or beside each other?
 #' @param ... Custom parameters, which are handed over to subroutines, in this
 #'   case to the \code{summary} method for the object.
 #'
@@ -4941,7 +4987,6 @@ extract.mnlogit <- function(model,
                             include.loglik = TRUE,
                             include.nobs = TRUE,
                             include.groups = TRUE,
-                            include.intercept = TRUE,
                             include.iterations = FALSE,
                             beside = FALSE,
                             ...) {
@@ -4977,16 +5022,10 @@ extract.mnlogit <- function(model,
     gof.names <- c(gof.names, "K")
     gof.decimal <- c(gof.decimal, FALSE)
   }
-  if (include.intercept == TRUE) {
-    b0 <- s$model.size$intercept
-    gof <- c(gof, b0)
-    gof.names <- c(gof.names, "Intercept")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
   if (include.iterations == TRUE) {
-    iter <- s$est.stats$niters
-    gradNorm <- s$est.stats$gradNorm
-    diffLike <- s$est.stats$funcDiff
+    iter <- s$est.stat$niters
+    gradNorm <- s$est.stat$gradNorm
+    diffLike <- s$est.stat$funcDiff
     gof <- c(gof, iter, gradNorm, diffLike)
     gof.names <- c(gof.names, "Iterations", "Gradient 2-norm",
                    "Diff. Likelihood")
@@ -5047,7 +5086,6 @@ extract.mnlogit <- function(model,
 #' @param include.loglik Report the log likelihood in the GOF block?
 #' @param include.nobs Report the number of observations in the GOF block?
 #' @param include.groups Report the number of groups?
-#' @param include.intercept Report the intercept in the GOF block?
 #' @param include.iterations Report the number of iterations?
 #' @param beside Arrange the model terms below each other or beside each other?
 #' @param ... Custom parameters, which are handed over to subroutines, in this
@@ -5145,8 +5183,9 @@ extract.multinom <- function(model,
                              include.loglik = TRUE,
                              include.deviance = TRUE,
                              include.nobs = TRUE,
+                             include.groups = TRUE,
                              levels = model$lev,
-                             beside = TRUE,
+                             beside = FALSE,
                              ...) {
 
   s <- summary(model, ...)
@@ -5193,8 +5232,34 @@ extract.multinom <- function(model,
     gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
+  if (include.groups == TRUE) {
+    K <- ncol(model$residuals)
+    if (K == 1) {
+      K <- 2
+    }
+    gof <- c(gof, K)
+    gof.names <- c(gof.names, "K")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
 
-  if (beside == TRUE) {
+  if (is.null(rownames(co))) {
+    if (include.pvalues == TRUE) {
+      zval <- co[i, ] / se[i, ]
+      pval <- c(pval, 2 * pnorm(abs(zval), lower.tail = FALSE))
+    } else {
+      pval <- numeric(0)
+    }
+    tr <- createTexreg(
+      coef.names = coefnames,
+      coef = co[1, ],
+      se = se[1, ],
+      pvalues = pval,
+      gof.names = gof.names,
+      gof = gof,
+      gof.decimal = gof.decimal
+    )
+    return(tr)
+  } else if (beside == TRUE) {
     trlist <- list()
     for (i in which(rownames(co) %in% levels)) {
       if (include.pvalues == TRUE) {
@@ -5234,6 +5299,8 @@ extract.multinom <- function(model,
       if (include.pvalues == TRUE) {
         zval <- co[i, ] / se[i, ]
         pval <- c(pval, 2 * pnorm(abs(zval), lower.tail = FALSE))
+      } else {
+        pval <- numeric(0)
       }
     }
     tr <- createTexreg(
@@ -5263,6 +5330,7 @@ extract.multinom <- function(model,
 #' @param include.loglik Report the log likelihood in the GOF block?
 #' @param include.deviance Report the deviance?
 #' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.groups Report the number of groups?
 #' @param levels The names of the levels of a multinomial model that should be
 #'   included in the table. Should be provided as a vector of character strings.
 #' @param beside Arrange the model terms below each other or beside each other?

@@ -430,6 +430,105 @@ test_that("extract lmerMod objects from the lme4 package", {
   expect_length(which(grepl("Cov", tr2_wald@gof.names)), 0)
 })
 
+# multinom (nnet), mlogit (mlogit), mnlogit (mnlogit) ----
+test_that("extract multinom objects from the nnet package and mlogit and mnlogit objects", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("carData")
+
+  skip_if_not_installed("nnet")
+  require("nnet")
+  set.seed(12345)
+  data(WVS, package = "carData")
+  WVS$poverty <- as.factor(as.character(WVS$poverty))
+  sink("/dev/null")
+  model1 <- multinom(poverty ~ religion + degree + country + age + gender, data = WVS)
+  sink()
+  tr1 <- extract(model1)
+
+  expect_equivalent(sum(abs(tr1@coef)), 8.387416, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@se), 1.624519, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@pvalues), 2.961305, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@gof), 30608.87, tolerance = 1e-2)
+  expect_length(tr1@coef, 16)
+  expect_length(tr1@gof, 6)
+  expect_equivalent(which(tr1@gof.decimal), 1:4)
+
+  tr1b <- extract(model1, beside = TRUE)
+  expect_type(tr1b, "list")
+  expect_length(tr1b, 2)
+  expect_equivalent(length(tr1b[[1]]@coef), length(tr1b[[1]]@coef))
+  expect_length(tr1b[[1]]@coef, 8)
+
+  skip_if_not_installed("MASS")
+  sink("/dev/null")
+  example(birthwt, package = "MASS")
+  bwt.mu <- multinom(low ~ ., bwt)
+  sink()
+  tr1c <- extract(bwt.mu)
+
+  expect_equivalent(sum(abs(tr1c@coef)), 8.117209, tolerance = 1e-2)
+  expect_equivalent(sum(tr1c@se), 5.314884, tolerance = 1e-2)
+  expect_equivalent(sum(tr1c@pvalues), 2.295426, tolerance = 1e-2)
+  expect_equivalent(sum(tr1c@gof), 759.248, tolerance = 1e-2)
+  expect_length(tr1c@coef, 11)
+  expect_length(tr1c@gof, 6)
+  expect_equivalent(which(tr1c@gof.decimal), 1:4)
+  expect_equivalent(tr1c@gof[6], 2)
+  expect_equal(dim(matrixreg(tr1c)), c(29, 2))
+
+  skip_if_not_installed("mlogit")
+  require("mlogit")
+  set.seed(12345)
+  WVS2 <- mlogit.data(WVS, choice = "poverty", shape = "wide")
+  model2 <- mlogit(poverty ~ 0 | religion + degree + country +
+                     age + gender, data = WVS2)
+  tr2 <- extract(model2)
+
+  expect_equivalent(sum(abs(tr1@coef)), sum(abs(tr2@coef)), tolerance = 1e-2)
+  expect_equivalent(sum(tr1@se), sum(tr2@se), tolerance = 1e-2)
+  expect_equivalent(sum(tr1@pvalues), sum(tr2@pvalues), tolerance = 1e-2)
+  expect_length(tr2@gof, 4)
+  expect_equivalent(which(tr2@gof.decimal), 1:2)
+
+  tr2b <- extract(model2, beside = TRUE)
+  expect_type(tr2b, "list")
+  expect_length(tr2b, 2)
+  expect_equivalent(length(tr2b[[1]]@coef), length(tr2b[[1]]@coef))
+  expect_length(tr2b[[1]]@coef, 8)
+
+  tr2c <- extract(model2, include.iterations = TRUE)
+  expect_length(tr2c@gof, 6)
+  expect_equivalent(which(tr2c@gof.decimal), c(1:2, 6))
+
+  skip_if_not_installed("mnlogit")
+  require("mnlogit")
+  set.seed(12345)
+  model3 <- mnlogit(poverty ~ 1 | religion + degree +
+                      country + age + gender, data = WVS2)
+  tr3 <- extract(model3)
+
+  expect_equivalent(sum(abs(tr3@coef)), sum(abs(tr2@coef)), tolerance = 1e-2)
+  expect_equivalent(sum(tr3@se), sum(tr2@se), tolerance = 1e-2)
+  expect_equivalent(sum(tr3@pvalues), sum(tr2@pvalues), tolerance = 1e-2)
+  expect_length(tr3@gof, 4)
+  expect_equivalent(which(tr3@gof.decimal), 1:2)
+
+  tr3b <- extract(model3, beside = TRUE)
+  expect_type(tr3b, "list")
+  expect_length(tr3b, 2)
+  expect_equivalent(length(tr3b[[1]]@coef), length(tr3b[[1]]@coef))
+  expect_length(tr3b[[1]]@coef, 8)
+
+  tr3c <- extract(model3, include.iterations = TRUE)
+  expect_length(tr3c@gof, 7)
+  expect_equivalent(which(tr3c@gof.decimal), c(1:2, 6:7))
+
+  mr1 <- matrixreg(list(model1, model2, model3))
+  expect_equivalent(dim(mr1), c(103, 4))
+  mr2 <- matrixreg(list(model1, model2, model3), beside = TRUE)
+  expect_equivalent(dim(mr2), c(25, 7))
+})
+
 # nlmerMod (lme4) ----
 test_that("extract nlmerMod objects from the lme4 package", {
   skip_if_not_installed("lme4")

@@ -10,7 +10,10 @@
   include.aic = TRUE,
   include.loglik = TRUE,
   include.nobs = TRUE,
+  include.groups = TRUE,
   include.order = FALSE,
+  include.iterations = FALSE,
+  beside = FALSE,
   ...
 )
 }
@@ -24,7 +27,13 @@ block?}
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
 
+\item{include.groups}{Report the number of groups?}
+
 \item{include.order}{Report coefficient names in alphabetical order?}
+
+\item{include.iterations}{Report the number of iterations?}
+
+\item{beside}{Arrange the model terms below each other or beside each other?}
 
 \item{...}{Custom parameters, which are handed over to subroutines, in this
 case to the \code{summary} method for the object.}

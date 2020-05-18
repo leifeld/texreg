@@ -13,8 +13,9 @@
   include.loglik = TRUE,
   include.deviance = TRUE,
   include.nobs = TRUE,
+  include.groups = TRUE,
   levels = model$lev,
-  beside = TRUE,
+  beside = FALSE,
   ...
 )
 }
@@ -34,6 +35,8 @@ block?}
 \item{include.deviance}{Report the deviance?}
 
 \item{include.nobs}{Report the number of observations in the GOF block?}
+
+\item{include.groups}{Report the number of groups?}
 
 \item{levels}{The names of the levels of a multinomial model that should be
 included in the table. Should be provided as a vector of character strings.}
