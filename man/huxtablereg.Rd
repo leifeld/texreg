@@ -271,16 +271,18 @@ the heading of the group. Example: \code{groups = list("first group" = 1:4,
 "second group" = 7:8)}.}
 
 \item{custom.columns}{An optional list of additional text columns to be
-inserted into the table, for example coefficient types. The list should
-contain one or more character vectors with as many character or numeric
-elements as there are rows. If the vectors in the list are named, the names
-are used as labels in the table header. For example, \code{custom.columns =
-list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is
-labeled while the second one is not. Note that the numeric elements of the
-second column will be converted to \code{character} objects in this example. The
-consequence is that decimal alignment with the \pkg{dcolumn} package is
-switched off in these columns. Note that this argument is processed after
-any arguments that affect the number of rows.}
+inserted into the coefficient block of the table, for example coefficient
+types. The list should contain one or more character vectors with as many
+character or numeric elements as there are coefficients/model terms. If the
+vectors in the list are named, the names are used as labels in the table
+header. For example,
+\code{custom.columns = list(type = c("a", "b", "c"), 1:3)} will add two
+columns; the first one is labeled while the second one is not. Note that
+the numeric elements of the second column will be converted to
+\code{character} objects in this example. The consequence is that decimal
+alignment with the \pkg{dcolumn} package is switched off in these columns.
+Note that this argument is processed after any arguments that affect the
+number of rows.}
 
 \item{custom.col.pos}{An optional integer vector of positions for the columns
 given in the \code{custom.columns} argument. For example, if there are

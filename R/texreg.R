@@ -869,16 +869,18 @@ knitreg <- function(...) {
 #'   the heading of the group. Example: \code{groups = list("first group" = 1:4,
 #'   "second group" = 7:8)}.
 #' @param custom.columns An optional list of additional text columns to be
-#'   inserted into the table, for example coefficient types. The list should
-#'   contain one or more character vectors with as many character or numeric
-#'   elements as there are rows. If the vectors in the list are named, the names
-#'   are used as labels in the table header. For example, \code{custom.columns =
-#'   list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is
-#'   labeled while the second one is not. Note that the numeric elements of the
-#'   second column will be converted to \code{character} objects in this example. The
-#'   consequence is that decimal alignment with the \pkg{dcolumn} package is
-#'   switched off in these columns. Note that this argument is processed after
-#'   any arguments that affect the number of rows.
+#'   inserted into the coefficient block of the table, for example coefficient
+#'   types. The list should contain one or more character vectors with as many
+#'   character or numeric elements as there are coefficients/model terms. If the
+#'   vectors in the list are named, the names are used as labels in the table
+#'   header. For example,
+#'   \code{custom.columns = list(type = c("a", "b", "c"), 1:3)} will add two
+#'   columns; the first one is labeled while the second one is not. Note that
+#'   the numeric elements of the second column will be converted to
+#'   \code{character} objects in this example. The consequence is that decimal
+#'   alignment with the \pkg{dcolumn} package is switched off in these columns.
+#'   Note that this argument is processed after any arguments that affect the
+#'   number of rows.
 #' @param custom.col.pos An optional integer vector of positions for the columns
 #'   given in the \code{custom.columns} argument. For example, if there are
 #'   three custom columns, \code{custom.col.pos = c(1, 3, 3)} will insert the
@@ -2702,6 +2704,14 @@ screenreg <- function(l,
 #' document or for usage with \pkg{Sweave} or \pkg{knitr}, based on a list of
 #' statistical models.
 #'
+#' @param custom.header An optional named list of multi-column headers that are
+#'   placed above the model names. For example,
+#'   \code{custom.header = list("abc" = 1:3, "ef" = 4:5)} will add the label
+#'   \code{"abc"} to the first three models and \code{"ef"} to the fourth and
+#'   fifth model. The column with coefficient names and any custom columns added
+#'   by the \code{"custom.columns"} argument are not counted towards these
+#'   positions. If \code{booktabs = TRUE}, \code{\\cmidrule} rules are added
+#'   below the respective labels; otherwise \code{\\cline} lines are used.
 #' @param file Using this argument, the resulting table is written to a file
 #'   rather than to the \R prompt. The file name can be specified as a character
 #'   string. Writing a table to a file can be useful for working with MS Office
@@ -2819,6 +2829,7 @@ texreg <- function(l,
                    file = NULL,
                    single.row = FALSE,
                    stars = c(0.001, 0.01, 0.05),
+                   custom.header = NULL,
                    custom.model.names = NULL,
                    custom.coef.names = NULL,
                    custom.coef.map = NULL,
@@ -3166,7 +3177,7 @@ texreg <- function(l,
       }
     }
     if (isTRUE(siunitx)) {
-      string <- paste0(string, "\\sisetup{parse-numbers=false, table-text-alignment=centre}", linesep)
+      string <- paste0(string, "\\sisetup{parse-numbers=false, table-text-alignment=right}", linesep)
     }
     if (isTRUE(threeparttable)) {
       string <- paste0(string, "\\begin{threeparttable}", linesep)
@@ -3180,6 +3191,97 @@ texreg <- function(l,
     tablehead <- paste0(tablehead, "\\toprule", linesep)
   } else {
     tablehead <- paste0(tablehead, "\\hline", linesep)
+  }
+
+  # specify multicolumn header
+  if (!is.null(custom.header) && !is.na(custom.header) && length(custom.header) > 0) {
+    if (!"list" %in% class(custom.header) || length(custom.header) >= length(mod.names) || is.null(names(custom.header)) || !all(sapply(custom.header, is.numeric))) {
+      stop("'custom.header' must be a named list of numeric vectors.")
+    }
+    ch <- unlist(custom.header)
+    for (i in 1:length(ch)) {
+      if (is.na(ch[i])) {
+        stop("NA values are not permitted in 'custom.header'. Try leaving out the model indices that should not be included in the custom header.")
+      }
+      if (ch[i] %% 1 != 0) {
+        stop("The model column indices in 'custom.header' must be provided as integer values.")
+      }
+      if (ch[i] < 1 || ch[i] >= length(mod.names)) {
+        stop("The model column indices in 'custom.header' must be between 1 and the number of models.")
+      }
+      if (i > 1 && ch[i] <= ch[i - 1]) {
+        stop("The model column indices in 'custom.header' must be strictly increasing.")
+      }
+    }
+    ch <- ""      # multicolumn header labels
+    rules <- ""   # multicolumn header mid-rules (booktabs package if possible)
+    counter <- 0  # keeps track of how many columns we have processed to the left of the current start column
+    for (i in 1:length(custom.header)) {
+      # check if there are gaps within multicolumn blocks and throw error
+      if (length(custom.header[[i]]) != custom.header[[i]][length(custom.header[[i]])] - custom.header[[i]][1] + 1) {
+        stop("Each item in 'custom.header' must have strictly consecutive column indices, without gaps.")
+      }
+
+      # find out corrected column indices (ignoring the coef label column) of the current model after taking into account custom columns
+      numCoefCol <- 0
+      numCustomCol <- 0
+      for (j in 1:length(coltypes)) {
+        if (coltypes[j] == "coef") {
+          numCoefCol <- numCoefCol + 1
+        } else if (coltypes[j] == "customcol") {
+          numCustomCol <- numCustomCol + 1
+        }
+        if (numCoefCol == custom.header[[i]][1]) {
+          break() # break the loop if we have reached the number of models so far
+        }
+      }
+      startIndex <- numCoefCol + numCustomCol # corrected column index
+      numCoefCol <- 0
+      numCustomCol <- 0
+      for (j in 1:length(coltypes)) {
+        if (coltypes[j] == "coef") {
+          numCoefCol <- numCoefCol + 1
+        } else if (coltypes[j] == "customcol") {
+          numCustomCol <- numCustomCol + 1
+        }
+        if (numCoefCol == custom.header[[i]][length(custom.header[[i]])]) {
+          break() # break the loop if we have reached the number of models so far
+        }
+      }
+      stopIndex <- numCoefCol + numCustomCol # corrected column index
+
+      # check if there are gaps between multicolumn headers and fill up with empty cells
+      if (i > 1) {
+        emptycells <- custom.header[[i]][1] - custom.header[[i - 1]][length(custom.header[[i - 1]])] - 1
+        if (emptycells > 0) {
+          for (j in 1:emptycells) {
+            ch <- paste0(ch, " &")
+            counter <- counter + 1
+          }
+        }
+      }
+
+      # add empty cells also for custom text columns
+      if (startIndex > counter + 1) {
+        difference <- startIndex - (counter + 1)
+        for (j in 1:difference) {
+          ch <- paste0(ch, " &")
+          counter <- counter + 1
+        }
+      }
+
+      # add multicolumn cells (+ 1 is for the coefficient label column)
+      ch <- paste0(ch, " & \\multicolumn{", stopIndex - startIndex + 1, "}{c}{", names(custom.header)[i], "}")
+      counter <- counter + stopIndex - startIndex + 1
+
+      # add mid-rules (+ 1 is for the coefficient label column)
+      if (isTRUE(booktabs)) {
+        rules <- paste0(rules, ifelse(i > 1, " ", ""), "\\cmidrule(lr){", startIndex + 1, "-", stopIndex + 1, "}")
+      } else {
+        rules <- paste0(rules, ifelse(i > 1, " ", ""), "\\cline{", startIndex + 1, "-", stopIndex + 1, "}")
+      }
+    }
+    tablehead <- paste0(tablehead, ch, " \\\\", linesep, rules, linesep)
   }
 
   # specify model names

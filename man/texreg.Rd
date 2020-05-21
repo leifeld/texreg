@@ -9,6 +9,7 @@ texreg(
   file = NULL,
   single.row = FALSE,
   stars = c(0.001, 0.01, 0.05),
+  custom.header = NULL,
   custom.model.names = NULL,
   custom.coef.names = NULL,
   custom.coef.map = NULL,
@@ -83,6 +84,15 @@ attach one single star to all coefficients where the p value is below 0.05.
 \code{stars = c(0.001, 0.01, 0.05, 0.1)} will print one, two, or three
 stars, or a symbol as specified by the \code{symbol} argument depending on
 the p-values.}
+
+\item{custom.header}{An optional named list of multi-column headers that are
+placed above the model names. For example,
+\code{custom.header = list("abc" = 1:3, "ef" = 4:5)} will add the label
+\code{"abc"} to the first three models and \code{"ef"} to the fourth and
+fifth model. The column with coefficient names and any custom columns added
+by the \code{"custom.columns"} argument are not counted towards these
+positions. If \code{booktabs = TRUE}, \code{\\cmidrule} rules are added
+below the respective labels; otherwise \code{\\cline} lines are used.}
 
 \item{custom.model.names}{A character vector of labels for the models. By
 default, the models are named "Model 1", "Model 2", etc. Specifying
@@ -308,16 +318,18 @@ the heading of the group. Example: \code{groups = list("first group" = 1:4,
 "second group" = 7:8)}.}
 
 \item{custom.columns}{An optional list of additional text columns to be
-inserted into the table, for example coefficient types. The list should
-contain one or more character vectors with as many character or numeric
-elements as there are rows. If the vectors in the list are named, the names
-are used as labels in the table header. For example, \code{custom.columns =
-list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is
-labeled while the second one is not. Note that the numeric elements of the
-second column will be converted to \code{character} objects in this example. The
-consequence is that decimal alignment with the \pkg{dcolumn} package is
-switched off in these columns. Note that this argument is processed after
-any arguments that affect the number of rows.}
+inserted into the coefficient block of the table, for example coefficient
+types. The list should contain one or more character vectors with as many
+character or numeric elements as there are coefficients/model terms. If the
+vectors in the list are named, the names are used as labels in the table
+header. For example,
+\code{custom.columns = list(type = c("a", "b", "c"), 1:3)} will add two
+columns; the first one is labeled while the second one is not. Note that
+the numeric elements of the second column will be converted to
+\code{character} objects in this example. The consequence is that decimal
+alignment with the \pkg{dcolumn} package is switched off in these columns.
+Note that this argument is processed after any arguments that affect the
+number of rows.}
 
 \item{custom.col.pos}{An optional integer vector of positions for the columns
 given in the \code{custom.columns} argument. For example, if there are
