@@ -9,6 +9,7 @@ htmlreg(
   file = NULL,
   single.row = FALSE,
   stars = c(0.001, 0.01, 0.05),
+  custom.header = NULL,
   custom.model.names = NULL,
   custom.coef.names = NULL,
   custom.coef.map = NULL,
@@ -38,12 +39,12 @@ htmlreg(
   caption = "Statistical models",
   caption.above = FALSE,
   inline.css = TRUE,
-  doctype = TRUE,
+  doctype = FALSE,
   html.tag = FALSE,
   head.tag = FALSE,
   body.tag = FALSE,
   indentation = "",
-  table.margin = 10,
+  margin = 10,
   padding = 5,
   color = "#000000",
   outer.rules = 2,
@@ -81,6 +82,15 @@ attach one single star to all coefficients where the p value is below 0.05.
 \code{stars = c(0.001, 0.01, 0.05, 0.1)} will print one, two, or three
 stars, or a symbol as specified by the \code{symbol} argument depending on
 the p-values.}
+
+\item{custom.header}{An optional named list of multi-column headers that are
+placed above the model names. For example,
+\code{custom.header = list("abc" = 1:3, "ef" = 4:5)} will add the label
+\code{"abc"} to the first three models and \code{"ef"} to the fourth and
+fifth model. The column with coefficient names and any custom columns added
+by the \code{"custom.columns"} argument are not counted towards these
+positions. If \code{booktabs = TRUE}, \code{\\cmidrule} rules are added
+below the respective labels; otherwise \code{\\cline} lines are used.}
 
 \item{custom.model.names}{A character vector of labels for the models. By
 default, the models are named "Model 1", "Model 2", etc. Specifying
@@ -396,9 +406,9 @@ default, \code{indentation = ""} uses no indentation. Any number of spaces
 or characters can be used instead. For example, \code{indentation = " "}
 uses two spaces of (additional) indentation for each subelement.}
 
-\item{table.margin}{The margin around the table in pixels. This determines
-how much space there is around the table. To remove all space around the
-table, set \code{table.margin = 0}.}
+\item{margin}{The margin around the table in pixels. This determines how much
+space there is around the table. To remove all space around the table, set
+\code{table.margin = 0}.}
 
 \item{padding}{The space on the left and right of each table cell in pixels.}
 

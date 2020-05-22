@@ -68,9 +68,9 @@ NULL
 #'   default, \code{indentation = ""} uses no indentation. Any number of spaces
 #'   or characters can be used instead. For example, \code{indentation = " "}
 #'   uses two spaces of (additional) indentation for each subelement.
-#' @param table.margin The margin around the table in pixels. This determines
-#'   how much space there is around the table. To remove all space around the
-#'   table, set \code{table.margin = 0}.
+#' @param margin The margin around the table in pixels. This determines how much
+#'   space there is around the table. To remove all space around the table, set
+#'   \code{table.margin = 0}.
 #' @param padding The space on the left and right of each table cell in pixels.
 #' @param color The color of the table, including text and rules or lines. This
 #'   can be provided as a hex RGB value or as a color string that is valid in
@@ -109,6 +109,7 @@ htmlreg <- function(l,
                     file = NULL,
                     single.row = FALSE,
                     stars = c(0.001, 0.01, 0.05),
+                    custom.header = NULL,
                     custom.model.names = NULL,
                     custom.coef.names = NULL,
                     custom.coef.map = NULL,
@@ -138,12 +139,12 @@ htmlreg <- function(l,
                     caption = "Statistical models",
                     caption.above = FALSE,
                     inline.css = TRUE,
-                    doctype = TRUE,
+                    doctype = FALSE,
                     html.tag = FALSE,
                     head.tag = FALSE,
                     body.tag = FALSE,
                     indentation = "",
-                    table.margin = 10,
+                    margin = 10,
                     padding = 5,
                     color = "#000000",
                     outer.rules = 2,
@@ -151,7 +152,7 @@ htmlreg <- function(l,
                     ...) {
 
   # CSS definitions
-  css_table.texreg <- paste0("margin: ", table.margin, "px",
+  css_table.texreg <- paste0("margin: ", margin, "px",
                              ifelse(isTRUE(center), " auto", ""),
                              ";border-collapse: collapse;border-spacing: 0px;",
                              ifelse(isTRUE(caption.above), "", "caption-side: bottom;"),
@@ -311,10 +312,98 @@ htmlreg <- function(l,
     h.ind, b.ind, ind, ind, "<tr>\n"
   )
 
+  # specify multicolumn header
+  if (!is.null(custom.header) && !is.na(custom.header) && length(custom.header) > 0) {
+    if (!"list" %in% class(custom.header) || length(custom.header) >= length(mod.names) || is.null(names(custom.header)) || !all(sapply(custom.header, is.numeric))) {
+      stop("'custom.header' must be a named list of numeric vectors.")
+    }
+    ch <- unlist(custom.header)
+    for (i in 1:length(ch)) {
+      if (is.na(ch[i])) {
+        stop("NA values are not permitted in 'custom.header'. Try leaving out the model indices that should not be included in the custom header.")
+      }
+      if (ch[i] %% 1 != 0) {
+        stop("The model column indices in 'custom.header' must be provided as integer values.")
+      }
+      if (ch[i] < 1 || ch[i] >= length(mod.names)) {
+        stop("The model column indices in 'custom.header' must be between 1 and the number of models.")
+      }
+      if (i > 1 && ch[i] <= ch[i - 1]) {
+        stop("The model column indices in 'custom.header' must be strictly increasing.")
+      }
+    }
+    ch <- paste0(h.ind, b.ind, ind, ind, ind, "<th>&nbsp;</th>\n") # multicolumn header labels; first column is empty
+    counter <- 0 # keeps track of how many columns we have processed to the left of the current start column
+    for (i in 1:length(custom.header)) {
+      # check if there are gaps within multicolumn blocks and throw error
+      if (length(custom.header[[i]]) != custom.header[[i]][length(custom.header[[i]])] - custom.header[[i]][1] + 1) {
+        stop("Each item in 'custom.header' must have strictly consecutive column indices, without gaps.")
+      }
+
+      # find out corrected column indices (ignoring the coef label column) of the current model after taking into account custom columns
+      numCoefCol <- 0
+      numCustomCol <- 0
+      for (j in 1:length(coltypes)) {
+        if (coltypes[j] == "coef") {
+          numCoefCol <- numCoefCol + 1
+        } else if (coltypes[j] == "customcol") {
+          numCustomCol <- numCustomCol + 1
+        }
+        if (numCoefCol == custom.header[[i]][1]) {
+          break() # break the loop if we have reached the number of models so far
+        }
+      }
+      startIndex <- numCoefCol + numCustomCol # corrected column index
+      numCoefCol <- 0
+      numCustomCol <- 0
+      for (j in 1:length(coltypes)) {
+        if (coltypes[j] == "coef") {
+          numCoefCol <- numCoefCol + 1
+        } else if (coltypes[j] == "customcol") {
+          numCustomCol <- numCustomCol + 1
+        }
+        if (numCoefCol == custom.header[[i]][length(custom.header[[i]])]) {
+          break() # break the loop if we have reached the number of models so far
+        }
+      }
+      stopIndex <- numCoefCol + numCustomCol # corrected column index
+
+      # check if there are gaps between multicolumn headers and fill up with empty cells
+      if (i > 1) {
+        emptycells <- custom.header[[i]][1] - custom.header[[i - 1]][length(custom.header[[i - 1]])] - 1
+        if (emptycells > 0) {
+          for (j in 1:emptycells) {
+            ch <- paste0(ch, h.ind, b.ind, ind, ind, ind, "<th>&nbsp;</th>\n")
+            counter <- counter + 1
+          }
+        }
+      }
+
+      # add empty cells also for custom text columns
+      if (startIndex > counter + 1) {
+        difference <- startIndex - (counter + 1)
+        for (j in 1:difference) {
+          ch <- paste0(ch, h.ind, b.ind, ind, ind, ind, "<th>&nbsp;</th>\n")
+          counter <- counter + 1
+        }
+      }
+
+      # add multicolumn cells (+ 1 is for the coefficient label column)
+      th <- ifelse(isTRUE(inline.css),
+                   paste0("<th style=\"", css_table.texreg_thtd, css_table.texreg_thead_.rule, "\" colspan=\"", stopIndex - startIndex + 1, "\">"),
+                   paste0("<th class = \"rule\" colspan=\"", stopIndex - startIndex + 1, "\">"))
+      ch <- paste0(ch, h.ind, b.ind, ind, ind, ind, th, names(custom.header)[i], "</th>\n")
+      counter <- counter + stopIndex - startIndex + 1
+    }
+    string <- paste0(string, ch)
+    string <- paste0(string, h.ind, b.ind, ind, ind, "</tr>\n")
+    string <- paste0(string, h.ind, b.ind, ind, ind, "<tr>\n")
+  }
+
   # specify model names (header row)
   th <- ifelse(isTRUE(inline.css), paste0("<th style=\"", css_table.texreg_thtd, "\">"), "<th>")
   for (i in 1:length(mod.names)) {
-    string <- paste0(string, h.ind, b.ind, ind, ind, ind, th, mod.names[i], "</th>\n")
+    string <- paste0(string, h.ind, b.ind, ind, ind, ind, th, ifelse(mod.names[i] == "", "&nbsp;", mod.names[i]), "</th>\n")
   }
   string <- paste0(string, h.ind, b.ind, ind, ind, "</tr>\n")
   string <- paste0(string, h.ind, b.ind, ind, "</thead>\n")
