@@ -9,6 +9,7 @@ screenreg(
   file = NULL,
   single.row = FALSE,
   stars = c(0.001, 0.01, 0.05),
+  custom.header = NULL,
   custom.model.names = NULL,
   custom.coef.names = NULL,
   custom.coef.map = NULL,
@@ -69,6 +70,15 @@ attach one single star to all coefficients where the p value is below 0.05.
 \code{stars = c(0.001, 0.01, 0.05, 0.1)} will print one, two, or three
 stars, or a symbol as specified by the \code{symbol} argument depending on
 the p-values.}
+
+\item{custom.header}{An optional named list of multi-column headers that are
+placed above the model names. For example,
+\code{custom.header = list("abc" = 1:3, "ef" = 4:5)} will add the label
+\code{"abc"} to the first three models and \code{"ef"} to the fourth and
+fifth model. The column with coefficient names and any custom columns added
+by the \code{"custom.columns"} argument are not counted towards these
+positions. If \code{booktabs = TRUE}, \code{\\cmidrule} rules are added
+below the respective labels; otherwise \code{\\cline} lines are used.}
 
 \item{custom.model.names}{A character vector of labels for the models. By
 default, the models are named "Model 1", "Model 2", etc. Specifying

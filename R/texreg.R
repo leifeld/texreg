@@ -1983,10 +1983,14 @@ matrixreg <- function(l,
         newcol <- matrix("", nrow = nrow(temp), ncol = 1)
         for (j in 1:numcoef) {
           if (single.row == TRUE) {
-            newcol[j, 1] <- as.character(custom.columns[[custom.count]][j])
+            j_index <- j
           } else {
-            newcol[(2 * j) - 1, 1] <- as.character(custom.columns[[custom.count]][j])
+            j_index <- (2 * j) - 1
           }
+          if (output.type[1] == "ascii") { # ASCII tables have the model names already built in, so the row counter needs to be corrected
+            j_index <- j_index + 1
+          }
+          newcol[j_index, 1] <- as.character(custom.columns[[custom.count]][j])
         }
         temp <- cbind(temp, newcol)
       }
@@ -2006,6 +2010,12 @@ matrixreg <- function(l,
     attr(output.matrix, "gof.names") <- gof.matrix[, 1]
     attr(output.matrix, "coef.names") <- coef.names
     attr(output.matrix, "mod.names") <- mod.names
+  }
+
+  # replace model names for ASCII tables because they already have the model names but fail to include custom column names
+  if (output.type[1] == "ascii") {
+    mod.names <- customcolumnnames(mod.names, custom.columns, custom.col.pos, types = FALSE)
+    output.matrix[1, ] <- mod.names
   }
 
   return(output.matrix)
@@ -2574,6 +2584,7 @@ screenreg <- function(l,
                       file = NULL,
                       single.row = FALSE,
                       stars = c(0.001, 0.01, 0.05),
+                      custom.header = NULL,
                       custom.model.names = NULL,
                       custom.coef.names = NULL,
                       custom.coef.map = NULL,
@@ -2637,6 +2648,7 @@ screenreg <- function(l,
   gof.names <- attr(output.matrix, "gof.names")
   coef.names <- attr(output.matrix, "coef.names")
   mod.names <- attr(output.matrix, "mod.names")
+  coltypes <- customcolumnnames(mod.names, custom.columns, custom.col.pos, types = TRUE)
   ci <- attr(output.matrix, "ci")
   ci.test <- attr(output.matrix, "ci.test")
 
@@ -2666,8 +2678,108 @@ screenreg <- function(l,
     string <- paste0(string, o.rule, "\n")
   }
 
-  # specify model names
+  # specify multicolumn header
   spacing <- paste(rep(" ", column.spacing), collapse = "")
+  mod.names <- c("", mod.names)
+  if (!is.null(custom.header) && !is.na(custom.header) && length(custom.header) > 0) {
+    if (!"list" %in% class(custom.header) || length(custom.header) >= length(mod.names) || is.null(names(custom.header)) || !all(sapply(custom.header, is.numeric))) {
+      stop("'custom.header' must be a named list of numeric vectors.")
+    }
+    ch <- unlist(custom.header)
+    for (i in 1:length(ch)) {
+      if (is.na(ch[i])) {
+        stop("NA values are not permitted in 'custom.header'. Try leaving out the model indices that should not be included in the custom header.")
+      }
+      if (ch[i] %% 1 != 0) {
+        stop("The model column indices in 'custom.header' must be provided as integer values.")
+      }
+      if (ch[i] < 1 || ch[i] >= length(mod.names)) {
+        stop("The model column indices in 'custom.header' must be between 1 and the number of models.")
+      }
+      if (i > 1 && ch[i] <= ch[i - 1]) {
+        stop("The model column indices in 'custom.header' must be strictly increasing.")
+      }
+    }
+
+    ch <- rules <- paste0(rep(" ", nchar(output.matrix[1, 1])), collapse = "") # multicolumn header labels and mid-rules
+    counter <- 0  # keeps track of how many columns we have processed to the left of the current start column
+    for (i in 1:length(custom.header)) {
+      # check if there are gaps within multicolumn blocks and throw error
+      if (length(custom.header[[i]]) != custom.header[[i]][length(custom.header[[i]])] - custom.header[[i]][1] + 1) {
+        stop("Each item in 'custom.header' must have strictly consecutive column indices, without gaps.")
+      }
+
+      # find out corrected column indices (ignoring the coef label column) of the current model after taking into account custom columns
+      numCoefCol <- 0
+      numCustomCol <- 0
+      for (j in 1:length(coltypes)) {
+        if (coltypes[j] == "coef") {
+          numCoefCol <- numCoefCol + 1
+        } else if (coltypes[j] == "customcol") {
+          numCustomCol <- numCustomCol + 1
+        }
+        if (numCoefCol == custom.header[[i]][1]) {
+          break() # break the loop if we have reached the number of models so far
+        }
+      }
+      startIndex <- numCoefCol + numCustomCol # corrected column index
+      numCoefCol <- 0
+      numCustomCol <- 0
+      for (j in 1:length(coltypes)) {
+        if (coltypes[j] == "coef") {
+          numCoefCol <- numCoefCol + 1
+        } else if (coltypes[j] == "customcol") {
+          numCustomCol <- numCustomCol + 1
+        }
+        if (numCoefCol == custom.header[[i]][length(custom.header[[i]])]) {
+          break() # break the loop if we have reached the number of models so far
+        }
+      }
+      stopIndex <- numCoefCol + numCustomCol # corrected column index
+
+      # add empty cells for gaps and custom text columns
+      if (startIndex > counter + 1) {
+        spaces <- ""
+        for (j in (startIndex):(counter + 2)) {
+          spaces <- paste0(spaces, spacing, paste0(rep(" ", nchar(output.matrix[1, j])), collapse = ""))
+          counter <- counter + 1
+        }
+        ch <- paste0(ch, spaces)
+        rules <- paste0(rules, spaces)
+      }
+
+      # add multicolumn cells (+ 1 is for the coefficient label column)
+      chars <- 0
+      for (j in (startIndex + 1):(stopIndex + 1)) {
+        chars <- chars + nchar(output.matrix[1, j]) + column.spacing
+      }
+      chars <- chars - column.spacing # last column does not have extra spacing
+      label <- names(custom.header)[i]
+      chars_label <- chars - nchar(label)
+      if (chars_label < 0) {
+        label <- substr(label, 1, chars)
+      }
+      before <- after <- (chars - nchar(label)) / 2
+      if (before %% 1 != 0) {
+        before <- before + 0.5
+        after <- after - 0.5
+      }
+      ch <- paste0(ch,
+                   spacing,
+                   paste0(rep(" ", before), collapse = ""),
+                   label,
+                   paste0(rep(" ", after), collapse = "")
+                   )
+      rules <- paste0(rules,
+                      spacing,
+                      paste0(rep(inner.rule, chars), collapse = "")
+                      )
+      counter <- counter + stopIndex - startIndex + 1
+    }
+    string <- paste0(string, ch, "\n", rules, "\n")
+  }
+
+  # specify model names
   string <- paste(string, output.matrix[1, 1], sep = "")
   for (i in 2:ncol(output.matrix)) {
     string <- paste0(string, spacing, output.matrix[1, i])
