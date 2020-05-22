@@ -43,7 +43,11 @@ htmlreg(
   head.tag = FALSE,
   body.tag = FALSE,
   indentation = "",
-  vertical.align.px = 0,
+  table.margin = 10,
+  padding = 5,
+  color = "#000000",
+  outer.rules = 2,
+  inner.rules = 1,
   ...
 )
 }
@@ -392,15 +396,22 @@ default, \code{indentation = ""} uses no indentation. Any number of spaces
 or characters can be used instead. For example, \code{indentation = " "}
 uses two spaces of (additional) indentation for each subelement.}
 
-\item{vertical.align.px}{Vertical alignment of significance stars. Browsers
-differ in their ways of displaying superscripted significance stars; in
-some browsers, the stars are elevated by default, and in other browsers,
-the stars are aligned vertically with the text, without any actual
-superscripting. This argument controls by how many additional pixels the
-stars are elevated. The default setting of \code{0} uses the defaults of
-the browser. In RStudio's internal browser, this looks OK, but in Firefox,
-this looks too low. A value of \code{4} looks OK in Firefox, for example,
-but is above the line in RStudio's internal browser.}
+\item{table.margin}{The margin around the table in pixels. This determines
+how much space there is around the table. To remove all space around the
+table, set \code{table.margin = 0}.}
+
+\item{padding}{The space on the left and right of each table cell in pixels.}
+
+\item{color}{The color of the table, including text and rules or lines. This
+can be provided as a hex RGB value or as a color string that is valid in
+HTML (e.g., \code{"black"}).}
+
+\item{outer.rules}{The line width at the top and bottom of the table in
+pixels. Can be \code{outer.rules = 0} to omit outer lines.}
+
+\item{inner.rules}{The horizontal line width before and after the coefficient
+block of the table in pixels. Can be \code{outer.rules = 0} to omit inner
+lines.}
 
 \item{...}{Custom options to be passed on to the \code{\link{extract}}
 function. For example, most extract methods provide custom options for the

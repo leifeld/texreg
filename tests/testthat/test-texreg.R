@@ -61,7 +61,7 @@ test_that("siunitx argument works in the texreg function", {
   expect_match(tr, "l S\\[table-format=3\\.11\\]", perl = TRUE)
   expect_match(tr, "\\n\\\\usepackage\\{siunitx\\}\\n", perl = TRUE)
   expect_match(tr, "abc         \\& \\{abcdefg hijklmn\\}     \\& \\{abc\\}", perl = TRUE)
-  expect_match(tr, "\\n\\\\sisetup\\{parse-numbers=false, table-text-alignment=centre\\}\\n", perl = TRUE)
+  expect_match(tr, "\\n\\\\sisetup\\{parse-numbers=false, table-text-alignment=right\\}\\n", perl = TRUE)
   tr <- texreg(list(model1, model1), siunitx = TRUE, custom.gof.rows = list(abc = c("abcdefg hijklmn", "abc")))
   expect_match(tr, "l S\\[table-format=3\\.5\\]", perl = TRUE)
   expect_match(tr, "\\{Model 1\\}", perl = TRUE)

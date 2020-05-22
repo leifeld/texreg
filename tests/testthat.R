@@ -1,4 +1,4 @@
 library("testthat")
-suppressPackageStartupMessages(library("texreg"))
+library("texreg")
 
 test_check("texreg")

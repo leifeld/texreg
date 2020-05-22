@@ -18,12 +18,12 @@ test_that("texreg returns output as in the JSS 2013 article", {
 
   # texreg example with dcolumn and booktabs usage and table float options
   expect_equal(output <- texreg(list(m1, m2),
-                                dcolumn = TRUE,
-                                booktabs = TRUE,
-                                use.packages = FALSE,
-                                label = "tab:3",
-                                caption = "Two linear models.",
-                                float.pos = "bh"),
+                      dcolumn = TRUE,
+                      booktabs = TRUE,
+                      use.packages = FALSE,
+                      label = "tab:3",
+                      caption = "Two linear models.",
+                      float.pos = "bh"),
                readRDS("../files/jss_texreg_dcolumn_booktabs.RDS"))
   # saveRDS(output, "../files/jss_texreg_dcolumn_booktabs.RDS")
 

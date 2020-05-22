@@ -10,7 +10,6 @@ get_stars_note(
   symbol = ".",
   ci = FALSE,
   ci.test = NULL,
-  css.sup = NULL,
   output = "ascii"
 )
 }
@@ -27,11 +26,6 @@ significance.}
 \item{ci.test}{The null hypothesis value, for example \code{0} (the normal
 case) or \code{1} (e.g., with exponentiated coefficients). A star is added
 if this value is outside the confidence interval.}
-
-\item{css.sup}{An HTML style sheet attribute to be added to the
-\code{"<sup>"} tag for vertical alignment. For example,
-\code{" style=\"vertical-align: 4px;\""}. Only required with
-\code{output = "html"}.}
 
 \item{output}{The output type of the note. This can be \code{"ascii"},
 \code{"latex"}, or \code{"html"}.}
