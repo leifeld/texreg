@@ -313,7 +313,7 @@ htmlreg <- function(l,
   )
 
   # specify multicolumn header
-  if (!is.null(custom.header) && !is.na(custom.header) && length(custom.header) > 0) {
+  if (!is.null(custom.header) && length(custom.header) > 0 && !any(is.na(custom.header))) {
     if (!"list" %in% class(custom.header) || length(custom.header) >= length(mod.names) || is.null(names(custom.header)) || !all(sapply(custom.header, is.numeric))) {
       stop("'custom.header' must be a named list of numeric vectors.")
     }
@@ -2681,7 +2681,7 @@ screenreg <- function(l,
   # specify multicolumn header
   spacing <- paste(rep(" ", column.spacing), collapse = "")
   mod.names <- c("", mod.names)
-  if (!is.null(custom.header) && !is.na(custom.header) && length(custom.header) > 0) {
+  if (!is.null(custom.header) && length(custom.header) > 0 && !any(is.na(custom.header))) {
     if (!"list" %in% class(custom.header) || length(custom.header) >= length(mod.names) || is.null(names(custom.header)) || !all(sapply(custom.header, is.numeric))) {
       stop("'custom.header' must be a named list of numeric vectors.")
     }
@@ -3366,7 +3366,7 @@ texreg <- function(l,
   }
 
   # specify multicolumn header
-  if (!is.null(custom.header) && !is.na(custom.header) && length(custom.header) > 0) {
+  if (!is.null(custom.header) && length(custom.header) > 0 && !any(is.na(custom.header))) {
     if (!"list" %in% class(custom.header) || length(custom.header) >= length(mod.names) || is.null(names(custom.header)) || !all(sapply(custom.header, is.numeric))) {
       stop("'custom.header' must be a named list of numeric vectors.")
     }
@@ -3379,10 +3379,10 @@ texreg <- function(l,
         stop("The model column indices in 'custom.header' must be provided as integer values.")
       }
       if (ch[i] < 1 || ch[i] >= length(mod.names)) {
-        stop("The model column indices in 'custom.header' must be between 1 and the number of models.")
+          stop("The model column indices in 'custom.header' must be between 1 and the number of models.")
       }
       if (i > 1 && ch[i] <= ch[i - 1]) {
-        stop("The model column indices in 'custom.header' must be strictly increasing.")
+          stop("The model column indices in 'custom.header' must be strictly increasing.")
       }
     }
     ch <- ""      # multicolumn header labels

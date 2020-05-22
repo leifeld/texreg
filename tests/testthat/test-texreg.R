@@ -4,6 +4,58 @@ library("texreg")
 data("iris")
 model1 <- lm(Sepal.Width ~ Petal.Width, data = iris)
 
+test_that("custom.header argument works", {
+  # screenreg
+  sr1 <- screenreg(list(model1, model1, model1, model1, model1, model1),
+                   custom.header = list("ab" = 1:2, "def" = 4:6))
+  expect_match(sr1, "\n                       ab                                        def               \n             ----------------------              ----------------------------------\n             Model 1")
+  sr2 <- screenreg(list(model1, model1, model1, model1, model1, model1),
+                   custom.header = list("ab" = 1:2, "def" = 4:6),
+                   custom.columns = list("first" = c("one", "two"), "second" = c("three", "four")),
+                   custom.col.pos = c(1, 6))
+  expect_match(sr2, " ---------------------- ")
+  expect_match(sr2, " ------------------------------------------\n")
+  expect_match(sr2, "-              -")
+  expect_match(sr2, "\nfirst               Model 1     Model 2     Model 3     Model 4     second  Model 5     Model 6   \n")
+  sr3 <- screenreg(list(model1, model1, model1),
+                   custom.header = list("ab" = 1:2, "defghijklmnopqrstuvxwyz" = 3),
+                   single.row = TRUE, groups = list("Group 1" = 1, "Group 2" = 2))
+  expect_match(sr3, " defghijklmnopqrst\n")
+  expect_match(sr3, "\n    Petal.Width")
+
+  # texreg
+  tr1 <- texreg(list(model1, model1, model1, model1, model1, model1),
+                custom.header = list("ab" = 1:2, "def" = 4:6))
+  expect_match(tr1, "\\n \\& \\\\multicolumn\\{2\\}\\{c\\}\\{ab\\} \\& \\& \\\\multicolumn\\{3\\}\\{c\\}\\{def\\} \\\\\\\\\\n\\\\cline\\{2-3\\} \\\\cline\\{5-7\\}\\n")
+  tr2 <- texreg(list(model1, model1, model1, model1, model1, model1),
+                custom.header = list("ab" = 1:2, "def" = 4:6),
+                custom.columns = list("first" = c("one", "two"), "second" = c("three", "four")),
+                custom.col.pos = c(1, 6))
+  expect_match(tr2, "\\n & & \\\\multicolumn\\{2\\}\\{c\\}\\{ab\\} \\& \\& \\\\multicolumn\\{4\\}\\{c\\}\\{def\\} \\\\\\\\\\n\\\\cline\\{3-4\\} \\\\cline\\{6-9\\}\\n")
+  tr3 <- texreg(list(model1, model1, model1),
+                custom.header = list("ab" = 1:2, "defghijklmnopqrstuvxwyz" = 3),
+                single.row = TRUE, groups = list("Group 1" = 1, "Group 2" = 2),
+                booktabs = TRUE, longtable = TRUE, siunitx = TRUE)
+  expect_match(tr3, "\\n\\\\toprule\\n \\& \\\\multicolumn\\{2\\}\\{c\\}\\{ab\\} \\& \\\\multicolumn\\{1\\}\\{c\\}\\{defghijklmnopqrstuvxwyz\\} \\\\\\\\\\n\\\\cmidrule\\(lr\\)\\{2-3\\} \\\\cmidrule\\(lr\\)\\{4-4\\}\\n")
+  expect_error(texreg(list(model1, model1), custom.header = c("a", "b")), "must be a named list of numeric vectors")
+  expect_error(texreg(list(model1, model1), custom.header = list("ab" = c(1, NA))), "NA values are not permitted in 'custom.header'")
+  expect_error(texreg(list(model1, model1), custom.header = list("ab" = c(1, 1.5))), "must be provided as integer values")
+  expect_error(texreg(list(model1, model1), custom.header = list("ab" = c(1, 3))), "must be between 1 and the number of models")
+  expect_error(texreg(list(model1, model1), custom.header = list("ab" = c(2, 1))), "must be strictly increasing")
+  expect_error(texreg(list(model1, model1, model1), custom.header = list("ab" = c(1, 3))), "must have strictly consecutive column indices")
+
+  # htmlreg
+  hr1 <- htmlreg(list(model1, model1, model1, model1, model1, model1),
+                 custom.header = list("ab" = 1:2, "def" = 4:6),
+                 inline.css = FALSE)
+  expect_match(hr1, "<tr>\\n<th>\\&nbsp;<\\/th>\\n<th class = \"rule\" colspan=\"2\">ab<\\/th>\\n<th>\\&nbsp;<\\/th>\\n<th class = \"rule\" colspan=\"3\">def<\\/th>\\n<\\/tr>")
+  hr2 <- htmlreg(list(model1, model1, model1, model1, model1, model1),
+                 custom.header = list("ab" = 1:2, "def" = 4:6),
+                 custom.columns = list("first" = c("one", "two"), "second" = c("three", "four")),
+                 custom.col.pos = c(1, 6), inline.css = FALSE, body.tag = TRUE)
+  expect_match(hr2, "<tr>\\n<th>\\&nbsp;<\\/th>\\n<th>\\&nbsp;<\\/th>\\n<th class = \"rule\" colspan=\"2\">ab<\\/th>\\n<th>\\&nbsp;<\\/th>\\n<th class = \"rule\" colspan=\"4\">def<\\/th>\\n<\\/tr>")
+})
+
 test_that("ci.test argument works", {
   mr <- matrixreg(list(model1, model1), ci.force = TRUE, ci.test = 3.3)
   expect_match(mr[2, 2], "  3.31        ")
