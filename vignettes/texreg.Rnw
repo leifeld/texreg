@@ -1,17 +1,17 @@
-%\VignetteIndexEntry{texreg: Conversion of Statistical Model Output in R to LaTeX and HTML tables}
+  %\VignetteIndexEntry{texreg: Conversion of Statistical Model Output in R to LaTeX and HTML tables}
 %\VignetteDepends{}
 %\VignetteKeyword{typesetting, reporting, table, coefficients, regression, R, LaTeX, MS Word, HTML, Markdown}
 %\VignettePackage{texreg}
 
 \documentclass[nojss]{jss}
-\usepackage{booktabs,dcolumn,rotating,thumbpdf,longtable}
+\usepackage{booktabs,dcolumn,rotating,thumbpdf,longtable,paralist}
 
 \usepackage{tikz}
 \usetikzlibrary{trees}
 
 \graphicspath{{Figures/}}
 
-\author{Philip Leifeld \\ University of Glasgow}
+\author{Philip Leifeld \\ University of Essex}
 \Plainauthor{Philip Leifeld}
 
 \title{\pkg{texreg}: Conversion of Statistical Model Output in \proglang{R} to {\LaTeX} and HTML Tables}
@@ -34,8 +34,8 @@
   custom model extensions is proposed.
 }
 
-\Keywords{reporting, table, coefficients, regression, \proglang{R}, {\LaTeX}, Microsoft Word, HTML, Markdown}
-\Plainkeywords{reporting, table, coefficients, regression, R, LaTeX, Microsoft Word, HTML, Markdown}
+\Keywords{reporting, table, coefficients, regression, \proglang{R}, {\LaTeX}, MS Word, HTML, Markdown}
+\Plainkeywords{reporting, table, coefficients, regression, R, LaTeX, MS Word, HTML, Markdown}
 
 \Volume{55}
 \Issue{8}
@@ -46,13 +46,12 @@
 
 \Address{
   Philip Leifeld\\
-  University of Glasgow\\
-  School of Social and Political Sciences\\
-  Adam Smith Building\\
-  40 Bute Gardens\\
-  Glasgow, G12\,8RT\\
-  Scotland, United Kingdom\\
-  E-mail: \email{philip.leifeld@glasgow.ac.uk}\\
+  Department of Government\\
+  University of Essex\\
+  Wivenhoe Park\\
+  Colchester, CO4~6BW\\
+  United Kingdom\\
+  E-mail: \email{philip.leifeld@essex.ac.uk}\\
   URL: \url{http://www.philipleifeld.com}
 }
 
@@ -60,7 +59,7 @@
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
-This \proglang{R} package vignette is based on an article in the Journal of Statistical Software \citep{leifeld2013texreg:}.
+This \proglang{R} package vignette is based on an article in the \emph{Journal of Statistical Software} \citep{leifeld2013texreg:}. The contents of the article have not been modified, apart from the author affiliation. However, the package has been updated with more arguments, model extensions, and functions. The help pages contain details on any differences to the version documented here.
 
 \section[Typesetting R model output in LaTeX and HTML]{Typesetting \proglang{R} model output in {\LaTeX} and HTML}
 
@@ -115,15 +114,17 @@ commands in {\LaTeX} documents and their execution and
 evaluation at runtime \citep{leisch2002sweave}.  In spite of this,
 common approaches for linking \proglang{R} model output and tables in
 {\LaTeX} include
-(1) copying and pasting individual values after every change of the
+\begin{inparaenum}[(1)]
+\item copying and pasting individual values after every change of the
   model,
-(2) custom user-written functions which convert a specific model
+\item custom user-written functions which convert a specific model
   into a matrix,
-(3) the use of sophisticated table-management packages (see next
+\item the use of sophisticated table-management packages (see next
   section), and
-(4) the inclusion of single models in the form of the model summary
+\item the inclusion of single models in the form of the model summary
   instead of nicely aligned coefficient tables as a second best
   solution.
+\end{inparaenum}
 
 Popular alternatives for document preparation include
 \proglang{Microsoft Word} and the dynamic report generation
@@ -140,7 +141,7 @@ function which would directly output {\LaTeX} or
 HTML tables and for which custom methods for any model type
 could be written as extensions.  While several attempts already exist
 (see Section~\ref{comparison}), all of them have limitations.  This
-article introduces the \pkg{texreg} package \citep{Leifeld:2014}, which
+article introduces the \pkg{texreg} package \citep{Leifeld:2013}, which
 closes this gap and provides a unified framework for typesetting
 {\LaTeX} and HTML tables for various statistical
 models in \proglang{R}. Package \pkg{texreg} is available from
@@ -276,13 +277,15 @@ printed without any header or document type information, and that
 significance stars are escaped using backslashes.
 
 In other situations, it may be important to
-(1) omit certain coefficients (like random or fixed effects or
+\begin{inparaenum}[(1)]
+\item omit certain coefficients (like random or fixed effects or
   thresholds),
-(2) reorder the coefficients in the model (e.g., because some models
+\item reorder the coefficients in the model (e.g., because some models
   put interaction effects at the end of the list of coefficients), or
-(3) replace coefficients, standard errors, or $p$~values by custom
+\item replace coefficients, standard errors, or $p$~values by custom
   vectors, for example when heteroskedasticity-consistent (``robust'')
   standard errors are used \citep{zeileis2004econometric}.
+\end{inparaenum}
 
 \pagebreak
 
@@ -323,17 +326,13 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{override.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace coefficients by custom vectors \\
 \code{override.se}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace standard errors by custom vectors \\
 \code{override.pval}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace $p$~values by custom vectors \\
-\code{override.ci.low}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace lower confidence intervals \\
-\code{override.ci.up}		& $\bullet$	& $\bullet$	& $\bullet$	& Replace upper confidence intervals \\
 \code{omit.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Remove rows using a regular expression \\
 \code{reorder.coef}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the model terms \\
 \code{reorder.gof}		& $\bullet$	& $\bullet$	& $\bullet$	& Provide a custom order for the GOF statistics \\
+\code{return.string}		& $\bullet$	& $\bullet$	& $\bullet$	& Return the table as a character vector? \\
 \code{ci.force}			& $\bullet$	& $\bullet$	& $\bullet$	& Convert standard errors to confidence intervals \\
 \code{ci.level}			& $\bullet$	& $\bullet$	& $\bullet$	& Confidence level for CI conversion \\
 \code{ci.star}			& $\bullet$	& $\bullet$	& $\bullet$	& Print star when 0 is not contained in the CI \\
-\code{groups}			& $\bullet$	& $\bullet$	& $\bullet$	& Partition rows of the table into groups with labels \\
-\code{custom.columns}		& $\bullet$	& $\bullet$	& $\bullet$	& Add custom text columns to the table \\
-\code{custom.col.pos}		& $\bullet$	& $\bullet$	& $\bullet$	& Define where custom columns should be placed \\
 \code{bold}			& $\bullet$	& $\bullet$	& $\circ$	& $p$~value below which coefficients are bolded \\
 \code{center}			& $\bullet$	& $\bullet$	& $\circ$	& Horizontal alignment on the page \\
 \code{caption}			& $\bullet$	& $\bullet$	& $\circ$	& Set the caption of the table \\
@@ -341,8 +340,7 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{label}			& $\bullet$	& $\circ$	& $\circ$	& Set the label of the table \\
 \code{booktabs}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{booktabs} package \citep{fear2005booktabs}? \\
 \code{dcolumn}			& $\bullet$	& $\circ$	& $\circ$	& Use the \pkg{dcolumn} package \citep{carlisle2001dcolumn}? \\
-\code{lyx}			& $\bullet$	& $\circ$	& $\circ$	& Double the newline characters found in the output to facilitate transfer of output to the LyX document processor \\
-\code{sideways}			& $\bullet$	& $\circ$	& $\circ$	& Use \code{sidewaystable} \citep{rahtz2008rotating} \\
+\code{sideways}			& $\bullet$	& $\circ$	& $\circ$	& Use \code{sidewaystable} \citep{rahtz2008rotating}? \\
 \code{use.packages}		& $\bullet$	& $\circ$	& $\circ$	& Print the \verb+\usepackage{}+ declarations? \\
 \code{table}			& $\bullet$	& $\circ$	& $\circ$	& Wrap \code{tabular} in a table environment? \\
 \code{no.margin}		& $\bullet$	& $\circ$	& $\circ$	& Remove margins between columns to save space \\
@@ -354,7 +352,6 @@ Argument			& \rotatebox{90}{\code{texreg}}	& \rotatebox{90}{\code{htmlreg}}	& \r
 \code{html.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<html>} tag? \\
 \code{head.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<head>} tag? \\
 \code{body.tag}			& $\circ$	& $\bullet$	& $\circ$	& Include the \code{<body>} tag? \\
-\code{indentation}		& $\circ$	& $\bullet$	& $\circ$	& Indentation of subelements in the HTML code \\
 \code{column.spacing}		& $\circ$	& $\circ$	& $\bullet$	& Number of spaces between columns \\
 \code{outer.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the outer rule \\
 \code{inner.rule}		& $\circ$	& $\circ$	& $\bullet$	& Line type for the inner rule \\
@@ -420,6 +417,8 @@ package.  \pkg{texreg}, however, offers more straightforward ways of
 custom model implementation.  This important feature is notably absent
 from \pkg{stargazer}.
 
+\pagebreak
+
 \begin{center}
 \begin{longtable}{l l l}
 \toprule
@@ -439,112 +438,59 @@ Class			& Package			& Description \\
 \bottomrule
 \endfoot
 
-\caption[List of 103 supported model types (version 1.36.24).]{\label{tab:types} List of 103 supported model types (version 1.36.24).} \\ \\
+\caption[List of 52 supported model types (version 1.30).]{\label{tab:types} List of 52 supported model types (version 1.30).} \\
 \endlastfoot
 
-`\code{aftreg}'         & \pkg{eha}	            & Accelerated failure time regression \\
-`\code{Arima}'          & \pkg{stats}           & ARIMA time series models \\
-`\code{ARIMA}'          & \pkg{forecast}        & ARIMA time series models \\
-`\code{averaging}'      & \pkg{MuMIn}           & Model averaging objects \\
-`\code{bam}'            & \pkg{mgcv}            & Generalized additive models \\
-`\code{betamfx}'        & \pkg{mfx}             & Beta regression with marginal effects \\
-`\code{betaor}'         & \pkg{mfx}             & Beta regression with odds ratios \\
-`\code{betareg}'        & \pkg{betareg}         & Beta regression for rates and proportions \\
-`\code{bife}'           & \pkg{bife}            & Binary Choice Models with Fixed Effects \\
-`\code{biglm}'          & \pkg{biglm}           & Bounded memory linear  and generalized linear models \\
-`\code{brglm}'          & \pkg{brglm}           & Bias-reduced generalized linear models \\
-`\code{btergm}'         & \pkg{xergm}           & Temporal exponential random graph models \\
-`\code{censReg}'        & \pkg{censReg}         & Censored regression (tobit) models \\
-`\code{clm}'            & \pkg{ordinal}         & Cumulative link models \\
-`\code{clmm}'           & \pkg{ordinal}         & Cumulative link mixed models \\
-`\code{clogit}'         & \pkg{survival}        & Conditional logistic regression \\
-`\code{coeftest}'       & \pkg{lmtest}          & Wald tests of estimated coefficients \\
-`\code{coxph}'          & \pkg{survival}        & Cox proportional hazard models \\
-`\code{coxph.penal}'    & \pkg{survival}        & Cox proportional hazard with penalty splines \\
-`\code{coxreg}'         & \pkg{eha}             & Cox regression \\
-`\code{dynlm}'          & \pkg{dynlm}           & Time series regression \\
-`\code{ergm}'           & \pkg{ergm}            & Exponential random graph models \\
-`\code{ergmm}'          & \pkg{latentnet}       & Latent space and latent cluster models \\
-`\code{ets}'            & \pkg{forecast}        & Exponential smoothing state space models \\
-`\code{feglm}'          & \pkg{alpaca}          & GLM with high-dimensional k-way fixed effects \\
-`\code{felm}'           & \pkg{lfe}             & Linear models with multiple group fixed effects \\
-`\code{fGARCH}'         & \pkg{fGarch}          & GARCH time series models \\
-`\code{forecast}'       & \pkg{forecast}        & Time series forecasting \\
-`\code{gam}'            & \pkg{mgcv}            & Generalized additive models \\
-`\code{gamlss}'         & \pkg{gamlss}          & GAM for location scale and shape \\
-`\code{gee}'            & \pkg{gee}             & Generalized estimating equation \\
-`\code{geeglm}'         & \pkg{geepack}         & Generalized estimating equation \\
-`\code{gel}'            & \pkg{gmm}             & Generalized empirical likelihood estimation \\
-`\code{glm}'            & \pkg{stats}			& Generalized linear models \\
-`\code{[gl|l|nl]merMod}' & \pkg{lme4} ($<$ 1.0) & Generalized linear mixed models \\
-`\code{glmmadmb}'       & \pkg{glmmADMB}        & Generalized linear mixed models and extensions \\
-`\code{glmrob}          & \pkg{robustbase}      & Robust fitting of generalized linear models \\
-`\code{gls}'            & \pkg{nlme}            & Generalized least squares \\
-`\code{gnls}'           & \pkg{nlme}            & Generalized non-linear least squares  \\
-`\code{gmm}'            & \pkg{gmm}             & Generalized method of moments estimation \\
-`\code{gnm}'            & \pkg{gnm}             & Generalized non-linear models \\
-`\code{hurdle}'         & \pkg{pscl}            & Hurdle regression models for count data \\
-`\code{ivreg}'          & \pkg{AER}             & Instrumental-variable regression using 2SLS \\
-`\code{H2OBinomialModel}'& \pkg{h2o}            & Binomial generalized linear model \\
-`\code{lm}'             & \pkg{stats}           & Ordinary least squares \\
-`\code{lme}'            & \pkg{nlme}            & Linear mixed-effects models \\
-`\code{lme4}'           & \pkg{lme4} ($\geq$ 1.0)& Linear mixed-effects models \\
-`\code{lmrob}'          & \pkg{robustbase}      & MM-type estimators for linear models \\
-`\code{lmRob}'          & \pkg{robust}          & Robust linear regression with high breakdown point and high efficiency regression \\
-`\code{lnam}'           & \pkg{sna}             & Linear network autocorrelation models \\
-`\code{logitmfx}'       & \pkg{mfx}             & Logistic regression with marginal effects \\
-`\code{logitor}'        & \pkg{mfx}             & Logistic regression with odds ratios \\
-`\code{lqmm}'           & \pkg{lqmm}            & Linear quantile mixed models \\
-`\code{lrm}'            & \pkg{rms}, \pkg{Design} & Logistic regression models \\
-`\code{maBina}'         & \pkg{erer}            & Marginal effects for binary response models \\
-`\code{mhurdle}'        & \pkg{mhurdle}         & Models with zero left-censored variables \\
-`\code{mlogit}'         & \pkg{mlogit}          & Multinomial logit models \\
-`\code{mnlogit}'        & \pkg{mnlogit}         & Multinomial choice models \\
-`\code{multinom}'       & \pkg{nnet}            & Multinomial log-linear models \\
-`\code{model.selection}'& \pkg{MuMIn}           & Model selection objects \\
-`\code{mtergm}'         & \pkg{btergm}          & MCMC-based TERGM \\
-`\code{negbin}'         & \pkg{MASS}            & Negative binomial generalized linear models \\
-`\code{negbinirr}'      & \pkg{mfx}             & Negative binomial models with incidence rate ratios \\
-`\code{negbinmfx}'      & \pkg{mfx}             & Negative binomial models with marginal effects \\
-`\code{netlogit}'       & \pkg{sna}             & Logistic regression for networks \\
-`\code{nlme}'           & \pkg{nlme}            & Nonlinear mixed-effects models \\
-`\code{oglmx}'          & \pkg{oglmx}           & Ordered Generalized Linear Model \\
-`\code{ols}'            & \pkg{rms}             & Ordinary least squares linear models \\
-`\code{panelAR}'        & \pkg{panelAR}         & Linear models on panel data structures in the presence of AR(1)-type autocorrelation \\
-`\code{pglm}'           & \pkg{pglm}            & Estimation by maximum likelihood of glm \\
-`\code{pgmm}'           & \pkg{plm}             & GMM estimation for panel data \\
-`\code{phreg}'          & \pkg{eha}             & Parametric proportional hazards regression \\
-`\code{plm}'            & \pkg{plm}             & Linear models for panel data \\
-`\code{pmg}'            & \pkg{plm}             & Linear panel models with heterogeneous coefficients \\
-`\code{poissonirr}'     & \pkg{mfx}             & Poisson models with incidence rate ratios \\
-`\code{poissonmfx}'     & \pkg{mfx}             & Poisson models with marginal effects \\
-`\code{polr}'           & \pkg{MASS}            & Ordered logistic or probit regression \\
-`\code{probitmfx}'      & \pkg{mfx}             & Probit regression with marginal effects \\
-`\code{Relogit}'        & \pkg{Zelig}           & Rare events logistic regression \\
-`\code{rem.dyad}'       & \pkg{relevent}        & Relational event models for dyadic data \\
-`\code{rlm}'            & \pkg{MASS}            & Robust fitting of linear models \\
-`\code{rq}'             & \pkg{quantreg}        & Quantile regression models \\
-`\code{sarlm}'          & \pkg{spdep}           & Linear spatial autocorrelation and error models \\
-`\code{sclm}'           & \pkg{ordinal}         & Cumulative link models \\
-`\code{selection}'      & \pkg{sampleSelection} & Sample selection models \\
-`\code{sienaFit}'       & \pkg{RSiena}          & Stochastic actor-oriented models for networks \\
-`\code{simex}'          & \pkg{simex}           & SIMEX algorithm for measurement error models \\
-`\code{speedglm}'       & \pkg{speedglm}        &  Fitting generalized linear models to large data sets\\
-`\code{speedlm}'        & \pkg{speedglm}        &  Fitting linear models to large data sets\\
-`\code{stergm}'         & \pkg{tergm}           & Temporal exponential random graph models \\
-`\code{summary.lm}'     & \pkg{stats}           & Summary objects for linear models \\
-`\code{survreg}'        & \pkg{survival}        & Parametric survival regression models \\
-`\code{survreg.penal}'  & \pkg{survival}        & Frailty survival models \\
-`\code{svyglm}'         & \pkg{survey}          & Survey-weighted generalized linear models \\
-`\code{systemfit}'      & \pkg{systemfit}       & Linear structural equations \\
-`\code{texreg}'         & \pkg{texreg}          & For easy manipulation of \pkg{texreg} tables \\
-`\code{tobit}'          & \pkg{AER}             & Tobit regression models for censored data \\
-`\code{vglm}'           & \pkg{VGAM}            & Vector generalized linear models \\
-`\code{weibreg}'        & \pkg{eha}             & Weibull regression \\
-`\code{wls}'            & \pkg{metaSEM}         & Weighted least squares models \\
-`\code{zelig}'          & \pkg{Zelig}           & Zelig models \citep{owen2013zelig:} \\
-`\code{Zelig}'          & \pkg{Zelig}           & Zelig models \citep{owen2013zelig:} \\
-`\code{zeroinfl}'       & \pkg{pscl}            & Zero-inflated regression models \\
+`\code{aftreg}'		& \pkg{eha}			& Accelerated failure time regression \\
+`\code{betareg}'	& \pkg{betareg}			& Beta regression for rates and proportions \\
+`\code{brglm}'		& \pkg{brglm}			& Bias-reduced generalized linear models \\
+`\code{btergm}'		& \pkg{btergm}			& Temporal exponential random graph models \\
+`\code{clm}'		& \pkg{ordinal}			& Cumulative link models \\
+`\code{clogit}'		& \pkg{survival}		& Conditional logistic regression \\
+`\code{coeftest}'	& \pkg{lmtest}			& Wald tests of estimated coefficients \\
+`\code{coxph}'		& \pkg{survival}		& Cox proportional hazard models \\
+`\code{coxph.penal}'	& \pkg{survival}		& Cox proportional hazard with penalty splines \\
+`\code{dynlm}'		& \pkg{dynlm}			& Time series regression \\
+`\code{ergm}'		& \pkg{ergm}			& Exponential random graph models \\
+`\code{gam}'		& \pkg{mgcv}			& Generalized additive models \\
+`\code{gee}'		& \pkg{gee}			& Generalized estimation equation \\
+`\code{glm}'		& \pkg{stats}			& Generalized linear models \\
+`\code{[gl|l|nl]merMod}'& \pkg{lme4} ($<$ 1.0) 		& Generalized linear mixed models \\
+`\code{gls}'		& \pkg{nlme}			& Generalized least squares \\
+`\code{gmm}'		& \pkg{gmm}			& Generalized method of moments estimation \\
+`\code{ivreg}'		& \pkg{AER}			& Instrumental-variable regression using 2SLS \\
+`\code{hurdle}'		& \pkg{pscl}			& Hurdle regression models for count data \\
+`\code{lm}'		& \pkg{stats}			& Ordinary least squares \\
+`\code{lme}'		& \pkg{nlme}			& Linear mixed-effects models \\
+`\code{lme4}'		& \pkg{lme4} ($\geq$ 1.0)	& Linear mixed-effects models \\
+`\code{lmrob}'  	& \pkg{robustbase}		& MM-type estimators for linear models \\
+`\code{lnam}'		& \pkg{sna}			& Linear network autocorrelation models \\
+`\code{lrm}'		& \pkg{rms}, \pkg{Design}	& Logistic regression models \\
+`\code{maBina}'		& \pkg{erer}			& Marginal effects for binary response models \\
+`\code{multinom}'	& \pkg{nnet}			& Multinomial log-linear models \\
+`\code{negbin}'		& \pkg{MASS}			& Negative binomial generalized linear models \\
+`\code{nlme}'		& \pkg{nlme}			& Nonlinear mixed-effects models \\
+`\code{phreg}'		& \pkg{eha}			& Parametric proportional hazards regression \\
+`\code{plm}'		& \pkg{plm}			& Linear models for panel data \\
+`\code{pmg}'		& \pkg{plm}			& Linear panel models with heterogeneous coefficients \\
+`\code{polr}'		& \pkg{MASS}			& Ordered logistic or probit regression \\
+`\code{Relogit}'	& \pkg{Zelig}			& Rare events logistic regression \\
+`\code{rem.dyad}'	& \pkg{relevent}		& Relational event models for dyadic data \\
+`\code{rlm}'		& \pkg{MASS}			& Robust fitting of linear models \\
+`\code{rq}'		& \pkg{quantreg}		& Quantile regression models \\
+`\code{sclm}'		& \pkg{ordinal}			& Cumulative link models \\
+`\code{sienaFit}'	& \pkg{RSiena}			& Stochastic actor-oriented models for networks \\
+`\code{simex}'		& \pkg{simex}			& SIMEX algorithm for measurement error models \\
+`\code{stergm}'		& \pkg{tergm}			& Temporal exponential random graph models \\
+`\code{survreg}'	& \pkg{survival}		& Parametric survival regression models \\
+`\code{survreg.penal}'	& \pkg{survival}		& Frailty survival models \\
+`\code{svyglm}' 	& \pkg{survey}			& Survey-weighted generalized linear models \\
+`\code{systemfit}'	& \pkg{systemfit}		& Linear structural equations \\
+`\code{texreg}'		& \pkg{texreg}			& For easy manipulation of \pkg{texreg} tables \\
+`\code{tobit}'		& \pkg{AER}			& Tobit regression models for censored data \\
+`\code{weibreg}'	& \pkg{eha}			& Weibull regression \\
+`\code{zelig}'		& \pkg{Zelig}			& Zelig models \citep{owen2013zelig:} \\
+`\code{zeroinfl}'	& \pkg{pscl}			& Zero-inflated regression models \\
 \bottomrule\\
 \end{longtable}
 \end{center}
@@ -573,22 +519,16 @@ The \pkg{stargazer} package (version 3.0.1) has built-in functions for
 `\code{zeroinfl}' objects as well as several \pkg{Zelig} adaptations
 \citep{owen2013zelig:}, but it does not support custom user extensions.
 
-\pkg{texreg} (version 1.37), in contrast, can deal with all of the
-above model types (that is, the union of all three packages, is
-extensible, and offers additional built-in functions for the following
-model classes: `\code{ARIMA}', `\code{averaging}', `\code{bam}',
-`\code{betamfx}', `\code{betaor}', `\code{brglm}', `\code{btergm}',
-`\code{censReg}', `\code{coxph.penal}', `\code{coxreg}',  `\code{ergmm}', `\code{ets}',
-`\code{fGARCH}', `\code{forecast}', `\code{gamlss}', `\code{glmmadmb}',
-`\code{glmrob}', `\code{felm}', `\code{gmm}', `\code{lme}', `\code{lme4}',
-`\code{lnam}', `\code{logitmfx}', `\code{logitor}', `\code{lqmm}',
-`\code{maBina}', `\code{mlogit}', `\code{mnlogit}', `\code{mtergm}',
-`\code{model.selection}', `\code{negbinirr}', `\code{negbinmfx}',
-`\code{netlogit}', `\code{nlme}', `\code{poissonirr}', `\code{poissonmfx}',
-`\code{probitmfx}', `\code{rem.dyad}', `\code{rq}', `\code{sclm}',
-`\code{selection}', `\code{stergm}', `\code{systemfit}', `\code{texreg}',
-`\code{vglm}', and `\code{wls}' objects. Table~\ref{tab:types} gives
-an overview of currently implemented model types.
+\pkg{texreg} (version 1.30), in contrast, can deal with all of the
+above model types (that is, the union of all three packages, except
+for some \pkg{Zelig} models), is extensible, and offers additional
+built-in functions for the following model classes: `\code{brglm}',
+`\code{btergm}',`\code{coxph.penal}', `\code{gmm}', `\code{lme}',
+`\code{lme4}', `\code{lnam}', `\code{maBina}', `\code{nlme}',
+`\code{rem.dyad}', `\code{rq}', `\code{sclm}', `\code{stergm}',
+`\code{systemfit}', `\code{texreg}' and `\code{zelig}' (`\code{logit}'
+and `\code{relogit}') objects.  Table~\ref{tab:types} gives an
+overview of currently implemented model types.
 
 \pkg{texreg} supports Microsoft Word, HTML,
 Markdown, and \pkg{knitr} whereas the other packages
@@ -613,6 +553,8 @@ requirements (Section~\ref{specific}), and customizability
 \section[Under the hood: How texreg works]{Under the hood: How
   \pkg{texreg} works} \label{description} The \pkg{texreg} package
 consists of three main functions:
+
+\pagebreak
 
 \begin{enumerate}
 \item \code{texreg()} for {\LaTeX} output;
@@ -726,9 +668,8 @@ have to be preprocessed.  This entails two steps: first, coefficients,
 standard errors or $p$~values must be replaced by user-defined
 \code{numeric} vectors (for example if robust standard errors have
 been manually computed).  The arguments \code{override.coef},
-\code{override.se}, \code{override.pvalues}, \code{override.ci.low},
-and \code{override.ci.up} serve to replace the coefficients, standard
-errors, $p$~values, and confidence intervals, respectively.  Second,
+\code{override.se}, and \code{override.pvalues} serve to replace the
+coefficients, standard errors, and $p$~values, respectively.  Second,
 {\LaTeX} -specific markup codes are replaced by their
 HTML or plain-text equivalents if \code{htmlreg()} or
 \code{screenreg()} are called instead of \code{texreg()}.
@@ -807,42 +748,80 @@ This section gives some practical examples.  All data and model
 formulae were taken from the help files of the respective models and
 their packages for the sake of replicability.
 
-<<echo=false>>=
-options(prompt="R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
-@
-
 \subsection[The screenreg() function]{The \code{screenreg()} function}
 
 First, consider a simple linear model as created by the \code{lm()}
 function:
-<<>>=
-ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
-trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
-group <- gl(2, 10, 20, labels = c("Ctl", "Trt"))
-weight <- c(ctl, trt)
-m1 <- lm(weight ~ group)
-m2 <- lm(weight ~ group - 1)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
+R> trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
+R> group <- gl(2, 10, 20, labels = c("Ctl", "Trt"))
+R> weight <- c(ctl, trt)
+R> m1 <- lm(weight ~ group)
+R> m2 <- lm(weight ~ group - 1)
+\end{Sinput}
+\end{Schunk}
+%
 The coefficients, standard errors, $p$~values etc.\ of model~2 can be
 displayed as follows:
-<<>>=
-summary(m2)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> summary(m2)
+\end{Sinput}
+\begin{Soutput}
+Call:
+lm(formula = weight ~ group - 1)
+
+Residuals:
+    Min      1Q  Median      3Q     Max
+-1.0710 -0.4938  0.0685  0.2462  1.3690
+
+Coefficients:
+         Estimate Std. Error t value Pr(>|t|)
+groupCtl   5.0320     0.2202   22.85 9.55e-15 ***
+groupTrt   4.6610     0.2202   21.16 3.62e-14 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.6964 on 18 degrees of freedom
+Multiple R-squared: 0.9818,	Adjusted R-squared: 0.9798
+F-statistic: 485.1 on 2 and 18 DF,  p-value: < 2.2e-16
+\end{Soutput}
+\end{Schunk}
 Next, load the \pkg{texreg} package.  The output of the two models can
 be converted into a plain text table using the following command.  The
 text output is shown below the \proglang{R} code.
-<<eval=false>>=
-library("texreg")
-screenreg(list(m1, m2))
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> library("texreg")
+R> screenreg(list(m1, m2))
+\end{Sinput}
+\end{Schunk}
 
-\begin{minipage}{10cm}
-<<echo=false>>=
-library("texreg")
-screenreg(list(m1, m2))
-@
-\end{minipage}\\
-
+\begin{Schunk}
+\begin{Soutput}
+=================================
+             Model 1    Model 2
+---------------------------------
+(Intercept)   5.03 ***
+             (0.22)
+groupTrt     -0.37       4.66 ***
+             (0.31)     (0.22)
+groupCtl                 5.03 ***
+                        (0.22)
+---------------------------------
+R^2           0.07       0.98
+Adj. R^2      0.02       0.98
+Num. obs.    20         20
+=================================
+*** p < 0.001, ** p < 0.01, * p < 0.05
+\end{Soutput}
+\end{Schunk}
+%
 An arbitrary number of models can be handed over to the
 \code{texreg()}, \code{htmlreg()} or\linebreak \code{screenreg()} function by
 enclosing them in a \code{list}.  If only one model is converted, the
@@ -851,16 +830,76 @@ enclosing them in a \code{list}.  If only one model is converted, the
 \subsection[texreg(), table environments, and layout
 packages]{\code{texreg()}, table environments, and layout packages}
 
+\begin{table}[t!]
+\centering
+\begin{tabular}{l D{.}{.}{2.5}@{} D{.}{.}{2.5}@{} }
+\toprule
+            & \multicolumn{1}{c}{Model 1} & \multicolumn{1}{c}{Model 2} \\
+\midrule
+(Intercept) & 5.03^{***} &            \\
+            & (0.22)     &            \\
+groupTrt    & -0.37      & 4.66^{***} \\
+            & (0.31)     & (0.22)     \\
+groupCtl    &            & 5.03^{***} \\
+            &            & (0.22)     \\
+\midrule
+R$^2$       & 0.07       & 0.98       \\
+Adj. R$^2$  & 0.02       & 0.98       \\
+Num. obs.   & 20         & 20         \\
+\bottomrule
+\multicolumn{3}{l}{\scriptsize{\textsuperscript{***}$p < 0.001$,
+  \textsuperscript{**}$p < 0.01$,
+  \textsuperscript{*}$p < 0.05$}}
+\end{tabular}
+\caption{Two linear models.}
+\label{tab:3}
+\end{table}
+
+
 The same table can be typeset in {\LaTeX} by exchanging
 \code{screenreg()} for \code{texreg()}.  In the following example, several
 additional arguments are demonstrated.  The {\LaTeX} output
 code is shown below the \proglang{R} code that generates the table.
 The resulting table is shown in Table~\ref{tab:3}.
-<<results=tex>>=
-texreg(list(m1, m2), dcolumn = TRUE, booktabs = TRUE,
-    use.packages = FALSE, label = "tab:3", caption = "Two linear models.",
-    float.pos = "hb!")
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> texreg(list(m1, m2), dcolumn = TRUE, booktabs = TRUE,
++    use.packages = FALSE, label = "tab:3", caption = "Two linear models.",
++    float.pos = "h")
+\end{Sinput}
+
+\vspace*{-0.5cm}
+
+\begin{Soutput}
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{l D{.}{.}{2.5}@{} D{.}{.}{2.5}@{} }
+\toprule
+            & \multicolumn{1}{c}{Model 1} & \multicolumn{1}{c}{Model 2} \\
+\midrule
+(Intercept) & 5.03^{***} &            \\
+            & (0.22)     &            \\
+groupTrt    & -0.37      & 4.66^{***} \\
+            & (0.31)     & (0.22)     \\
+groupCtl    &            & 5.03^{***} \\
+            &            & (0.22)     \\
+\midrule
+R$^2$       & 0.07       & 0.98       \\
+Adj. R$^2$  & 0.02       & 0.98       \\
+Num. obs.   & 20         & 20         \\
+\bottomrule
+\multicolumn{3}{l}{\scriptsize{\textsuperscript{***}$p < 0.001$,
+  \textsuperscript{**}$p < 0.01$,
+  \textsuperscript{*}$p < 0.05$}}
+\end{tabular}
+\caption{Two linear models.}
+\label{tab:3}
+\end{center}
+\end{table}
+\end{Soutput}
+\end{Schunk}
+%
 The caption, label, and float position of the table are set
 explicitly.  The \pkg{dcolumn} package is used to align coefficients
 at their decimal separators, and the \pkg{booktabs} package is
@@ -889,24 +928,42 @@ instead of the default \code{table} environment.
 \subsection{Custom names, omission of terms, and customization of coefficients}
 
 Another example demonstrates how the {\LaTeX} code can be
-saved in an object The result is shown in Table~\ref{tab:4}.
-<<results=tex>>=
-mytable <- texreg(list(m1, m2), label = "tab:4",
-    caption = "Bolded coefficients, custom notes, three digits.",
-    float.pos = "h", bold = 0.05, stars = 0,  custom.note =
-    "Coefficients with $p < 0.05$ in \\textbf{bold}.",
-    digits = 3, leading.zero = FALSE, omit.coef = "Inter")
-@
-<<results=tex, echo=false>>=
-texreg(list(m1, m2), label = "tab:4",
-    caption = "Bolded coefficients, custom notes, three digits.",
-    float.pos = "h", bold = 0.05, stars = 0,  custom.note =
-    "Coefficients with $p < 0.05$ in \\textbf{bold}.",
-    digits = 3, leading.zero = FALSE, omit.coef = "Inter")
-@
+saved in an object using the \code{return.string} argument.  The
+result is shown in Table~\ref{tab:4}.
+%
+\begin{Schunk}
+\begin{Sinput}
+R> mytable <- texreg(list(m1, m2), label = "tab:4",
++    caption = "Bolded coefficients, custom notes, three digits.",
++    float.pos = "h", return.string = TRUE, bold = 0.05, stars = 0,
++    custom.note = "Coefficients with $p < 0.05$ in \\textbf{bold}.",
++    digits = 3, leading.zero = FALSE, omit.coef = "Inter")
+\end{Sinput}
+\end{Schunk}
+%
+The table can be printed to the \proglang{R} console later using the
+\code{cat()} function.
 
-The table can be printed to the \proglang{R} console later by calling
-the name of the object (in this case \code{mytable}).
+\begin{table}[t!]
+\centering
+\begin{tabular}{l c c }
+\hline
+           & Model 1 & Model 2 \\
+\hline
+groupTrt   & $-.371$  & $\textbf{4.661}$ \\
+           & $(.311)$ & $(.220)$         \\
+groupCtl   &          & $\textbf{5.032}$ \\
+           &          & $(.220)$         \\
+\hline
+R$^2$      & .073     & .982             \\
+Adj. R$^2$ & .022     & .980             \\
+Num. obs.  & 20       & 20               \\
+\hline
+\multicolumn{3}{l}{\scriptsize{Coefficients with $p < 0.05$ in \textbf{bold}.}}
+\end{tabular}
+\caption{Bolded coefficients, custom notes, three digits.}
+\label{tab:4}
+\end{table}
 
 The example presented above introduced several additional arguments:
 \code{bold = 0.05} formats all coefficients with $p$~values $< 0.05$
@@ -937,33 +994,49 @@ Another example shows how \pkg{texreg} can deal with multiple
 how ordinary least squares (OLS) and generalized least squares (GLS)
 models are matched in a single output table.  The output is shown in
 Table~\ref{tab:5}.
-<<results=tex>>=
-library("nlme")
-m3 <- gls(follicles ~ sin(2 * pi * Time) + cos(2 * pi * Time), Ovary,
-    correlation = corAR1(form = ~ 1 | Mare))
-
-texreg(
-    list(m1, m3),
-    custom.coef.names = c(
-        "Intercept",
-        "Control",
-        "$\\sin(2 \\cdot \\pi \\cdot \\mbox{time})$",
-        "$\\cos(2 \\cdot \\pi \\cdot \\mbox{time})$"
-    ),
-    custom.model.names = c("OLS model", "GLS model"),
-    reorder.coef = c(1, 3, 4, 2),
-    caption = "Multiple model types, custom names, and single row.",
-    label = "tab:5",
-    stars = c(0.01, 0.001),
-    dcolumn = TRUE,
-    booktabs = TRUE,
-    use.packages = FALSE,
-    single.row = TRUE,
-    include.adjrs = FALSE,
-    include.bic = FALSE
-)
-@
-
+%
+\begin{Schunk}
+\begin{Sinput}
+R> library("nlme")
+R> m3 <- gls(follicles ~ sin(2 * pi * Time) + cos(2 * pi * Time), Ovary,
++    correlation = corAR1(form = ~ 1 | Mare))
+R> table <- texreg(list(m1, m3), custom.coef.names = c(
++      "Intercept",
++      "Control",
++      "$\\sin(2 \\cdot \\pi \\cdot \\mbox{time})$",
++      "$\\cos(2 \\cdot \\pi \\cdot \\mbox{time})$"),
++    custom.model.names = c("OLS model", "GLS model"),
++    reorder.coef = c(1, 3, 4, 2),
++    caption = "Multiple model types, custom names, and single row.",
++    label = "tab:5", stars = c(0.01, 0.001), dcolumn = TRUE,
++    booktabs = TRUE, use.packages = FALSE, single.row = TRUE,
++    include.adjrs = FALSE, include.bic = FALSE)
+\end{Sinput}
+\end{Schunk}
+%
+\begin{table}[t!]
+\centering
+\begin{tabular}{l D{)}{)}{11)2}@{} D{)}{)}{11)2}@{} }
+\toprule
+                                      & \multicolumn{1}{c}{OLS model} & \multicolumn{1}{c}{GLS model} \\
+\midrule
+Intercept                             & 5.03 \; (0.22)^{**} & 12.22 \; (0.66)^{**} \\
+$\sin(2 \cdot \pi \cdot \mbox{time})$ &                     & -2.77 \; (0.65)^{**} \\
+$\cos(2 \cdot \pi \cdot \mbox{time})$ &                     & -0.90 \; (0.70)      \\
+Control                               & -0.37 \; (0.31)     &                      \\
+\midrule
+R$^2$                                 & 0.07                &                      \\
+Num. obs.                             & 20                  & 308                  \\
+AIC                                   &                     & 1571.45              \\
+Log Likelihood                        &                     & -780.73              \\
+\bottomrule
+\multicolumn{3}{l}{\scriptsize{\textsuperscript{**}$p < 0.001$,
+  \textsuperscript{*}$p < 0.01$}}
+\end{tabular}
+\caption{Multiple model types, custom names, and single row.}
+\label{tab:5}
+\end{table}
+%
 Several interesting things can be noted.  First, the
 \code{custom.coef.names} argument was used to relabel the coefficient
 rows.  If there were repetitions of coefficient names in the\linebreak
@@ -1014,15 +1087,19 @@ errors using the \pkg{sandwich}
 \citep{zeileis2002diagnostic} packages.  The following code shows how
 this can be accomplished in combination with the \pkg{texreg} package.
 The resulting table is not reported here.
-<<eval=false>>=
-library("sandwich")
-library("lmtest")
-hc <- vcovHC(m2)
-ct <- coeftest(m2, vcov = hc)
-se <- ct[, 2]
-pval <- ct[, 4]
-texreg(m2, override.se = se, override.pvalues = pval)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> library("sandwich")
+R> library("lmtest")
+R> hc <- vcovHC(m2)
+R> ct <- coeftest(m2, vcov = hc)
+R> se <- ct[, 2]
+R> pval <- ct[, 4]
+R> texreg(m2, override.se = se, override.pvalues = pval)
+\end{Sinput}
+\end{Schunk}
+%
 The standard errors and $p$~values are first extracted from the
 \code{hc} matrix and then handed over to the \code{texreg()} function
 using the \code{override.se} and \code{override.pvalues} arguments.
@@ -1042,10 +1119,14 @@ HTML files can be read by Microsoft Word if a
 If the table is exported to a file, it is advisable to include the
 full header information of the HTML file to make sure that
 Microsoft Word or other programs can parse the file.  An example:
-<<results=hide>>=
-htmlreg(list(m1, m2, m3), file = "mytable.doc", inline.css = FALSE,
-    doctype = TRUE, html.tag = TRUE, head.tag = TRUE, body.tag = TRUE)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> htmlreg(list(m1, m2, m3), file = "mytable.doc", inline.css = FALSE,
++    doctype = TRUE, html.tag = TRUE, head.tag = TRUE, body.tag = TRUE)
+\end{Sinput}
+\end{Schunk}
+%
 The \code{doctype} argument adds the document type declaration to the
 first line of the HTML document.  The \code{inline.css =
   FALSE} argument causes the function to write cascading style sheets
@@ -1066,10 +1147,13 @@ HTML.  In addition to HTML, \pkg{knitr} is also
 compatible with Markdown, a simplified markup language.
 \pkg{texreg} can work with Markdown as well, but an
 additional argument should be provided to make it work:
-<<results=hide>>=
-htmlreg(list(m1, m2, m3), star.symbol = "\\*", center = TRUE,
-    doctype = FALSE)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> htmlreg(list(m1, m2, m3), star.symbol = "\\*", center = TRUE)
+\end{Sinput}
+\end{Schunk}
+%
 The \verb+star.symbol = "\\*"+ argument makes sure that
 Markdown does not interpret the significance stars as
 special Markdown syntax.  The additional (and optional)
@@ -1077,9 +1161,28 @@ special Markdown syntax.  The additional (and optional)
 page.
 
 \subsection{Confidence intervals instead of standard errors}
+
+\begin{table}[t!]
+\centering
+\begin{tabular}{l c c c }
+\toprule
+            & Model 1 & Model 2 & Model 3 \\
+\midrule
+(Intercept) & $\textbf{5.03} \; (0.22)^{***}$ & $\textbf{5.03} \; [4.60;\ 5.46]^{*}$ &                                      \\
+groupTrt    & $-0.37 \; (0.31)$               & $-0.37 \; [-0.98;\ 0.24]$            & $\textbf{4.66} \; [4.23;\ 5.09]^{*}$ \\
+groupCtl    &                                 &                                      & $\textbf{5.03} \; [4.60;\ 5.46]^{*}$ \\
+\bottomrule
+\multicolumn{4}{l}{\scriptsize{\textsuperscript{***}$p<0.001$,
+  \textsuperscript{**}$p<0.01$,
+  \textsuperscript{*}$p<0.05$ (or 0 outside the confidence interval).}}
+\end{tabular}
+\caption{Enforcing confidence intervals.}
+\label{table:coefficients}
+\end{table}
+
 Most model types implemented in \pkg{texreg} report standard errors
 and $p$~values.  However, some model types report confidence intervals
-by default.  The \pkg{xergm} package \citep{leifeld2014xergm:} and
+by default.  The \pkg{btergm} package \citep{leifeld2013btergm:} and
 the \pkg{lme4} package \citep{bates2013lme4:} are two examples.  If
 confidence intervals are preferred to standard errors but they are not
 available by default, the \code{ci.force} argument allows conversion
@@ -1094,30 +1197,15 @@ used in conjunction with confidence intervals, \code{bold} values
 greater than $0$ cause \pkg{texreg} to print estimates in bold where
 the \code{ci.test} value is outside the confidence interval, regardless
 of the actual value of the \code{bold} argument (see Table~\ref{table:coefficients}):
-<<results=tex>>=
-texreg(list(m1, m1, m2), ci.force = c(FALSE, TRUE, TRUE), ci.test = 0,
-    ci.force.level = 0.95, bold = 0.05, float.pos = "tb",
-    caption = "Enforcing confidence intervals.",
-    booktabs = TRUE, use.packages = FALSE, single.row = TRUE)
-@
-
-\subsection{Coefficient plots}
-Finally, it is possible to display the results of statistical models using a coefficient plot \citep[a forest plot applied to the estimates and confidence intervals or standard errors of a regression model; for another implementation, see][]{lander2013coefplot;}.
-Using the \code{plotreg} function, one or multiple statistical model objects can be plotted.
-Most of the arguments of the \code{screenreg}, \code{texreg}, and \code{htmlreg} functions are also supported by the \code{plotreg} function.
-Where confidence intervals are not natively available, the \code{plotreg} function converts standard errors into confidence intervals.
-Alternatively, the \code{use.se} argument can be used to plot error bars with one or two standard errors from the point estimate.
-The diagram produced by the following code is shown in Figure~\ref{fig:plotreg}:
-<<results=hide,label=figure,fig=TRUE,include=FALSE, height=5, width=8>>=
-plotreg(m1, custom.coef.names = c("Intercept", "Group Trt"))
-@
-\begin{figure}[ht!]
- \begin{center}
-   \includegraphics[width=0.7\textwidth]{texreg-figure}
- \end{center}
- \caption{Result of the \code{plotreg} function. Significant estimates are colored in red and are represented by a circle point.}
- \label{fig:plotreg}
-\end{figure}
+%
+\begin{Schunk}
+\begin{Sinput}
+R> texreg(list(m1, m1, m2), ci.force = c(FALSE, TRUE, TRUE), ci.test = 0,
++    ci.force.level = 0.95, bold = 0.05, float.pos = "h",
++    caption = "Enforcing confidence intervals.",
++    booktabs = TRUE, use.packages = FALSE, single.row = TRUE)
+\end{Sinput}
+\end{Schunk}
 
 \section{Writing extensions for new models} \label{extensions}
 The previous examples have demonstrated how the \pkg{texreg} package
@@ -1127,7 +1215,7 @@ Yet, this only works with model types known to \pkg{texreg}.
 Accordingly, this section shows how methods for new model types can be
 devised and registered.
 
-\begin{table}[tb]
+\begin{table}[b!]
 \centering
   \begin{tabular}{l p{12.3cm}}
    \toprule
@@ -1169,34 +1257,36 @@ be omitted.  Either the \code{se} slot or the \code{ci.low} and
 Once these data have been located and extracted, a `\code{texreg}'
 object can be created and returned to the \code{texreg()} function.
 The following code provides a simple example for `\code{lm}' objects:
-
-<<results=hide, eval=FALSE>>=
-extract.lm <- function(model) {
-  s <- summary(model)
-  names <- rownames(s$coef)
-  co <- s$coef[, 1]
-  se <- s$coef[, 2]
-  pval <- s$coef[, 4]
-
-  rs <- s$r.squared
-  adj <- s$adj.r.squared
-  n <- nobs(model)
-
-  gof <- c(rs, adj, n)
-  gof.names <- c("R$^2$", "Adj.\\ R$^2$", "Num.\\ obs.")
-
-  tr <- createTexreg(
-      coef.names = names,
-      coef = co,
-      se = se,
-      pvalues = pval,
-      gof.names = gof.names,
-      gof = gof
-  )
-  return(tr)
-}
-@
-
+%
+\begin{Schunk}
+\begin{Sinput}
+R> extract.lm <- function(model) {
++    s <- summary(model)
++    names <- rownames(s$coef)
++    co <- s$coef[, 1]
++    se <- s$coef[, 2]
++    pval <- s$coef[, 4]
++
++    rs <- s$r.squared
++    adj <- s$adj.r.squared
++    n <- nobs(model)
++
++    gof <- c(rs, adj, n)
++    gof.names <- c("R$^2$", "Adj.\\ R$^2$", "Num.\\ obs.")
++
++    tr <- createTexreg(
++        coef.names = names,
++        coef = co,
++        se = se,
++        pvalues = pval,
++        gof.names = gof.names,
++        gof = gof
++    )
++    return(tr)
++  }
+\end{Sinput}
+\end{Schunk}
+%
 First, the names of the model terms, the coefficient values, the
 standard errors, and the $p$~values are extracted from the model or
 its summary (they can be computed if not available).
@@ -1218,19 +1308,27 @@ for the \code{texreg()} function to continue processing the model.
 After writing a custom function, the function has to be registered as
 a method for the generic \code{extract()} function.  In the above
 example, this can be achieved with the following code:
-<<results=hide, eval=FALSE>>=
-setMethod("extract", signature = className("lm", "stats"),
-    definition = extract.lm)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> setMethod("extract", signature = className("lm", "stats"),
++    definition = extract.lm)
+\end{Sinput}
+\end{Schunk}
+%
 Assume, for instance, that an extension for `\code{clogit}' objects
 called \code{extract.clogit()} is written.  The \code{clogit()}
 function (and the corresponding class definition) can be found in the
 \pkg{survival} package \citep{survival-book, therneau2012package}.  Then the code
 above should be changed as follows:
-<<results=hide, eval=FALSE>>=
-setMethod("extract", signature = className("clogit", "survival"),
-    definition = extract.clogit)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> setMethod("extract", signature = className("clogit", "survival"),
++    definition = extract.clogit)
+\end{Sinput}
+\end{Schunk}
+%
 After executing the definition of the function and the adjusted
 \code{setMethod()} command, \pkg{texreg} can be used with
 `\code{clogit}' models.
@@ -1238,53 +1336,56 @@ After executing the definition of the function and the adjusted
 \subsection{A complete example}
 The following code shows the complete \code{extract.lm()} function as
 included in the \pkg{texreg} package.
-<<results=hide, eval=FALSE>>=
-extract.lm <- function(model, include.rsquared = TRUE,
-    include.adjrs = TRUE, include.nobs = TRUE, ...) {
-
-  s <- summary(model, ...)
-  names <- rownames(s$coef)
-  co <- s$coef[, 1]
-  se <- s$coef[, 2]
-  pval <- s$coef[, 4]
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.rsquared == TRUE) {
-    rs <- s$r.squared
-    gof <- c(gof, rs)
-    gof.names <- c(gof.names, "R$^2$")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.adjrs == TRUE) {
-    adj <- s$adj.r.squared
-    gof <- c(gof, adj)
-    gof.names <- c(gof.names, "Adj.\\ R$^2$")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    n <- nobs(model)
-    gof <- c(gof, n)
-    gof.names <- c(gof.names, "Num.\\ obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-  tr <- createTexreg(
-      coef.names = names,
-      coef = co,
-      se = se,
-      pvalues = pval,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-  )
-  return(tr)
-}
-
-setMethod("extract", signature = className("lm", "stats"),
-    definition = extract.lm)
-@
+%
+\begin{Schunk}
+\begin{Sinput}
+R> extract.lm <- function(model, include.rsquared = TRUE,
++      include.adjrs = TRUE, include.nobs = TRUE, ...) {
++
++    s <- summary(model, ...)
++    names <- rownames(s$coef)
++    co <- s$coef[, 1]
++    se <- s$coef[, 2]
++    pval <- s$coef[, 4]
++
++    gof <- numeric()
++    gof.names <- character()
++    gof.decimal <- logical()
++    if (include.rsquared == TRUE) {
++      rs <- s$r.squared
++      gof <- c(gof, rs)
++      gof.names <- c(gof.names, "R$^2$")
++      gof.decimal <- c(gof.decimal, TRUE)
++    }
++    if (include.adjrs == TRUE) {
++      adj <- s$adj.r.squared
++      gof <- c(gof, adj)
++      gof.names <- c(gof.names, "Adj.\\ R$^2$")
++      gof.decimal <- c(gof.decimal, TRUE)
++    }
++    if (include.nobs == TRUE) {
++      n <- nobs(model)
++      gof <- c(gof, n)
++      gof.names <- c(gof.names, "Num.\\ obs.")
++      gof.decimal <- c(gof.decimal, FALSE)
++    }
++
++    tr <- createTexreg(
++        coef.names = names,
++        coef = co,
++        se = se,
++        pvalues = pval,
++        gof.names = gof.names,
++        gof = gof,
++        gof.decimal = gof.decimal
++    )
++    return(tr)
++  }
+R> setMethod("extract", signature = className("lm", "stats"),
++    definition = extract.lm)
+\end{Sinput}
+\end{Schunk}
+%
 In addition to the simple example code shown above, this function has
 several arguments, which can be used to include or exclude various GOF
 or summary statistics.  Additional arguments can also be used in other
@@ -1304,46 +1405,82 @@ forum of \pkg{texreg} is encouraged.
 Existing functions can also be manipulated and overwritten locally in
 order to change the GOF statistics block.
 
-\section{Installation and help} \label{help}
+% \section{Installation and help} \label{help}
 
-It should be possible to install \pkg{texreg} using a simple command:
-<<results=hide, eval=FALSE>>=
-install.packages("texreg")
-@
-\pkg{texreg} is hosted on the R-Forge repository, which means that the most recent version can be installed with this command (often more recent than the CRAN version in the previous command):
-<<results=hide, eval=FALSE>>=
-install.packages("texreg", repos = "http://R-Forge.R-project.org")
-@
-The package can be updated to the most recent version by typing:
-<<results=hide, eval=FALSE>>=
-update.packages("texreg", repos = "http://R-Forge.R-project.org")
-@
+% It should be possible to install \pkg{texreg} using a simple command:
+% %
+% \begin{Schunk}
+% \begin{Sinput}
+% R> install.packages("texreg")
+% \end{Sinput}
+% \end{Schunk}
+% %
+% \pkg{texreg} is hosted on the R-Forge repository, which means that the
+% most recent version can be installed with this command (often more
+% recent than the CRAN version in the previous command):
+% %
+% \begin{Schunk}
+% \begin{Sinput}
+% R> install.packages("texreg", repos = "http://R-Forge.R-project.org")
+% \end{Sinput}
+% \end{Schunk}
+% %
+% The package can be updated to the most recent version by typing:
+% %
+% \begin{Schunk}
+% \begin{Sinput}
+% R> update.packages("texreg", repos = "http://R-Forge.R-project.org")
+% \end{Sinput}
+% \end{Schunk}
+% %
+% Alternatively, the source files and binaries can be downloaded from
+% the \pkg{texreg} homepage
+% (\url{http://r-forge.r-project.org/projects/texreg/}) and installed
+% manually by entering something like
+% \begin{Code}
+% $ R CMD INSTALL texreg_1.xx.tar.gz
+% \end{Code}
+% %
+% (replace \code{xx} by the current version number) on the terminal (not the \proglang{R} terminal, but the command line of the operating system).
 
-Alternatively, the source files and binaries can be downloaded from the \pkg{texreg} homepage (\url{http://r-forge.r-project.org/projects/texreg/}) and installed manually by entering something like
-\begin{Code}
-> R CMD INSTALL texreg_1.xx.tar.gz
-\end{Code}
-(replace \code{xx} by the current version number) on the terminal (not the \proglang{R} terminal, but the command line of the operating system).
-
-After loading the package, its help page can be displayed as follows:
-<<results=hide, eval=FALSE>>=
-help(package = "texreg")
-@
-More specific help on the \code{texreg()} command can be obtained by entering the following command once the package has been loaded:
-<<results=hide, eval=FALSE>>=
-help("texreg")
-@
-To get an overview of currently implemented extract functions and methods, one of these two commands can be used.
-<<results=hide, eval=FALSE>>=
-help("extract")
-help("extract-methods")
-@
-
-If all else fails, more help can be obtained from the homepage of the \pkg{texreg} package.
-Questions can be posted to a public forum at \url{http://r-forge.r-project.org/projects/texreg/}.
+% After loading the package, its help page can be displayed as follows:
+% %
+% \begin{Schunk}
+% \begin{Sinput}
+% R> help(package = "texreg")
+% \end{Sinput}
+% \end{Schunk}
+% %
+% More specific help on the \code{texreg()} command can be obtained by
+% entering the following command once the package has been loaded:
+% %
+% \begin{Schunk}
+% \begin{Sinput}
+% R> help("texreg")
+% \end{Sinput}
+% \end{Schunk}
+% %
+% To get an overview of currently implemented extract functions and
+% methods, one of these two commands can be used.
+% %
+% \begin{Schunk}
+% \begin{Sinput}
+% R> help("extract")
+% R> help("extract-methods")
+% \end{Sinput}
+% \end{Schunk}
+% %
+% If all else fails, more help can be obtained from the homepage of the
+% \pkg{texreg} package.  Questions can be posted to a public forum at
+% \url{http://r-forge.r-project.org/projects/texreg/}.
 
 \section*{Acknowledgments}
-The author would like to thank the numerous people who contributed ideas and code snippets to this project.
+The author would like to thank Oleg Badunenko, Tom Carsey, S.\,Q. Chang,
+Skyler Cranmer, Sebastian Daza, Christopher Gandrud, Lena Koerber,
+Johannes Kutsam, Fabrice Le Lec, Florian Oswald, Markus Riester,
+Francesco Sarracino, Matthieu Stigler, Sebastian Ugbaje, G{\'a}bor
+Uhrin, Antoine Vernet, Yanghao Wang, and Yihui Xie for their valuable
+input and ideas.
 
 \bibliography{texreg}
 
