@@ -2945,6 +2945,13 @@ screenreg <- function(l,
 #' @param table By default, \code{texreg} puts the actual \code{tabular} object
 #'   in a \code{table} floating environment. To get only the \code{tabular}
 #'   object without the whole table header, set \code{table = FALSE}.
+#' @param tabular By default, the table contents are wrapped in a \code{tabular}
+#'   environment. To get only the contents for each row without the environment,
+#'   set \code{tabular = FALSE}. Note that if \code{tabular = FALSE}, the
+#'   \code{table} argument must also be \code{FALSE}, otherwise a warning is
+#'   printed. Switching off the tabular environment may be useful for designing
+#'   one's own table more flexibly, for example using \code{tabular*} or
+#'   \code{tabularx} environments in LaTeX.
 #' @param no.margin In order to save space, inner margins of tables can be
 #'   switched off.
 #' @param fontsize The \code{fontsize} argument serves to change the font size
@@ -3040,6 +3047,7 @@ texreg <- function(l,
                    threeparttable = FALSE,
                    use.packages = TRUE,
                    table = TRUE,
+                   tabular = TRUE,
                    no.margin = FALSE,
                    fontsize = NULL,
                    scalebox = NULL,
@@ -3100,6 +3108,12 @@ texreg <- function(l,
   if (isTRUE(longtable) && !is.null(scalebox)) {
     scalebox <- NULL
     warning(paste("'longtable' and 'scalebox' are not compatible. Setting scalebox = NULL."))
+  }
+
+  # check table vs. tabular
+  if (isTRUE(table) && !isTRUE(tabular)) {
+    table <- FALSE
+    warning("Setting 'table = FALSE' because 'tabular = FALSE'.")
   }
 
   # matrixreg produces the output matrix
@@ -3355,7 +3369,9 @@ texreg <- function(l,
     if (isTRUE(threeparttable)) {
       string <- paste0(string, "\\begin{threeparttable}", linesep)
     }
-    string <- paste0(string, "\\begin{tabular}{", coldef, "}", linesep)
+    if (isTRUE(tabular)) {
+      string <- paste0(string, "\\begin{tabular}{", coldef, "}", linesep)
+    }
   }
 
   # horizontal rule above the table
@@ -3574,8 +3590,8 @@ texreg <- function(l,
     string <- paste0(string, bottomline)
     if (isTRUE(threeparttable)) {
       string <- paste0(string,
-                       "\\end{tabular}",
-                       linesep,
+                       ifelse(isTRUE(tabular), "\\end{tabular}", ""),
+                       ifelse(isTRUE(tabular), linesep, ""),
                        "\\begin{tablenotes}[flushleft]",
                        linesep,
                        note,
@@ -3585,7 +3601,11 @@ texreg <- function(l,
                        linesep
                        )
     } else {
-      string <- paste0(string, note, "\\end{tabular}", linesep)
+      if(isTRUE(tabular)) {
+        string <- paste0(string, note, "\\end{tabular}", linesep)
+      } else {
+        string <- paste0(string, note)
+      }
     }
   }
 

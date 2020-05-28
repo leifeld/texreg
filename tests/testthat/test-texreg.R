@@ -168,6 +168,14 @@ test_that("no stars, single.row, and dcolumn work together", {
                perl = TRUE)
 })
 
+test_that("table and tabular arguments work in texreg function", {
+  tr <- texreg(model1, table = FALSE)
+  expect_match(tr, "^\\n\\\\begin\\{tabular")
+  tr <- texreg(model1, table = FALSE, tabular = FALSE)
+  expect_match(tr, "^\\n\\\\hline")
+  expect_warning(texreg(model1, tabular = FALSE), "Setting 'table = FALSE'")
+})
+
 test_that("sanity checks and arguments work in texreg function", {
   expect_warning(texreg(model1, dcolumn = TRUE, bold = 0.05),
                  "cannot be used at the same time. Switching off 'dcolumn'. You should also consider setting stars = 0.")

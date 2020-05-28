@@ -47,6 +47,7 @@ texreg(
   threeparttable = FALSE,
   use.packages = TRUE,
   table = TRUE,
+  tabular = TRUE,
   no.margin = FALSE,
   fontsize = NULL,
   scalebox = NULL,
@@ -406,6 +407,14 @@ to \code{FALSE}, the use package statements are omitted from the output.}
 \item{table}{By default, \code{texreg} puts the actual \code{tabular} object
 in a \code{table} floating environment. To get only the \code{tabular}
 object without the whole table header, set \code{table = FALSE}.}
+
+\item{tabular}{By default, the table contents are wrapped in a \code{tabular}
+environment. To get only the contents for each row without the environment,
+set \code{tabular = FALSE}. Note that if \code{tabular = FALSE}, the
+\code{table} argument must also be \code{FALSE}, otherwise a warning is
+printed. Switching off the tabular environment may be useful for designing
+one's own table more flexibly, for example using \code{tabular*} or
+\code{tabularx} environments in LaTeX.}
 
 \item{no.margin}{In order to save space, inner margins of tables can be
 switched off.}
