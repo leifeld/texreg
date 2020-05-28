@@ -432,9 +432,7 @@ test_that("extract lmerMod objects from the lme4 package", {
 
 # multinom (nnet), mlogit (mlogit), mnlogit (mnlogit) ----
 test_that("extract multinom objects from the nnet package and mlogit and mnlogit objects", {
-  testthat::skip_on_cran()
   skip_if_not_installed("carData")
-
   skip_if_not_installed("nnet")
   require("nnet")
   set.seed(12345)

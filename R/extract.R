@@ -5244,8 +5244,8 @@ extract.multinom <- function(model,
 
   if (is.null(rownames(co))) {
     if (include.pvalues == TRUE) {
-      zval <- co[i, ] / se[i, ]
-      pval <- c(pval, 2 * pnorm(abs(zval), lower.tail = FALSE))
+      zval <- co[1, ] / se[1, ]
+      pval <- 2 * pnorm(abs(zval), lower.tail = FALSE)
     } else {
       pval <- numeric(0)
     }
