@@ -122,6 +122,15 @@ test_that("siunitx argument works in the texreg function", {
   expect_warning(texreg(model1, dcolumn = TRUE, bold = TRUE), "The dcolumn package and the 'bold' argument cannot be used at the same time. Switching off 'dcolumn'.")
 })
 
+test_that("NA values in custom.coef.names are interpreted correctly", {
+  mr <- matrixreg(model1, custom.coef.names = c("abc", NA))
+  expect_match(mr[2, 1], "abc")
+  expect_match(mr[4, 1], "Petal.Width")
+  mr <- matrixreg(model1, custom.coef.names = c("abc", "abc"))
+  expect_match(mr[2, 1], "abc")
+  expect_match(mr[4, 1], "abc")
+})
+
 test_that("duplicate row labels in custom.coef.names are merged when feasible", {
   skip_if_not_installed("nlme")
   require("nlme")

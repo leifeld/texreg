@@ -1354,6 +1354,7 @@ matrixreg <- function(l,
     }
 
     # output
+    custom.coef.names[is.na(custom.coef.names)] <- rownames(m)[is.na(custom.coef.names)]
     m <- m[idx, , drop = FALSE]
     row.names(m) <- custom.coef.names
   }
