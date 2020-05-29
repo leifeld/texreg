@@ -4,7 +4,7 @@ Date: 2020-05-29
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
              person(given = "Claudia", family = "Zucca", email = "claudia.zucca@glasgow.ac.uk", role = "ctb"))
-Description: Converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables or HTML tables/MS Word documents or to nicely formatted screen output for the R console for easy model comparison. A list of several models can be combined in a single table. The output is highly customizable. New model types can be easily implemented. (If the Zelig package, which this package enhances, cannot be found on CRAN, you can find it at https://github.com/IQSS/Zelig.)
+Description: Converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables or HTML tables/MS Word documents or to nicely formatted screen output for the R console for easy model comparison. A list of several models can be combined in a single table. The output is highly customizable. New model types can be easily implemented. (If the Zelig package, which this package enhances, cannot be found on CRAN, you can find it at <https://github.com/IQSS/Zelig>.)
 URL: http://github.com/leifeld/texreg/
 BugReports: https://github.com/leifeld/texreg/issues
 Suggests:
