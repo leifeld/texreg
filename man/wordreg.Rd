@@ -316,6 +316,7 @@ The \code{wordreg} function creates a Microsoft Word document with the
 requested table.
 }
 \examples{
+\dontrun{
 # Use models from ?lm:
 ctl <- c(4.17, 5.58, 5.18, 6.11, 4.50, 4.61, 5.17, 4.53, 5.33, 5.14)
 trt <- c(4.81, 4.17, 4.41, 3.59, 5.87, 3.83, 6.03, 4.89, 4.32, 4.69)
@@ -325,6 +326,7 @@ lm.D9 <- lm(weight ~ group)
 lm.D90 <- lm(weight ~ group - 1)
 wordreg(list(lm.D9, lm.D90), file = "testfile.doc")
 unlink("testfile.doc")
+}
 
 }
 \seealso{

@@ -1,5 +1,5 @@
 Package: texreg
-Version: 1.37.1
+Version: 1.37.2
 Date: 2020-05-29
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
@@ -19,7 +19,7 @@ Suggests:
   lmtest (>= 0.9-34),
   carData (>= 3.0-2)
 Depends: R (>= 3.5)
-Imports: methods, grDevices, stats, httr
+Imports: methods, stats, httr
 Enhances: AER,
   alpaca,
   betareg,

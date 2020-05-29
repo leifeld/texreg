@@ -432,8 +432,9 @@ test_that("extract lmerMod objects from the lme4 package", {
 
 # multinom (nnet), mlogit (mlogit), mnlogit (mnlogit) ----
 test_that("extract multinom objects from the nnet package and mlogit and mnlogit objects", {
-  skip_if_not_installed("carData")
-  skip_if_not_installed("nnet")
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("carData", minimum_version = "3.0.2")
+  testthat::skip_if_not_installed("nnet", minimum_version = "7.3.12")
   require("nnet")
   set.seed(12345)
   data(WVS, package = "carData")
@@ -457,7 +458,7 @@ test_that("extract multinom objects from the nnet package and mlogit and mnlogit
   expect_equivalent(length(tr1b[[1]]@coef), length(tr1b[[1]]@coef))
   expect_length(tr1b[[1]]@coef, 8)
 
-  skip_if_not_installed("MASS")
+  testthat::skip_if_not_installed("MASS")
   sink("/dev/null")
   example(birthwt, package = "MASS")
   bwt.mu <- multinom(low ~ ., bwt)
@@ -474,7 +475,7 @@ test_that("extract multinom objects from the nnet package and mlogit and mnlogit
   expect_equivalent(tr1c@gof[6], 2)
   expect_equal(dim(matrixreg(tr1c)), c(29, 2))
 
-  skip_if_not_installed("mlogit")
+  testthat::skip_if_not_installed("mlogit", minimum_version = "1.0.2")
   require("mlogit")
   set.seed(12345)
   WVS2 <- mlogit.data(WVS, choice = "poverty", shape = "wide")
@@ -498,7 +499,7 @@ test_that("extract multinom objects from the nnet package and mlogit and mnlogit
   expect_length(tr2c@gof, 6)
   expect_equivalent(which(tr2c@gof.decimal), c(1:2, 6))
 
-  skip_if_not_installed("mnlogit")
+  testthat::skip_if_not_installed("mnlogit", minimum_version = "1.2.6")
   require("mnlogit")
   set.seed(12345)
   model3 <- mnlogit(poverty ~ 1 | religion + degree +
