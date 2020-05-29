@@ -17,8 +17,8 @@
 #' for other users, funders, and employers to view. This will also enable the
 #' package authors to compile reports about how \pkg{texreg} is used by academic
 #' and non-academic users to increase their productivity and work quality, for
-#' example in the form of an impact case study for the 2021 UK Research
-#' Excellence Framework (REF).
+#' example in the form of an impact case study for the next round of the UK
+#' Research Excellence Framework (REF).
 #'
 #' We need many positive examples of how \pkg{texreg} has an impact on your
 #' work. We are especially interested in non-academic users, but welcome
@@ -34,11 +34,15 @@
 #' of models you work with, and some other details. Your choice!
 #'
 #' Please note that by using the \code{\link{praise}} function you agree that
-#' the information you provide through the function, including your location, is
-#' stored online in a database, displayed on the website of the package author,
-#' and used in reports to funders, employers etc. (This is the whole purpose of
-#' it.) You can contact the package maintainer any time to have your praise
-#' removed.
+#' the information you provide through the function, including your approximate
+#' location, is stored online in a database, displayed on the website of the
+#' package author, and used in reports to funders, employers etc. (This is the
+#' whole purpose of it.) You can contact the package maintainer any time to have
+#' your praise removed within a few days.
+#'
+#' Before your praise is submitted, the function will present an interactive
+#' menu and ask if you want to submit the praise now. So do not worry about
+#' accidentally submitting feedback.
 #'
 #' @param academic_user Should be \code{TRUE} if you are at a university or
 #'   public research institute. Should be \code{FALSE} if you are a private
@@ -123,6 +127,7 @@
 #' }
 #'
 #' @import httr
+#' @importFrom utils menu
 #' @export
 praise <- function(academic_user,
                    organization,
@@ -242,9 +247,15 @@ praise <- function(academic_user,
                 "models" = models,
                 "num_users" = num_users)
   url <- "https://praise.philipleifeld.com/index.php"
-  tryCatch(response <- POST(url = url, body = query),
-           error = function(e) message("Praise could not be sent. Please check your internet connection.\n",
-                                       "If this does not help, perhaps the server is currently down."))
+
+  # present menu, then submit
+  if (menu(choices = c("Yes, submit now!", "No, cancel!"), title = "Submit your praise now?") == 1) {
+    tryCatch(response <- POST(url = url, body = query),
+             error = function(e) message("Praise could not be sent. Please check your internet connection.\n",
+                                         "If this does not help, perhaps the server is currently down."))
+  } else {
+    stop("Submission of praise canceled by user.")
+  }
 
   # user feedback
   if (grepl("<p>User type: (non-academic)|(academic)</p>", as.character(httr::content(response)))) {

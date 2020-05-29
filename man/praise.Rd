@@ -125,8 +125,8 @@ subsequently displayed at \url{http://www.philipleifeld.com/praise}
 for other users, funders, and employers to view. This will also enable the
 package authors to compile reports about how \pkg{texreg} is used by academic
 and non-academic users to increase their productivity and work quality, for
-example in the form of an impact case study for the 2021 UK Research
-Excellence Framework (REF).
+example in the form of an impact case study for the next round of the UK
+Research Excellence Framework (REF).
 
 We need many positive examples of how \pkg{texreg} has an impact on your
 work. We are especially interested in non-academic users, but welcome
@@ -142,11 +142,15 @@ we will be happier if we also know your name, how to contact you, what kinds
 of models you work with, and some other details. Your choice!
 
 Please note that by using the \code{\link{praise}} function you agree that
-the information you provide through the function, including your location, is
-stored online in a database, displayed on the website of the package author,
-and used in reports to funders, employers etc. (This is the whole purpose of
-it.) You can contact the package maintainer any time to have your praise
-removed.
+the information you provide through the function, including your approximate
+location, is stored online in a database, displayed on the website of the
+package author, and used in reports to funders, employers etc. (This is the
+whole purpose of it.) You can contact the package maintainer any time to have
+your praise removed within a few days.
+
+Before your praise is submitted, the function will present an interactive
+menu and ask if you want to submit the praise now. So do not worry about
+accidentally submitting feedback.
 }
 \examples{
 \dontrun{
