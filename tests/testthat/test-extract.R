@@ -21,6 +21,7 @@ test_that("extract Arima objects from the stats package", {
 
 # forecast_ARIMA (forecast) ----
 test_that("extract forecast_ARIMA objects from the forecast package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("forecast")
   require("forecast")
   set.seed(12345)
@@ -55,6 +56,7 @@ test_that("extract forecast_ARIMA objects from the forecast package", {
 
 # bife (bife) ----
 test_that("extract bife objects from the bife package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("bife", minimum_version = "0.7")
   require("bife")
 
@@ -119,6 +121,7 @@ test_that("extract brmsfit objects from the brms package", {
 
 # dynlm (dynlm) ----
 test_that("extract dynlm objects from the dynlm package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("dynlm")
   skip_if_not_installed("datasets")
   require("dynlm")
@@ -139,6 +142,7 @@ test_that("extract dynlm objects from the dynlm package", {
 
 # feglm (alpaca) ----
 test_that("extract feglm objects from the alpaca package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("alpaca", minimum_version = "0.3.2")
   require("alpaca")
 
@@ -160,6 +164,7 @@ test_that("extract feglm objects from the alpaca package", {
 
 # feis (feisr) ----
 test_that("extract feis objects from the feisr package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("feisr", minimum_version = "1.0.1")
   require("feisr")
   set.seed(12345)
@@ -182,6 +187,7 @@ test_that("extract feis objects from the feisr package", {
 
 # felm (lfe) ----
 test_that("extract felm objects from the lfe package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("lfe", minimum_version = "2.8.5")
   require("lfe")
 
@@ -215,6 +221,7 @@ test_that("extract felm objects from the lfe package", {
 
 # gamlssZadj (gamlss.inf) ----
 test_that("extract gamlssZadj objects from the gamlss.inf package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("gamlss.inf", minimum_version = "1.0.1")
   require("gamlss.inf")
 
@@ -240,6 +247,7 @@ test_that("extract gamlssZadj objects from the gamlss.inf package", {
 
 # glm.cluster (miceadds) ----
 test_that("extract glm.cluster objects from the miceadds package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("miceadds", minimum_version = "3.8.9")
   require("miceadds")
 
@@ -297,6 +305,7 @@ test_that("extract glmerMod objects from the lme4 package", {
 
 # glmmTMB (glmmTMB) ----
 test_that("extract glmmTMB objects from the glmmTMB package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("glmmTMB", minimum_version = "1.0.1")
   require("glmmTMB")
 
@@ -328,6 +337,7 @@ test_that("extract glmmTMB objects from the glmmTMB package", {
 
 # ivreg (AER) ----
 test_that("extract ivreg objects from the AER package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("AER")
   require("AER")
   set.seed(12345)
@@ -375,6 +385,7 @@ test_that("extract lm objects from the stats package", {
 
 # lm.cluster (miceadds) ----
 test_that("extract lm.cluster objects from the miceadds package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("miceadds", minimum_version = "3.8.9")
   require("miceadds")
 
@@ -475,7 +486,7 @@ test_that("extract multinom objects from the nnet package and mlogit and mnlogit
   expect_equivalent(tr1c@gof[6], 2)
   expect_equal(dim(matrixreg(tr1c)), c(29, 2))
 
-  testthat::skip_if_not_installed("mlogit", minimum_version = "1.0.2")
+  testthat::skip_if_not_installed("mlogit", minimum_version = "1.1-0")
   require("mlogit")
   set.seed(12345)
   WVS2 <- mlogit.data(WVS, choice = "poverty", shape = "wide")
@@ -530,6 +541,7 @@ test_that("extract multinom objects from the nnet package and mlogit and mnlogit
 
 # nlmerMod (lme4) ----
 test_that("extract nlmerMod objects from the lme4 package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("lme4")
   require("lme4")
   set.seed(12345)
@@ -556,6 +568,7 @@ test_that("extract nlmerMod objects from the lme4 package", {
 
 # speedglm (speedglm) ----
 test_that("extract speedglm objects from the speedglm package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("speedglm", minimum_version = "0.3.2")
   require("speedglm")
   set.seed(12345)
@@ -577,6 +590,7 @@ test_that("extract speedglm objects from the speedglm package", {
 
 # speedlm (speedglm) ----
 test_that("extract speedlm objects from the speedglm package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("speedglm", minimum_version = "0.3.2")
   require("speedglm")
   set.seed(12345)

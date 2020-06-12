@@ -1,6 +1,6 @@
 Package: texreg
-Version: 1.37.2
-Date: 2020-05-29
+Version: 1.37.3
+Date: 2020-06-12
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
              person(given = "Claudia", family = "Zucca", email = "claudia.zucca@glasgow.ac.uk", role = "ctb"))
@@ -13,79 +13,40 @@ Suggests:
   ggplot2 (>= 3.1.0),
   huxtable (>= 4.2.0),
   knitr (>= 1.22),
-  rmarkdown (>= 1.12),
+  rmarkdown (>= 1.12.3),
   sandwich (>= 2.3-1),
   testthat (>= 2.0.0),
   lmtest (>= 0.9-34),
-  carData (>= 3.0-2)
+  carData (>= 3.0.2)
 Depends: R (>= 3.5)
 Imports: methods, stats, httr
 Enhances: AER,
   alpaca,
-  betareg,
   bife,
   biglm,
-  brglm,
-  brms (>= 2.8.8),
+  brms,
   btergm,
-  censReg,
   dynlm,
-  eha,
-  erer,
-  ergm,
-  feisr (>= 1.0.1),
-  fGarch,
+  feisr,
   forecast,
   gamlss,
   gamlss.inf,
-  gee,
-  geepack,
-  glmmADMB,
   glmmTMB,
-  gmm,
-  gnm,
-  h2o,
-  latentnet,
   lfe,
   lme4,
-  lqmm,
-  MASS,
-  metaSEM,
-  mfx,
-  mgcv,
-  mhurdle,
   miceadds,
   mlogit,
   mnlogit,
   MuMIn,
   nlme,
   nnet,
-  oglmx,
-  ordinal,
-  panelAR,
-  pglm,
-  pgmm,
   plm,
-  pscl,
-  quantreg,
-  relevent,
-  rms,
-  robust,
-  robustbase,
-  RSiena,
-  sampleSelection,
-  simex,
-  sna,
-  spdep,
   speedglm,
-  survey,
   survival,
-  systemfit,
-  tergm,
   VGAM,
   Zelig
 Additional_repositories: http://r-forge.r-project.org/
-SystemRequirements: LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette
+SystemRequirements: pandoc (>= 1.12.3) suggested for using wordreg function; LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.0
