@@ -4919,10 +4919,10 @@ extract.mlogit <- function(model,
     models <- attributes(model$freq)$dimnames[[1]][-1]
     trlist <- list()
     for (i in 1:length(models)) {
-      rows <- which(grepl(paste0("^", models[i]), rn))
+      rows <- which(grepl(paste0(":", models[i], "$"), rn))
       coeftable <- s$CoefTable[rows, ]
       cn <- rn[rows]
-      cn <- gsub(paste0("^", models[i], ":"), "", cn)
+      cn <- gsub(paste0(":", models[i], "$"), "", cn)
       co <- coeftable[, 1]
       se <- coeftable[, 2]
       pval <- coeftable[, 4]

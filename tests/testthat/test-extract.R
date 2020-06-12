@@ -486,7 +486,7 @@ test_that("extract multinom objects from the nnet package and mlogit and mnlogit
   expect_equivalent(tr1c@gof[6], 2)
   expect_equal(dim(matrixreg(tr1c)), c(29, 2))
 
-  testthat::skip_if_not_installed("mlogit", minimum_version = "1.0.2")
+  testthat::skip_if_not_installed("mlogit", minimum_version = "1.1.0")
   require("mlogit")
   set.seed(12345)
   WVS2 <- mlogit.data(WVS, choice = "poverty", shape = "wide")
