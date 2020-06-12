@@ -45,7 +45,6 @@ Enhances: AER,
   survival,
   VGAM,
   Zelig
-Additional_repositories: http://r-forge.r-project.org/
 SystemRequirements: pandoc (>= 1.12.3) suggested for using wordreg function; LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette
 License: GPL-3
 Encoding: UTF-8
