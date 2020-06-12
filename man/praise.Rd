@@ -3,6 +3,7 @@
 \name{praise}
 \alias{praise}
 \alias{feedback}
+\alias{praise_interactive}
 \title{Publish praise about \pkg{texreg}}
 \usage{
 praise(
@@ -19,6 +20,8 @@ praise(
   num_users = NULL,
   return.response = FALSE
 )
+
+praise_interactive()
 }
 \arguments{
 \item{academic_user}{Should be \code{TRUE} if you are at a university or
@@ -110,7 +113,18 @@ If everything works well, no output is returned (but see the
 Publish praise about \pkg{texreg} to help the developers demonstrate impact.
 }
 \details{
-You can use this function to praise the \pkg{texreg} package. Funders and
+The \code{\link{praise_interactive}} function asks you 11 questions
+interactively on the R console. You can choose to answer or skip them. Some
+questions are mandatory but most are optional. After collecting your answers,
+it will call the \code{\link{praise}} function to submit your praise. You can
+also choose to use the \code{\link{praise}} function directly and supply your
+answers as arguments. Either way is fine.
+
+Before your praise is submitted, the functions will present an interactive
+menu and ask if you want to submit the praise now. So do not worry about
+accidentally submitting feedback.
+
+You can use these functions to praise the \pkg{texreg} package. Funders and
 academic employers are increasingly interested in seeing evidence for the
 impact academic research generates. For software, such as \pkg{texreg}, this
 is very hard to accomplish because the developers are usually disconnected
@@ -118,15 +132,16 @@ from the users. The consequence is that incentives for developing
 packages like these are diminishing the more the funders and employers
 require evidence of impact on society, firms, or policy makers.
 
-The \code{\link{praise}} function is our attempt at rectifying the situation.
-With this function, you can provide positive feedback to the developers. The
-praise is saved to a database on the web server of the package maintainer and
-subsequently displayed at \url{http://www.philipleifeld.com/praise}
-for other users, funders, and employers to view. This will also enable the
-package authors to compile reports about how \pkg{texreg} is used by academic
-and non-academic users to increase their productivity and work quality, for
-example in the form of an impact case study for the next round of the UK
-Research Excellence Framework (REF).
+The \code{\link{praise}} and \code{\link{praise_interactive}} functions are
+our attempt at rectifying the situation. With these functions, you can
+provide positive feedback to the developers. The praise is saved to a
+database on the web server of the package maintainer and subsequently
+displayed at \url{http://www.philipleifeld.com/praise} for other users,
+funders, and employers to view. This will also enable the package authors to
+compile reports about how \pkg{texreg} is used by academic and non-academic
+users to increase their productivity and work quality, for example in the
+form of an impact case study for the next round of the UK Research Excellence
+Framework (REF).
 
 We need many positive examples of how \pkg{texreg} has an impact on your
 work. We are especially interested in non-academic users, but welcome
@@ -141,22 +156,19 @@ additional fields. While we are happy with the basic information, of course
 we will be happier if we also know your name, how to contact you, what kinds
 of models you work with, and some other details. Your choice!
 
-Please note that by using the \code{\link{praise}} function you agree that
-the information you provide through the function, including your approximate
-location, is stored online in a database, displayed on the website of the
-package author, and used in reports to funders, employers etc. (This is the
-whole purpose of it.) You can contact the package maintainer any time to have
-your praise removed within a few days.
-
-Before your praise is submitted, the function will present an interactive
-menu and ask if you want to submit the praise now. So do not worry about
-accidentally submitting feedback.
+Please note that by using the \code{\link{praise}} or
+\code{\link{praise_interactive}} function you agree that the information you
+provide through the function, including your approximate location, is stored
+online in a database, displayed on the website of the package author, and
+used in reports to funders, employers etc. (This is the whole purpose of it.)
+You can contact the package maintainer any time to have your praise removed
+within a few days.
 }
 \examples{
 \dontrun{
 praise(academic_user = TRUE,
        organization = "University of Happy Tables",
-       increase_quality = "Man I've never had such pretty tables!")
+       increase_quality = "Man, I've never seen such pretty tables!")
 }
 
 }
