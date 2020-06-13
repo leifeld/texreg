@@ -35,7 +35,7 @@ not in use.}
 }
 \description{
 \code{\link{extract}} method for \code{glm.cluster} objects created by the
-\code{\link[miceadds]{glm.cluster}} function in the \pkg{miceadds} package.
+\code{\link[miceadds:lm.cluster]{glm.cluster}} function in the \pkg{miceadds} package.
 }
 \author{
 Alexander Staudt, Philip Leifeld

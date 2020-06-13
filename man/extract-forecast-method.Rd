@@ -15,6 +15,6 @@ not in use.}
 }
 \description{
 \code{\link{extract}} method for \code{forecast} objects created by the
-\code{\link[forecast]{forecast}} and \code{\link[forecast]{holt}} functions
+\code{\link[forecast]{forecast}} and \code{\link[forecast:ses]{holt}} functions
 in the \pkg{forecast} package.
 }

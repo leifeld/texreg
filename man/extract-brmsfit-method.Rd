@@ -40,8 +40,8 @@ block of the table?}
 
 \item{reloo}{Recompute exact cross-validation for problematic observations
 for which approximate leave-one-out cross-validation may return incorrect
-results? This is done using the \code{\link[brms]{reloo}} function and may
-take some time to compute.}
+results? This is done using the \code{\link[brms]{reloo.brmsfit}} function
+and may take some time to compute.}
 
 \item{include.waic}{Report Widely Applicable Information Criterion (WAIC)?}
 

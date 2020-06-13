@@ -32,5 +32,5 @@ not in use.}
 }
 \description{
 \code{\link{extract}} method for \code{mtergm} objects created by the
-\code{\link[btergm]{mtergm}} function in the \pkg{btergm} package.
+\code{\link[btergm:btergm]{mtergm}} function in the \pkg{btergm} package.
 }

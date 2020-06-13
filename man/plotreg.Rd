@@ -207,7 +207,7 @@ models will be grouped together and displayed as a single forest plot.}
 \item{theme}{The \code{theme} argument can be used to customize the
 appearance of the plot. The default theme is \code{theme_bw}. It can be
 replaced by any other \pkg{ggplot2} theme. See
-\code{\link[ggplot2]{theme_bw}} for details.}
+\code{\link[ggplot2]{ggtheme}} for details.}
 
 \item{signif.light}{Color of outer confidence intervals for significant model
 terms.}

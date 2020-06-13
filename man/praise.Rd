@@ -98,9 +98,9 @@ responses as a \code{character} object.}
 be returned as a \code{response} object, as defined in the \pkg{httr}
 package. You can load the \pkg{httr} package and use the
 \code{\link[httr]{content}} function, possibly enclosed in an
-\code{\link[base]{as.character}} call, to inspect the output and diagnose
-any problems with the transmission of the data. Only use this argument if
-instructed by the package authors.}
+\code{\link[base:character]{as.character}} call, to inspect the output and
+diagnose any problems with the transmission of the data. Only use this
+argument if instructed by the package authors.}
 }
 \value{
 If everything works well, no output is returned (but see the
