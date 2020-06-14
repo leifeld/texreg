@@ -3771,6 +3771,7 @@ wordreg <- function(l,
     "Version:  ", desc$Version, "\n",
     "Date:     ", desc$Date, "\n",
     "Author:   ", "Philip Leifeld (University of Essex)", "\n\n",
+    "Consider submitting praise using the praise or praise_interactive functions.\n",
     "Please cite the JSS article in your publications -- see citation(\"texreg\")."
   )
 }
