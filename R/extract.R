@@ -4918,7 +4918,8 @@ extract.mlogit <- function(model,
   # check for choice-specific covariates and fix beside argument if necessary
   models <- attributes(model$freq)$dimnames[[1]][-1]
   rows <- which(grepl(paste0(":", models[1], "$"), rn))
-  if ((ncol(s$residuals) - 1) * length(rows) < nrow(s$CoefTable)) {
+  if (isTRUE(beside) &&
+      (ncol(s$residuals) - 1) * length(rows) < nrow(s$CoefTable)) {
     beside <- FALSE
     warning(paste0("The mlogit model has choice-specific covariates; 'beside'",
                    " argument will be set to FALSE."))
@@ -5044,7 +5045,7 @@ extract.mnlogit <- function(model,
   # check for choice-specific covariates and fix beside argument if necessary
   models <- attributes(model$freq)$names[-1]
   rows <- which(grepl(paste0(models[1], "$"), coefnames))
-  if ((ncol(s$residuals) - 1) * length(rows) < nrow(coT)) {
+  if (isTRUE(beside) && (ncol(s$residuals) - 1) * length(rows) < nrow(coT)) {
     beside <- FALSE
     warning(paste0("The mnlogit model has choice-specific covariates; 'beside'",
                    " argument will be set to FALSE."))
