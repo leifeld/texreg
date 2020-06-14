@@ -4802,7 +4802,7 @@ setMethod("extract", signature = className("maBina", "erer"),
           definition = extract.maBina)
 
 
-# -- extract.mhurdle (mhurdle) -----------------------------------------------------
+# -- extract.mhurdle (mhurdle) -------------------------------------------------
 
 #' @noRd
 extract.mhurdle <- function (model,
@@ -4913,6 +4913,15 @@ extract.mlogit <- function(model,
     gof <- c(gof, iter, gradNorm)
     gof.names <- c(gof.names, "Iterations", "Gradient 2-norm")
     gof.decimal <- c(gof.decimal, c(FALSE, TRUE))
+  }
+
+  # check for choice-specific covariates and fix beside argument if necessary
+  models <- attributes(model$freq)$dimnames[[1]][-1]
+  rows <- which(grepl(paste0(":", models[1], "$"), rn))
+  if ((ncol(s$residuals) - 1) * length(rows) < nrow(s$CoefTable)) {
+    beside <- FALSE
+    warning(paste0("The mlogit model has choice-specific covariates; 'beside'",
+                   " argument will be set to FALSE."))
   }
 
   if (isTRUE(beside)) {
@@ -5030,6 +5039,15 @@ extract.mnlogit <- function(model,
     gof.names <- c(gof.names, "Iterations", "Gradient 2-norm",
                    "Diff. Likelihood")
     gof.decimal <- c(gof.decimal, c(FALSE, TRUE, TRUE))
+  }
+
+  # check for choice-specific covariates and fix beside argument if necessary
+  models <- attributes(model$freq)$names[-1]
+  rows <- which(grepl(paste0(models[1], "$"), coefnames))
+  if ((ncol(s$residuals) - 1) * length(rows) < nrow(coT)) {
+    beside <- FALSE
+    warning(paste0("The mnlogit model has choice-specific covariates; 'beside'",
+                   " argument will be set to FALSE."))
   }
 
   if (beside == FALSE) {
