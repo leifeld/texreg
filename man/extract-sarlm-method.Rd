@@ -34,5 +34,6 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{sarlm} objects created by the
-\code{\link[spdep]{lagsarlm}} function in the \pkg{spdep} package.
+\code{\link[spatialreg:ML_models]{lagsarlm}} function in the \pkg{spatialreg}
+package.
 }

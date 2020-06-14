@@ -6612,7 +6612,7 @@ setMethod("extract", signature = className("rq", "quantreg"),
           definition = extract.rq)
 
 
-# -- extract.sarlm (spdep) -----------------------------------------------------
+# -- extract.sarlm (spatialreg) ------------------------------------------------
 
 #' @noRd
 extract.sarlm <- function(model,
@@ -6718,7 +6718,8 @@ extract.sarlm <- function(model,
 #' \code{\link{extract}} method for \code{sarlm} objects
 #'
 #' \code{\link{extract}} method for \code{sarlm} objects created by the
-#' \code{\link[spdep]{lagsarlm}} function in the \pkg{spdep} package.
+#' \code{\link[spatialreg:ML_models]{lagsarlm}} function in the \pkg{spatialreg}
+#' package.
 #'
 #' @param model A statistical model object.
 #' @param include.nobs Report the number of observations in the GOF block?
