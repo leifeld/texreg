@@ -42,6 +42,8 @@ r_packages:
   - nlme
   - nnet
   - ordinal
+  - VGAM
+  - alpaca
 
 notifications:
   email:
