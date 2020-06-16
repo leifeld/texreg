@@ -119,6 +119,23 @@ test_that("extract brmsfit objects from the brms package", {
   expect_equivalent(which(tr@gof.decimal), c(1:2, 4:5))
 })
 
+# clm (ordinal) ----
+test_that("extract clm objects from the ordinal package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("ordinal", minimum_version = "2019.12.10")
+  set.seed(12345)
+  fit <- ordinal::clm(Species ~ Sepal.Length, data = iris)
+  tr <- extract(fit)
+  expect_equivalent(tr@coef, c(3.452351, 18.569105, 21.689788), tolerance = 1e-2)
+  expect_equivalent(sum(tr@se), 5.331556, tolerance = 1e-2)
+  expect_equivalent(sum(tr@pvalues), 1.384519e-15, tolerance = 1e-2)
+  expect_equivalent(sum(tr@gof), 457.647, tolerance = 1e-2)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(which(tr@gof.decimal), 1:3)
+})
+
 # dynlm (dynlm) ----
 test_that("extract dynlm objects from the dynlm package", {
   testthat::skip_on_cran()

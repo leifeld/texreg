@@ -892,7 +892,7 @@ extract.clm <- function(model,
   threshold.coef <- thresh[, 1]
   threshold.se <- thresh[, 2]
   threshold.pval <- thresh[, 4]
-  beta <- tab[rownames(tab) %in% names(s$aliased$beta), ]
+  beta <- tab[rownames(tab) %in% names(s$aliased$beta), , drop = FALSE]
   beta.names <- rownames(beta)
   beta.coef <- beta[, 1]
   beta.se <- beta[, 2]
