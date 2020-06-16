@@ -20,6 +20,7 @@ addons:
 r_packages:
   - covr
   - ggplot2
+  - huxtable
   - AER
   - bife
   - biglm
