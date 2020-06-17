@@ -672,11 +672,11 @@ knitreg <- function(...) {
     output <- rmarkdown::all_output_formats(knitr::current_input())[1]
     if (is.null(output)) { # .Rpres presentation (not .Rmd)
       htmlreg(..., doctype = FALSE) # do not include document type because inline table
-    } else if (output == "html_document") { # .Rmd with HTML rendering via the rmarkdown package
+    } else if (output %in% c("html_document", "bookdown::html_document2")) { # .Rmd with HTML rendering via the rmarkdown package
       htmlreg(..., doctype = FALSE, star.symbol = "\\*") # the '*' symbol must be escaped in Markdown
-    } else if (output == "pdf_document") { # .Rmd with PDF LaTeX rendering via the rmarkdown package
+    } else if (output %in% c("pdf_document", "bookdown::pdf_document2", "bookdown::pdf_book")) { # .Rmd with PDF LaTeX rendering via the rmarkdown package
       texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
-    } else if (output %in% c("word_document", "powerpoint_presentation")) { # .Rmd with Word/Powerpoint rendering through the rmarkdown package
+    } else if (output %in% c("word_document", "powerpoint_presentation", "bookdown::word_document2")) { # .Rmd with Word/Powerpoint rendering through the rmarkdown package
       mr <- matrixreg(..., output.type = "ascii", include.attributes = FALSE, trim = TRUE)
       colnames(mr) <- mr[1, ] # set column names because we want 'kable' to draw a horizontal  line under the model names
       mr <- mr[-1, ] # remove the first row because we already set the model names as column names
