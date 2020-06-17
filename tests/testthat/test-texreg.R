@@ -299,11 +299,6 @@ test_that("arguments work in screenreg function", {
                "\\n    Petal\\.Width")
 })
 
-## formatting table to test word output in knitreg
-mr <- matrixreg(model1, output.type = "ascii", include.attributes = FALSE, trim = TRUE)
-colnames(mr) <- mr[1, ]
-mr <- mr[-1, ]
-
 test_that("knitreg function works", {
   with_mock(requireNamespace = function (package, ...) {
     ifelse(package == "knitr", return(FALSE), return(TRUE))
@@ -321,7 +316,7 @@ test_that("knitreg function works", {
   require("rmarkdown")
   expect_match(knitreg(model1), "Petal.Width")
 
-  ## the following evaluates that knitreg chooses and outputs the expected format
+  # the following evaluates that knitreg chooses and outputs the expected format
   knitr::opts_knit$set(out.format = "markdown")
 
   with_mock("rmarkdown::all_output_formats" = function (input) {"html_document"},
@@ -343,6 +338,11 @@ test_that("knitreg function works", {
   with_mock("rmarkdown::all_output_formats" = function (input) {"bookdown::pdf_book"},
             "knitr::current_input" = function () {NULL},
             expect_equivalent(knitreg(model1), texreg(model1, use.packages = FALSE)))
+
+  # formatting table to test word output in knitreg
+  mr <- matrixreg(model1, output.type = "ascii", include.attributes = FALSE, trim = TRUE)
+  colnames(mr) <- mr[1, ]
+  mr <- mr[-1, ]
 
   with_mock("rmarkdown::all_output_formats" = function (input) {"word_document"},
             "knitr::current_input" = function () {NULL},
