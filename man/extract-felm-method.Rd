@@ -11,6 +11,7 @@
   include.rsquared = TRUE,
   include.adjrs = TRUE,
   include.fstatistic = FALSE,
+  include.proj.stats = TRUE,
   include.groups = TRUE,
   ...
 )
@@ -25,6 +26,8 @@
 \item{include.adjrs}{Report adjusted R^2 in the GOF block?}
 
 \item{include.fstatistic}{Report the F-statistic in the GOF block?}
+
+\item{include.proj.stats}{Include statistics for projected model in the GOF block?}
 
 \item{include.groups}{Report the number of groups?}
 

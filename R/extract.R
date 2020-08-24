@@ -1875,6 +1875,7 @@ extract.felm <- function(model,
                          include.rsquared = TRUE,
                          include.adjrs = TRUE,
                          include.fstatistic = FALSE,
+                         include.proj.stats = TRUE,
                          include.groups = TRUE,
                          ...) {
 
@@ -1893,23 +1894,39 @@ extract.felm <- function(model,
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.rsquared == TRUE) {
-    gof <- c(gof, s$r2, s$P.r.squared)
-    gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
-    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+    gof <- c(gof, s$r2)
+    gof.decimal <- c(gof.decimal, TRUE)
+    if (include.proj.stats == TRUE) {
+      gof <- c(gof, s$P.r.squared)
+      gof.decimal <- c(gof.decimal, TRUE)
+      gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
+    } else {
+      gof.names <- c(gof.names, "R$^2$")
+    }
   }
   if (include.adjrs == TRUE) {
-    gof <- c(gof, s$r2adj, s$P.adj.r.squared)
-    gof.names <- c(gof.names, "Adj. R$^2$ (full model)",
-                   "Adj. R$^2$ (proj model)")
-    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+    gof <- c(gof, s$r2adj)
+    gof.decimal <- c(gof.decimal, TRUE)
+    if (include.proj.stats == TRUE) {
+      gof <- c(gof, s$P.adj.r.squared)
+      gof.decimal <- c(gof.decimal, TRUE)
+      gof.names <- c(gof.names, "Adj. R$^2$ (full model)", "Adj. R$^2$ (proj model)")
+    } else {
+      gof.names <- c(gof.names, "Adj. R$^2$")
+    }
   }
   if (include.fstatistic == TRUE) {
-    gof <- c(gof, s$F.fstat[1], s$F.fstat[4],
-             s$P.fstat[length(s$P.fstat) - 1], s$P.fstat[1])
-    gof.names <- c(gof.names, "F statistic (full model)",
-                   "F (full model): p-value", "F statistic (proj model)",
-                   "F (proj model): p-value")
-    gof.decimal <- c(gof.decimal, TRUE, TRUE, TRUE, TRUE)
+    gof <- c(gof, s$F.fstat[1], s$F.fstat[4])
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+    if (include.proj.stats == TRUE) {
+      gof <- c(gof, s$P.fstat[length(s$P.fstat) - 1], s$P.fstat[1])
+      gof.decimal <- c(gof.decimal, TRUE, TRUE)
+      gof.names <- c(gof.names, "F statistic (full model)",
+                     "F (full model): p-value", "F statistic (proj model)",
+                     "F (proj model): p-value")
+    } else {
+      gof.names <- c(gof.names, "F statistic", "F p-value")
+    }
   }
   if (include.groups == TRUE && length(s$fe) > 0) {
     grp <- sapply(s$fe, function(x) length(levels(x)))
@@ -1941,6 +1958,7 @@ extract.felm <- function(model,
 #' @param include.rsquared Report R^2 in the GOF block?
 #' @param include.adjrs Report adjusted R^2 in the GOF block?
 #' @param include.fstatistic Report the F-statistic in the GOF block?
+#' @param include.proj.stats Include statistics for projected model in the GOF block?
 #' @param include.groups Report the number of groups?
 #' @param ... Custom parameters, which are handed over to subroutines, in this
 #'   case to the \code{summary} method for the object.
