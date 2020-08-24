@@ -1989,60 +1989,60 @@ extract.fixest.feols <- function(model,
                                  include.groups = TRUE,
                                  ...) {
 
-    s <- fixest::coeftable(model, ...)
-    nam <- rownames(s)
-    co <- s[, 1]
-    se <- s[, 2]
-    pval <- s[, 4]
+  s <- fixest::coeftable(model, ...)
+  nam <- rownames(s)
+  co <- s[, 1]
+  se <- s[, 2]
+  pval <- s[, 4]
 
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.nobs == TRUE) {
-        gof <- c(gof, model$nobs)
-        gof.names <- c(gof.names, "Num. obs.")
-        gof.decimal <- c(gof.decimal, FALSE)
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    gof <- c(gof, model$nobs)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.rsquared == TRUE) {
+    gof <- c(gof, fixest::r2(model, 'r2'))
+    gof.decimal <- c(gof.decimal, TRUE)
+    if (include.proj.stats == TRUE) {
+      gof <- c(gof, fixest::r2(model, 'wr2'))
+      gof.decimal <- c(gof.decimal, TRUE)
+      gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
+    } else {
+      gof.names <- c(gof.names, "R$^2$")
     }
-    if (include.rsquared == TRUE) {
-        gof <- c(gof, fixest::r2(model, 'r2'))
-        gof.decimal <- c(gof.decimal, TRUE)
-        if (include.proj.stats == TRUE) {
-            gof <- c(gof, fixest::r2(model, 'wr2'))
-            gof.decimal <- c(gof.decimal, TRUE)
-            gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
-        } else {
-            gof.names <- c(gof.names, "R$^2$")
-        }
+  }
+  if (include.adjrs == TRUE) {
+    gof <- c(gof, fixest::r2(model, 'ar2'))
+    gof.decimal <- c(gof.decimal, TRUE)
+    if (include.proj.stats == TRUE) {
+      gof <- c(gof, fixest::r2(model, 'war2'))
+      gof.decimal <- c(gof.decimal, TRUE)
+      gof.names <- c(gof.names, "Adj. R$^2$ (full model)", "Adj. R$^2$ (proj model)")
+    } else {
+      gof.names <- c(gof.names, "Adj. R$^2$")
     }
-    if (include.adjrs == TRUE) {
-        gof <- c(gof, fixest::r2(model, 'ar2'))
-        gof.decimal <- c(gof.decimal, TRUE)
-        if (include.proj.stats == TRUE) {
-            gof <- c(gof, fixest::r2(model, 'war2'))
-            gof.decimal <- c(gof.decimal, TRUE)
-            gof.names <- c(gof.names, "Adj. R$^2$ (full model)", "Adj. R$^2$ (proj model)")
-        } else {
-            gof.names <- c(gof.names, "Adj. R$^2$")
-        }
-    }
-    if (include.groups == TRUE && any(model$fixef_sizes > 0)) {
-        grp <- model$fixef_sizes
-        grp.names <- paste0("Num. groups: ", names(grp))
-        gof <- c(gof, grp)
-        gof.names <- c(gof.names, grp.names)
-        gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
-    }
+  }
+  if (include.groups == TRUE && any(model$fixef_sizes > 0)) {
+    grp <- model$fixef_sizes
+    grp.names <- paste0("Num. groups: ", names(grp))
+    gof <- c(gof, grp)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
+  }
 
-    tr <- createTexreg(
-        coef.names = nam,
-        coef = co,
-        se = se,
-        pvalues = pval,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal
-    )
-    return(tr)
+  tr <- createTexreg(
+    coef.names = nam,
+    coef = co,
+    se = se,
+    pvalues = pval,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
 }
 #' \code{\link{extract}} method for \code{fixest} objects
 #'
@@ -2148,13 +2148,13 @@ extract.fixest.feglm <- function(model,
 
 #' @noRd
 extract.fixest <- function(model, ...) {
-    if (model$method == 'feols') {
-        tr <- extract.fixest.feols(model, ...)
-    } else {
-        # GLM / maximum likelihood
-        tr <- extract.fixest.feglm(model, ...)
-    }
-    return(tr)
+  if (model$method == 'feols') {
+    tr <- extract.fixest.feols(model, ...)
+  } else {
+    # GLM / maximum likelihood
+    tr <- extract.fixest.feglm(model, ...)
+  }
+  return(tr)
 }
 #' \code{\link{extract}} method for \code{fixest} objects
 #'
