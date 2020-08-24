@@ -271,7 +271,7 @@ test_that("extract fixest objects created with the fixest package", {
   expect_equivalent(which(tr@gof.decimal), 2:5)
 
   # test generalized linear model
-  data$y <- rpois(length(data$x), exp(x + x2 + id.eff[data$id]))
+  data$y <- rpois(length(data$x), exp(data$x + data$x2 + id.eff[data$id]))
   est <- fepois(y ~ x + x2 | id, data = data)
   tr <- extract(est)
 
