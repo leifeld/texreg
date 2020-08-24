@@ -237,11 +237,12 @@ test_that("extract felm objects from the lfe package", {
 })
 
 # feols (fixest) ----
-test_that("extract fixest objects created with feols from the fixest package", {
+test_that("extract fixest objects created with the fixest package", {
   testthat::skip_on_cran()
   skip_if_not_installed("fixest", minimum_version = "0.4.0")
   require("fixest")
 
+  # test ordinary least squares with multiple fixed effects
   set.seed(12345)
   x <- rnorm(1000)
   data <- data.frame(
@@ -268,6 +269,19 @@ test_that("extract fixest objects created with feols from the fixest package", {
   expect_length(tr@coef, 2)
   expect_equivalent(which(tr@pvalues < 0.05), 1:2)
   expect_equivalent(which(tr@gof.decimal), 2:5)
+
+  # test generalized linear model
+  data$y <- rpois(length(data$x), exp(x + x2 + id.eff[data$id]))
+  est <- fepois(y ~ x + x2 | id, data = data)
+  tr <- extract(est)
+
+  expect_equivalent(tr@coef, c(1.00, 1.00), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.01, 0.02), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(955.4, -1479.6, 1000, 20, 0.83), tolerance = 1e-2)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 2)
+  expect_equivalent(which(!tr@gof.decimal), 3:4)
 })
 
 # gamlssZadj (gamlss.inf) ----
