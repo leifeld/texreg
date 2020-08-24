@@ -1978,6 +1978,118 @@ setMethod("extract", signature = className("forecast", "forecast"),
           definition = extract.forecast)
 
 
+# -- extract.fixest (fixest) ---------------------------------------------------
+
+#' @noRd
+extract.fixest.feols <- function(model,
+                                 include.nobs = TRUE,
+                                 include.rsquared = TRUE,
+                                 include.adjrs = TRUE,
+                                 include.proj.stats = TRUE,
+                                 include.groups = TRUE,
+                                 ...) {
+
+    s <- fixest::coeftable(model, ...)
+    nam <- rownames(s)
+    co <- s[, 1]
+    se <- s[, 2]
+    pval <- s[, 4]
+
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.nobs == TRUE) {
+        gof <- c(gof, model$nobs)
+        gof.names <- c(gof.names, "Num. obs.")
+        gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (include.rsquared == TRUE) {
+        gof <- c(gof, fixest::r2(model, 'r2'))
+        gof.decimal <- c(gof.decimal, TRUE)
+        if (include.proj.stats == TRUE) {
+            gof <- c(gof, fixest::r2(model, 'wr2'))
+            gof.decimal <- c(gof.decimal, TRUE)
+            gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
+        } else {
+            gof.names <- c(gof.names, "R$^2$")
+        }
+    }
+    if (include.adjrs == TRUE) {
+        gof <- c(gof, fixest::r2(model, 'ar2'))
+        gof.decimal <- c(gof.decimal, TRUE)
+        if (include.proj.stats == TRUE) {
+            gof <- c(gof, fixest::r2(model, 'war2'))
+            gof.decimal <- c(gof.decimal, TRUE)
+            gof.names <- c(gof.names, "Adj. R$^2$ (full model)", "Adj. R$^2$ (proj model)")
+        } else {
+            gof.names <- c(gof.names, "Adj. R$^2$")
+        }
+    }
+    if (include.groups == TRUE && any(model$fixef_sizes > 0)) {
+        grp <- model$fixef_sizes
+        grp.names <- paste0("Num. groups: ", names(grp))
+        gof <- c(gof, grp)
+        gof.names <- c(gof.names, grp.names)
+        gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
+    }
+
+    tr <- createTexreg(
+        coef.names = nam,
+        coef = co,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+    )
+    return(tr)
+}
+#' \code{\link{extract}} method for \code{fixest} objects
+#'
+#' \code{\link{extract}} method for model objects created by the
+#' \code{\link[fixest]{feols}} function in the \pkg{fixest} package.
+#'
+#' @param model A statistical model object.
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.rsquared Report R^2 in the GOF block?
+#' @param include.adjrs Report adjusted R^2 in the GOF block?
+#' @param include.proj.stats Include statistics for projected model in the GOF block?
+#' @param include.groups Report the number of groups?
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the \code{fixest::coeftable} method for the object.
+#'
+#' @method extract fixest.feols
+#' @aliases extract.fixest.feols
+#' @author Christopher Poliquin
+
+#' @noRd
+extract.fixest <- function(model, ...) {
+    if (model$method == 'feols') {
+        tr <- extract.fixest.feols(model, ...)
+    } else {
+        # no method for other fixest models yet
+        tr <- extract.broom(model, ...)
+    }
+    return(tr)
+}
+#' \code{\link{extract}} method for \code{fixest} objects
+#'
+#' \code{\link{extract}} method for model objects created by the
+#' model fitting functions in the \pkg{fixest} package.
+#'
+#' @param model A statistical model object.
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the extract methods for individual model types (e.g.
+#'   \code{\link{extract.fixest.feols}}).
+#'
+#' @method extract fixest
+#' @aliases extract.fixest
+#' @author Christopher Poliquin
+#' @export
+setMethod("extract", signature = className("fixest", "fixest"),
+          definition = extract.fixest)
+
+
 # -- extract.feglm (alpaca) ----------------------------------------------------
 
 #' @noRd

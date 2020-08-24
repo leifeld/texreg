@@ -236,6 +236,40 @@ test_that("extract felm objects from the lfe package", {
   expect_length(tr1@gof, 5)
 })
 
+# feols (fixest) ----
+test_that("extract fixest objects created with feols from the fixest package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("fixest", minimum_version = "0.4.0")
+  require("fixest")
+
+  set.seed(12345)
+  x <- rnorm(1000)
+  data <- data.frame(
+    x = x,
+    x2 = rnorm(length(x)),
+    id = factor(sample(20, length(x), replace = TRUE)),
+    firm = factor(sample(13, length(x),replace = TRUE))
+  )
+  id.eff <- rnorm(nlevels(data$id))
+  firm.eff <- rnorm(nlevels(data$firm))
+  u <- rnorm(length(x))
+  data$y <- with(data, x + 0.5 * x2 + id.eff[id] + firm.eff[firm] + u)
+  est <- feols(y ~ x + x2 | id + firm, data = data)
+
+  tr <- extract(est)
+
+  expect_equivalent(tr@coef, c(1.0188, 0.5182), tolerance = 1e-2)
+  # NOTE: standard errors differ from default produced by lfe (tested above)
+  #       see https://cran.r-project.org/web/packages/fixest/vignettes/standard_errors.html
+  expect_equivalent(tr@se, c(0.021, 0.032), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(1000, 0.7985, 0.575, 0.792, 0.57, 20, 13), tolerance = 1e-2)
+  expect_length(tr@gof.names, 7)
+  expect_length(tr@coef, 2)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(which(tr@gof.decimal), 2:5)
+})
+
 # gamlssZadj (gamlss.inf) ----
 test_that("extract gamlssZadj objects from the gamlss.inf package", {
   testthat::skip_on_cran()
