@@ -1,5 +1,3 @@
-dist: bionic
-
 language: r
 
 r:
@@ -50,7 +48,7 @@ notifications:
   email:
     recipients:
       - philip.leifeld@essex.ac.uk
-      - claudia.zucca@glasgow.ac.uk
+      - c.zucca@jads.nl
     on_success: change
     on_failure: change
 
