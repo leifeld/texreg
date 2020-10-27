@@ -250,6 +250,11 @@ test_that("extract felm objects from the lfe package", {
   expect_equivalent(which(tr@pvalues < 0.05), 1:2)
   expect_equivalent(which(tr@gof.decimal), 2:5)
 
+  # check exclusion of projected model statistics
+  tr <- extract(est, include.proj.stats = FALSE)
+  expect_length(tr@gof.names, 5)
+  expect_false(any(grepl('proj model', tr@gof.names, fixed = TRUE)))
+
   # without fixed effects
   OLS1 <- felm(Sepal.Length ~ Sepal.Width |0|0|0, data = iris)
   tr1 <- extract(OLS1)
