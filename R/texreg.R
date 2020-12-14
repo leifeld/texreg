@@ -2461,8 +2461,7 @@ plotreg <- function(l,
       dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[coeforder])
     }
     
-    # put models in the right order  ###### breaks here
-    dataframe$lab <- as.factor(dataframe$lab)
+    # put models in the right order
     laborder<- c(length(dataframe$lab):1)
     dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[laborder])
     
