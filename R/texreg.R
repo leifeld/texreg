@@ -2170,27 +2170,27 @@ plotreg <- function(l,
                     insignif.medium = "#5A9ECC",
                     insignif.dark = "#1C5BA6",
                     ...) {
-
+  
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("plotreg requires the 'ggplot2' package to be installed.\n",
          "To do this, enter 'install.packages(\"ggplot2\")'.")
   }
-
+  
   if (is.null(theme)) {
     theme <- ggplot2::theme_bw()
   }
-
+  
   if (!is.null(omit.coef) && !is.na(omit.coef) && !is.character(omit.coef)) {
     stop("'omit.coef' must be a character string!")
   }
   if (is.null(omit.coef)) {
     omit.coef <- NA
   }
-
+  
   if (length(use.se) == 1) {
     use.se <- rep(use.se, length(l))
   }
-
+  
   # extract texreg objects and override data
   models <- get.data(l, ...)
   models <- override(models,
@@ -2210,9 +2210,9 @@ plotreg <- function(l,
   } else {
     model.names <- custom.model.names
   }
-
+  
   co <- se <- co.names <- pv <- lab <- ci.low <- ci.up <- NULL
-
+  
   # make dataframe
   for (i in 1:length(models)) {
     # custom coefficient names
@@ -2233,7 +2233,7 @@ plotreg <- function(l,
         stop("Custom coefficient names must be provided as a list of character vectors.")
       }
     }
-
+    
     coef.names <- models[[i]]@coef.names
     co.names <- append(co.names, coef.names)
     coefs <- models[[i]]@coef
@@ -2254,40 +2254,40 @@ plotreg <- function(l,
     }
   }
   dataframe <- data.frame(cbind(co.names, co, lab))
-
+  
   if (length(models[[i]]@se) > 0) {
     dataframe <- cbind(dataframe, se)
   }
-
+  
   if (length(models[[i]]@pvalues) > 0) {
     dataframe <- cbind(dataframe, pv)
   }
-
+  
   if (length(models[[i]]@ci.low) > 0) {
     dataframe <- cbind(dataframe, ci.low)
   }
-
+  
   if (length(models[[i]]@ci.up) > 0) {
     dataframe <- cbind(dataframe, ci.up)
   }
   dataframe$co <- as.numeric(as.character(dataframe$co))
-
+  
   if (length(dataframe$se) > 0) {
     dataframe$se <- as.numeric(as.character(dataframe$se))
   }
-
+  
   if (length(dataframe$pv) > 0) {
     dataframe$pv <- as.numeric(as.character(dataframe$pv))
   }
-
+  
   if (length(dataframe$ci.low) > 0) {
     dataframe$ci.low <- as.numeric(as.character(dataframe$ci.low))
   }
-
+  
   if (length(dataframe$ci.up) > 0) {
     dataframe$ci.up <- as.numeric(as.character(dataframe$ci.up))
   }
-
+  
   # aggregate confidence intervals or SEs
   if (isTRUE(use.se[i]) && length(models[[i]]@se) > 0) {
     lower.inner <- dataframe$co - dataframe$se
@@ -2309,7 +2309,7 @@ plotreg <- function(l,
     lower.inner <- rep(0, length(dataframe$co.names))
     upper.inner <- rep(0, length(dataframe$co.names))
   }
-
+  
   if (length(lower.outer) > 0) {
     dataframe <- cbind(dataframe, lower.outer)
   }
@@ -2322,18 +2322,18 @@ plotreg <- function(l,
   if (length(upper.inner) > 0) {
     dataframe <- cbind(dataframe, upper.inner)
   }
-
+  
   # which terms are significant?
   if (length(dataframe$pv) == 0 & length(dataframe$ci.low) == 0) {
     stop("Impossible to estimate significance since no CIs or SEs are provided.")
   }
-
+  
   if (length(dataframe$pv) > 0) {
     signif.outer <- dataframe$pv < (1 - ci.level)
   } else if (length(dataframe$ci.low) > 0) {
     signif.outer <- ((dataframe$ci.low > 0 & dataframe$ci.up > 0) | (dataframe$ci.low < 0 & dataframe$ci.up < 0))
   }
-
+  
   if (is.logical(signif.outer) && length(signif.outer) == length(dataframe$co)) {
     signif <- sapply(signif.outer, isTRUE)
   } else if (sapply(signif.outer, isTRUE)) {
@@ -2343,31 +2343,33 @@ plotreg <- function(l,
   } else {
     stop("'signif.outer' does not correspond to the intervals provided.")
   }
-
+  
   dataframe <- cbind(dataframe, signif)
-
+  dataframe$lab <- as.factor(dataframe$lab)
+  dataframe$co.names <- as.factor(dataframe$co.names)
+  
   if (length(co) == 0) {
     stop(paste("No coefficients available. Was the 'omit.coef' argument",
                "misspecified? If coefficients were renamed using the",
                "'custom.coef.names' argument, 'omit.coef' refers to the renamed",
                "coefficients."))
   }
-
+  
   # omit.coef
   if (!is.na(omit.coef)) {
     dataframe <- dataframe[!grepl(omit.coef, dataframe$co.names), ]
   }
-
+  
   # custom coef. name
   if (length(custom.coef.names) > 0) {
     levels(dataframe$co.names) <- custom.coef.names
   }
-
+  
   # custom model name
   if (length(custom.model.names) > 0) {
     levels(dataframe$lab) <- custom.model.names
   }
-
+  
   # ggplot functions
   if (type == "facet") {
     if (length(reorder.coef) > 0) {
@@ -2383,7 +2385,7 @@ plotreg <- function(l,
       startlevel<- c(length(dataframe$co.names):1)
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
     }
-
+    
     if (length(custom.coef.map) > 0) {
       # keep only coefficients selected by the user and replace NAs if any
       idx <- is.na(custom.coef.map)
@@ -2400,7 +2402,7 @@ plotreg <- function(l,
       coeforder<- c(length(dataframe$co.names):1)
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[coeforder])
     }
-
+    
     p <- ggplot2::ggplot(dataframe, ggplot2::aes(co.names, co)) +
       ggplot2::geom_hline(yintercept = 0,
                           lty = 2, lwd = 1,
@@ -2423,11 +2425,11 @@ plotreg <- function(l,
                           strip.position = "left",
                           nrow = length(dataframe),
                           scales = "free_y")
-
+    
     if (length(custom.title) > 0) {
       p <- p + ggplot2::ggtitle(custom.title)
     }
-
+    
   } else if (type == "forest") {
     if (length(reorder.coef) > 0) {
       # reorder levels
@@ -2441,7 +2443,7 @@ plotreg <- function(l,
       startlevel<- c(1:length(dataframe$co.names))
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
     }
-
+    
     if (length(custom.coef.map) > 0) {
       # keep only coefficients selected by the user and replace NAs if any
       idx <- is.na(custom.coef.map)
@@ -2458,11 +2460,12 @@ plotreg <- function(l,
       coeforder<- c(length(dataframe$lab):1)
       dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[coeforder])
     }
-
-    # put models in the right order
+    
+    # put models in the right order  ###### breaks here
+    dataframe$lab <- as.factor(dataframe$lab)
     laborder<- c(length(dataframe$lab):1)
     dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[laborder])
-
+    
     # plot
     p <- ggplot2::ggplot(dataframe, ggplot2::aes(lab, co)) +
       ggplot2::geom_hline(yintercept = 0,
@@ -2487,12 +2490,12 @@ plotreg <- function(l,
                           strip.position = "left",
                           nrow = length(dataframe),
                           scales = "free_y")
-
+    
     if (length(custom.title) > 0) {
       p <- p + ggplot2::ggtitle(custom.title)
     }
   }
-
+  
   # adds message to p as ylab; adds output meassages to paste that comes as R output (not in plot)
   if (isTRUE(use.se[i]) && length(models[[i]]@se) > 0) {
     p <- p + ggplot2::ylab("Bars denote SEs. Circle points denote significance.")
@@ -2527,7 +2530,7 @@ plotreg <- function(l,
       message(paste0("Models: bars denote ", ci.level, " confidence intervals."))
     }
   }
-
+  
   # print plot in R
   if (is.null(file)) {
     return(p)
