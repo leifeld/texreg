@@ -46,6 +46,7 @@ jobs:
           tinytex::tlmgr_install("thumbpdf")
           tinytex::tlmgr_install("paralist")
           tinytex::tlmgr_install("pgf")
+          tinytex::tlmgr_install("grfext")
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-pandoc@v1
