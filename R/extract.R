@@ -2102,6 +2102,125 @@ setMethod("extract", signature = className("feglm", "alpaca"),
           definition = extract.feglm)
 
 
+# -- extract.fixest (fixest) ---------------------------------------------------
+
+#' @noRd
+extract.fixest <- function(model,
+                           include.nobs = TRUE,       # both
+                           include.groups = TRUE,     # both
+                           include.rsquared = TRUE,   # OLS only
+                           include.adjrs = TRUE,      # OLS only
+                           include.proj.stats = TRUE, # OLS only
+                           include.deviance = TRUE,   # GLM/MLE only
+                           include.loglik = TRUE,     # GLM/MLE only
+                           include.pseudors = TRUE,   # GLM/MLE only
+                           ...) {
+  # coefficient block
+  s <- fixest::coeftable(model, ...)
+  nam <- rownames(s)
+  co <- s[, 1]
+  se <- s[, 2]
+  pval <- s[, 4]
+
+  # GOF block: shared OLS and GLM/MLE statistics
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (isTRUE(include.nobs)) {
+    gof <- c(gof, model$nobs)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (isTRUE(include.groups) && any(model$fixef_sizes > 0)) {
+    grp <- model$fixef_sizes
+    grp.names <- paste0("Num. groups: ", names(grp))
+    gof <- c(gof, grp)
+    gof.names <- c(gof.names, grp.names)
+    gof.decimal <- c(gof.decimal, rep(FALSE, length(grp)))
+  }
+
+  # GOF block: OLS-specific statistics
+  if (model$method == "feols" && isTRUE(include.rsquared)) {
+    gof <- c(gof, fixest::r2(model, "r2"))
+    gof.decimal <- c(gof.decimal, TRUE)
+    if (isTRUE(include.proj.stats)) {
+      gof <- c(gof, fixest::r2(model, "wr2"))
+      gof.decimal <- c(gof.decimal, TRUE)
+      gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
+    } else {
+      gof.names <- c(gof.names, "R$^2$")
+    }
+  }
+  if (model$method == "feols" && isTRUE(include.adjrs)) {
+    gof <- c(gof, fixest::r2(model, "ar2"))
+    gof.decimal <- c(gof.decimal, TRUE)
+    if (isTRUE(include.proj.stats)) {
+      gof <- c(gof, fixest::r2(model, "war2"))
+      gof.decimal <- c(gof.decimal, TRUE)
+      gof.names <- c(gof.names,
+                     "Adj. R$^2$ (full model)",
+                     "Adj. R$^2$ (proj model)")
+    } else {
+      gof.names <- c(gof.names, "Adj. R$^2$")
+    }
+  }
+
+  # GOF block: GLM/MLE-specific statistics
+  if (model$method != "feols" && isTRUE(include.deviance)) {
+    gof <- c(gof, model$deviance)
+    gof.names <- c(gof.names, "Deviance")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (model$method != "feols" && isTRUE(include.loglik)) {
+    gof <- c(gof, model$loglik)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (model$method != "feols" && isTRUE(include.pseudors)) {
+    gof <- c(gof, model$pseudo_r2)
+    gof.names <- c(gof.names, "Pseudo R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+
+  tr <- createTexreg(
+    coef.names = nam,
+    coef = co,
+    se = se,
+    pvalues = pval,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{fixest} objects
+#'
+#' \code{\link{extract}} method for \code{fixest} objects created by the
+#' model fitting functions in the \pkg{fixest} package. The method can deal with
+#' OLS (fitted by \code{\link[fixes]{feols}}) and GLM/MLE models (fitted by
+#' \code{\link[fixes]{feglm}} and other functions).
+#'
+#' @param model A statistical model object.
+#' @param include.nobs Report the number of observations?
+#' @param include.groups Report the number of groups?
+#' @param include.rsquared Report R^2? (OLS only)
+#' @param include.adjrs Report adjusted R^2? (OLS only)
+#' @param include.proj.stats Include statistics for projected model? (OLS only)
+#' @param include.deviance Report the deviance? (GLM/MLE only)
+#' @param include.loglik Report the log likelihood? (GLM/MLE only)
+#' @param include.pseudors Report Pseudo-R^2? (GLM/MLE only)
+#' @param ... Custom parameters, which are handed over to the
+#'  \code{\link[fixest]{coeftable}} method for the \code{fixest} object.
+#'
+#' @method extract fixest
+#' @aliases extract.fixest
+#' @author Christopher Poliquin, Philip Leifeld
+#' @export
+setMethod("extract", signature = className("fixest", "fixest"),
+          definition = extract.fixest)
+
+
 # -- extract.gam (mgcv) --------------------------------------------------------
 
 #' @noRd
