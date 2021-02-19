@@ -685,7 +685,6 @@ test_that("extract speedlm objects from the speedglm package", {
 
 # truncreg (truncreg) ----
 test_that("extract truncreg objects from the truncreg package", {
-  testthat::skip_on_cran()
   skip_if_not_installed("truncreg", minimum_version = "0.2.5")
   require("truncreg")
 
