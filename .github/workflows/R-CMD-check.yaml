@@ -41,6 +41,7 @@ jobs:
 
       - name: add TeX deps
         run: |
+          install.packages('tinytex')
           tinytex::tlmgr_install("ae")
         shell: Rscript {0}
 
