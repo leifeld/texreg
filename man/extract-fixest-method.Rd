@@ -43,8 +43,8 @@
 \description{
 \code{\link{extract}} method for \code{fixest} objects created by the
 model fitting functions in the \pkg{fixest} package. The method can deal with
-OLS (fitted by \code{\link[fixes]{feols}}) and GLM/MLE models (fitted by
-\code{\link[fixes]{feglm}} and other functions).
+OLS (fitted by \code{\link[fixest]{feols}}) and GLM/MLE models (fitted by
+\code{\link[fixest]{feglm}} and other functions).
 }
 \author{
 Christopher Poliquin, Philip Leifeld

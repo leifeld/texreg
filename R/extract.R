@@ -2198,8 +2198,8 @@ extract.fixest <- function(model,
 #'
 #' \code{\link{extract}} method for \code{fixest} objects created by the
 #' model fitting functions in the \pkg{fixest} package. The method can deal with
-#' OLS (fitted by \code{\link[fixes]{feols}}) and GLM/MLE models (fitted by
-#' \code{\link[fixes]{feglm}} and other functions).
+#' OLS (fitted by \code{\link[fixest]{feols}}) and GLM/MLE models (fitted by
+#' \code{\link[fixest]{feglm}} and other functions).
 #'
 #' @param model A statistical model object.
 #' @param include.nobs Report the number of observations?
@@ -8072,6 +8072,78 @@ extract.tobit <- function(model,
 #' @export
 setMethod("extract", signature = className("tobit", "AER"),
           definition = extract.tobit)
+
+
+# -- extract.truncreg (truncreg) -----------------------------------------------
+
+#' @noRd
+extract.truncreg <- function(model,
+                             include.nobs = TRUE,
+                             include.loglik = TRUE,
+                             include.aic = TRUE,
+                             include.bic = TRUE,
+                             ...) {
+  s <- summary(model, ...)
+  coef_names <- rownames(s$coefficients)
+  coefs <- s$coefficients[, 1]
+  se <- s$coefficients[, 2]
+  pval <- s$coefficients[, 4]
+
+  gof_names <- character()
+  gof_stats <- numeric()
+  gof_decimal <- logical()
+  if (isTRUE(include.nobs)) {
+    gof_names <- c(gof_names, "Num. obs.")
+    gof_stats <- c(gof_stats, s$nobs)
+    gof_decimal <- c(gof_decimal, FALSE)
+  }
+  if (isTRUE(include.loglik)) {
+    gof_names <- c(gof_names, "Log Likelihood")
+    gof_stats <- c(gof_stats, s$logLik)
+    gof_decimal <- c(gof_decimal, TRUE)
+  }
+  if (isTRUE(include.aic)) {
+    gof_names <- c(gof_names, "AIC")
+    aic <- (-2 * s$logLik) + (2 * length(model$coefficients))
+    gof_stats <- c(gof_stats, aic)
+    gof_decimal <- c(gof_decimal, TRUE)
+  }
+  if (isTRUE(include.bic)) {
+    gof_names <- c(gof_names, "BIC")
+    bic <- (-2 * s$logLik) + (log(model$nobs) * length(model$coefficients))
+    gof_stats <- c(gof_stats, bic)
+    gof_decimal <- c(gof_decimal, TRUE)
+  }
+
+  createTexreg(coef.names = coef_names,
+               coef = coefs,
+               se = se,
+               pvalues = pval,
+               gof.names = gof_names,
+               gof = gof_stats,
+               gof.decimal = gof_decimal)
+}
+
+#' \code{\link{extract}} method for \code{truncreg} objects
+#'
+#' \code{\link{extract}} method for \code{truncreg} objects created by the
+#' \code{\link[truncreg]{truncreg}} function in the \pkg{truncreg} package.
+#'
+#' @param model A statistical model object.
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.loglik Report the log likelihood in the GOF block?
+#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
+#'   block?
+#' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF
+#'   block?
+#' @param ... Custom parameters, which are handed over to subroutines. Currently
+#'   not in use.
+#'
+#' @method extract truncreg
+#' @aliases extract.truncreg
+#' @export
+setMethod("extract", signature = className("truncreg", "truncreg"),
+          definition = extract.truncreg)
 
 
 # -- extract.vglm (VGAM) -------------------------------------------------------

@@ -682,3 +682,27 @@ test_that("extract speedlm objects from the speedglm package", {
   expect_equivalent(which(tr@pvalues < 0.05), integer())
   expect_equivalent(which(tr@gof.decimal), c(1, 2, 4))
 })
+
+# truncreg (truncreg) ----
+test_that("extract truncreg objects from the truncreg package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("truncreg", minimum_version = "0.2.5")
+  require("truncreg")
+
+  set.seed(12345)
+  x <- rnorm(100, mean = 1)
+  y <- rnorm(100, mean = 1.3)
+  dta <- data.frame(x, y)
+  dta <- dta[y < quantile(y, 0.8), ]
+  model <- truncreg(y ~ x, data = dta, point = max(dta$y), direction = "right")
+  tr <- extract(model)
+
+  expect_equivalent(tr@coef, c(1.24, 0.05, 0.96), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.25, 0.12, 0.14), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0, 0.67, 0), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(80, -81.69, 169.38, 176.53), tolerance = 1e-2)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), c(1, 3))
+  expect_equivalent(which(tr@gof.decimal), 2:4)
+})
