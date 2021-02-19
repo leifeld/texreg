@@ -302,6 +302,45 @@ setMethod("extract", signature = className("averaging", "MuMIn"),
           definition = extract.averaging)
 
 
+# -- extract.bergm (Bergm) -----------------------------------------------------
+
+#' @noRd
+extract.bergm <- function(model, posterior.median = FALSE, level = 0.95, ...) {
+  coefnames <- model$specs
+  coefs <- apply(model$Theta, 2, ifelse(isTRUE(posterior.median), median, mean))
+  alpha <- (1 - level) / 2
+  cil <- apply(model$Theta, 2, function(x) quantile(x, (1 - level) / 2))
+  ciu <- apply(model$Theta, 2, function(x) quantile(x, 1 - ((1 - level) / 2)))
+
+  tr <- createTexreg(
+    coef.names = coefnames,
+    coef = coefs,
+    ci.low = cil,
+    ci.up = ciu
+  )
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{bergm} objects
+#'
+#' \code{\link{extract}} method for \code{bergm} objects created by the
+#' \code{\link[Bergm]{bergm}} function in the \pkg{Bergm} package.
+#'
+#' @param model A statistical model object.
+#' @param posterior.median Report the posterior median instead of the default
+#'   posterior mean as coefficients?
+#' @param level Confidence level, i.e., the proportion of the posterior
+#'   distribution to be included in the credible interval.
+#' @param ... Custom parameters, which are handed over to subroutines. Currently
+#'   not in use.
+#'
+#' @method extract bergm
+#' @aliases extract.bergm
+#' @export
+setMethod("extract", signature = className("bergm", "Bergm"),
+          definition = extract.bergm)
+
+
 # -- extract.betamfx (mfx) -----------------------------------------------------
 
 #' @noRd
