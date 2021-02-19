@@ -61,17 +61,17 @@ test_that("extract bergm objects from the Bergm package", {
   set.seed(12345)
   data(florentine)
   suppressMessages(p.flo <- bergm(flomarriage ~ edges + kstar(2),
-                 burn.in    = 1,
-                 aux.iters  = 3,
-                 main.iters = 3,
+                 burn.in    = 10,
+                 aux.iters  = 30,
+                 main.iters = 30,
                  gamma      = 1.2))
   tr <- extract(p.flo)
-  expect_equivalent(tr@coef, c(-1.45, 0.23), tolerance = 1e-2)
+  expect_equivalent(tr@coef, c(-1.57, -0.01), tolerance = 1e-2)
   expect_length(tr@se, 0)
   expect_length(tr@pvalues, 0)
   expect_length(tr@gof, 0)
-  expect_equivalent(tr@ci.low, c(-1.82, -0.11), tolerance = 1e-2)
-  expect_equivalent(tr@ci.up, c(-1.03, 0.72), tolerance = 1e-2)
+  expect_equivalent(tr@ci.low, c(-2.56, -0.30), tolerance = 1e-2)
+  expect_equivalent(tr@ci.up, c(0.13, 0.16), tolerance = 1e-2)
 })
 
 # bife (bife) ----
