@@ -38,9 +38,10 @@ jobs:
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("covr")
-          install.packages(c("truncreg", "speedglm"))
+          install.packages("withr")
+          install.packages(c("truncreg", "speedglm", "forecast", "Bergm", "bife", "brms", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "famlss.inf", "miceadds", "lme4", "glmmTMB", "AER"))
         shell: Rscript {0}
 
       - name: Test coverage
-        run: covr::codecov()
+        run: withr::with_envvar(c("NOT_CRAN" = "true"), covr::codecov(quiet = FALSE))
         shell: Rscript {0}
