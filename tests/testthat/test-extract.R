@@ -544,7 +544,7 @@ test_that("extract multinom objects from the nnet package", {
   x[201:400] <- 1 * x[201:400] + rnorm(200)
   x[401:600] <- 2 * x[401:600] + rnorm(200, 2, 2)
 
-  sink("/dev/null")
+  sink(nullfile())
   m1 <- multinom(y ~ x)
   sink()
   tr2 <- extract(m1, beside = FALSE)
