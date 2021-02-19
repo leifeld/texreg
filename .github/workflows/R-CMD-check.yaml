@@ -45,11 +45,7 @@ jobs:
           tinytex::tlmgr_install("ae")
           tinytex::tlmgr_install("thumbpdf")
           tinytex::tlmgr_install("paralist")
-          tinytex::tlmgr_install("longtable")
-          tinytex::tlmgr_install("dcolumn")
-          tinytex::tlmgr_install("tikz")
-          tinytex::tlmgr_install("booktabs")
-          tinytex::tlmgr_install("rotating")
+          tinytex::tlmgr_install("pgf")
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-pandoc@v1
