@@ -2345,6 +2345,8 @@ plotreg <- function(l,
   }
 
   dataframe <- cbind(dataframe, signif)
+  dataframe$lab <- as.factor(dataframe$lab)
+  dataframe$co.names <- as.factor(dataframe$co.names)
 
   if (length(co) == 0) {
     stop(paste("No coefficients available. Was the 'omit.coef' argument",
