@@ -43,6 +43,7 @@ jobs:
         run: |
           install.packages('tinytex')
           tinytex::tlmgr_install("ae")
+          tinytex::tlmgr_install("thumbpdf")
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-pandoc@v1
