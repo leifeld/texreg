@@ -5,40 +5,47 @@
 \alias{extract.fixest}
 \title{\code{\link{extract}} method for \code{fixest} objects}
 \usage{
-\S4method{extract}{fixest}(model, ...)
+\S4method{extract}{fixest}(
+  model,
+  include.nobs = TRUE,
+  include.groups = TRUE,
+  include.rsquared = TRUE,
+  include.adjrs = TRUE,
+  include.proj.stats = TRUE,
+  include.deviance = TRUE,
+  include.loglik = TRUE,
+  include.pseudors = TRUE,
+  ...
+)
 }
 \arguments{
 \item{model}{A statistical model object.}
 
-\item{...}{Custom parameters, which are handed over to subroutines, in this
-case to the \code{\link[fixest]{coeftable}} method for the object.}
-
-\item{include.rsquared}{Report R^2 in the GOF block?}
-
-\item{include.adjrs}{Report adjusted R^2 in the GOF block?}
-
-\item{include.proj.stats}{Include statistics for projected model in the GOF block?}
-
-\item{include.deviance}{Report the deviance in the GOF block?}
-
-\item{include.loglik}{Report the log likelihood in the GOF block?}
-
-\item{include.nobs}{Report the number of observations in the GOF block?}
+\item{include.nobs}{Report the number of observations?}
 
 \item{include.groups}{Report the number of groups?}
 
-\item{include.pseudors}{Report Pseudo-R^2 in the GOF block?}
+\item{include.rsquared}{Report R^2? (OLS only)}
+
+\item{include.adjrs}{Report adjusted R^2? (OLS only)}
+
+\item{include.proj.stats}{Include statistics for projected model? (OLS only)}
+
+\item{include.deviance}{Report the deviance? (GLM/MLE only)}
+
+\item{include.loglik}{Report the log likelihood? (GLM/MLE only)}
+
+\item{include.pseudors}{Report Pseudo-R^2? (GLM/MLE only)}
+
+\item{...}{Custom parameters, which are handed over to the
+\code{\link[fixest]{coeftable}} method for the \code{fixest} object.}
 }
 \description{
-\code{\link{extract}} method for model objects created by the
-model fitting functions (e.g. \code{\link[fixes]{feols}},
-\code{\link[fixes]{feglm}}) in the \pkg{fixest} package.
-}
-\details{
-Note that appropriate arguments depend on the model fitting method used.
-For example, \code{include.pseudors} does not make sense for models fit
-with \code{\link[fixest]{feols}}.
+\code{\link{extract}} method for \code{fixest} objects created by the
+model fitting functions in the \pkg{fixest} package. The method can deal with
+OLS (fitted by \code{\link[fixes]{feols}}) and GLM/MLE models (fitted by
+\code{\link[fixes]{feglm}} and other functions).
 }
 \author{
-Christopher Poliquin
+Christopher Poliquin, Philip Leifeld
 }
