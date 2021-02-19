@@ -42,6 +42,7 @@ jobs:
       - name: add TeX deps
         run: |
           tinytex::tlmgr_install("ae")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/setup-pandoc@v1
 
