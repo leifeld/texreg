@@ -39,6 +39,10 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
+      - name: add TeX deps
+        run: |
+          tinytex::tlmgr_install(pkgs = "ae")
+
       - uses: r-lib/actions/setup-pandoc@v1
 
       - name: Query dependencies
