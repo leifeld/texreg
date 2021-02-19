@@ -40,8 +40,6 @@ jobs:
           r-version: ${{ matrix.config.r }}
 
       - uses: r-lib/actions/setup-pandoc@v1
-      
-      - uses: jy95/ghostscript-action@v1
 
       - name: Query dependencies
         run: |
@@ -60,6 +58,7 @@ jobs:
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
+        uses: jy95/ghostscript-action@v1
         run: |
           while read -r cmd
           do
