@@ -105,7 +105,7 @@ test_that("extract brmsfit objects from the brms package", {
   require("coda")
 
   # example 2 from brm help page; see ?brm
-  sink("/dev/null")
+  sink(nullfile())
   suppressMessages(fit2 <- brm(rating ~ period + carry + cs(treat),
                                data = inhaler, family = sratio("logit"),
                                prior = set_prior("normal(0,5)"), chains = 1))
@@ -122,7 +122,7 @@ test_that("extract brmsfit objects from the brms package", {
 
   # example 1 from brm help page; see ?brm
   bprior1 <- prior(student_t(5,0,10), class = b) + prior(cauchy(0,2), class = sd)
-  sink("/dev/null")
+  sink(nullfile())
   fit1 <- suppressMessages(brm(count ~ zAge + zBase * Trt + (1|patient),
                                data = epilepsy,
                                family = poisson(),
@@ -316,7 +316,7 @@ test_that("extract gamlssZadj objects from the gamlss.inf package", {
   require("gamlss.inf")
 
   set.seed(12345)
-  sink("/dev/null")
+  sink(nullfile())
   y0 <- rZAGA(1000, mu = .3, sigma = .4, nu = .15)
   g0 <- gamlss(y0 ~ 1, family = ZAGA)
   t0 <- gamlssZadj(y = y0, mu.formula = ~1, family = GA, trace = TRUE)
