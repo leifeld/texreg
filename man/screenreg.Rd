@@ -174,8 +174,8 @@ FALSE}.}
 specified. This is useful if \pkg{knitr} and Markdown are used for HTML
 report generation. In Markdown, asterisks or stars are interpreted as
 special characters, so they have to be escaped. To make a HTML table
-compatible with Markdown, specify \code{star.symbol = "\*"}. Note that some
-other modifications are recommended for usage with \pkg{knitr} in
+compatible with Markdown, specify \code{star.symbol = "&#42;"}. Note that
+some other modifications are recommended for usage with \pkg{knitr} in
 combination with Markdown or HTML (see the \code{inline.css},
 \code{doctype}, \code{html.tag}, \code{head.tag}, and \code{body.tag}
 arguments in the \code{\link{htmlreg}} function).}

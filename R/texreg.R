@@ -118,7 +118,7 @@ htmlreg <- function(l,
                     custom.note = NULL,
                     digits = 2,
                     leading.zero = TRUE,
-                    star.symbol = "*",
+                    star.symbol = "&#42;",
                     symbol = "&middot;",
                     override.coef = 0,
                     override.se = 0,
@@ -549,7 +549,7 @@ huxtablereg <- function(l,
                         custom.gof.rows = NULL,
                         digits = 2,
                         leading.zero = TRUE,
-                        star.symbol = star.symbol,
+                        star.symbol = "*",
                         symbol = "+",
                         override.coef = 0,
                         override.se = 0,
@@ -628,7 +628,7 @@ huxtablereg <- function(l,
 #' }
 #'
 #' If Markdown and HTML rendering are selected, \link{htmlreg} arguments
-#' \code{doctype = FALSE} and \code{star.symbol = "\\*"} are set to enable
+#' \code{doctype = FALSE} and \code{star.symbol = "&#42;"} are set to enable
 #' compatibility with Markdown. With \R HTML documents (but not Markdown) or
 #' presentations (\code{.Rpres} extension), only \code{doctype = FALSE} is set.
 #'
@@ -673,7 +673,7 @@ knitreg <- function(...) {
     if (is.null(output)) { # .Rpres presentation (not .Rmd)
       htmlreg(..., doctype = FALSE) # do not include document type because inline table
     } else if (output %in% c("html_document", "bookdown::html_document2")) { # .Rmd with HTML rendering via the rmarkdown package
-      htmlreg(..., doctype = FALSE, star.symbol = "\\*") # the '*' symbol must be escaped in Markdown
+      htmlreg(..., doctype = FALSE, star.symbol = "&#42;") # the star symbol must be escaped in Markdown
     } else if (output %in% c("pdf_document", "bookdown::pdf_document2", "bookdown::pdf_book")) { # .Rmd with PDF LaTeX rendering via the rmarkdown package
       texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
     } else if (output %in% c("word_document", "powerpoint_presentation", "bookdown::word_document2")) { # .Rmd with Word/Powerpoint rendering through the rmarkdown package
@@ -793,8 +793,8 @@ knitreg <- function(...) {
 #'   specified. This is useful if \pkg{knitr} and Markdown are used for HTML
 #'   report generation. In Markdown, asterisks or stars are interpreted as
 #'   special characters, so they have to be escaped. To make a HTML table
-#'   compatible with Markdown, specify \code{star.symbol = "\*"}. Note that some
-#'   other modifications are recommended for usage with \pkg{knitr} in
+#'   compatible with Markdown, specify \code{star.symbol = "&#42;"}. Note that
+#'   some other modifications are recommended for usage with \pkg{knitr} in
 #'   combination with Markdown or HTML (see the \code{inline.css},
 #'   \code{doctype}, \code{html.tag}, \code{head.tag}, and \code{body.tag}
 #'   arguments in the \code{\link{htmlreg}} function).
@@ -3697,7 +3697,7 @@ wordreg <- function(l,
                     custom.gof.rows = NULL,
                     digits = 2,
                     leading.zero = TRUE,
-                    star.symbol = star.symbol,
+                    star.symbol = "*",
                     symbol = ".",
                     override.coef = 0,
                     override.se = 0,
@@ -3732,7 +3732,7 @@ wordreg <- function(l,
                    custom.gof.rows = custom.gof.rows,
                    digits = digits,
                    leading.zero = leading.zero,
-                   star.symbol = "*", # produces error if fed star.symbol itself
+                   star.symbol = star.symbol,
                    symbol = symbol,
                    override.coef = override.coef,
                    override.se = override.se,
@@ -3755,8 +3755,14 @@ wordreg <- function(l,
   )
   wd <- getwd()
   f = tempfile(fileext = ".Rmd")
+  if (!all(mat[1, ] == "")) { # column names for kable
+    dvnames <- mat[1, ]
+    mat <- mat[-1, ]
+  } else {
+    dvnames <- NA
+  }
   cat(file = f, "```{r, echo = FALSE}
-                    knitr::kable(mat)
+                    knitr::kable(mat, col.names = dvnames)
                     ```", append = TRUE)
   rmarkdown::render(f, output_file = paste0(wd, "/", file))
 }
@@ -4159,7 +4165,7 @@ get_stars_note <- function(stars = c(0.01, 0.05, 0.1),
     } else if (output == "latex") {
       ci_symbol <- "$^*$"
     } else if (output == "html") {
-      ci_symbol <- paste0("<sup>*</sup>")
+      ci_symbol <- paste0("<sup>&#42;</sup>")
     }
   } else {  # ci not calculated for any model -> empty ci note
     ci_note <- ""

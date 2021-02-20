@@ -321,11 +321,11 @@ test_that("knitreg function works", {
 
   with_mock("rmarkdown::all_output_formats" = function (input) {"html_document"},
             "knitr::current_input" = function () {NULL},
-            expect_equivalent(knitreg(model1), htmlreg(model1, doctype = FALSE, star.symbol = "\\*")))
+            expect_equivalent(knitreg(model1), htmlreg(model1, doctype = FALSE)))
 
   with_mock("rmarkdown::all_output_formats" = function (input) {"bookdown::html_document2"},
             "knitr::current_input" = function () {NULL},
-            expect_equivalent(knitreg(model1), htmlreg(model1, doctype = FALSE, star.symbol = "\\*")))
+            expect_equivalent(knitreg(model1), htmlreg(model1, doctype = FALSE)))
 
   with_mock("rmarkdown::all_output_formats" = function (input) {"pdf_document"},
             "knitr::current_input" = function () {NULL},

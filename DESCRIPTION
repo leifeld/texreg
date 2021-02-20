@@ -1,6 +1,6 @@
 Package: texreg
-Version: 1.38.1
-Date: 2021-02-19
+Version: 1.38.2
+Date: 2021-02-20
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
              person(given = "Claudia", family = "Zucca", email = "c.zucca@jads.nl", role = "ctb"))
@@ -16,8 +16,7 @@ Suggests:
   rmarkdown (>= 1.12.3),
   sandwich (>= 2.3-1),
   testthat (>= 2.0.0),
-  lmtest (>= 0.9-34),
-  fixest (>= 0.8.2)
+  lmtest (>= 0.9-34)
 Depends: R (>= 3.5)
 Imports: methods, stats, httr
 Enhances: AER,
@@ -47,7 +46,8 @@ Enhances: AER,
   truncreg (>= 0.2.5),
   VGAM,
   Zelig,
-  Bergm
+  Bergm,
+  fixest (>= 0.8.2)
 SystemRequirements: pandoc (>= 1.12.3) suggested for using wordreg function; LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette
 License: GPL-3
 Encoding: UTF-8

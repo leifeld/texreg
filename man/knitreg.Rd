@@ -46,7 +46,7 @@ document when a different output format is selected.
 }
 
 If Markdown and HTML rendering are selected, \link{htmlreg} arguments
-\code{doctype = FALSE} and \code{star.symbol = "\\*"} are set to enable
+\code{doctype = FALSE} and \code{star.symbol = "&#42;"} are set to enable
 compatibility with Markdown. With \R HTML documents (but not Markdown) or
 presentations (\code{.Rpres} extension), only \code{doctype = FALSE} is set.
 
