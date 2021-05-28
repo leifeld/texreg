@@ -17,11 +17,13 @@ plotreg(
   override.pval = 0,
   override.ci.low = 0,
   override.ci.up = 0,
+  override.pvalues = 0,
   omit.coef = NULL,
   reorder.coef = NULL,
   ci.level = 0.95,
-  ci.inner = 0.5,
-  use.se = FALSE,
+  ci.force = FALSE,
+  ci.force.level = 0.95,
+  ci.test = 0,
   type = "facet",
   theme = NULL,
   signif.light = "#FBC9B9",
@@ -156,6 +158,17 @@ intervals are provided here and in the \code{override.ci.low} argument, the
 standard errors and p values as well as the \code{ci.force} argument are
 ignored.}
 
+\item{override.pvalues}{Set custom values for the p-values. New p-values are
+provided as a list of numeric vectors. The list contains vectors of
+p-values for each model. There must be as many vectors of p-values as there
+are models. For example, if there are two models with three coefficients
+each, the argument could be specified as \code{override.pvalues =
+list(c(0.1, 0.2, 0.3), c(0.05, 0.06, 0.07))}. If there is only one model,
+custom values can be provided as a plain vector (not embedded in a list).
+For example: \code{override.pvalues = c(0.05, 0.06, 0.07)}. Overriding
+p-values can be useful for the implementation of robust SEs and p-values,
+for example.}
+
 \item{omit.coef}{A character string which is used as a regular expression to
 remove coefficient rows from the table. For example, \code{omit.coef =
 "group"} deletes all coefficient rows from the table where the name of the
@@ -186,16 +199,39 @@ original order.}
 should be used for the outer confidence interval? By default, \code{0.95}
 is used (i.e., an alpha value of 0.05).}
 
-\item{ci.inner}{If standard errors are converted to confidence intervals
-(because a model does not natively support CIs), what confidence level
-should be used for the inner confidence interval? By default, \code{0.50}
-is used (i.e., an alpha value of 0.5). Can be set to \code{ci.inner = 0} to
-suppress inner confidence CI bars.}
+\item{ci.force}{Should confidence intervals be used instead of the default
+standard errors and p-values? Most models implemented in the \pkg{texreg}
+package report standard errors and p-values by default while few models
+report confidence intervals. However, the functions in the \pkg{texreg}
+package can convert standard errors and into confidence intervals using
+z-scores if desired. To enforce confidence intervals instead of standard
+errors, the \code{ci.force} argument accepts either a logical value
+indicating whether all models or none of the models should be forced to
+report confidence intervals (\code{ci.force = TRUE} for all and
+\code{ci.force = FALSE} for none) or a vector of logical values indicating
+for each model separately whether the model should be forced to report
+confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}).
+Confidence intervals are computed using the standard normal distribution
+(z-values based on the \code{\link[stats:Normal]{qnorm}} function). The
+t-distribution is currently not supported because this would require each
+\code{\link{extract}} method to have an additional argument for the degrees
+of freedom.}
 
-\item{use.se}{Use one standard error for the inner horizontal bar and two
-standard errors from the estimate for the outer horizontal bar (instead
-of confidence intervals). Only available if standard errors can be
-extracted from the model using the respective \code{\link{extract}} method.}
+\item{ci.force.level}{If the \code{ci.force} argument is used to convert
+standard errors to confidence intervals, what confidence level should be
+used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
+
+\item{ci.test}{If confidence intervals are reported, the \code{ci.test}
+argument specifies the reference value to establish whether a
+coefficient/CI is significant. The default value \code{ci.test = 0}, for
+example, will display coefficients with a round circle and the red color 
+if the confidence interval does not contain \code{0}. A value of 
+\code{ci.test = 1} could be useful if coefficients are provided on the 
+odds-ratio scale, for example. It is possible to provide a single value 
+for all models or a vector with a separate value for each model 
+(even if it would make the plot hard to read). The \code{ci.test} argument
+ works both for models with native support for confidence intervals and 
+ in cases where the \code{ci.force} argument is used.}
 
 \item{type}{The default option is \code{type = "facet"}. If only one model is
 specified, it will print one forest plot applied to point estimates and

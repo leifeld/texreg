@@ -14,7 +14,7 @@ test_that("plotreg works", {
   m1 <- lm(weight ~ group)
   m2 <- lm(weight ~ group - 1)
   p1 <- plotreg(list(m1, m2))
-  p2 <- plotreg(list(m1, m2), use.se = TRUE)
+  p2 <- plotreg(list(m1, m2), ci.force = TRUE)
   p3 <- plotreg(list(m1, m2), custom.title = "My plot")
   p4 <- plotreg(list(m1, m2), custom.note = "My note")
 
@@ -26,10 +26,10 @@ test_that("plotreg works", {
   expect_s3_class(p1$data, "data.frame")
   expect_s3_class(p1, "gg")
   expect_equal(dim(p1$data), dim(readRDS("../files/PlotDataFrame.RDS"))) # test if data frame is correctly constructed
-  # saveRDS(p1$data, "../files/PlotDataFrame.RDS")
+   #saveRDS(p1$data, "../files/PlotDataFrame.RDS")
 
-  expect_identical(p1$labels$y, "Bars denote CIs. Circle points denote significance.") # tests if it is printing the correct xlab
-  expect_identical(p2$labels$y, "Bars denote SEs. Circle points denote significance.") # tests if it is printing the correct xlab
+  expect_identical(p1$labels$y, "Bars denote SEs (95%). Circle points denote significance.")# tests if it is printing the correct xlab
+  expect_identical(p2$labels$y, "Bars denote CIs (95%) computed from SEs. Circle points denote significance.") # tests if it is printing the correct xlab
   expect_identical(p3$labels$title, "My plot") # test if title is printed
   expect_identical(p4$labels$y, "My note") # test if note is printed
 
