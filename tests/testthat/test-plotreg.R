@@ -71,6 +71,6 @@ test_that("plotreg -odds ratio", {
   #saveRDS(p1$data, "../files/PlotDataFrameOR.RDS")
   class(p7$data$signif)
   # tests if significance is computed according to the value provided with ci.test
-  expect_identical(p7$data$signif, c(TRUE, FALSE))
+  expect_identical(as.character(p7$data$signif), as.character(c(TRUE, FALSE)))
 })
 
