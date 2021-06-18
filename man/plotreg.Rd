@@ -224,13 +224,13 @@ used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 \item{ci.test}{If confidence intervals are reported, the \code{ci.test}
 argument specifies the reference value to establish whether a
 coefficient/CI is significant. The default value \code{ci.test = 0}, for
-example, will display coefficients with a round circle and the red color 
-if the confidence interval does not contain \code{0}. A value of 
-\code{ci.test = 1} could be useful if coefficients are provided on the 
-odds-ratio scale, for example. It is possible to provide a single value 
-for all models or a vector with a separate value for each model 
+example, will display coefficients with a round circle and the red color
+if the confidence interval does not contain \code{0}. A value of
+\code{ci.test = 1} could be useful if coefficients are provided on the
+odds-ratio scale, for example. It is possible to provide a single value
+for all models or a vector with a separate value for each model
 (even if it would make the plot hard to read). The \code{ci.test} argument
- works both for models with native support for confidence intervals and 
+ works both for models with native support for confidence intervals and
  in cases where the \code{ci.force} argument is used.}
 
 \item{type}{The default option is \code{type = "facet"}. If only one model is
