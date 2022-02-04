@@ -8369,38 +8369,39 @@ setMethod("extract", signature = className("coxreg", "eha"),
 
 #' @noRd
 extract.wls <- function(model, include.nobs = TRUE, ...) {
-
+  
   coefnames <- rownames(summary(model)$coef)
   coefs <- summary(model)$coef[, 1]
   se <- as.numeric(summary(model)$coef[, 2])
   pval <- summary(model)$coef[, 6]
-
+  
   # Compute average variance extracted
-  # Based on: http://openmx.psyc.virginia.edu/thread/3988
-  # Could also check description of reliability() from {semTools}
+  # Based on: https://cran.r-project.org/web/packages/cSEM/vignettes/Using-assess.html#ave
+  # Given that the model uses standardized loadings: Var() = 1 and the denominator reduces to K
+  # "Empirically, it is the mean square of the standardized loading"
   mat <- model$mx.fit$impliedS1$result
   if (is.null(mat)) {
     ave <- NULL
   } else {
-    ave <- mean(mat[nrow(mat), -ncol(mat)])
+    ave <- mean( mat[nrow(mat), -ncol(mat)] ^ 2 )
   }
-
-  chi      <- summary(model)$stat["Chi-square of independence model", 1]
-  dfs       <- summary(model)$stat["DF of independence model", 1]
-  # chi.pval <- summary(model)$stat["p value of target model", 1]
-  # if(pval < .0001) pval <- "< .0001"
+  
+  chi      <- summary(model)$stat["Chi-square of target model", 1]
+  dfs      <- summary(model)$stat["DF of target model", 1]
+  chi.pval <- summary(model)$stat["p value of target model", 1]
   rmsea    <- summary(model)$stat["RMSEA", 1]
   rmseall  <- summary(model)$stat["RMSEA lower 95% CI", 1]
   rmseaul  <- summary(model)$stat["RMSEA upper 95% CI", 1]
   cfi      <- summary(model)$stat["CFI", 1]
-
-  gof <- c(chi, dfs, rmsea, rmseall, rmseaul, cfi)
-  gof.names <- c("Chi-square of independence model",
-                 "DF of independence model",
+  
+  gof <- c(chi, dfs, chi.pval, rmsea, rmseall, rmseaul, cfi)
+  gof.names <- c("Chi-square of target model",
+                 "DF of target model",
+                 "Chi-square p-value",
                  "RMSEA", "RMSEA lower 95 percent CI",
                  "RMSEA upper 95 percent CI",
                  "CFI")
-  gof.decimal <- c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
+  gof.decimal <- c(TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE)
   if (!is.null(ave)) {
     gof <- c(gof, ave)
     gof.names <- c(gof.names, "Average variance extracted")
@@ -8411,7 +8412,7 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
     gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
-
+  
   tr <- createTexreg(
     coef.names = coefnames,
     coef = coefs,
