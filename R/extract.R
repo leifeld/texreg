@@ -8257,7 +8257,7 @@ extract.weibreg <- function(model,
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.events == TRUE) {
-    ev <- model$events
+    ev <- model$n.events
     gof <- c(gof, ev)
     gof.names <- c(gof.names, "Num. events")
     gof.decimal <- c(gof.decimal, FALSE)
