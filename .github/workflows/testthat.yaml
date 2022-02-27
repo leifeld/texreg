@@ -9,7 +9,7 @@ on:
 name: testthat
 
 jobs:
-  test-coverage:
+  testthat:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,12 +18,10 @@ jobs:
         with:
           r-version: 'release'
 
-      - uses: r-lib/actions/setup-pandoc@master
-
       - name: Query dependencies
         run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          install.packages("devtools")
+          saveRDS(devtools::dev_package_deps(dependencies = c("Depends", "Imports", "LinkingTo", "Suggests")), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
       - name: Cache R packages
@@ -35,12 +33,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("devtools"))
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("testthat")
-          install.packages("withr")
+          devtools::install_deps(dependencies = TRUE)
           install.packages(c("truncreg", "speedglm", "forecast", "Bergm", "bife", "brms", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "gamlss.inf", "miceadds", "lme4", "AER", "eha", "metaSEM", "biglm", "mlogit"))
-          remotes::install_github("https://github.com/glmmTMB/glmmTMB")
+          Sys.unsetenv("GITHUB_PAT")
+          devtools::install_github("https://github.com/glmmTMB/glmmTMB")
         shell: Rscript {0}
 
       - name: Unit testing
