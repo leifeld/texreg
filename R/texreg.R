@@ -2077,15 +2077,17 @@ print.texregTable <- function(x, ...) {
 #'   (because a model does not natively support CIs), what confidence level
 #'   should be used for the outer confidence interval? By default, \code{0.95}
 #'   is used (i.e., an alpha value of 0.05).
-#' @param ci.inner If standard errors are converted to confidence intervals
-#'   (because a model does not natively support CIs), what confidence level
-#'   should be used for the inner confidence interval? By default, \code{0.50}
-#'   is used (i.e., an alpha value of 0.5). Can be set to \code{ci.inner = 0} to
-#'   suppress inner confidence CI bars.
-#' @param use.se Use one standard error for the inner horizontal bar and two
-#'   standard errors from the estimate for the outer horizontal bar (instead
-#'   of confidence intervals). Only available if standard errors can be
-#'   extracted from the model using the respective \code{\link{extract}} method.
+#' @param ci.test If confidence intervals are reported, the \code{ci.test}
+#'   argument specifies the reference value to establish whether a
+#'   coefficient/CI is significant. The default value \code{ci.test = 0}, for
+#'   example, will display coefficients with a round circle and the red color
+#'   if the confidence interval does not contain \code{0}. A value of
+#'   \code{ci.test = 1} could be useful if coefficients are provided on the
+#'   odds-ratio scale, for example. It is possible to provide a single value
+#'   for all models or a vector with a separate value for each model
+#'   (even if it would make the plot hard to read). The \code{ci.test} argument
+#'    works both for models with native support for confidence intervals and
+#'    in cases where the \code{ci.force} argument is used.
 #' @param type The default option is \code{type = "facet"}. If only one model is
 #'   specified, it will print one forest plot applied to point estimates and
 #'   confidence intervals. If more than one model is specified, it will print
@@ -2156,11 +2158,13 @@ plotreg <- function(l,
                     override.pval = 0,
                     override.ci.low = 0,
                     override.ci.up = 0,
+                    override.pvalues = 0,
                     omit.coef = NULL,
                     reorder.coef = NULL,
                     ci.level = 0.95,
-                    ci.inner = 0.5,
-                    use.se = FALSE,
+                    ci.force = FALSE,
+                    ci.force.level = 0.95,
+                    ci.test = 0,
                     type = "facet",
                     theme = NULL,
                     signif.light = "#FBC9B9",
@@ -2187,11 +2191,7 @@ plotreg <- function(l,
     omit.coef <- NA
   }
 
-  if (length(use.se) == 1) {
-    use.se <- rep(use.se, length(l))
-  }
-
-  # extract texreg objects and override data
+  # Extract texreg objects and override data
   models <- get.data(l, ...)
   models <- override(models,
                      override.coef,
@@ -2199,7 +2199,7 @@ plotreg <- function(l,
                      override.pval,
                      override.ci.low,
                      override.ci.up)
-  # custom model names
+  # Custom model names
   model.names <- character()
   if (is.null(custom.model.names)) {
     model.names <- paste("Model", 1:length(l))
@@ -2211,11 +2211,11 @@ plotreg <- function(l,
     model.names <- custom.model.names
   }
 
+  # Initialize variables to store the data for plotting
   co <- se <- co.names <- pv <- lab <- ci.low <- ci.up <- NULL
 
-  # make dataframe
+  # Custom coefficients names
   for (i in 1:length(models)) {
-    # custom coefficient names
     if (!is.null(custom.coef.names)) {
       if ("list" %in% class(custom.coef.names)) {
         if (length(custom.coef.names[[i]]) == length(models[[i]]@coef.names)) {
@@ -2234,6 +2234,7 @@ plotreg <- function(l,
       }
     }
 
+    # Store data in the inizialized variables for plotting
     coef.names <- models[[i]]@coef.names
     co.names <- append(co.names, coef.names)
     coefs <- models[[i]]@coef
@@ -2252,102 +2253,142 @@ plotreg <- function(l,
     if (length(models[[i]]@ci.up) > 0) {
       ci.up <- append(ci.up, models[[i]]@ci.up)
     }
+
+    # Create confidence intervals using ci.force argument if it is set to TRUE
+    # (code replicated from matrixreg, but modified where needed)
+    if (isTRUE(ci.force[i])) {
+      ci.low <- ci.up <- NULL
+    }
+    if (is.logical(ci.force) && length(ci.force) == 1) {
+      ci.force <- rep(ci.force, length(models))
+    }
+    if (!is.logical(ci.force)) {
+      stop("The 'ci.force' argument must be a vector of logical values.")
+    }
+    if (length(ci.force) != length(models)) {
+      stop(paste("There are", length(models), "models and", length(ci.force), "ci.force values."))
+    }
+    if (is.null(ci.force.level) ||
+        length(ci.force.level) != 1 ||
+        !is.numeric(ci.force.level) ||
+        ci.force.level > 1 ||
+        ci.force.level < 0) {
+      stop("'ci.force.level' must be a single value between 0 and 1.")
+    }
+
+    for (i in 1:length(models)) {
+      if (isTRUE(ci.force[i]) && length(models[[i]]@se) > 0) {
+        z <- stats::qnorm(1 - ((1 - ci.force.level) / 2))
+        upper <- models[[i]]@coef + (z * models[[i]]@se)
+        lower <- models[[i]]@coef - (z * models[[i]]@se)
+
+        # store the coefficients as a ordered vector from model 1 to N
+        ci.low <- append(ci.low, lower)
+        ci.up <- append(ci.up, upper)
+      }
+    }
   }
+
+  # Building the main dataframe to store data for plotting
   dataframe <- data.frame(cbind(co.names, co, lab))
 
-  if (length(models[[i]]@se) > 0) {
+  if (length(se) > 0) {
     dataframe <- cbind(dataframe, se)
   }
-
-  if (length(models[[i]]@pvalues) > 0) {
+  if (length(pv) > 0) {
     dataframe <- cbind(dataframe, pv)
   }
-
-  if (length(models[[i]]@ci.low) > 0) {
+  if (length(ci.low) > 0) {
     dataframe <- cbind(dataframe, ci.low)
   }
-
-  if (length(models[[i]]@ci.up) > 0) {
+  if (length(ci.up) > 0) {
     dataframe <- cbind(dataframe, ci.up)
   }
+
+  # Impose numeric class to every variable in the dataframe
   dataframe$co <- as.numeric(as.character(dataframe$co))
 
   if (length(dataframe$se) > 0) {
     dataframe$se <- as.numeric(as.character(dataframe$se))
   }
-
   if (length(dataframe$pv) > 0) {
     dataframe$pv <- as.numeric(as.character(dataframe$pv))
   }
-
   if (length(dataframe$ci.low) > 0) {
     dataframe$ci.low <- as.numeric(as.character(dataframe$ci.low))
   }
-
   if (length(dataframe$ci.up) > 0) {
     dataframe$ci.up <- as.numeric(as.character(dataframe$ci.up))
   }
 
-  # aggregate confidence intervals or SEs
-  if (isTRUE(use.se[i]) && length(models[[i]]@se) > 0) {
-    lower.inner <- dataframe$co - dataframe$se
-    upper.inner <- dataframe$co + dataframe$se
-    lower.outer <- dataframe$co - 2 * dataframe$se
-    upper.outer <- dataframe$co + 2 * dataframe$se
-  } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
-    z.inner <- stats::qnorm(1 - ((1 - ci.inner) / 2))
-    lower.inner <- dataframe$co - (z.inner * dataframe$se)
-    upper.inner <- dataframe$co + (z.inner * dataframe$se)
-    z.outer <- stats::qnorm(1 - ((1 - ci.level) / 2))
-    lower.outer <- dataframe$co - (z.outer * dataframe$se)
-    upper.outer <- dataframe$co + (z.outer * dataframe$se)
-  } else if (length(models[[i]]@se) == 0 && length(models[[i]]@pvalues) > 0) {
-    stop("Model has p-values but no SEs. SEs or CIs are required for plotting.")
-  } else {
-    lower.outer <- dataframe$ci.low
-    upper.outer <- dataframe$ci.up
-    lower.inner <- rep(0, length(dataframe$co.names))
-    upper.inner <- rep(0, length(dataframe$co.names))
+  # Remove se and pv from dataframe in case ci.up and ci.low are provided
+  if (length(dataframe$ci.up > 0) && length(dataframe$ci.low > 0)) {
+    dataframe <- dataframe[, !(colnames(dataframe) %in% c("se","pv"))]
   }
 
+  # Initialize variable to store intervals for bars in plot
+  # (name kept from old version where inner bars were also displayed)
+  lower.outer <- upper.outer <- NULL
+
+  # Create intervals from standard error OR assign ci.low and ci.up to the
+  # variables called for plotting
+  if (isFALSE(ci.force[i]) && length(dataframe$se) > 0) {
+    lower.outer <- dataframe$co - 2 * dataframe$se
+    upper.outer <- dataframe$co + 2 * dataframe$se
+  } else if (length(dataframe$ci.low) > 0 && length(dataframe$ci.up) > 0) {
+    lower.outer <- dataframe$ci.low
+    upper.outer <- dataframe$ci.up
+  } else if (length(dataframe$se) == 0 && length(dataframe$pvalues) > 0) {
+    stop("Model has p-values but no SEs. SEs or CIs are required for plotting.")
+  }
+
+  # Bind the lower.outer and upper.outer in the dataframe
   if (length(lower.outer) > 0) {
     dataframe <- cbind(dataframe, lower.outer)
   }
-  if (length(lower.inner) > 0) {
-    dataframe <- cbind(dataframe, lower.inner)
-  }
   if (length(upper.outer) > 0) {
     dataframe <- cbind(dataframe, upper.outer)
-  }
-  if (length(upper.inner) > 0) {
-    dataframe <- cbind(dataframe, upper.inner)
+  } else if (length(upper.outer) == 0 && length(lower.outer) == 0) {
+    stop("Model does not have either SEs or CIs. SEs or CIs are required for plotting bars.")
   }
 
-  # which terms are significant?
+  # Errors for the ci.test argument (adapted from matrixreg)
+  if (is.null(ci.test) || (length(ci.test) == 1 && is.na(ci.test))) {
+    ci.test <- NA
+  } else if (!is.numeric(ci.test) && !all(is.na(ci.test))) {
+    stop("'ci.test' must be numeric or NA.")
+  }
+  if (length(ci.test) != 1 && length(ci.test) != length(models)) {
+    stop("'ci.test' must be either a single value for all models or one value per model or NA.")
+  }
+  if (length(ci.test) == 1) {
+    ci.test <- rep(ci.test, length(models))
+  }
+
+  # Assign significance labels to terms
   if (length(dataframe$pv) == 0 & length(dataframe$ci.low) == 0) {
-    stop("Impossible to estimate significance since no CIs or SEs are provided.")
-  }
-
-  if (length(dataframe$pv) > 0) {
+    stop("Impossible to estimate significance since no CIs or pvalues are provided.")
+  } else if (length(dataframe$pv) > 0) {
+    # Significance from SE OR CI
     signif.outer <- dataframe$pv < (1 - ci.level)
   } else if (length(dataframe$ci.low) > 0) {
-    signif.outer <- ((dataframe$ci.low > 0 & dataframe$ci.up > 0) | (dataframe$ci.low < 0 & dataframe$ci.up < 0))
+    signif.outer <- ((dataframe$ci.low > ci.test & dataframe$ci.up > ci.test) |
+                       (dataframe$ci.low < ci.test & dataframe$ci.up < ci.test))
   }
 
+  # Insert significance in dataframe
   if (is.logical(signif.outer) && length(signif.outer) == length(dataframe$co)) {
-    signif <- sapply(signif.outer, isTRUE)
-  } else if (sapply(signif.outer, isTRUE)) {
-    signif <- apply(cbind(lower.outer, upper.outer), 1, function(x) x[1] <= 0 && x[2] >= 0)
-  } else if (sapply(signif.outer, isFALSE)) {
-    signif <- apply(cbind(lower.inner, upper.inner), 1, function(x) x[1] <= 0 && x[2] >= 0)
+    signif <- signif.outer
+    dataframe <- cbind(dataframe, signif)
   } else {
     stop("'signif.outer' does not correspond to the intervals provided.")
   }
 
-  dataframe <- cbind(dataframe, signif)
+  # Make sure lab and co.names are factors, otherwise it clashes with ggplot2
   dataframe$lab <- as.factor(dataframe$lab)
   dataframe$co.names <- as.factor(dataframe$co.names)
 
+  # Error message for coefficient misspecification
   if (length(co) == 0) {
     stop(paste("No coefficients available. Was the 'omit.coef' argument",
                "misspecified? If coefficients were renamed using the",
@@ -2355,65 +2396,61 @@ plotreg <- function(l,
                "coefficients."))
   }
 
-  # omit.coef
+  # Processing omit.coef
   if (!is.na(omit.coef)) {
     dataframe <- dataframe[!grepl(omit.coef, dataframe$co.names), ]
   }
 
-  # custom coef. name
+  # Processing custom coef. name
   if (length(custom.coef.names) > 0) {
     levels(dataframe$co.names) <- custom.coef.names
   }
 
-  # custom model name
+  # Processing custom model name
   if (length(custom.model.names) > 0) {
     levels(dataframe$lab) <- custom.model.names
   }
 
-  # ggplot functions
+  # Starting ggplot functions
   if (type == "facet") {
+
+    # Processing reorder.coef
+    dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
     if (length(reorder.coef) > 0) {
-      # reorder levels
-      dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-      # reorder coef
+      # Reorder coef
       reorder.coef<- rev(reorder.coef)
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
     } else {
-      # reorder levels
-      dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-      # reorder coef in original order
+      # Reorder coef in original order
       startlevel<- c(length(dataframe$co.names):1)
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
     }
 
+    # Processing custom.coef.map
     if (length(custom.coef.map) > 0) {
-      # keep only coefficients selected by the user and replace NAs if any
+      # Keep only coefficients selected by the user and replace NAs if any
       idx <- is.na(custom.coef.map)
       custom.coef.map[idx] <- names(custom.coef.map)[idx]
       selectcoef <- names(custom.coef.map)
       keepcoef <- paste(selectcoef, collapse = "|")
       dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
-      # resize number of levels in factor to avoid error
+      # Resize number of levels in factor to avoid error
       dataframe$co.names <- ordered(dataframe$co.names, levels = unique(as.character(dataframe$co.names)))
-      # rename selected coefficients
+      # Rename selected coefficients
       renamedcoef <- paste(unlist(custom.coef.map), sep = ", ")
       levels(dataframe$co.names) <- renamedcoef
-      # invert order factors for plot
+      # Invert order factors for plot
       coeforder<- c(length(dataframe$co.names):1)
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[coeforder])
     }
 
     p <- ggplot2::ggplot(dataframe, ggplot2::aes(co.names, co)) +
-      ggplot2::geom_hline(yintercept = 0,
+      ggplot2::geom_hline(yintercept = ci.test,
                           lty = 2, lwd = 1,
                           colour = "grey50") +
       ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.outer, ymax = upper.outer),
                              lwd = 1,
                              colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light),
-                             width = 0) +
-      ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.inner, ymax = upper.inner),
-                             lwd = 2.5,
-                             colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
                              width = 0) +
       ggplot2::geom_point(size = 3,
                           pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22),
@@ -2432,52 +2469,48 @@ plotreg <- function(l,
 
   } else if (type == "forest") {
     if (length(reorder.coef) > 0) {
-      # reorder levels
+      # Reorder levels
       dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-      # reorder coef
+      # Reorder coef
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[reorder.coef])
     } else {
-      # reorder levels
+      # Reorder levels
       dataframe$co.names <- ordered(dataframe$co.names, levels = (unique(as.character(dataframe$co.names))))
-      # reorder coef in original order
+      # Reorder coef in original order
       startlevel<- c(1:length(dataframe$co.names))
       dataframe$co.names <- factor(dataframe$co.names, levels(dataframe$co.names)[startlevel])
     }
 
     if (length(custom.coef.map) > 0) {
-      # keep only coefficients selected by the user and replace NAs if any
+      # Keep only coefficients selected by the user and replace NAs if any
       idx <- is.na(custom.coef.map)
       custom.coef.map[idx] <- names(custom.coef.map)[idx]
       selectcoef <- names(custom.coef.map)
       keepcoef <- paste(selectcoef, collapse = "|")
       dataframe <- dataframe[grepl(keepcoef, dataframe$co.names), ]
-      # resize number of levels in factor to avoid error
+      # Resize number of levels in factor to avoid error
       dataframe$co.names <- ordered(dataframe$co.names, levels = unique(as.character(dataframe$co.names)))
-      # rename selected coefficients
+      # Rename selected coefficients
       renamedcoef <- paste(unlist(custom.coef.map), sep = ", ")
       levels(dataframe$co.names) <- renamedcoef
-      # invert order factors for plot
+      # Invert order factors for plot
       coeforder<- c(length(dataframe$lab):1)
       dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[coeforder])
     }
 
-    # put models in the right order
+    # Put models in the right order
     laborder<- c(length(dataframe$lab):1)
     dataframe$lab <- factor(dataframe$lab, levels(dataframe$lab)[laborder])
 
-    # plot
+    # Plot
     p <- ggplot2::ggplot(dataframe, ggplot2::aes(lab, co)) +
-      ggplot2::geom_hline(yintercept = 0,
+      ggplot2::geom_hline(yintercept = ci.test,
                           lty = 2,
                           lwd = 1,
                           colour = "grey50") +
       ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.outer, ymax = upper.outer),
                              lwd = 1,
                              colour = ifelse(sapply(dataframe$signif, isTRUE) , signif.light, insignif.light),
-                             width = 0) +
-      ggplot2::geom_errorbar(ggplot2::aes(ymin = lower.inner, ymax = upper.inner),
-                             lwd = 2.5,
-                             colour = ifelse(sapply(dataframe$signif, isTRUE), signif.medium, insignif.medium),
                              width = 0) +
       ggplot2::geom_point(size = 3,
                           pch = ifelse(sapply(dataframe$signif, isTRUE), 21, 22),
@@ -2495,31 +2528,41 @@ plotreg <- function(l,
     }
   }
 
-  # adds message to p as ylab; adds output meassages to paste that comes as R output (not in plot)
-  if (isTRUE(use.se[i]) && length(models[[i]]@se) > 0) {
-    p <- p + ggplot2::ylab("Bars denote SEs. Circle points denote significance.")
+  # It adds message to p as ylab; adds output meassages to paste that comes as R
+  # output (not in plot)
+  ci.level.perc <- ci.level*100
+  if (isFALSE(ci.force[i]) && length(dataframe$se) > 0) {
+    p <- p + ggplot2::ylab(paste0("Bars denote SEs (",
+                                  deparse1(substitute(ci.level.perc)),
+                                  "%). Circle points denote significance."))
     if (length(custom.note) > 0) {
       p <- p + ggplot2::ylab(custom.note)
     }
     if (length(models) == 1) {
-      message("Model: bars denote one (inner) resp. two (outer) standard errors.")
+      message(paste0("Model: bars denote standard errors(",
+                     deparse1(substitute(ci.level.perc)), "%)."))
     } else if (length(models) > 1) {
-      message("Models: bars denote one (inner) resp. two (outer) standard errors.")
+      message(paste0("Models: bars denote standard errors(" ,
+                     deparse1(substitute(ci.level.perc)), "%)."))
     }
-  } else if (length(models[[i]]@ci.low) == 0 && length(models[[i]]@se) > 0) {
-    p <- p + ggplot2::ylab("Bars denote CIs. Circle points denote significance.")
+  } else if (isTRUE(ci.force[i]) && length(dataframe$se) == 0) {
+    p <- p + ggplot2::ylab(paste0("Bars denote CIs (",
+                                  deparse1(substitute(ci.level.perc)),
+                                  "%) computed from SEs. Circle points denote significance."))
     if (length(custom.note) > 0) {
       p <- p + ggplot2::ylab(custom.note)
     }
     if (length(models) == 1) {
-      message(paste0("Model: bars denote 0.5 (inner) resp. ", ci.level,
-                     " (outer) confidence intervals (computed from standard errors)."))
+      message(paste0("Model: bars denote ", ci.level,
+                     " confidence intervals."))
     } else if (length(models) > 1) {
-      message(paste0("Models: bars denote 0.5 (inner) resp. ", ci.level,
-                     " (outer) confidence intervals (computed from standard errors)."))
+      message(paste0("Models: bars denote ", ci.level,
+                     " confidence intervals."))
     }
   } else {
-    p <- p + ggplot2::ylab("Bars denote CIs. Circle points denote significance.")
+    p <- p + ggplot2::ylab(paste0("Bars denote CIs (",
+                                  deparse1(substitute(ci.level.perc)),
+                                  "%). Circle points denote significance."))
     if (length(custom.note) > 0) {
       p <- p + ggplot2::ylab(custom.note)
     }
@@ -2530,7 +2573,7 @@ plotreg <- function(l,
     }
   }
 
-  # print plot in R
+  # Print plot in R
   if (is.null(file)) {
     return(p)
   } else {
