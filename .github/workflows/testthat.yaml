@@ -35,7 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("remotes"))
+          install.packages(c("devtools"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("testthat")
           install.packages("withr")
@@ -45,6 +45,5 @@ jobs:
       - name: Unit testing
         run: |
           library("testthat")
-          library("texreg")
-          withr::with_envvar(c("NOT_CRAN" = "true"), testthat::test_check("texreg"))
+          withr::with_envvar(c("NOT_CRAN" = "true"), devtools::test())
         shell: Rscript {0}
