@@ -14,15 +14,18 @@ An updated version of this paper is included as a [package vignette](https://cra
 
 ## Installation from GitHub
 
-The last stable release can be installed from CRAN. To install the latest version from GitHub, use the `remotes` package:
+The last stable release can be installed from CRAN:
 ``` r
-library("remotes")
-install_github("leifeld/texreg")
+install.packages("texreg")
+```
+To install the latest development version from GitHub, use the `remotes` package:
+``` r
+remotes::install_github("leifeld/texreg")
 ```
 
 ## Contribute to the project
 
-Please feel free to report bugs or possible enhancements using the [issue tracker](http://github.com/leifeld/texreg/issues) and propose solutions for known bugs using a pull request.
+Please feel free to report bugs or possible enhancements using the [issue tracker](http://github.com/leifeld/texreg/issues) and propose solutions for known bugs using a pull request. Please observe and follow the code formatting in the texreg package when doing so, and add (or update) `testthat` unit tests to your pull requests if possible.
 
 [![R-CMD-check](https://github.com/leifeld/texreg/workflows/R-CMD-check/badge.svg)](https://github.com/leifeld/texreg/actions)
 [![cran version](http://www.r-pkg.org/badges/version/texreg)](https://cran.r-project.org/package=texreg)
@@ -30,10 +33,3 @@ Please feel free to report bugs or possible enhancements using the [issue tracke
 [![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/texreg)](http://cranlogs.r-pkg.org/badges/grand-total/texreg)
 [![Research software impact](http://depsy.org/api/package/cran/texreg/badge.svg)](http://depsy.org/package/r/texreg)
 [![Coverage status](https://codecov.io/gh/leifeld/texreg/branch/master/graph/badge.svg)](https://codecov.io/github/leifeld/texreg?branch=master)
-
-Please also consider contributing to the project by telling other people about the software; citing our underlying [research](https://www.philipleifeld.com/publications) in your publications; or funding the development financially:
-
-<a href="https://liberapay.com/leifeld/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a>
-
-[<img src="http://img.shields.io/liberapay/patrons/leifeld.svg?logo=liberapay">](https://liberapay.com/leifeld)
-[<img src="http://img.shields.io/liberapay/receives/leifeld.svg?logo=liberapay">](https://liberapay.com/leifeld)

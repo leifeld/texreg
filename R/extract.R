@@ -6105,73 +6105,6 @@ setMethod("extract", signature = className("ols", "rms"),
           definition = extract.ols)
 
 
-# -- extract.panelAR (panelAR) -------------------------------------------------
-
-#' @noRd
-extract.panelAR <- function(model,
-                            include.rsquared = TRUE,
-                            include.nobs = TRUE,
-                            include.groups = TRUE,
-                            ...) {
-  s <- summary(model, ...)
-
-  coefficient.names <- rownames(s$coef)
-  co <- s$coef[, 1]
-  se <- s$coef[, 2]
-  pval <- s$coef[, 4]
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-
-  if (include.rsquared == TRUE){
-    rs <- s$r2
-    gof <- c(gof, rs)
-    gof.names <- c(gof.names, "R$^2$")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE){
-    nobs <- length(s$residuals)
-    gof <- c(gof, nobs)
-    gof.names <- c(gof.names, "Num. obs.")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.groups == TRUE){
-    ngroups <- sqrt(length(s$Sigma))
-    gof <- c(gof, ngroups)
-    gof.names <- c(gof.names, "Num. panels")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-
-  tr <- createTexreg(coef.names = coefficient.names,
-                     coef = co,
-                     se = se,
-                     pvalues = pval,
-                     gof.names = gof.names,
-                     gof = gof
-  )
-  return(tr)
-}
-
-#' \code{\link{extract}} method for \code{panelAR} objects
-#'
-#' \code{\link{extract}} method for \code{panelAR} objects created by the
-#' \code{\link[panelAR]{panelAR}} function in the \pkg{panelAR} package.
-#'
-#' @param model A statistical model object.
-#' @param include.rsquared Report R^2 in the GOF block?
-#' @param include.nobs Report the number of observations in the GOF block?
-#' @param include.groups Report the number of groups?
-#' @param ... Custom parameters, which are handed over to subroutines, in this
-#'   case to the \code{summary} method for the object.
-#'
-#' @method extract panelAR
-#' @aliases extract.panelAR
-#' @export
-setMethod("extract", signature = className("panelAR", "panelAR"),
-          definition = extract.panelAR)
-
-
 # -- extract.pglm (pglm) -------------------------------------------------------
 
 #' @noRd
@@ -8369,12 +8302,12 @@ setMethod("extract", signature = className("coxreg", "eha"),
 
 #' @noRd
 extract.wls <- function(model, include.nobs = TRUE, ...) {
-  
+
   coefnames <- rownames(summary(model)$coef)
   coefs <- summary(model)$coef[, 1]
   se <- as.numeric(summary(model)$coef[, 2])
   pval <- summary(model)$coef[, 6]
-  
+
   # Compute average variance extracted
   # Based on: https://cran.r-project.org/web/packages/cSEM/vignettes/Using-assess.html#ave
   # Given that the model uses standardized loadings: Var() = 1 and the denominator reduces to K
@@ -8383,9 +8316,9 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
   if (is.null(mat)) {
     ave <- NULL
   } else {
-    ave <- mean( mat[nrow(mat), -ncol(mat)] ^ 2 )
+    ave <- mean(mat[nrow(mat), -ncol(mat)]^2)
   }
-  
+
   chi      <- summary(model)$stat["Chi-square of target model", 1]
   dfs      <- summary(model)$stat["DF of target model", 1]
   chi.pval <- summary(model)$stat["p value of target model", 1]
@@ -8393,7 +8326,7 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
   rmseall  <- summary(model)$stat["RMSEA lower 95% CI", 1]
   rmseaul  <- summary(model)$stat["RMSEA upper 95% CI", 1]
   cfi      <- summary(model)$stat["CFI", 1]
-  
+
   gof <- c(chi, dfs, chi.pval, rmsea, rmseall, rmseaul, cfi)
   gof.names <- c("Chi-square of target model",
                  "DF of target model",
@@ -8412,7 +8345,7 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
     gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
-  
+
   tr <- createTexreg(
     coef.names = coefnames,
     coef = coefs,
