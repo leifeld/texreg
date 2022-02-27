@@ -105,9 +105,10 @@ test_that("extract brmsfit objects from the brms package", {
 
   # example 2 from brm help page; see ?brm
   sink(nullfile())
-  suppressMessages(fit2 <- brm(rating ~ period + carry + cs(treat),
-                               data = inhaler, family = sratio("logit"),
-                               prior = set_prior("normal(0,5)"), chains = 1))
+  suppressWarnings(suppressMessages(
+    fit2 <- brm(rating ~ period + carry + cs(treat),
+                data = inhaler, family = sratio("logit"),
+                prior = set_prior("normal(0,5)"), chains = 1)))
   sink()
 
   suppressWarnings(tr <- extract(fit2))
@@ -122,10 +123,11 @@ test_that("extract brmsfit objects from the brms package", {
   # example 1 from brm help page; see ?brm
   bprior1 <- prior(student_t(5,0,10), class = b) + prior(cauchy(0,2), class = sd)
   sink(nullfile())
-  fit1 <- suppressMessages(brm(count ~ zAge + zBase * Trt + (1|patient),
-                               data = epilepsy,
-                               family = poisson(),
-                               prior = bprior1))
+  fit1 <- suppressWarnings(suppressMessages(
+    brm(count ~ zAge + zBase * Trt + (1|patient),
+        data = epilepsy,
+        family = poisson(),
+        prior = bprior1)))
   sink()
 
   suppressMessages(tr <- extract(fit1, use.HDI = TRUE, reloo = TRUE))

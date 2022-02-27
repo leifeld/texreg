@@ -39,7 +39,8 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("testthat")
           install.packages("withr")
-          install.packages(c("truncreg", "speedglm", "forecast", "Bergm", "bife", "brms", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "famlss.inf", "miceadds", "lme4", "glmmTMB", "AER", "eha", "metaSEM"))
+          install.packages(c("truncreg", "speedglm", "forecast", "Bergm", "bife", "brms", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "gamlss.inf", "miceadds", "lme4", "AER", "eha", "metaSEM", "biglm", "mlogit"))
+          remotes::install_github("https://github.com/glmmTMB/glmmTMB")
         shell: Rscript {0}
 
       - name: Unit testing
