@@ -25,7 +25,8 @@
 #' for linear models. To get help on a specific extract method, type something
 #' like \code{?`extract,lm-method`} (or something similar for other models,
 #' where \code{"lm"} needs to be replaced by the class name of the respective
-#' model).
+#' model). You can also list the available methods by displaying the
+#' \link[=texreg-package]{texreg package} help index.
 #'
 #' Users can contribute their own extensions for additional statistical models.
 #' Examples are contained in the article in the Journal of Statistical Software
@@ -8181,7 +8182,7 @@ extract.weibreg <- function(model,
     aic <- 2 * model$loglik[2] + 2 * length(coefs)
     gof <- c(gof, aic)
     gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, FALSE)
+    gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.nobs == TRUE) {
     n <- nobs(model)
@@ -8301,49 +8302,118 @@ setMethod("extract", signature = className("coxreg", "eha"),
 # -- extract.wls (metaSEM) -----------------------------------------------------
 
 #' @noRd
-extract.wls <- function(model, include.nobs = TRUE, ...) {
+extract.wls <- function(model,
+                        include.statistics = TRUE,
+                        include.nobs = TRUE,
+                        include.aic = TRUE,
+                        include.bic = TRUE,
+                        ...) {
 
   coefnames <- rownames(summary(model)$coef)
-  coefs <- summary(model)$coef[, 1]
-  se <- as.numeric(summary(model)$coef[, 2])
-  pval <- summary(model)$coef[, 6]
-
-  # Compute average variance extracted
-  # Based on: https://cran.r-project.org/web/packages/cSEM/vignettes/Using-assess.html#ave
-  # Given that the model uses standardized loadings: Var() = 1 and the denominator reduces to K
-  # "Empirically, it is the mean square of the standardized loading"
-  mat <- model$mx.fit$impliedS1$result
-  if (is.null(mat)) {
-    ave <- NULL
-  } else {
-    ave <- mean(mat[nrow(mat), -ncol(mat)]^2)
+  coefs <- summary(model)$coef$Estimate
+  se <- as.numeric(summary(model)$coef$`Std.Error`)
+  pval <- summary(model)$coef$`Pr(>|z|)`
+  ci.l <- summary(model)$coef$lbound
+  ci.u <- summary(model)$coef$ubound
+  if (all(is.na(se))) {
+    se <- numeric(0)
+  }
+  if (all(is.na(pval))) {
+    pval <- numeric(0)
+  }
+  if (all(is.na(ci.l)) && all(is.na(ci.u))) {
+    ci.l <- numeric(0)
+    ci.u <- numeric(0)
+  }
+  # prefer SE and p-values if available
+  if (length(se) > 0 && length(se) == length(pval) &&
+      (length(ci.u) > 0 || length(ci.l) > 0)) {
+    ci.l <- numeric(0)
+    ci.u <- numeric(0)
   }
 
-  chi      <- summary(model)$stat["Chi-square of target model", 1]
-  dfs      <- summary(model)$stat["DF of target model", 1]
-  chi.pval <- summary(model)$stat["p value of target model", 1]
-  rmsea    <- summary(model)$stat["RMSEA", 1]
-  rmseall  <- summary(model)$stat["RMSEA lower 95% CI", 1]
-  rmseaul  <- summary(model)$stat["RMSEA upper 95% CI", 1]
-  cfi      <- summary(model)$stat["CFI", 1]
-
-  gof <- c(chi, dfs, chi.pval, rmsea, rmseall, rmseaul, cfi)
-  gof.names <- c("Chi-square of target model",
-                 "DF of target model",
-                 "Chi-square p-value",
-                 "RMSEA", "RMSEA lower 95 percent CI",
-                 "RMSEA upper 95 percent CI",
-                 "CFI")
-  gof.decimal <- c(TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE)
-  if (!is.null(ave)) {
-    gof <- c(gof, ave)
-    gof.names <- c(gof.names, "Average variance extracted")
-    gof.decimal <- c(gof.decimal, TRUE)
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.statistics == TRUE) {
+    chi <- summary(model)$stat["Chi-square of target model", 1]
+    if (!is.na(chi) && !is.null(chi) && is.finite(chi)) {
+      gof <- c(gof, chi)
+      gof.names <- c(gof.names, "Chi-square of target model")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    dfs <- summary(model)$stat["DF of target model", 1]
+    if (!is.na(dfs) && !is.null(dfs) && is.finite(dfs)) {
+      gof <- c(gof, dfs)
+      gof.names <- c(gof.names, "DF of target model")
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    chi.pval <- summary(model)$stat["p value of target model", 1]
+    if (!is.na(chi.pval) && !is.null(chi.pval) && is.finite(chi.pval)) {
+      gof <- c(gof, chi.pval)
+      gof.names <- c(gof.names, "Chi-square p-value")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    rmsea <- summary(model)$stat["RMSEA", 1]
+    if (!is.na(rmsea) && !is.null(rmsea) && is.finite(rmsea)) {
+      gof <- c(gof, rmsea)
+      gof.names <- c(gof.names, "RMSEA")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    rmseall  <- summary(model)$stat["RMSEA lower 95% CI", 1]
+    if (!is.na(rmseall) && !is.null(rmseall) && is.finite(rmseall)) {
+      gof <- c(gof, rmseall)
+      gof.names <- c(gof.names, "RMSEA lower 95 percent CI")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    rmseaul  <- summary(model)$stat["RMSEA upper 95% CI", 1]
+    if (!is.na(rmseaul) && !is.null(rmseaul) && is.finite(rmseaul)) {
+      gof <- c(gof, rmseaul)
+      gof.names <- c(gof.names, "RMSEA upper 95 percent CI")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    cfi <- summary(model)$stat["CFI", 1]
+    if (!is.na(cfi) && !is.null(cfi) && is.finite(cfi)) {
+      gof <- c(gof, cfi)
+      gof.names <- c(gof.names, "CFI")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+    # Compute average variance extracted
+    # Based on: https://cran.r-project.org/web/packages/cSEM/vignettes/Using-assess.html#ave
+    # Given that the model uses standardized loadings: Var() = 1 and the denominator reduces to K
+    # "Empirically, it is the mean square of the standardized loading"
+    mat <- model$mx.fit$impliedS1$result
+    if (is.null(mat)) {
+      ave <- NULL
+    } else {
+      ave <- mean(mat[nrow(mat), -ncol(mat)]^2)
+    }
+    if (!is.null(ave) && !is.na(ave) && is.finite(ave)) {
+      gof <- c(gof, ave)
+      gof.names <- c(gof.names, "Average variance extracted")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
   }
   if (include.nobs == TRUE) {
     gof <- c(gof, summary(model)$stat["Sample size", 1])
     gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.aic == TRUE) {
+    aic <- summary(model)$stat["AIC", 1]
+    if (!is.null(aic) && !is.na(aic) && length(aic) == 1 && is.finite(aic)) {
+      gof <- c(gof, aic)
+      gof.names <- c(gof.names, "AIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+  }
+  if (include.bic == TRUE) {
+    bic <- summary(model)$stat["BIC", 1]
+    if (!is.null(bic) && !is.na(bic) && length(bic) == 1 && is.finite(bic)) {
+      gof <- c(gof, bic)
+      gof.names <- c(gof.names, "BIC")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
   }
 
   tr <- createTexreg(
@@ -8351,6 +8421,8 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
     coef = coefs,
     se = se,
     pvalues = pval,
+    ci.low = ci.l,
+    ci.up = ci.u,
     gof.names = gof.names,
     gof = gof,
     gof.decimal = gof.decimal
@@ -8364,13 +8436,17 @@ extract.wls <- function(model, include.nobs = TRUE, ...) {
 #' \code{\link[metaSEM]{wls}} function in the \pkg{metaSEM} package.
 #'
 #' @param model A statistical model object.
+#' @param include.statistics Report RMSEA and other GOF statistics?
 #' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.bic Report BIC?
+#' @param include.aic Report AIC?
 #' @param ... Custom parameters, which are handed over to subroutines. Currently
 #'   not in use.
 #'
 #' @method extract wls
 #' @aliases extract.wls
 #' @author Christoph Riedl <c.riedl@neu.edu>
+#' @author Philip Leifeld
 #' @export
 setMethod("extract", signature = className("wls", "metaSEM"),
           definition = extract.wls)

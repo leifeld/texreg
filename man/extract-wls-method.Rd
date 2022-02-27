@@ -5,12 +5,25 @@
 \alias{extract.wls}
 \title{\code{\link{extract}} method for \code{wls} objects}
 \usage{
-\S4method{extract}{wls}(model, include.nobs = TRUE, ...)
+\S4method{extract}{wls}(
+  model,
+  include.statistics = TRUE,
+  include.nobs = TRUE,
+  include.aic = TRUE,
+  include.bic = TRUE,
+  ...
+)
 }
 \arguments{
 \item{model}{A statistical model object.}
 
+\item{include.statistics}{Report RMSEA and other GOF statistics?}
+
 \item{include.nobs}{Report the number of observations in the GOF block?}
+
+\item{include.aic}{Report AIC?}
+
+\item{include.bic}{Report BIC?}
 
 \item{...}{Custom parameters, which are handed over to subroutines. Currently
 not in use.}
@@ -21,4 +34,6 @@ not in use.}
 }
 \author{
 Christoph Riedl <c.riedl@neu.edu>
+
+Philip Leifeld
 }

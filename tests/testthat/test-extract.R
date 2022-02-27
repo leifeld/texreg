@@ -56,22 +56,21 @@ test_that("extract forecast_ARIMA objects from the forecast package", {
 
 # bergm (Bergm) ----
 test_that("extract bergm objects from the Bergm package", {
-  skip_if_not_installed("Bergm", minimum_version = "5.0.2")
+  suppressWarnings(skip_if_not_installed("Bergm", minimum_version = "5.0.2"))
   require("Bergm")
   set.seed(12345)
   data(florentine)
-  suppressMessages(p.flo <- bergm(flomarriage ~ edges + kstar(2),
-                 burn.in    = 10,
-                 aux.iters  = 30,
-                 main.iters = 30,
-                 gamma      = 1.2))
+  suppressWarnings(suppressMessages(
+    p.flo <- bergm(flomarriage ~ edges + kstar(2),
+                   burn.in    = 10,
+                   aux.iters  = 30,
+                   main.iters = 30,
+                   gamma      = 1.2)))
   tr <- extract(p.flo)
-  expect_equivalent(tr@coef, c(-1.57, -0.01), tolerance = 1e-2)
   expect_length(tr@se, 0)
   expect_length(tr@pvalues, 0)
   expect_length(tr@gof, 0)
-  expect_equivalent(tr@ci.low, c(-2.56, -0.30), tolerance = 1e-2)
-  expect_equivalent(tr@ci.up, c(0.13, 0.16), tolerance = 1e-2)
+  expect_length(tr@coef, 2)
 })
 
 # bife (bife) ----
@@ -704,4 +703,126 @@ test_that("extract truncreg objects from the truncreg package", {
   expect_length(tr@coef, 3)
   expect_equivalent(which(tr@pvalues < 0.05), c(1, 3))
   expect_equivalent(which(tr@gof.decimal), 2:4)
+})
+
+# weibreg (eha) ----
+test_that("extract weibreg objects from the eha package", {
+  skip_if_not_installed("eha", minimum_version = "2.9.0")
+  require("eha")
+
+  set.seed(12345)
+  # stratified model example from weibreg help page
+  dat <- data.frame(time = c(4, 3, 1, 1, 2, 2, 3),
+                    status = c(1, 1, 1, 0, 1, 1, 0),
+                    x = c(0, 2, 1, 1, 1, 0, 0),
+                    sex = c(0, 0, 0, 0, 1, 1, 1))
+  model <- eha::weibreg(Surv(time, status) ~ x + strata(sex), data = dat)
+  tr <- extract(model)
+
+  expect_length(tr@coef, 5)
+  expect_equivalent(class(tr@coef), "numeric")
+  expect_length(tr@se, 5)
+  expect_equivalent(class(tr@se), "numeric")
+  expect_length(tr@pvalues, 5)
+  expect_equivalent(class(tr@pvalues), "numeric")
+  expect_length(tr@coef.names, 5)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 6)
+  expect_length(tr@gof.names, 6)
+  expect_length(tr@gof.decimal, 6)
+  expect_equivalent(tr@gof[5], 5)
+  expect_equivalent(which(tr@pvalues < 0.05), 2:5)
+  expect_equivalent(which(tr@gof.decimal), 1:3)
+})
+
+# wls (metaSEM) ----
+test_that("extract wls objects from the metaSEM package", {
+  skip_if_not_installed("metaSEM", minimum_version = "1.2.5.1")
+  require("metaSEM")
+  set.seed(12345)
+
+  # example 1 from wls help page: analysis of correlation structure
+  R1.labels <- c("a1", "a2", "a3", "a4")
+  R1 <- matrix(c(1.00, 0.22, 0.24, 0.18,
+                 0.22, 1.00, 0.30, 0.22,
+                 0.24, 0.30, 1.00, 0.24,
+                 0.18, 0.22, 0.24, 1.00), ncol = 4, nrow = 4,
+               dimnames = list(R1.labels, R1.labels))
+  n <- 1000
+  acovR1 <- metaSEM::asyCov(R1, n)
+  model1 <- "f =~ a1 + a2 + a3 + a4"
+  RAM1 <- metaSEM::lavaan2RAM(model1, obs.variables = R1.labels)
+  wls.fit1a <- metaSEM::wls(Cov = R1, aCov = acovR1, n = n, RAM = RAM1,
+                            cor.analysis = TRUE, intervals = "LB")
+  tr1 <- extract(wls.fit1a)
+  expect_length(tr1@coef.names, 4)
+  expect_length(tr1@coef, 4)
+  expect_length(tr1@se, 0)
+  expect_length(tr1@pvalues, 0)
+  expect_length(tr1@ci.low, 4)
+  expect_length(tr1@ci.up, 4)
+  expect_true(!any(is.na(tr1@coef)))
+  expect_length(tr1@gof, 11)
+  expect_length(tr1@gof.names, 11)
+  expect_length(tr1@gof.decimal, 11)
+  expect_equivalent(tr1@gof[8], 0.23893943, tolerance = 1e-2)
+  expect_equivalent(which(tr1@gof.decimal), c(1, 3, 4, 5, 6, 7, 8, 10, 11))
+
+  # example 2 from wls help page: multiple regression
+  R2.labels <- c("y", "x1", "x2")
+  R2 <- matrix(c(1.00, 0.22, 0.24,
+                 0.22, 1.00, 0.30,
+                 0.24, 0.30, 1.00), ncol = 3, nrow = 3,
+               dimnames = list(R2.labels, R2.labels))
+  acovR2 <- metaSEM::asyCov(R2, n)
+  model2 <- "y ~ x1 + x2
+             ## Variances of x1 and x2 are 1
+             x1 ~~ 1*x1
+             x2 ~~ 1*x2
+             ## x1 and x2 are correlated
+             x1 ~~ x2"
+  RAM2 <- metaSEM::lavaan2RAM(model2, obs.variables = R2.labels)
+  wls.fit2a <- metaSEM::wls(Cov = R2, aCov = acovR2, n = n, RAM = RAM2,
+                            cor.analysis = TRUE, intervals = "LB")
+  tr2 <- extract(wls.fit2a)
+  expect_length(tr2@coef.names, 3)
+  expect_length(tr2@coef, 3)
+  expect_length(tr2@se, 0)
+  expect_length(tr2@pvalues, 0)
+  expect_length(tr2@ci.low, 3)
+  expect_length(tr2@ci.up, 3)
+  expect_true(!any(is.na(tr2@coef)))
+  expect_length(tr2@gof, 11)
+  expect_length(tr2@gof.names, 11)
+  expect_length(tr2@gof.decimal, 11)
+  expect_equivalent(tr2@gof[8], 0.0738, tolerance = 1e-2)
+  expect_equivalent(which(tr2@gof.decimal), c(1, 3, 4, 5, 6, 7, 8, 10, 11))
+
+  # example 3 from wls help page
+  R3.labels <- c("a1", "a2", "a3", "a4")
+  R3 <- matrix(c(1.50, 0.22, 0.24, 0.18,
+                 0.22, 1.60, 0.30, 0.22,
+                 0.24, 0.30, 1.80, 0.24,
+                 0.18, 0.22, 0.24, 1.30), ncol = 4, nrow = 4,
+               dimnames = list(R3.labels, R3.labels))
+  n <- 1000
+  acovS3 <- metaSEM::asyCov(R3, n, cor.analysis = FALSE)
+  model3 <- "f =~ a1 + a2 + a3 + a4"
+  RAM3 <- metaSEM::lavaan2RAM(model3, obs.variables = R3.labels)
+  wls.fit3a <- metaSEM::wls(Cov = R3, aCov = acovS3, n = n, RAM = RAM3,
+                            cor.analysis = FALSE)
+  tr3 <- extract(wls.fit3a)
+  expect_length(tr3@coef.names, 8)
+  expect_length(tr3@coef, 8)
+  expect_length(tr3@se, 8)
+  expect_length(tr3@pvalues, 8)
+  expect_length(tr3@ci.low, 0)
+  expect_length(tr3@ci.up, 0)
+  expect_true(!any(is.na(tr3@coef)))
+  expect_length(tr3@gof, 10)
+  expect_length(tr3@gof.names, 10)
+  expect_length(tr3@gof.decimal, 10)
+  expect_equivalent(which(tr3@gof.decimal), c(1, 3, 4, 5, 6, 7, 9, 10))
+  expect_true(all(tr3@pvalues < 0.05))
 })

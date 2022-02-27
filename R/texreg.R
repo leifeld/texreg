@@ -2539,10 +2539,10 @@ plotreg <- function(l,
       p <- p + ggplot2::ylab(custom.note)
     }
     if (length(models) == 1) {
-      message(paste0("Model: bars denote standard errors(",
+      message(paste0("Model: bars denote standard errors (",
                      deparse1(substitute(ci.level.perc)), "%)."))
     } else if (length(models) > 1) {
-      message(paste0("Models: bars denote standard errors(" ,
+      message(paste0("Models: bars denote standard errors (" ,
                      deparse1(substitute(ci.level.perc)), "%)."))
     }
   } else if (isTRUE(ci.force[i]) && length(dataframe$se) == 0) {

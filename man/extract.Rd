@@ -41,7 +41,8 @@ the \code{getMethod} function, for example \code{getMethod("extract", "lm")}
 for linear models. To get help on a specific extract method, type something
 like \code{?`extract,lm-method`} (or something similar for other models,
 where \code{"lm"} needs to be replaced by the class name of the respective
-model).
+model). You can also list the available methods by displaying the
+\link[=texreg-package]{texreg package} help index.
 
 Users can contribute their own extensions for additional statistical models.
 Examples are contained in the article in the Journal of Statistical Software

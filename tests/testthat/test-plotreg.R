@@ -48,9 +48,8 @@ test_that("plotreg works with confidence intervals using the biglm package", {
   expect_true(ggplot2::is.ggplot(p6))
   expect_equal(dim(p6$data), dim(readRDS("../files/PlotDataFrameCI.RDS")))
   # saveRDS(p6$data, "../files/PlotDataFrameCI.RDS")
-  expect_identical(p6$labels$y, "Bars denote CIs. Circle points denote significance.")
+  expect_identical(p6$labels$y, "Bars denote SEs (95%). Circle points denote significance.")
 })
-
 
 test_that("plotreg -odds ratio", {
   skip_if_not_installed("ggplot2", minimum_version = "3.3.1")
@@ -73,4 +72,3 @@ test_that("plotreg -odds ratio", {
   # tests if significance is computed according to the value provided with ci.test
   expect_identical(as.character(p7$data$signif), as.character(c(TRUE, FALSE)))
 })
-
