@@ -4,6 +4,7 @@ suppressPackageStartupMessages(library("texreg"))
 
 # Arima (stats) ----
 test_that("extract Arima objects from the stats package", {
+  testthat::skip_on_cran()
   set.seed(12345)
   m <- arima(USAccDeaths,
              order = c(0, 1, 1),
@@ -56,6 +57,7 @@ test_that("extract forecast_ARIMA objects from the forecast package", {
 
 # bergm (Bergm) ----
 test_that("extract bergm objects from the Bergm package", {
+  testthat::skip_on_cran()
   suppressWarnings(skip_if_not_installed("Bergm", minimum_version = "5.0.2"))
   require("Bergm")
   set.seed(12345)
@@ -105,10 +107,10 @@ test_that("extract brmsfit objects from the brms package", {
 
   # example 2 from brm help page; see ?brm
   sink(nullfile())
-  #suppressWarnings(suppressMessages(
+  suppressMessages(
     fit2 <- brm(rating ~ period + carry + cs(treat),
                 data = inhaler, family = sratio("logit"),
-                prior = set_prior("normal(0,5)"), chains = 1)#))
+                prior = set_prior("normal(0,5)"), chains = 1))
   sink()
 
   suppressWarnings(tr <- extract(fit2))
@@ -121,16 +123,16 @@ test_that("extract brmsfit objects from the brms package", {
   expect_equivalent(which(tr@gof.decimal), c(1, 3, 4))
 
   # example 1 from brm help page; see ?brm
-  bprior1 <- prior(student_t(5,0,10), class = b) + prior(cauchy(0,2), class = sd)
+  bprior1 <- prior(student_t(5, 0, 10), class = b) + prior(cauchy(0, 2), class = sd)
   sink(nullfile())
-  fit1 <- suppressWarnings(suppressMessages(
-    brm(count ~ zAge + zBase * Trt + (1|patient),
+  suppressMessages(
+    fit1 <- brm(count ~ zAge + zBase * Trt + (1|patient),
         data = epilepsy,
         family = poisson(),
-        prior = bprior1)))
+        prior = bprior1))
   sink()
 
-  suppressMessages(tr <- extract(fit1, use.HDI = TRUE, reloo = TRUE))
+  expect_warning(suppressMessages(tr <- extract(fit1, use.HDI = TRUE, reloo = TRUE)))
   expect_length(tr@gof.names, 5)
   expect_length(tr@coef, 5)
   expect_length(tr@se, 5)
@@ -178,6 +180,45 @@ test_that("extract dynlm objects from the dynlm package", {
   expect_equivalent(which(tr@gof.decimal), c(1, 2, 4))
 })
 
+# ergm (ergm) ----
+test_that("extract ergm objects from the ergm package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("ergm", minimum_version = "4.1.2")
+  require("ergm")
+
+  set.seed(12345)
+  data(florentine)
+  suppressMessages(gest <- ergm(flomarriage ~ edges + absdiff("wealth")))
+  tr1 <- extract(gest)
+  expect_length(tr1@coef.names, 2)
+  expect_length(tr1@coef, 2)
+  expect_length(tr1@se, 2)
+  expect_length(tr1@pvalues, 2)
+  expect_length(tr1@ci.low, 0)
+  expect_length(tr1@ci.up, 0)
+  expect_length(tr1@gof, 3)
+  expect_length(tr1@gof.names, 3)
+  expect_length(tr1@gof.decimal, 3)
+  expect_equivalent(which(tr1@gof.decimal), 1:3)
+
+  data(molecule)
+  molecule %v% "atomic type" <- c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3,
+                                  3, 3, 3, 3, 3)
+  suppressMessages(gest <- ergm(molecule ~ edges + kstar(2) + triangle +
+                                  nodematch("atomic type")))
+  tr2 <- extract(gest)
+  expect_length(tr2@coef.names, 4)
+  expect_length(tr2@coef, 4)
+  expect_length(tr2@se, 4)
+  expect_length(tr2@pvalues, 4)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_length(tr2@gof, 3)
+  expect_length(tr2@gof.names, 3)
+  expect_length(tr2@gof.decimal, 3)
+  expect_equivalent(which(tr2@gof.decimal), 1:3)
+})
+
 # feglm (alpaca) ----
 test_that("extract feglm objects from the alpaca package", {
   testthat::skip_on_cran()
@@ -189,15 +230,17 @@ test_that("extract feglm objects from the alpaca package", {
   mod <- feglm(y ~ x1 + x2 + x3 | i + t, data)
 
   tr <- extract(mod)
-
-  expect_equivalent(tr@coef, c(1.091, -1.106, 1.123), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.024, 0.024, 0.024), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0, 0, 0), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(15970.75, 19940.00, 997.00, 20.00), tolerance = 1e-2)
-  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef.names, 3)
   expect_length(tr@coef, 3)
+  expect_length(tr@se, 3)
+  expect_length(tr@pvalues, 3)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 6)
+  expect_length(tr@gof.names, 6)
+  expect_length(tr@gof.decimal, 6)
+  expect_equivalent(which(tr@gof.decimal), 4:6)
   expect_equivalent(which(tr@pvalues < 0.05), 1:3)
-  expect_equivalent(which(tr@gof.decimal), 1)
 })
 
 # feis (feisr) ----
@@ -566,6 +609,7 @@ test_that("extract multinom objects from the nnet package", {
 })
 
 test_that("extract mlogit objects from the mlogit package", {
+  testthat::skip_on_cran()
   testthat::skip_if_not_installed("mlogit", minimum_version = "1.1.0")
   require("mlogit")
   set.seed(12345)
@@ -587,6 +631,7 @@ test_that("extract mlogit objects from the mlogit package", {
 })
 
 test_that("extract mnlogit models from the mnlogit package", {
+  testthat::skip_on_cran()
   testthat::skip_if_not_installed("mnlogit", minimum_version = "1.2.6")
   require("mnlogit")
   set.seed(12345)
@@ -631,6 +676,41 @@ test_that("extract nlmerMod objects from the lme4 package", {
   expect_length(tr_wald@se, 0)
   expect_length(tr_wald@ci.low, 3)
   expect_length(tr_wald@ci.up, 3)
+})
+
+# pcce (plm) ----
+test_that("extract pcce objects from the plm package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("plm", minimum_version = "2.4.1")
+  require("plm")
+  set.seed(12345)
+  data("Produc", package = "plm")
+
+  ccepmod <- pcce(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, data = Produc, model="p")
+  tr <- extract(ccepmod)
+  expect_length(tr@coef.names, 4)
+  expect_length(tr@coef, 4)
+  expect_length(tr@se, 4)
+  expect_length(tr@pvalues, 4)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
+  expect_equivalent(which(tr@gof.decimal), 1:3)
+
+  ccemgmod <- pcce(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, data = Produc, model="mg")
+  tr2 <- extract(ccemgmod)
+  expect_length(tr2@coef.names, 4)
+  expect_length(tr2@coef, 4)
+  expect_length(tr2@se, 4)
+  expect_length(tr2@pvalues, 4)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_length(tr2@gof, 4)
+  expect_length(tr2@gof.names, 4)
+  expect_length(tr2@gof.decimal, 4)
+  expect_equivalent(which(tr2@gof.decimal), 1:3)
 })
 
 # speedglm (speedglm) ----
@@ -686,6 +766,7 @@ test_that("extract speedlm objects from the speedglm package", {
 
 # truncreg (truncreg) ----
 test_that("extract truncreg objects from the truncreg package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("truncreg", minimum_version = "0.2.5")
   require("truncreg")
 
@@ -709,6 +790,7 @@ test_that("extract truncreg objects from the truncreg package", {
 
 # weibreg (eha) ----
 test_that("extract weibreg objects from the eha package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("eha", minimum_version = "2.9.0")
   require("eha")
 
@@ -740,6 +822,7 @@ test_that("extract weibreg objects from the eha package", {
 
 # wls (metaSEM) ----
 test_that("extract wls objects from the metaSEM package", {
+  testthat::skip_on_cran()
   skip_if_not_installed("metaSEM", minimum_version = "1.2.5.1")
   require("metaSEM")
   set.seed(12345)

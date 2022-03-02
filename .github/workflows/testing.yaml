@@ -40,11 +40,11 @@ jobs:
           devtools::install_deps(dependencies = TRUE)
           install.packages("glmmTMB", repos = "https://glmmTMB.github.io/glmmTMB/repos")
           devtools::install_github("paul-buerkner/brms", build_vignettes = FALSE)
-          install.packages(c("forecast", "Bergm", "bife", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "gamlss.inf", "miceadds", "lme4", "AER", "speedglm", "truncreg", "eha", "metaSEM", "biglm", "mlogit"))
+          install.packages(c("AER", "alpaca", "Bergm", "bife", "biglm", "dynlm", "eha", "ergm", "feisr", "fixest", "forecast", "gamlss.inf", "lfe", "lme4", "metaSEM", "miceadds", "mlogit", "ordinal", "plm", "speedglm", "truncreg"))
         shell: Rscript {0}
 
       - name: Unit testing
-        run: withr::with_envvar(c("NOT_CRAN" = "true"), devtools::test(reporter = ListReporter$new()))
+        run: withr::with_envvar(c("NOT_CRAN" = "true"), devtools::test())
         shell: Rscript {0}
 
       - name: Test coverage

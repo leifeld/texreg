@@ -1480,11 +1480,11 @@ setMethod("extract", signature = className("coxph.penal", "survival"),
 extract.ergm <- function(model, include.aic = TRUE, include.bic = TRUE,
                          include.loglik = TRUE, ...) {
   s <- summary(model, ...)
-
-  coefficient.names <- rownames(s$coefs)
-  coefficients <- s$coefs[, 1]
-  standard.errors <- s$coefs[, 2]
-  significance <- s$coefs[, 4]
+  coefs <- coef(s)
+  coefficient.names <- rownames(coefs)
+  coefficients <- coefs[, 1]
+  standard.errors <- coefs[, 2]
+  significance <- coefs[, 5]
 
   gof <- numeric()
   gof.names <- character()
@@ -6104,6 +6104,74 @@ extract.ols <- function(model,
 #' @export
 setMethod("extract", signature = className("ols", "rms"),
           definition = extract.ols)
+
+
+# -- extract.pcce (plm) --------------------------------------------------------
+
+#' @noRd
+extract.pcce <- function(model,
+                         include.r.squared = TRUE,
+                         include.sumsquares = TRUE,
+                         include.nobs = TRUE,
+                         ...) {
+
+  s <- summary(model, ...)
+  coefnames <- rownames(s$CoefTable)
+  co <- s$CoefTable[, 1]
+  se <- s$CoefTable[, 2]
+  pval <- s$CoefTable[, 4]
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (isTRUE(include.r.squared)) {
+    rs <- s$r.squared
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "HPY R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (isTRUE(include.sumsquares)) {
+    gof <- c(gof, s$ssr, s$tss)
+    gof.names <- c(gof.names, "RSS", "TSS")
+    gof.decimal <- c(gof.decimal, TRUE, TRUE)
+  }
+  if (isTRUE(include.nobs)) {
+    n <- nobs(model)
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+
+  tr <- createTexreg(
+    coef.names = coefnames,
+    coef = co,
+    se = se,
+    pvalues = pval,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{pcce} objects
+#'
+#' \code{\link{extract}} method for \code{pcce} objects created by the
+#' \code{\link[plm]{pcce}} function in the \pkg{plm} package.
+#'
+#' @param model A statistical model object.
+#' @param include.r.squared Report the HPY R-squared statistic in the GOF block?
+#' @param include.sumsquares Report the total and residual sum of squares in the
+#'   GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the \code{summary} method for the object.
+#'
+#' @method extract pcce
+#' @aliases extract.pcce
+#' @export
+setMethod("extract", signature = className("pcce", "plm"),
+          definition = extract.pcce)
 
 
 # -- extract.pglm (pglm) -------------------------------------------------------

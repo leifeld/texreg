@@ -23,6 +23,7 @@ Enhances:
   AER,
   alpaca,
   betareg,
+  Bergm,
   bife,
   biglm,
   brglm,
@@ -31,8 +32,10 @@ Enhances:
   dynlm,
   eha (>= 2.9.0),
   erer,
+  ergm (>= 4.1.2),
   feisr (>= 1.0.1),
   fGarch,
+  fixest (>= 0.8.2),
   forecast,
   gamlss,
   gamlss.inf,
@@ -57,7 +60,7 @@ Enhances:
   oglmx,
   ordinal,
   pglm,
-  plm,
+  plm (>= 2.4.1),
   relevent,
   rms,
   robust,
@@ -67,9 +70,7 @@ Enhances:
   survival,
   truncreg (>= 0.2.5),
   VGAM,
-  Zelig,
-  Bergm,
-  fixest (>= 0.8.2)
+  Zelig
 SystemRequirements: pandoc (>= 1.12.3) suggested for using wordreg function; LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette
 License: GPL-3
 Encoding: UTF-8
