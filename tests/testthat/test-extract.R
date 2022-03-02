@@ -713,6 +713,59 @@ test_that("extract pcce objects from the plm package", {
   expect_equivalent(which(tr2@gof.decimal), 1:3)
 })
 
+# Sarlm (spatialreg) ----
+test_that("extract Sarlm objects from the spatialreg package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("spatialreg", minimum_version = "1.2.1")
+  require("spatialreg")
+  set.seed(12345)
+
+  # first example from ?lagsarlm
+  data(oldcol, package = "spdep")
+  listw <- spdep::nb2listw(COL.nb, style = "W")
+  ev <- spatialreg::eigenw(listw)
+  W <- as(listw, "CsparseMatrix")
+  trMatc <- spatialreg::trW(W, type = "mult")
+  sink(nullfile())
+  COL.lag.eig <- spatialreg::lagsarlm(CRIME ~ INC + HOVAL,
+                                      data = COL.OLD,
+                                      listw = listw,
+                                      method = "eigen",
+                                      quiet = FALSE,
+                                      control = list(pre_eig = ev,
+                                                     OrdVsign = 1))
+  sink()
+  tr <- extract(COL.lag.eig)
+  expect_length(tr@coef.names, 4)
+  expect_length(tr@coef, 4)
+  expect_length(tr@se, 4)
+  expect_length(tr@pvalues, 4)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 7)
+  expect_length(tr@gof.names, 7)
+  expect_length(tr@gof.decimal, 7)
+  expect_equivalent(which(tr@gof.decimal), 3:7)
+
+  # example from ?predict.Sarlm
+  lw <- spdep::nb2listw(COL.nb)
+  COL.lag.eig2 <- COL.mix.eig <- lagsarlm(CRIME ~ INC + HOVAL,
+                                          data = COL.OLD,
+                                          lw,
+                                          type = "mixed")
+  tr2 <- extract(COL.lag.eig2)
+  expect_length(tr2@coef.names, 6)
+  expect_length(tr2@coef, 6)
+  expect_length(tr2@se, 6)
+  expect_length(tr2@pvalues, 6)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_length(tr2@gof, 7)
+  expect_length(tr2@gof.names, 7)
+  expect_length(tr2@gof.decimal, 7)
+  expect_equivalent(which(tr2@gof.decimal), 3:7)
+})
+
 # speedglm (speedglm) ----
 test_that("extract speedglm objects from the speedglm package", {
   testthat::skip_on_cran()

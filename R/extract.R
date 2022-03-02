@@ -6790,10 +6790,10 @@ setMethod("extract", signature = className("rq", "quantreg"),
           definition = extract.rq)
 
 
-# -- extract.sarlm (spatialreg) ------------------------------------------------
+# -- extract.Sarlm (spatialreg) ------------------------------------------------
 
 #' @noRd
-extract.sarlm <- function(model,
+extract.Sarlm <- function(model,
                           include.nobs = TRUE,
                           include.loglik = TRUE,
                           include.aic = TRUE,
@@ -6893,9 +6893,9 @@ extract.sarlm <- function(model,
   return(tr)
 }
 
-#' \code{\link{extract}} method for \code{sarlm} objects
+#' \code{\link{extract}} method for \code{Sarlm} objects
 #'
-#' \code{\link{extract}} method for \code{sarlm} objects created by the
+#' \code{\link{extract}} method for \code{Sarlm} objects created by the
 #' \code{\link[spatialreg:ML_models]{lagsarlm}} function in the \pkg{spatialreg}
 #' package.
 #'
@@ -6909,12 +6909,12 @@ extract.sarlm <- function(model,
 #' @param ... Custom parameters, which are handed over to subroutines, in this
 #'   case to the \code{summary} method for the object.
 #'
-#' @method extract sarlm
-#' @aliases extract.sarlm
+#' @method extract Sarlm
+#' @aliases extract.Sarlm
 #' @export
 #' @importFrom stats pnorm AIC
-setMethod("extract", signature = className("sarlm", "spdep"),
-          definition = extract.sarlm)
+setMethod("extract", signature = className("Sarlm", "spatialreg"),
+          definition = extract.Sarlm)
 
 
 # -- extract.sclm (ordinal) ----------------------------------------------------

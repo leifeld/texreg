@@ -40,7 +40,7 @@ jobs:
           devtools::install_deps(dependencies = TRUE)
           install.packages("glmmTMB", repos = "https://glmmTMB.github.io/glmmTMB/repos")
           devtools::install_github("paul-buerkner/brms", build_vignettes = FALSE)
-          install.packages(c("AER", "alpaca", "Bergm", "bife", "biglm", "dynlm", "eha", "ergm", "feisr", "fixest", "forecast", "gamlss.inf", "lfe", "lme4", "metaSEM", "miceadds", "mlogit", "ordinal", "plm", "speedglm", "truncreg"))
+          install.packages(c("AER", "alpaca", "Bergm", "bife", "biglm", "dynlm", "eha", "ergm", "feisr", "fixest", "forecast", "gamlss.inf", "lfe", "lme4", "metaSEM", "miceadds", "mlogit", "ordinal", "plm", "spatialreg", "speedglm", "truncreg"))
         shell: Rscript {0}
 
       - name: Unit testing
