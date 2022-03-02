@@ -21,7 +21,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages("devtools")
-          saveRDS(devtools::dev_package_deps(dependencies = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")), ".github/depends.Rds", version = 2)
+          saveRDS(devtools::dev_package_deps(dependencies = c("Depends", "Imports", "LinkingTo", "Suggests")), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
       - name: Cache R packages
