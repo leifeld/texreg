@@ -11,8 +11,6 @@ name: testthat
 jobs:
   testthat:
     runs-on: macOS-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
@@ -23,7 +21,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages("devtools")
-          saveRDS(devtools::dev_package_deps(dependencies = c("Depends", "Imports", "LinkingTo", "Suggests")), ".github/depends.Rds", version = 2)
+          saveRDS(devtools::dev_package_deps(dependencies = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
       - name: Cache R packages
@@ -36,8 +34,6 @@ jobs:
       - name: Install dependencies
         run: |
           devtools::install_deps(dependencies = TRUE)
-          install.packages(c("truncreg", "speedglm", "forecast", "Bergm", "bife", "brms", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "gamlss.inf", "miceadds", "lme4", "AER", "eha", "metaSEM", "biglm", "mlogit"))
-          devtools::install_github("https://github.com/glmmTMB/glmmTMB")
         shell: Rscript {0}
 
       - name: Unit testing
