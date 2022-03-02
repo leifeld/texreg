@@ -11,6 +11,8 @@ name: testthat
 jobs:
   testthat:
     runs-on: macOS-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
@@ -35,7 +37,6 @@ jobs:
         run: |
           devtools::install_deps(dependencies = TRUE)
           install.packages(c("truncreg", "speedglm", "forecast", "Bergm", "bife", "brms", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "gamlss.inf", "miceadds", "lme4", "AER", "eha", "metaSEM", "biglm", "mlogit"))
-          Sys.setenv(GITHUB_PAT = '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')
           devtools::install_github("https://github.com/glmmTMB/glmmTMB")
         shell: Rscript {0}
 
