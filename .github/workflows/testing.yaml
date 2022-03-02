@@ -6,10 +6,10 @@ on:
     branches:
       - master
 
-name: testthat
+name: testing
 
 jobs:
-  testthat:
+  testing:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,10 +18,12 @@ jobs:
         with:
           r-version: 'release'
 
+      - uses: r-lib/actions/setup-pandoc@master
+
       - name: Query dependencies
         run: |
-          install.packages("devtools")
-          saveRDS(devtools::dev_package_deps(dependencies = c("Depends", "Imports", "LinkingTo", "Suggests")), ".github/depends.Rds", version = 2)
+          install.packages(c("devtools", "covr"))
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
       - name: Cache R packages
@@ -39,4 +41,8 @@ jobs:
 
       - name: Unit testing
         run: withr::with_envvar(c("NOT_CRAN" = "true"), devtools::test())
+        shell: Rscript {0}
+
+      - name: Test coverage
+        run: withr::with_envvar(c("NOT_CRAN" = "true"), covr::codecov(quiet = FALSE))
         shell: Rscript {0}
