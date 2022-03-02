@@ -34,10 +34,9 @@ jobs:
       - name: Install dependencies
         run: |
           devtools::install_deps(dependencies = TRUE)
+          install.packages(c("forecast", "Bergm", "bife", "brms", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "gamlss.inf", "miceadds", "lme4", "glmmTMB", "AER", "speedglm", "truncreg", "eha", "metaSEM", "biglm", "mlogit"))
         shell: Rscript {0}
 
       - name: Unit testing
-        run: |
-          library("testthat")
-          withr::with_envvar(c("NOT_CRAN" = "true"), devtools::test())
+        run: withr::with_envvar(c("NOT_CRAN" = "true"), devtools::test())
         shell: Rscript {0}

@@ -19,7 +19,8 @@ Suggests:
   lmtest (>= 0.9-34)
 Depends: R (>= 3.5)
 Imports: methods, stats, httr
-Enhances: AER,
+Enhances:
+  AER,
   alpaca,
   betareg,
   bife,
