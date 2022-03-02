@@ -39,7 +39,7 @@ jobs:
         run: |
           devtools::install_deps(dependencies = TRUE)
           install.packages("glmmTMB", repos = "https://glmmTMB.github.io/glmmTMB/repos")
-          devtools::install_github("paul-buerkner/brms/")
+          devtools::install_github("paul-buerkner/brms", build_vignettes = FALSE)
           install.packages(c("forecast", "Bergm", "bife", "ordinal", "dynlm", "alpaca", "feisr", "lfe", "fixest", "gamlss.inf", "miceadds", "lme4", "AER", "speedglm", "truncreg", "eha", "metaSEM", "biglm", "mlogit"))
         shell: Rscript {0}
 
