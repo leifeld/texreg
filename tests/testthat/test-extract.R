@@ -105,10 +105,10 @@ test_that("extract brmsfit objects from the brms package", {
 
   # example 2 from brm help page; see ?brm
   sink(nullfile())
-  suppressWarnings(suppressMessages(
+  #suppressWarnings(suppressMessages(
     fit2 <- brm(rating ~ period + carry + cs(treat),
                 data = inhaler, family = sratio("logit"),
-                prior = set_prior("normal(0,5)"), chains = 1)))
+                prior = set_prior("normal(0,5)"), chains = 1)#))
   sink()
 
   suppressWarnings(tr <- extract(fit2))
