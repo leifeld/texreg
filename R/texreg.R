@@ -12,7 +12,7 @@
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
 #' @docType package
 #' @name texreg-package
@@ -89,7 +89,7 @@ NULL
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
 #' @examples
 #' library("nlme")
@@ -966,7 +966,7 @@ knitreg <- function(...) {
 #'   confidence intervals, coefficient names, GOF statistic names, and model
 #'   names? These are used by \code{\link{texreg}} and other functions for table
 #'   construction.
-#' @param trim leading and trailing white space in the table cells? If
+#' @param trim Trim leading and trailing white space in the table cells? If
 #'   \code{FALSE}, the values in each column will be aligned at the decimal
 #'   point, and spaces are used to make all cells equally long. This is useful
 #'   for on-screen output.
@@ -2613,7 +2613,7 @@ plotreg <- function(l,
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
 #' @examples
 #' # Display models from ?lm:
@@ -3029,7 +3029,7 @@ screenreg <- function(l,
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
 #' @keywords print misc utilities IO programming|interface
 #'
@@ -4548,7 +4548,7 @@ reorder <- function(mat, new.order) {
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
 #' @examples
 #' library("nlme")  # load library for fitting linear mixed effects models
@@ -4625,7 +4625,7 @@ createTexreg <- function(coef.names,
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
 #' @export
 setClass(Class = "texreg",
@@ -4688,7 +4688,7 @@ setClass(Class = "texreg",
 #'
 #' @references Leifeld, Philip (2013). texreg: Conversion of Statistical Model
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-#'   55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+#'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
 #' @importFrom methods show
 #' @export

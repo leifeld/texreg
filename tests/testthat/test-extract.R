@@ -10,14 +10,18 @@ test_that("extract Arima objects from the stats package", {
              order = c(0, 1, 1),
              seasonal = list(order = c(0, 1, 1)))
   tr <- extract(m)
-  expect_equivalent(tr@coef, c(-0.43, -0.55), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.12, 0.178), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(856.88, 863.1126, -425.44, 59), tolerance = 1e-2)
-  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef.names, 2)
   expect_length(tr@coef, 2)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_length(tr@se, 2)
+  expect_length(tr@pvalues, 2)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
   expect_equivalent(which(tr@gof.decimal), 1:3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(dim(matrixreg(m)), c(9, 2))
 })
 
 # forecast_ARIMA (forecast) ----
@@ -31,14 +35,18 @@ test_that("extract forecast_ARIMA objects from the forecast package", {
                      seasonal = list(order = c(0, 1, 1), period = 12),
                      lambda = 0)
   tr <- extract(air.model)
-  expect_equivalent(tr@coef, c(-0.39, -0.61), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.117, 0.1075829), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(-291.5260, -291.2222, -284.2695, 148.7630, 83), tolerance = 1e-2)
-  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef.names, 2)
   expect_length(tr@coef, 2)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_length(tr@se, 2)
+  expect_length(tr@pvalues, 2)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 5)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@gof.decimal, 5)
   expect_equivalent(which(tr@gof.decimal), 1:4)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(dim(matrixreg(air.model)), c(10, 2))
 
   m1 <- arima(USAccDeaths,
               order = c(0, 1, 1),
@@ -71,8 +79,11 @@ test_that("extract bergm objects from the Bergm package", {
   tr <- extract(p.flo)
   expect_length(tr@se, 0)
   expect_length(tr@pvalues, 0)
+  expect_length(tr@ci.low, 2)
+  expect_length(tr@ci.up, 2)
   expect_length(tr@gof, 0)
   expect_length(tr@coef, 2)
+  expect_equivalent(dim(matrixreg(p.flo)), c(5, 2))
 })
 
 # bife (bife) ----
@@ -80,20 +91,22 @@ test_that("extract bife objects from the bife package", {
   testthat::skip_on_cran()
   skip_if_not_installed("bife", minimum_version = "0.7")
   require("bife")
-
   set.seed(12345)
-  mod <- bife(LFP ~ I(AGE^2) + log(INCH) + KID1 + KID2 + KID3 + factor(TIME) | ID, psid)
 
+  mod <- bife(LFP ~ I(AGE^2) + log(INCH) + KID1 + KID2 + KID3 + factor(TIME) | ID, psid)
   tr <- extract(mod)
 
-  expect_equivalent(sum(tr@coef), 4.61698, tolerance = 1e-2)
-  expect_equivalent(sum(tr@se), 2.443803, tolerance = 1e-2)
-  expect_equivalent(sum(tr@pvalues), 1.359822, tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(-3026.476, 6052.951, 5976), tolerance = 1e-2)
-  expect_length(tr@gof.names, 3)
+  expect_length(tr@coef.names, 13)
   expect_length(tr@coef, 13)
-  expect_equivalent(which(tr@pvalues < 0.05), c(1:4, 8:13))
+  expect_length(tr@se, 13)
+  expect_length(tr@pvalues, 13)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 3)
+  expect_length(tr@gof.names, 3)
+  expect_length(tr@gof.decimal, 3)
   expect_equivalent(which(tr@gof.decimal), 1:2)
+  expect_equivalent(which(tr@pvalues < 0.05), c(1:4, 8:13))
   expect_equivalent(dim(matrixreg(mod)), c(30, 2))
 })
 
@@ -121,6 +134,7 @@ test_that("extract brmsfit objects from the brms package", {
   expect_length(tr@ci.low, 8)
   expect_length(tr@ci.up, 8)
   expect_equivalent(which(tr@gof.decimal), c(1, 3, 4))
+  suppressWarnings(expect_equivalent(dim(matrixreg(fit2)), c(21, 2)))
 
   # example 1 from brm help page; see ?brm
   bprior1 <- prior(student_t(5, 0, 10), class = b) + prior(cauchy(0, 2), class = sd)
@@ -140,6 +154,7 @@ test_that("extract brmsfit objects from the brms package", {
   expect_length(tr@ci.low, 5)
   expect_length(tr@ci.up, 5)
   expect_equivalent(which(tr@gof.decimal), c(1:2, 4:5))
+  expect_equivalent(suppressWarnings(dim(matrixreg(fit1))), c(16, 2))
 })
 
 # clm (ordinal) ----
@@ -149,14 +164,18 @@ test_that("extract clm objects from the ordinal package", {
   set.seed(12345)
   fit <- ordinal::clm(Species ~ Sepal.Length, data = iris)
   tr <- extract(fit)
-  expect_equivalent(tr@coef, c(3.452351, 18.569105, 21.689788), tolerance = 1e-2)
-  expect_equivalent(sum(tr@se), 5.331556, tolerance = 1e-2)
-  expect_equivalent(sum(tr@pvalues), 1.384519e-15, tolerance = 1e-2)
-  expect_equivalent(sum(tr@gof), 457.647, tolerance = 1e-2)
-  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef.names, 3)
   expect_length(tr@coef, 3)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_length(tr@se, 3)
+  expect_length(tr@pvalues, 3)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
   expect_equivalent(which(tr@gof.decimal), 1:3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(dim(matrixreg(fit)), c(11, 2))
 })
 
 # dynlm (dynlm) ----
@@ -170,14 +189,18 @@ test_that("extract dynlm objects from the dynlm package", {
   uk <- log10(UKDriverDeaths)
   dfm <- dynlm(uk ~ L(uk, 1) + L(uk, 12))
   tr <- extract(dfm, include.rmse = TRUE)
-  expect_equivalent(tr@coef, c(0.18, 0.43, 0.51), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.158, 0.053, 0.056), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.25, 0.00, 0.00), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(0.68, 0.68, 180, 0.04), tolerance = 1e-2)
-  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef.names, 3)
   expect_length(tr@coef, 3)
-  expect_equivalent(which(tr@pvalues < 0.05), 2:3)
+  expect_length(tr@se, 3)
+  expect_length(tr@pvalues, 3)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
   expect_equivalent(which(tr@gof.decimal), c(1, 2, 4))
+  expect_equivalent(which(tr@pvalues < 0.05), 2:3)
+  expect_equivalent(dim(matrixreg(dfm)), c(10, 2))
 })
 
 # ergm (ergm) ----
@@ -200,6 +223,7 @@ test_that("extract ergm objects from the ergm package", {
   expect_length(tr1@gof.names, 3)
   expect_length(tr1@gof.decimal, 3)
   expect_equivalent(which(tr1@gof.decimal), 1:3)
+  expect_equivalent(dim(matrixreg(gest)), c(8, 2))
 
   data(molecule)
   molecule %v% "atomic type" <- c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3,
@@ -217,6 +241,7 @@ test_that("extract ergm objects from the ergm package", {
   expect_length(tr2@gof.names, 3)
   expect_length(tr2@gof.decimal, 3)
   expect_equivalent(which(tr2@gof.decimal), 1:3)
+  expect_equivalent(dim(matrixreg(gest)), c(12, 2))
 })
 
 # feglm (alpaca) ----
@@ -236,11 +261,12 @@ test_that("extract feglm objects from the alpaca package", {
   expect_length(tr@pvalues, 3)
   expect_length(tr@ci.low, 0)
   expect_length(tr@ci.up, 0)
-  expect_length(tr@gof, 6)
-  expect_length(tr@gof.names, 6)
-  expect_length(tr@gof.decimal, 6)
-  expect_equivalent(which(tr@gof.decimal), 4:6)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
+  expect_equivalent(which(tr@gof.decimal), 1)
   expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(dim(matrixreg(mod)), c(11, 2))
 })
 
 # feis (feisr) ----

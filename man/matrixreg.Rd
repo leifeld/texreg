@@ -331,7 +331,7 @@ confidence intervals, coefficient names, GOF statistic names, and model
 names? These are used by \code{\link{texreg}} and other functions for table
 construction.}
 
-\item{trim}{leading and trailing white space in the table cells? If
+\item{trim}{Trim leading and trailing white space in the table cells? If
 \code{FALSE}, the values in each column will be aligned at the decimal
 point, and spaces are used to make all cells equally long. This is useful
 for on-screen output.}

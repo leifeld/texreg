@@ -458,7 +458,7 @@ unlink("texreg.doc")
 \references{
 Leifeld, Philip (2013). texreg: Conversion of Statistical Model
   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-  55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+  55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 }
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
