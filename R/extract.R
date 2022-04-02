@@ -4983,7 +4983,7 @@ setMethod("extract", signature = className("maBina", "erer"),
 
 #' @noRd
 extract.maxLik <- function(model,
-                           include.logLik = TRUE,
+                           include.loglik = TRUE,
                            include.aic = TRUE,
                            ...) {
 
@@ -4999,7 +4999,7 @@ extract.maxLik <- function(model,
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
-  if (isTRUE(include.logLik)) {
+  if (isTRUE(include.loglik)) {
     ll <- stats::logLik(model)[1]
     if (!is.null(ll) && !is.na(ll)) {
       gof <- c(gof, ll)
@@ -5019,7 +5019,7 @@ extract.maxLik <- function(model,
   createTexreg(coef.names = coefnames,
                coef = coefs,
                se = se,
-               pval = pval,
+               pvalues = pval,
                gof.names = gof.names,
                gof = gof,
                gof.decimal = gof.decimal)
