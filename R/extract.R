@@ -5038,6 +5038,7 @@ extract.maxLik <- function(model,
 #'
 #' @method extract maxLik
 #' @aliases extract.maxLik
+#' @importFrom stats AIC logLik
 #' @export
 setMethod("extract", signature = className("maxLik", "maxLik"),
           definition = extract.maxLik)
@@ -5338,7 +5339,7 @@ extract.mnlogit <- function(model,
 #' \code{\link{extract}} method for \code{mnlogit} objects
 #'
 #' \code{\link{extract}} method for \code{mnlogit} objects created by the
-#' \code{\link[mnlogit]{mnlogit}} function in the \pkg{mnlogit} package.
+#' \code{mnlogit} function in the \pkg{mnlogit} package.
 #'
 #' @param model A statistical model object.
 #' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
@@ -8772,8 +8773,7 @@ extract.zelig <- function(model,
 #' \code{\link{extract}} method for \code{zelig} objects
 #'
 #' \code{\link{extract}} method for \code{zelig} objects created by the
-#' \code{\link[Zelig]{zelig}} function in the \pkg{Zelig} package
-#' (version < 5.0).
+#' \code{zelig} function in the \pkg{Zelig} package (version < 5.0).
 #'
 #' @param model A statistical model object.
 #' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
@@ -8862,8 +8862,7 @@ extract.Zelig <- function(model,
 #' \code{\link{extract}} method for \code{Zelig} objects
 #'
 #' \code{\link{extract}} method for \code{Zelig} objects created by the
-#' \code{\link[Zelig]{zelig}} function in the \pkg{Zelig} package
-#' (version >= 5.0).
+#' \code{zelig} function in the \pkg{Zelig} package (version >= 5.0).
 #'
 #' @param model A statistical model object.
 #' @param include.nobs Report the number of observations in the GOF block?

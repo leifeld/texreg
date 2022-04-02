@@ -51,10 +51,8 @@ models with imputed data)?}
 }
 \description{
 \code{\link{extract}} method for \code{zelig} objects created by the
-\code{\link[Zelig]{zelig}} function in the \pkg{Zelig} package
-(version < 5.0).
+\code{zelig} function in the \pkg{Zelig} package (version < 5.0).
 
 \code{\link{extract}} method for \code{Zelig} objects created by the
-\code{\link[Zelig]{zelig}} function in the \pkg{Zelig} package
-(version >= 5.0).
+\code{zelig} function in the \pkg{Zelig} package (version >= 5.0).
 }
