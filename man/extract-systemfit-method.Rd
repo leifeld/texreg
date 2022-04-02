@@ -35,5 +35,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{systemfit} objects created by the
-\code{\link[systemfit]{systemfit}} function in the \pkg{systemfit} package.
+\code{systemfit} function in the \pkg{systemfit} package.
 }

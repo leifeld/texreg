@@ -17,5 +17,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{glmrob} objects created by the
-\code{\link[robustbase]{glmrob}} function in the \pkg{robustbase} package.
+\code{glmrob} function in the \pkg{robustbase} package.
 }

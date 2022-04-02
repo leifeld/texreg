@@ -28,5 +28,5 @@ not in use.}
 }
 \description{
 \code{\link{extract}} method for \code{geeglm} objects created by the
-\code{\link[geepack]{geeglm}} function in the \pkg{geepack} package.
+\code{geeglm} function in the \pkg{geepack} package.
 }

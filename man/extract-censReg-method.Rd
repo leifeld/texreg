@@ -32,5 +32,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{censReg} objects created by the
-\code{\link[censReg]{censReg}} function in the \pkg{censReg} package.
+\code{censReg} function in the \pkg{censReg} package.
 }

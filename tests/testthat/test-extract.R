@@ -601,6 +601,139 @@ test_that("extract lmerMod objects from the lme4 package", {
   expect_length(which(grepl("Cov", tr2_wald@gof.names)), 0)
 })
 
+# maxLik (maxLik) ----
+test_that("extract maxLik objects from the maxLik package", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("maxLik", minimum_version = "1.4.8")
+  require("maxLik")
+  set.seed(12345)
+
+  # example 1 from help page
+  t <- rexp(100, 2)
+  loglik <- function(theta) log(theta) - theta * t
+  gradlik <- function(theta) 1 / theta - t
+  hesslik <- function(theta) -100 / theta^2
+  sink(nullfile())
+  a <- maxLik(loglik, start = 1, control = list(printLevel = 2))
+  sink()
+
+  tr1 <- extract(a)
+  expect_length(tr1@coef.names, 1)
+  expect_length(tr1@coef, 1)
+  expect_length(tr1@se, 1)
+  expect_length(tr1@pvalues, 1)
+  expect_length(tr1@ci.low, 0)
+  expect_length(tr1@ci.up, 0)
+  expect_true(!any(is.na(tr1@coef)))
+  expect_length(tr1@gof, 2)
+  expect_length(tr1@gof.names, 2)
+  expect_length(tr1@gof.decimal, 2)
+  expect_equivalent(which(tr1@gof.decimal), 1:2)
+
+  # example 2 from help page
+  b <- maxLik(loglik, gradlik, hesslik, start = 1,
+              control = list(tol = -1, reltol = 1e-12, gradtol = 1e-12))
+
+  tr2 <- extract(b)
+  expect_length(tr2@coef.names, 1)
+  expect_length(tr2@coef, 1)
+  expect_length(tr2@se, 1)
+  expect_length(tr2@pvalues, 1)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_true(!any(is.na(tr2@coef)))
+  expect_length(tr2@gof, 2)
+  expect_length(tr2@gof.names, 2)
+  expect_length(tr2@gof.decimal, 2)
+  expect_equivalent(which(tr2@gof.decimal), 1:2)
+
+  # example 3 from help page
+  loglik <- function(param) {
+    mu <- param[1]
+    sigma <- param[2]
+    ll <- -0.5 * N * log(2 * pi) - N * log(sigma) - sum(0.5 * (x - mu)^2 / sigma^2)
+    ll
+  }
+  x <- rnorm(100, 1, 2)
+  N <- length(x)
+  res <- maxLik(loglik, start = c(0, 1))
+
+  tr3 <- extract(res)
+  expect_length(tr3@coef.names, 2)
+  expect_length(tr3@coef, 2)
+  expect_length(tr3@se, 2)
+  expect_length(tr3@pvalues, 2)
+  expect_length(tr3@ci.low, 0)
+  expect_length(tr3@ci.up, 0)
+  expect_true(!any(is.na(tr3@coef)))
+  expect_length(tr3@gof, 2)
+  expect_length(tr3@gof.names, 2)
+  expect_length(tr3@gof.decimal, 2)
+  expect_equivalent(which(tr3@gof.decimal), 1:2)
+
+  # example 4 from help page
+  resFix <- maxLik(loglik, start = c(mu = 0, sigma = 1), fixed = "sigma")
+
+  tr4 <- extract(resFix)
+  expect_length(tr3@coef.names, 2)
+  expect_length(tr3@coef, 2)
+  expect_length(tr3@se, 2)
+  expect_length(tr3@pvalues, 2)
+  expect_length(tr3@ci.low, 0)
+  expect_length(tr3@ci.up, 0)
+  expect_true(!any(is.na(tr3@coef)))
+  expect_length(tr3@gof, 2)
+  expect_length(tr3@gof.names, 2)
+  expect_length(tr3@gof.decimal, 2)
+  expect_equivalent(which(tr3@gof.decimal), 1:2)
+})
+
+# mlogit (mlogit) ----
+test_that("extract mlogit objects from the mlogit package", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("mlogit", minimum_version = "1.1.0")
+  require("mlogit")
+  set.seed(12345)
+  data("Fishing", package = "mlogit")
+  Fish <- dfidx(Fishing, varying = 2:9, shape = "wide", choice = "mode")
+  m <- mlogit(mode ~ price + catch | income, data = Fish)
+  tr1 <- extract(m)
+
+  expect_equivalent(sum(abs(tr1@coef)), 3.382753, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@se), 0.7789933, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@pvalues), 0.6136796, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@gof), 2417.138, tolerance = 1e-2)
+  expect_length(tr1@coef, 8)
+  expect_length(tr1@gof, 4)
+  expect_equivalent(which(tr1@gof.decimal), 1:2)
+  expect_equivalent(tr1@gof[4], 4)
+  expect_equal(dim(matrixreg(tr1)), c(21, 2))
+  expect_warning(extract(m, beside = TRUE), "choice-specific covariates")
+})
+
+# mnlogit (mnlogit) ----
+test_that("extract mnlogit models from the mnlogit package", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("mnlogit", minimum_version = "1.2.6")
+  require("mnlogit")
+  set.seed(12345)
+  data(Fish, package = "mnlogit")
+  fit <- mnlogit(mode ~ price | income | catch, Fish, ncores = 1)
+  tr <- extract(fit)
+
+  expect_equivalent(sum(abs(tr@coef)), 13.33618, tolerance = 1e-2)
+  expect_equivalent(sum(tr@se), 3.059299, tolerance = 1e-2)
+  expect_equivalent(sum(tr@pvalues), 0.4701358, tolerance = 1e-2)
+  expect_equivalent(sum(tr@gof), 2407.143, tolerance = 1e-2)
+  expect_length(tr@coef, 11)
+  expect_length(tr@gof, 4)
+  expect_equivalent(which(tr@gof.decimal), 1:2)
+  expect_equivalent(tr@gof[4], 4)
+  expect_equal(dim(matrixreg(tr)), c(27, 2))
+  expect_warning(extract(fit, beside = TRUE), "choice-specific covariates")
+})
+
+# multinom (nnet) ----
 test_that("extract multinom objects from the nnet package", {
   testthat::skip_on_cran()
   testthat::skip_if_not_installed("nnet", minimum_version = "7.3.12")
@@ -632,49 +765,6 @@ test_that("extract multinom objects from the nnet package", {
   expect_length(tr3, 2)
   expect_length(tr3[[1]]@coef, 2)
   expect_length(tr3[[2]]@coef, 2)
-})
-
-test_that("extract mlogit objects from the mlogit package", {
-  testthat::skip_on_cran()
-  testthat::skip_if_not_installed("mlogit", minimum_version = "1.1.0")
-  require("mlogit")
-  set.seed(12345)
-  data("Fishing", package = "mlogit")
-  Fish <- dfidx(Fishing, varying = 2:9, shape = "wide", choice = "mode")
-  m <- mlogit(mode ~ price + catch | income, data = Fish)
-  tr1 <- extract(m)
-
-  expect_equivalent(sum(abs(tr1@coef)), 3.382753, tolerance = 1e-2)
-  expect_equivalent(sum(tr1@se), 0.7789933, tolerance = 1e-2)
-  expect_equivalent(sum(tr1@pvalues), 0.6136796, tolerance = 1e-2)
-  expect_equivalent(sum(tr1@gof), 2417.138, tolerance = 1e-2)
-  expect_length(tr1@coef, 8)
-  expect_length(tr1@gof, 4)
-  expect_equivalent(which(tr1@gof.decimal), 1:2)
-  expect_equivalent(tr1@gof[4], 4)
-  expect_equal(dim(matrixreg(tr1)), c(21, 2))
-  expect_warning(extract(m, beside = TRUE), "choice-specific covariates")
-})
-
-test_that("extract mnlogit models from the mnlogit package", {
-  testthat::skip_on_cran()
-  testthat::skip_if_not_installed("mnlogit", minimum_version = "1.2.6")
-  require("mnlogit")
-  set.seed(12345)
-  data(Fish, package = "mnlogit")
-  fit <- mnlogit(mode ~ price | income | catch, Fish, ncores = 1)
-  tr <- extract(fit)
-
-  expect_equivalent(sum(abs(tr@coef)), 13.33618, tolerance = 1e-2)
-  expect_equivalent(sum(tr@se), 3.059299, tolerance = 1e-2)
-  expect_equivalent(sum(tr@pvalues), 0.4701358, tolerance = 1e-2)
-  expect_equivalent(sum(tr@gof), 2407.143, tolerance = 1e-2)
-  expect_length(tr@coef, 11)
-  expect_length(tr@gof, 4)
-  expect_equivalent(which(tr@gof.decimal), 1:2)
-  expect_equivalent(tr@gof[4], 4)
-  expect_equal(dim(matrixreg(tr)), c(27, 2))
-  expect_warning(extract(fit, beside = TRUE), "choice-specific covariates")
 })
 
 # nlmerMod (lme4) ----

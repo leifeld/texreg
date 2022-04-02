@@ -45,5 +45,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{stergm} objects created by the
-\code{\link[tergm]{stergm}} function in the \pkg{tergm} package.
+\code{stergm} function in the \pkg{tergm} package.
 }

@@ -32,7 +32,7 @@ standard deviation) in the GOF block?}
 }
 \description{
 \code{\link{extract}} method for \code{lmrob} objects created by the
-\code{\link[robustbase]{lmrob}} function in the \pkg{robustbase} package.
+\code{lmrob} function in the \pkg{robustbase} package.
 
 \code{\link{extract}} method for \code{lmRob} objects created by the
 \code{\link[robust]{lmRob}} function in the \pkg{robust} package.

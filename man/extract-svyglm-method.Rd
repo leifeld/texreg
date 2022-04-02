@@ -38,5 +38,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{svyglm} objects created by the
-\code{\link[survey]{svyglm}} function in the \pkg{survey} package.
+\code{svyglm} function in the \pkg{survey} package.
 }
