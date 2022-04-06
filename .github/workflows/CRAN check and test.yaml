@@ -76,8 +76,8 @@ jobs:
         run: |
           remotes::install_cran("rcmdcheck")
           devtools::install_deps(dependencies = TRUE)
-          remotes::install_cran("TMB")
-          install.packages("glmmTMB", repos = "https://glmmTMB.github.io/glmmTMB/repos")
+          install.packages("TMB", type = "source")
+          install.packages("glmmTMB", repos = "https://glmmTMB.github.io/glmmTMB/repos", type = "source")
           devtools::install_github("paul-buerkner/brms", build_vignettes = FALSE)
           install.packages(c("AER", "alpaca", "Bergm", "bife", "biglm", "dynlm", "eha", "ergm", "feisr", "fixest", "forecast", "gamlss.inf", "lfe", "lme4", "maxLik", "metaSEM", "miceadds", "mlogit", "ordinal", "plm", "spatialreg", "speedglm", "truncreg"))
         shell: Rscript {0}
