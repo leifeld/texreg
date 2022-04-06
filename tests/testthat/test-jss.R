@@ -1,5 +1,5 @@
 context("JSS article 2013")
-library("texreg")
+suppressPackageStartupMessages(library("texreg"))
 
 # example models from ?lm
 ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)

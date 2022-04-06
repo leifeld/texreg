@@ -1,8 +1,8 @@
 context("huxtablereg")
+suppressPackageStartupMessages(library("texreg"))
 
 skip_if_not_installed("huxtable")
 
-library("texreg")
 library("huxtable")
 
 m1 <- lm(mpg ~ gear, mtcars)

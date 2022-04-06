@@ -1,5 +1,5 @@
 context("texreg family functions")
-library("texreg")
+suppressPackageStartupMessages(library("texreg"))
 
 data("iris")
 model1 <- lm(Sepal.Width ~ Petal.Width, data = iris)

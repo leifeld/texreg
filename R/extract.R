@@ -2145,9 +2145,15 @@ extract.fixest <- function(model,
     gof <- c(gof, suppressWarnings(fixest::r2(model, "r2")))
     gof.decimal <- c(gof.decimal, TRUE)
     if (isTRUE(include.proj.stats)) {
-      gof <- c(gof, suppressWarnings(fixest::r2(model, "wr2")))
-      gof.decimal <- c(gof.decimal, TRUE)
-      gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
+      tryCatch({ # wrap in tryCatch because it does not work in some versions
+        gof <- c(gof, suppressWarnings(fixest::r2(model, "wr2")))
+        gof.decimal <- c(gof.decimal, TRUE)
+        gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
+      }, error = function(cond) {
+        gof.names <- c(gof.names, "R$^2$")
+      }, warning = function(cond) {
+        # do nothing in case of a warning
+      })
     } else {
       gof.names <- c(gof.names, "R$^2$")
     }
@@ -2156,11 +2162,17 @@ extract.fixest <- function(model,
     gof <- c(gof, suppressWarnings(fixest::r2(model, "ar2")))
     gof.decimal <- c(gof.decimal, TRUE)
     if (isTRUE(include.proj.stats)) {
-      gof <- c(gof, suppressWarnings(fixest::r2(model, "war2")))
-      gof.decimal <- c(gof.decimal, TRUE)
-      gof.names <- c(gof.names,
-                     "Adj. R$^2$ (full model)",
-                     "Adj. R$^2$ (proj model)")
+      tryCatch({ # wrap in tryCatch because it does not work in some versions
+        gof <- c(gof, suppressWarnings(fixest::r2(model, "war2")))
+        gof.decimal <- c(gof.decimal, TRUE)
+        gof.names <- c(gof.names,
+                       "Adj. R$^2$ (full model)",
+                       "Adj. R$^2$ (proj model)")
+      }, error = function(cond) {
+        gof.names <- c(gof.names, "Adj. R$^2$")
+      }, warning = function(cond) {
+        # do nothing in case of a warning
+      })
     } else {
       gof.names <- c(gof.names, "Adj. R$^2$")
     }

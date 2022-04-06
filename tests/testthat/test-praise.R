@@ -1,5 +1,5 @@
 context("praise function")
-library("texreg")
+suppressPackageStartupMessages(library("texreg"))
 
 test_that("praise gives useful error messages if the fields were not filled out properly", {
   expect_error(praise(organization = "test"), "argument \"academic_user\" is missing, with no default")

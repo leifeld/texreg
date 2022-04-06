@@ -35,7 +35,7 @@ Enhances:
   ergm (>= 4.1.2),
   feisr (>= 1.0.1),
   fGarch,
-  fixest (>= 0.8.2),
+  fixest (>= 0.10.4),
   forecast,
   gamlss,
   gamlss.inf,
