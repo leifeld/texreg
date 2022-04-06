@@ -2142,10 +2142,10 @@ extract.fixest <- function(model,
 
   # GOF block: OLS-specific statistics
   if (model$method == "feols" && isTRUE(include.rsquared)) {
-    gof <- c(gof, fixest::r2(model, "r2"))
+    gof <- c(gof, suppressWarnings(fixest::r2(model, "r2")))
     gof.decimal <- c(gof.decimal, TRUE)
     if (isTRUE(include.proj.stats)) {
-      gof <- c(gof, fixest::r2(model, "wr2"))
+      gof <- c(gof, suppressWarnings(fixest::r2(model, "wr2")))
       gof.decimal <- c(gof.decimal, TRUE)
       gof.names <- c(gof.names, "R$^2$ (full model)", "R$^2$ (proj model)")
     } else {
@@ -2153,10 +2153,10 @@ extract.fixest <- function(model,
     }
   }
   if (model$method == "feols" && isTRUE(include.adjrs)) {
-    gof <- c(gof, fixest::r2(model, "ar2"))
+    gof <- c(gof, suppressWarnings(fixest::r2(model, "ar2")))
     gof.decimal <- c(gof.decimal, TRUE)
     if (isTRUE(include.proj.stats)) {
-      gof <- c(gof, fixest::r2(model, "war2"))
+      gof <- c(gof, suppressWarnings(fixest::r2(model, "war2")))
       gof.decimal <- c(gof.decimal, TRUE)
       gof.names <- c(gof.names,
                      "Adj. R$^2$ (full model)",
