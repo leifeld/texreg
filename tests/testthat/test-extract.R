@@ -333,7 +333,7 @@ test_that("extract felm objects from the lfe package", {
 # fixest (fixest) ----
 test_that("extract fixest objects created with the fixest package", {
   testthat::skip_on_cran()
-  skip_if_not_installed("fixest", minimum_version = "0.10.4")
+  skip_if_not_installed("fixest", minimum_version = "0.10.5")
   require("fixest")
 
   # test ordinary least squares with multiple fixed effects

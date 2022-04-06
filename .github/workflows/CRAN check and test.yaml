@@ -79,7 +79,8 @@ jobs:
           install.packages("TMB", type = "source")
           install.packages("glmmTMB", repos = "https://glmmTMB.github.io/glmmTMB/repos", type = "source")
           devtools::install_github("paul-buerkner/brms", build_vignettes = FALSE)
-          install.packages(c("AER", "alpaca", "Bergm", "bife", "biglm", "dynlm", "eha", "ergm", "feisr", "fixest", "forecast", "gamlss.inf", "lfe", "lme4", "maxLik", "metaSEM", "miceadds", "mlogit", "ordinal", "plm", "spatialreg", "speedglm", "truncreg"))
+          devtools::install_github("lrberge/fixest")
+          install.packages(c("AER", "alpaca", "Bergm", "bife", "biglm", "dynlm", "eha", "ergm", "feisr", "forecast", "gamlss.inf", "lfe", "lme4", "maxLik", "metaSEM", "miceadds", "mlogit", "ordinal", "plm", "spatialreg", "speedglm", "truncreg"))
         shell: Rscript {0}
 
       - name: Check
