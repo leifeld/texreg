@@ -1,4 +1,4 @@
-.travis.yml
 README.md
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.github$

@@ -35,5 +35,5 @@ case to the \code{coef} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{lnam} objects created by the
-\code{\link[sna]{lnam}} function in the \pkg{sna} package.
+\code{lnam} function in the \pkg{sna} package.
 }

@@ -1,5 +1,5 @@
 context("texreg family functions")
-library("texreg")
+suppressPackageStartupMessages(library("texreg"))
 
 data("iris")
 model1 <- lm(Sepal.Width ~ Petal.Width, data = iris)
@@ -315,6 +315,42 @@ test_that("knitreg function works", {
   skip_if_not_installed("rmarkdown", minimum_version = "1.12")
   require("rmarkdown")
   expect_match(knitreg(model1), "Petal.Width")
+
+  # the following evaluates that knitreg chooses and outputs the expected format
+  knitr::opts_knit$set(out.format = "markdown")
+
+  with_mock("rmarkdown::all_output_formats" = function (input) {"html_document"},
+            "knitr::current_input" = function () {NULL},
+            expect_equivalent(knitreg(model1), htmlreg(model1, doctype = FALSE)))
+
+  with_mock("rmarkdown::all_output_formats" = function (input) {"bookdown::html_document2"},
+            "knitr::current_input" = function () {NULL},
+            expect_equivalent(knitreg(model1), htmlreg(model1, doctype = FALSE)))
+
+  with_mock("rmarkdown::all_output_formats" = function (input) {"pdf_document"},
+            "knitr::current_input" = function () {NULL},
+            expect_equivalent(knitreg(model1), texreg(model1, use.packages = FALSE)))
+
+  with_mock("rmarkdown::all_output_formats" = function (input) {"bookdown::pdf_document2"},
+            "knitr::current_input" = function () {NULL},
+            expect_equivalent(knitreg(model1), texreg(model1, use.packages = FALSE)))
+
+  with_mock("rmarkdown::all_output_formats" = function (input) {"bookdown::pdf_book"},
+            "knitr::current_input" = function () {NULL},
+            expect_equivalent(knitreg(model1), texreg(model1, use.packages = FALSE)))
+
+  # formatting table to test word output in knitreg
+  mr <- matrixreg(model1, output.type = "ascii", include.attributes = FALSE, trim = TRUE)
+  colnames(mr) <- mr[1, ]
+  mr <- mr[-1, ]
+
+  with_mock("rmarkdown::all_output_formats" = function (input) {"word_document"},
+            "knitr::current_input" = function () {NULL},
+            expect_equivalent(knitreg(model1), knitr::kable(mr)))
+
+  with_mock("rmarkdown::all_output_formats" = function (input) {"bookdown::word_document2"},
+            "knitr::current_input" = function () {NULL},
+            expect_equivalent(knitreg(model1), knitr::kable(mr)))
 })
 
 test_that("matrixreg function works", {

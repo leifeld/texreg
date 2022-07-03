@@ -37,5 +37,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{mnlogit} objects created by the
-\code{\link[mnlogit]{mnlogit}} function in the \pkg{mnlogit} package.
+\code{mnlogit} function in the \pkg{mnlogit} package.
 }

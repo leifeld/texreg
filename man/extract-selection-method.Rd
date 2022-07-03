@@ -53,6 +53,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{selection} objects created by the
-\code{\link[sampleSelection]{selection}} function in the
-\pkg{sampleSelection} package.
+\code{selection} function in the \pkg{sampleSelection} package.
 }

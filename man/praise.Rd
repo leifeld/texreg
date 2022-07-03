@@ -136,7 +136,7 @@ The \code{\link{praise}} and \code{\link{praise_interactive}} functions are
 our attempt at rectifying the situation. With these functions, you can
 provide positive feedback to the developers. The praise is saved to a
 database on the web server of the package maintainer and subsequently
-displayed at \url{http://www.philipleifeld.com/praise} for other users,
+displayed at \url{https://www.philipleifeld.com/praise/} for other users,
 funders, and employers to view. This will also enable the package authors to
 compile reports about how \pkg{texreg} is used by academic and non-academic
 users to increase their productivity and work quality, for example in the

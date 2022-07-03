@@ -41,5 +41,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{hurdle} objects created by the
-\code{\link[pscl]{hurdle}} function in the \pkg{pscl} package.
+\code{hurdle} function in the \pkg{pscl} package.
 }

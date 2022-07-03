@@ -32,5 +32,5 @@ not in use.}
 }
 \description{
 \code{\link{extract}} method for \code{netlogit} objects created by the
-\code{\link[sna]{netlogit}} function in the \pkg{sna} package.
+\code{netlogit} function in the \pkg{sna} package.
 }

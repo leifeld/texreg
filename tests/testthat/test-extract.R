@@ -1,22 +1,26 @@
 context("extract methods")
 suppressPackageStartupMessages(library("texreg"))
 
-
 # Arima (stats) ----
 test_that("extract Arima objects from the stats package", {
+  testthat::skip_on_cran()
   set.seed(12345)
   m <- arima(USAccDeaths,
              order = c(0, 1, 1),
              seasonal = list(order = c(0, 1, 1)))
   tr <- extract(m)
-  expect_equivalent(tr@coef, c(-0.43, -0.55), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.12, 0.178), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(856.88, 863.1126, -425.44, 59), tolerance = 1e-2)
-  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef.names, 2)
   expect_length(tr@coef, 2)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_length(tr@se, 2)
+  expect_length(tr@pvalues, 2)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
   expect_equivalent(which(tr@gof.decimal), 1:3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(dim(matrixreg(m)), c(9, 2))
 })
 
 # forecast_ARIMA (forecast) ----
@@ -30,14 +34,18 @@ test_that("extract forecast_ARIMA objects from the forecast package", {
                      seasonal = list(order = c(0, 1, 1), period = 12),
                      lambda = 0)
   tr <- extract(air.model)
-  expect_equivalent(tr@coef, c(-0.39, -0.61), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.117, 0.1075829), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(-291.5260, -291.2222, -284.2695, 148.7630, 83), tolerance = 1e-2)
-  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef.names, 2)
   expect_length(tr@coef, 2)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_length(tr@se, 2)
+  expect_length(tr@pvalues, 2)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 5)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@gof.decimal, 5)
   expect_equivalent(which(tr@gof.decimal), 1:4)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+  expect_equivalent(dim(matrixreg(air.model)), c(10, 2))
 
   m1 <- arima(USAccDeaths,
               order = c(0, 1, 1),
@@ -54,25 +62,50 @@ test_that("extract forecast_ARIMA objects from the forecast package", {
   expect_equivalent(m[10, 1], "AICc")
 })
 
+# bergm (Bergm) ----
+test_that("extract bergm objects from the Bergm package", {
+  testthat::skip_on_cran()
+  suppressWarnings(skip_if_not_installed("Bergm", minimum_version = "5.0.2"))
+  require("Bergm")
+  set.seed(12345)
+  data(florentine)
+  suppressWarnings(suppressMessages(
+    p.flo <- bergm(flomarriage ~ edges + kstar(2),
+                   burn.in    = 10,
+                   aux.iters  = 30,
+                   main.iters = 30,
+                   gamma      = 1.2)))
+  tr <- extract(p.flo)
+  expect_length(tr@se, 0)
+  expect_length(tr@pvalues, 0)
+  expect_length(tr@ci.low, 2)
+  expect_length(tr@ci.up, 2)
+  expect_length(tr@gof, 0)
+  expect_length(tr@coef, 2)
+  expect_equivalent(dim(matrixreg(p.flo)), c(5, 2))
+})
+
 # bife (bife) ----
 test_that("extract bife objects from the bife package", {
   testthat::skip_on_cran()
   skip_if_not_installed("bife", minimum_version = "0.7")
   require("bife")
-
   set.seed(12345)
-  mod <- bife(LFP ~ I(AGE^2) + log(INCH) + KID1 + KID2 + KID3 + factor(TIME) | ID, psid)
 
+  mod <- bife(LFP ~ I(AGE^2) + log(INCH) + KID1 + KID2 + KID3 + factor(TIME) | ID, psid)
   tr <- extract(mod)
 
-  expect_equivalent(sum(tr@coef), 4.61698, tolerance = 1e-2)
-  expect_equivalent(sum(tr@se), 2.443803, tolerance = 1e-2)
-  expect_equivalent(sum(tr@pvalues), 1.359822, tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(-3026.476, 6052.951, 5976), tolerance = 1e-2)
-  expect_length(tr@gof.names, 3)
+  expect_length(tr@coef.names, 13)
   expect_length(tr@coef, 13)
-  expect_equivalent(which(tr@pvalues < 0.05), c(1:4, 8:13))
+  expect_length(tr@se, 13)
+  expect_length(tr@pvalues, 13)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 3)
+  expect_length(tr@gof.names, 3)
+  expect_length(tr@gof.decimal, 3)
   expect_equivalent(which(tr@gof.decimal), 1:2)
+  expect_equivalent(which(tr@pvalues < 0.05), c(1:4, 8:13))
   expect_equivalent(dim(matrixreg(mod)), c(30, 2))
 })
 
@@ -85,10 +118,11 @@ test_that("extract brmsfit objects from the brms package", {
   require("coda")
 
   # example 2 from brm help page; see ?brm
-  sink("/dev/null")
-  suppressMessages(fit2 <- brm(rating ~ period + carry + cs(treat),
-                               data = inhaler, family = sratio("logit"),
-                               prior = set_prior("normal(0,5)"), chains = 1))
+  sink(nullfile())
+  suppressMessages(
+    fit2 <- brm(rating ~ period + carry + cs(treat),
+                data = inhaler, family = sratio("logit"),
+                prior = set_prior("normal(0,5)"), chains = 1))
   sink()
 
   suppressWarnings(tr <- extract(fit2))
@@ -99,17 +133,19 @@ test_that("extract brmsfit objects from the brms package", {
   expect_length(tr@ci.low, 8)
   expect_length(tr@ci.up, 8)
   expect_equivalent(which(tr@gof.decimal), c(1, 3, 4))
+  suppressWarnings(expect_equivalent(dim(matrixreg(fit2)), c(21, 2)))
 
   # example 1 from brm help page; see ?brm
-  bprior1 <- prior(student_t(5,0,10), class = b) + prior(cauchy(0,2), class = sd)
-  sink("/dev/null")
-  fit1 <- suppressMessages(brm(count ~ zAge + zBase * Trt + (1|patient),
-                               data = epilepsy,
-                               family = poisson(),
-                               prior = bprior1))
+  bprior1 <- prior(student_t(5, 0, 10), class = b) + prior(cauchy(0, 2), class = sd)
+  sink(nullfile())
+  suppressMessages(
+    fit1 <- brm(count ~ zAge + zBase * Trt + (1|patient),
+        data = epilepsy,
+        family = poisson(),
+        prior = bprior1))
   sink()
 
-  suppressMessages(tr <- extract(fit1, use.HDI = TRUE, reloo = TRUE))
+  expect_warning(suppressMessages(tr <- extract(fit1, use.HDI = TRUE, reloo = TRUE)))
   expect_length(tr@gof.names, 5)
   expect_length(tr@coef, 5)
   expect_length(tr@se, 5)
@@ -117,6 +153,28 @@ test_that("extract brmsfit objects from the brms package", {
   expect_length(tr@ci.low, 5)
   expect_length(tr@ci.up, 5)
   expect_equivalent(which(tr@gof.decimal), c(1:2, 4:5))
+  expect_equivalent(suppressWarnings(dim(matrixreg(fit1))), c(16, 2))
+})
+
+# clm (ordinal) ----
+test_that("extract clm objects from the ordinal package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("ordinal", minimum_version = "2019.12.10")
+  set.seed(12345)
+  fit <- ordinal::clm(Species ~ Sepal.Length, data = iris)
+  tr <- extract(fit)
+  expect_length(tr@coef.names, 3)
+  expect_length(tr@coef, 3)
+  expect_length(tr@se, 3)
+  expect_length(tr@pvalues, 3)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
+  expect_equivalent(which(tr@gof.decimal), 1:3)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(dim(matrixreg(fit)), c(11, 2))
 })
 
 # dynlm (dynlm) ----
@@ -130,14 +188,59 @@ test_that("extract dynlm objects from the dynlm package", {
   uk <- log10(UKDriverDeaths)
   dfm <- dynlm(uk ~ L(uk, 1) + L(uk, 12))
   tr <- extract(dfm, include.rmse = TRUE)
-  expect_equivalent(tr@coef, c(0.18, 0.43, 0.51), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.158, 0.053, 0.056), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0.25, 0.00, 0.00), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(0.68, 0.68, 180, 0.04), tolerance = 1e-2)
-  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef.names, 3)
   expect_length(tr@coef, 3)
-  expect_equivalent(which(tr@pvalues < 0.05), 2:3)
+  expect_length(tr@se, 3)
+  expect_length(tr@pvalues, 3)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
   expect_equivalent(which(tr@gof.decimal), c(1, 2, 4))
+  expect_equivalent(which(tr@pvalues < 0.05), 2:3)
+  expect_equivalent(dim(matrixreg(dfm)), c(10, 2))
+})
+
+# ergm (ergm) ----
+test_that("extract ergm objects from the ergm package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("ergm", minimum_version = "4.1.2")
+  require("ergm")
+
+  set.seed(12345)
+  data(florentine)
+  suppressMessages(gest <- ergm(flomarriage ~ edges + absdiff("wealth")))
+  tr1 <- extract(gest)
+  expect_length(tr1@coef.names, 2)
+  expect_length(tr1@coef, 2)
+  expect_length(tr1@se, 2)
+  expect_length(tr1@pvalues, 2)
+  expect_length(tr1@ci.low, 0)
+  expect_length(tr1@ci.up, 0)
+  expect_length(tr1@gof, 3)
+  expect_length(tr1@gof.names, 3)
+  expect_length(tr1@gof.decimal, 3)
+  expect_equivalent(which(tr1@gof.decimal), 1:3)
+  expect_equivalent(dim(matrixreg(gest)), c(8, 2))
+
+  data(molecule)
+  molecule %v% "atomic type" <- c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3,
+                                  3, 3, 3, 3, 3)
+  suppressMessages(gest <- ergm(molecule ~ edges + kstar(2) + triangle +
+                                  nodematch("atomic type")))
+  tr2 <- extract(gest)
+  expect_length(tr2@coef.names, 4)
+  expect_length(tr2@coef, 4)
+  expect_length(tr2@se, 4)
+  expect_length(tr2@pvalues, 4)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_length(tr2@gof, 3)
+  expect_length(tr2@gof.names, 3)
+  expect_length(tr2@gof.decimal, 3)
+  expect_equivalent(which(tr2@gof.decimal), 1:3)
+  expect_equivalent(dim(matrixreg(gest)), c(12, 2))
 })
 
 # feglm (alpaca) ----
@@ -151,15 +254,18 @@ test_that("extract feglm objects from the alpaca package", {
   mod <- feglm(y ~ x1 + x2 + x3 | i + t, data)
 
   tr <- extract(mod)
-
-  expect_equivalent(tr@coef, c(1.091, -1.106, 1.123), tolerance = 1e-2)
-  expect_equivalent(tr@se, c(0.024, 0.024, 0.024), tolerance = 1e-2)
-  expect_equivalent(tr@pvalues, c(0, 0, 0), tolerance = 1e-2)
-  expect_equivalent(tr@gof, c(15970.75, 19940.00, 997.00, 20.00), tolerance = 1e-2)
-  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef.names, 3)
   expect_length(tr@coef, 3)
-  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_length(tr@se, 3)
+  expect_length(tr@pvalues, 3)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
   expect_equivalent(which(tr@gof.decimal), 1)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:3)
+  expect_equivalent(dim(matrixreg(mod)), c(11, 2))
 })
 
 # feis (feisr) ----
@@ -213,10 +319,63 @@ test_that("extract felm objects from the lfe package", {
   expect_equivalent(which(tr@pvalues < 0.05), 1:2)
   expect_equivalent(which(tr@gof.decimal), 2:5)
 
+  # check exclusion of projected model statistics
+  tr <- extract(est, include.proj.stats = FALSE)
+  expect_length(tr@gof.names, 5)
+  expect_false(any(grepl('proj model', tr@gof.names, fixed = TRUE)))
+
   # without fixed effects
   OLS1 <- felm(Sepal.Length ~ Sepal.Width |0|0|0, data = iris)
   tr1 <- extract(OLS1)
   expect_length(tr1@gof, 5)
+})
+
+# fixest (fixest) ----
+test_that("extract fixest objects created with the fixest package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("fixest", minimum_version = "0.10.5")
+  require("fixest")
+
+  # test ordinary least squares with multiple fixed effects
+  set.seed(12345)
+  x <- rnorm(1000)
+  data <- data.frame(
+    x = x,
+    x2 = rnorm(length(x)),
+    id = factor(sample(20, length(x), replace = TRUE)),
+    firm = factor(sample(13, length(x),replace = TRUE))
+  )
+  id.eff <- rnorm(nlevels(data$id))
+  firm.eff <- rnorm(nlevels(data$firm))
+  u <- rnorm(length(x))
+  data$y <- with(data, x + 0.5 * x2 + id.eff[id] + firm.eff[firm] + u)
+  est <- feols(y ~ x + x2 | id + firm, data = data)
+
+  tr <- extract(est)
+
+  expect_equivalent(tr@coef, c(1.0188, 0.5182), tolerance = 1e-2)
+  # NOTE: standard errors differ from default produced by lfe (tested above)
+  #       see https://cran.r-project.org/web/packages/fixest/vignettes/standard_errors.html
+  expect_equivalent(tr@se, c(0.021, 0.032), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(1000, 20, 13, 0.7985, 0.575, 0.792, 0.57), tolerance = 1e-2)
+  expect_lte(length(tr@gof.names), 7)
+  expect_gte(length(tr@gof.names), 5)
+  expect_length(tr@coef, 2)
+  expect_equivalent(which(tr@pvalues < 0.05), 1:2)
+
+  # test generalized linear model
+  data$y <- rpois(length(data$x), exp(data$x + data$x2 + id.eff[data$id]))
+  est <- fepois(y ~ x + x2 | id, data = data)
+  tr <- extract(est)
+
+  expect_equivalent(tr@coef, c(1.00, 1.00), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.01, 0.02), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0.00, 0.00), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(1000, 20, 955.4, -1479.6, 0.83), tolerance = 1e-2)
+  expect_length(tr@gof.names, 5)
+  expect_length(tr@coef, 2)
+  expect_equivalent(which(!tr@gof.decimal), 1:2)
 })
 
 # gamlssZadj (gamlss.inf) ----
@@ -226,7 +385,7 @@ test_that("extract gamlssZadj objects from the gamlss.inf package", {
   require("gamlss.inf")
 
   set.seed(12345)
-  sink("/dev/null")
+  sink(nullfile())
   y0 <- rZAGA(1000, mu = .3, sigma = .4, nu = .15)
   g0 <- gamlss(y0 ~ 1, family = ZAGA)
   t0 <- gamlssZadj(y = y0, mu.formula = ~1, family = GA, trace = TRUE)
@@ -441,102 +600,170 @@ test_that("extract lmerMod objects from the lme4 package", {
   expect_length(which(grepl("Cov", tr2_wald@gof.names)), 0)
 })
 
-# multinom (nnet), mlogit (mlogit), mnlogit (mnlogit) ----
-test_that("extract multinom objects from the nnet package and mlogit and mnlogit objects", {
+# maxLik (maxLik) ----
+test_that("extract maxLik objects from the maxLik package", {
   testthat::skip_on_cran()
-  testthat::skip_if_not_installed("carData", minimum_version = "3.0.2")
-  testthat::skip_if_not_installed("nnet", minimum_version = "7.3.12")
-  require("nnet")
+  testthat::skip_if_not_installed("maxLik", minimum_version = "1.4.8")
+  require("maxLik")
   set.seed(12345)
-  data(WVS, package = "carData")
-  WVS$poverty <- as.factor(as.character(WVS$poverty))
-  sink("/dev/null")
-  model1 <- multinom(poverty ~ religion + degree + country + age + gender, data = WVS)
+
+  # example 1 from help page
+  t <- rexp(100, 2)
+  loglik <- function(theta) log(theta) - theta * t
+  gradlik <- function(theta) 1 / theta - t
+  hesslik <- function(theta) -100 / theta^2
+  sink(nullfile())
+  a <- maxLik(loglik, start = 1, control = list(printLevel = 2))
   sink()
-  tr1 <- extract(model1)
 
-  expect_equivalent(sum(abs(tr1@coef)), 8.387416, tolerance = 1e-2)
-  expect_equivalent(sum(tr1@se), 1.624519, tolerance = 1e-2)
-  expect_equivalent(sum(tr1@pvalues), 2.961305, tolerance = 1e-2)
-  expect_equivalent(sum(tr1@gof), 30608.87, tolerance = 1e-2)
-  expect_length(tr1@coef, 16)
-  expect_length(tr1@gof, 6)
-  expect_equivalent(which(tr1@gof.decimal), 1:4)
+  tr1 <- extract(a)
+  expect_length(tr1@coef.names, 1)
+  expect_length(tr1@coef, 1)
+  expect_length(tr1@se, 1)
+  expect_length(tr1@pvalues, 1)
+  expect_length(tr1@ci.low, 0)
+  expect_length(tr1@ci.up, 0)
+  expect_true(!any(is.na(tr1@coef)))
+  expect_length(tr1@gof, 2)
+  expect_length(tr1@gof.names, 2)
+  expect_length(tr1@gof.decimal, 2)
+  expect_equivalent(which(tr1@gof.decimal), 1:2)
 
-  tr1b <- extract(model1, beside = TRUE)
-  expect_type(tr1b, "list")
-  expect_length(tr1b, 2)
-  expect_equivalent(length(tr1b[[1]]@coef), length(tr1b[[1]]@coef))
-  expect_length(tr1b[[1]]@coef, 8)
+  # example 2 from help page
+  b <- maxLik(loglik, gradlik, hesslik, start = 1,
+              control = list(tol = -1, reltol = 1e-12, gradtol = 1e-12))
 
-  testthat::skip_if_not_installed("MASS")
-  sink("/dev/null")
-  example(birthwt, package = "MASS")
-  bwt.mu <- multinom(low ~ ., bwt)
-  sink()
-  tr1c <- extract(bwt.mu)
+  tr2 <- extract(b)
+  expect_length(tr2@coef.names, 1)
+  expect_length(tr2@coef, 1)
+  expect_length(tr2@se, 1)
+  expect_length(tr2@pvalues, 1)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_true(!any(is.na(tr2@coef)))
+  expect_length(tr2@gof, 2)
+  expect_length(tr2@gof.names, 2)
+  expect_length(tr2@gof.decimal, 2)
+  expect_equivalent(which(tr2@gof.decimal), 1:2)
 
-  expect_equivalent(sum(abs(tr1c@coef)), 8.117209, tolerance = 1e-2)
-  expect_equivalent(sum(tr1c@se), 5.314884, tolerance = 1e-2)
-  expect_equivalent(sum(tr1c@pvalues), 2.295426, tolerance = 1e-2)
-  expect_equivalent(sum(tr1c@gof), 759.248, tolerance = 1e-2)
-  expect_length(tr1c@coef, 11)
-  expect_length(tr1c@gof, 6)
-  expect_equivalent(which(tr1c@gof.decimal), 1:4)
-  expect_equivalent(tr1c@gof[6], 2)
-  expect_equal(dim(matrixreg(tr1c)), c(29, 2))
+  # example 3 from help page
+  loglik <- function(param) {
+    mu <- param[1]
+    sigma <- param[2]
+    ll <- -0.5 * N * log(2 * pi) - N * log(sigma) - sum(0.5 * (x - mu)^2 / sigma^2)
+    ll
+  }
+  x <- rnorm(100, 1, 2)
+  N <- length(x)
+  res <- maxLik(loglik, start = c(0, 1))
 
+  tr3 <- extract(res)
+  expect_length(tr3@coef.names, 2)
+  expect_length(tr3@coef, 2)
+  expect_length(tr3@se, 2)
+  expect_length(tr3@pvalues, 2)
+  expect_length(tr3@ci.low, 0)
+  expect_length(tr3@ci.up, 0)
+  expect_true(!any(is.na(tr3@coef)))
+  expect_length(tr3@gof, 2)
+  expect_length(tr3@gof.names, 2)
+  expect_length(tr3@gof.decimal, 2)
+  expect_equivalent(which(tr3@gof.decimal), 1:2)
+
+  # example 4 from help page
+  resFix <- maxLik(loglik, start = c(mu = 0, sigma = 1), fixed = "sigma")
+
+  tr4 <- extract(resFix)
+  expect_length(tr3@coef.names, 2)
+  expect_length(tr3@coef, 2)
+  expect_length(tr3@se, 2)
+  expect_length(tr3@pvalues, 2)
+  expect_length(tr3@ci.low, 0)
+  expect_length(tr3@ci.up, 0)
+  expect_true(!any(is.na(tr3@coef)))
+  expect_length(tr3@gof, 2)
+  expect_length(tr3@gof.names, 2)
+  expect_length(tr3@gof.decimal, 2)
+  expect_equivalent(which(tr3@gof.decimal), 1:2)
+})
+
+# mlogit (mlogit) ----
+test_that("extract mlogit objects from the mlogit package", {
+  testthat::skip_on_cran()
   testthat::skip_if_not_installed("mlogit", minimum_version = "1.1.0")
   require("mlogit")
   set.seed(12345)
-  WVS2 <- mlogit.data(WVS, choice = "poverty", shape = "wide")
-  model2 <- mlogit(poverty ~ 0 | religion + degree + country +
-                     age + gender, data = WVS2)
-  tr2 <- extract(model2)
+  data("Fishing", package = "mlogit")
+  Fish <- dfidx(Fishing, varying = 2:9, shape = "wide", choice = "mode")
+  m <- mlogit(mode ~ price + catch | income, data = Fish)
+  tr1 <- extract(m)
 
-  expect_equivalent(sum(abs(tr1@coef)), sum(abs(tr2@coef)), tolerance = 1e-2)
-  expect_equivalent(sum(tr1@se), sum(tr2@se), tolerance = 1e-2)
-  expect_equivalent(sum(tr1@pvalues), sum(tr2@pvalues), tolerance = 1e-2)
-  expect_length(tr2@gof, 4)
-  expect_equivalent(which(tr2@gof.decimal), 1:2)
+  expect_equivalent(sum(abs(tr1@coef)), 3.382753, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@se), 0.7789933, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@pvalues), 0.6136796, tolerance = 1e-2)
+  expect_equivalent(sum(tr1@gof), 2417.138, tolerance = 1e-2)
+  expect_length(tr1@coef, 8)
+  expect_length(tr1@gof, 4)
+  expect_equivalent(which(tr1@gof.decimal), 1:2)
+  expect_equivalent(tr1@gof[4], 4)
+  expect_equal(dim(matrixreg(tr1)), c(21, 2))
+  expect_warning(extract(m, beside = TRUE), "choice-specific covariates")
+})
 
-  tr2b <- extract(model2, beside = TRUE)
-  expect_type(tr2b, "list")
-  expect_length(tr2b, 2)
-  expect_equivalent(length(tr2b[[1]]@coef), length(tr2b[[1]]@coef))
-  expect_length(tr2b[[1]]@coef, 8)
-
-  tr2c <- extract(model2, include.iterations = TRUE)
-  expect_length(tr2c@gof, 6)
-  expect_equivalent(which(tr2c@gof.decimal), c(1:2, 6))
-
+# mnlogit (mnlogit) ----
+test_that("extract mnlogit models from the mnlogit package", {
+  testthat::skip_on_cran()
   testthat::skip_if_not_installed("mnlogit", minimum_version = "1.2.6")
   require("mnlogit")
   set.seed(12345)
-  model3 <- mnlogit(poverty ~ 1 | religion + degree +
-                      country + age + gender, data = WVS2)
-  tr3 <- extract(model3)
+  data(Fish, package = "mnlogit")
+  fit <- mnlogit(mode ~ price | income | catch, Fish, ncores = 1)
+  tr <- extract(fit)
 
-  expect_equivalent(sum(abs(tr3@coef)), sum(abs(tr2@coef)), tolerance = 1e-2)
-  expect_equivalent(sum(tr3@se), sum(tr2@se), tolerance = 1e-2)
-  expect_equivalent(sum(tr3@pvalues), sum(tr2@pvalues), tolerance = 1e-2)
-  expect_length(tr3@gof, 4)
-  expect_equivalent(which(tr3@gof.decimal), 1:2)
+  expect_equivalent(sum(abs(tr@coef)), 13.33618, tolerance = 1e-2)
+  expect_equivalent(sum(tr@se), 3.059299, tolerance = 1e-2)
+  expect_equivalent(sum(tr@pvalues), 0.4701358, tolerance = 1e-2)
+  expect_equivalent(sum(tr@gof), 2407.143, tolerance = 1e-2)
+  expect_length(tr@coef, 11)
+  expect_length(tr@gof, 4)
+  expect_equivalent(which(tr@gof.decimal), 1:2)
+  expect_equivalent(tr@gof[4], 4)
+  expect_equal(dim(matrixreg(tr)), c(27, 2))
+  expect_warning(extract(fit, beside = TRUE), "choice-specific covariates")
+})
 
-  tr3b <- extract(model3, beside = TRUE)
-  expect_type(tr3b, "list")
-  expect_length(tr3b, 2)
-  expect_equivalent(length(tr3b[[1]]@coef), length(tr3b[[1]]@coef))
-  expect_length(tr3b[[1]]@coef, 8)
+# multinom (nnet) ----
+test_that("extract multinom objects from the nnet package", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("nnet", minimum_version = "7.3.12")
+  require("nnet")
 
-  tr3c <- extract(model3, include.iterations = TRUE)
-  expect_length(tr3c@gof, 7)
-  expect_equivalent(which(tr3c@gof.decimal), c(1:2, 6:7))
+  # example from https://thomasleeper.com/Rcourse/Tutorials/nominalglm.html
+  set.seed(100)
+  y <- sort(sample(1:3, 600, TRUE))
+  x <- numeric(length = 600)
+  x[1:200] <- -1 * x[1:200] + rnorm(200, 4, 2)
+  x[201:400] <- 1 * x[201:400] + rnorm(200)
+  x[401:600] <- 2 * x[401:600] + rnorm(200, 2, 2)
 
-  mr1 <- matrixreg(list(model1, model2, model3))
-  expect_equivalent(dim(mr1), c(103, 4))
-  mr2 <- matrixreg(list(model1, model2, model3), beside = TRUE)
-  expect_equivalent(dim(mr2), c(25, 7))
+  sink(nullfile())
+  m1 <- multinom(y ~ x)
+  sink()
+  tr2 <- extract(m1, beside = FALSE)
+  tr3 <- extract(m1, beside = TRUE)
+
+  expect_equivalent(sum(abs(tr2@coef)), 6.845567, tolerance = 1e-2)
+  expect_equivalent(sum(tr2@se), 0.6671602, tolerance = 1e-2)
+  expect_equivalent(sum(tr2@pvalues), 1.677308e-16, tolerance = 1e-2)
+  expect_equivalent(sum(tr2@gof), 2852.451, tolerance = 1e-2)
+  expect_length(tr2@coef, 4)
+  expect_length(tr2@gof, 6)
+  expect_equivalent(which(tr2@gof.decimal), 1:4)
+  expect_equivalent(tr2@gof[6], 3)
+  expect_equal(dim(matrixreg(tr2)), c(15, 2))
+  expect_length(tr3, 2)
+  expect_length(tr3[[1]]@coef, 2)
+  expect_length(tr3[[2]]@coef, 2)
 })
 
 # nlmerMod (lme4) ----
@@ -564,6 +791,94 @@ test_that("extract nlmerMod objects from the lme4 package", {
   expect_length(tr_wald@se, 0)
   expect_length(tr_wald@ci.low, 3)
   expect_length(tr_wald@ci.up, 3)
+})
+
+# pcce (plm) ----
+test_that("extract pcce objects from the plm package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("plm", minimum_version = "2.4.1")
+  require("plm")
+  set.seed(12345)
+  data("Produc", package = "plm")
+
+  ccepmod <- pcce(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, data = Produc, model="p")
+  tr <- extract(ccepmod)
+  expect_length(tr@coef.names, 4)
+  expect_length(tr@coef, 4)
+  expect_length(tr@se, 4)
+  expect_length(tr@pvalues, 4)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof.decimal, 4)
+  expect_equivalent(which(tr@gof.decimal), 1:3)
+
+  ccemgmod <- pcce(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, data = Produc, model="mg")
+  tr2 <- extract(ccemgmod)
+  expect_length(tr2@coef.names, 4)
+  expect_length(tr2@coef, 4)
+  expect_length(tr2@se, 4)
+  expect_length(tr2@pvalues, 4)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_length(tr2@gof, 4)
+  expect_length(tr2@gof.names, 4)
+  expect_length(tr2@gof.decimal, 4)
+  expect_equivalent(which(tr2@gof.decimal), 1:3)
+})
+
+# Sarlm (spatialreg) ----
+test_that("extract Sarlm objects from the spatialreg package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("spatialreg", minimum_version = "1.2.1")
+  require("spatialreg")
+  set.seed(12345)
+
+  # first example from ?lagsarlm
+  data(oldcol, package = "spdep")
+  listw <- spdep::nb2listw(COL.nb, style = "W")
+  ev <- spatialreg::eigenw(listw)
+  W <- as(listw, "CsparseMatrix")
+  trMatc <- spatialreg::trW(W, type = "mult")
+  sink(nullfile())
+  COL.lag.eig <- spatialreg::lagsarlm(CRIME ~ INC + HOVAL,
+                                      data = COL.OLD,
+                                      listw = listw,
+                                      method = "eigen",
+                                      quiet = FALSE,
+                                      control = list(pre_eig = ev,
+                                                     OrdVsign = 1))
+  sink()
+  tr <- extract(COL.lag.eig)
+  expect_length(tr@coef.names, 4)
+  expect_length(tr@coef, 4)
+  expect_length(tr@se, 4)
+  expect_length(tr@pvalues, 4)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 7)
+  expect_length(tr@gof.names, 7)
+  expect_length(tr@gof.decimal, 7)
+  expect_equivalent(which(tr@gof.decimal), 3:7)
+
+  # example from ?predict.Sarlm
+  lw <- spdep::nb2listw(COL.nb)
+  COL.lag.eig2 <- COL.mix.eig <- lagsarlm(CRIME ~ INC + HOVAL,
+                                          data = COL.OLD,
+                                          lw,
+                                          type = "mixed")
+  tr2 <- extract(COL.lag.eig2)
+  expect_length(tr2@coef.names, 6)
+  expect_length(tr2@coef, 6)
+  expect_length(tr2@se, 6)
+  expect_length(tr2@pvalues, 6)
+  expect_length(tr2@ci.low, 0)
+  expect_length(tr2@ci.up, 0)
+  expect_length(tr2@gof, 7)
+  expect_length(tr2@gof.names, 7)
+  expect_length(tr2@gof.decimal, 7)
+  expect_equivalent(which(tr2@gof.decimal), 3:7)
 })
 
 # speedglm (speedglm) ----
@@ -615,4 +930,152 @@ test_that("extract speedlm objects from the speedglm package", {
   expect_length(tr@coef, 4)
   expect_equivalent(which(tr@pvalues < 0.05), integer())
   expect_equivalent(which(tr@gof.decimal), c(1, 2, 4))
+})
+
+# truncreg (truncreg) ----
+test_that("extract truncreg objects from the truncreg package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("truncreg", minimum_version = "0.2.5")
+  require("truncreg")
+
+  set.seed(12345)
+  x <- rnorm(100, mean = 1)
+  y <- rnorm(100, mean = 1.3)
+  dta <- data.frame(x, y)
+  dta <- dta[y < quantile(y, 0.8), ]
+  model <- truncreg(y ~ x, data = dta, point = max(dta$y), direction = "right")
+  tr <- extract(model)
+
+  expect_equivalent(tr@coef, c(1.24, 0.05, 0.96), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.25, 0.12, 0.14), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0, 0.67, 0), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(80, -81.69, 169.38, 176.53), tolerance = 1e-2)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@coef, 3)
+  expect_equivalent(which(tr@pvalues < 0.05), c(1, 3))
+  expect_equivalent(which(tr@gof.decimal), 2:4)
+})
+
+# weibreg (eha) ----
+test_that("extract weibreg objects from the eha package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("eha", minimum_version = "2.9.0")
+  require("eha")
+
+  set.seed(12345)
+  # stratified model example from weibreg help page
+  dat <- data.frame(time = c(4, 3, 1, 1, 2, 2, 3),
+                    status = c(1, 1, 1, 0, 1, 1, 0),
+                    x = c(0, 2, 1, 1, 1, 0, 0),
+                    sex = c(0, 0, 0, 0, 1, 1, 1))
+  model <- eha::weibreg(Surv(time, status) ~ x + strata(sex), data = dat)
+  tr <- extract(model)
+
+  expect_length(tr@coef, 5)
+  expect_equivalent(class(tr@coef), "numeric")
+  expect_length(tr@se, 5)
+  expect_equivalent(class(tr@se), "numeric")
+  expect_length(tr@pvalues, 5)
+  expect_equivalent(class(tr@pvalues), "numeric")
+  expect_length(tr@coef.names, 5)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 6)
+  expect_length(tr@gof.names, 6)
+  expect_length(tr@gof.decimal, 6)
+  expect_equivalent(tr@gof[5], 5)
+  expect_equivalent(which(tr@pvalues < 0.05), 2:5)
+  expect_equivalent(which(tr@gof.decimal), 1:3)
+})
+
+# wls (metaSEM) ----
+test_that("extract wls objects from the metaSEM package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("metaSEM", minimum_version = "1.2.5.1")
+  require("metaSEM")
+  set.seed(12345)
+
+  # example 1 from wls help page: analysis of correlation structure
+  R1.labels <- c("a1", "a2", "a3", "a4")
+  R1 <- matrix(c(1.00, 0.22, 0.24, 0.18,
+                 0.22, 1.00, 0.30, 0.22,
+                 0.24, 0.30, 1.00, 0.24,
+                 0.18, 0.22, 0.24, 1.00), ncol = 4, nrow = 4,
+               dimnames = list(R1.labels, R1.labels))
+  n <- 1000
+  acovR1 <- metaSEM::asyCov(R1, n)
+  model1 <- "f =~ a1 + a2 + a3 + a4"
+  RAM1 <- metaSEM::lavaan2RAM(model1, obs.variables = R1.labels)
+  wls.fit1a <- metaSEM::wls(Cov = R1, aCov = acovR1, n = n, RAM = RAM1,
+                            cor.analysis = TRUE, intervals = "LB")
+  tr1 <- extract(wls.fit1a)
+  expect_length(tr1@coef.names, 4)
+  expect_length(tr1@coef, 4)
+  expect_length(tr1@se, 0)
+  expect_length(tr1@pvalues, 0)
+  expect_length(tr1@ci.low, 4)
+  expect_length(tr1@ci.up, 4)
+  expect_true(!any(is.na(tr1@coef)))
+  expect_length(tr1@gof, 11)
+  expect_length(tr1@gof.names, 11)
+  expect_length(tr1@gof.decimal, 11)
+  expect_equivalent(tr1@gof[8], 0.23893943, tolerance = 1e-2)
+  expect_equivalent(which(tr1@gof.decimal), c(1, 3, 4, 5, 6, 7, 8, 10, 11))
+
+  # example 2 from wls help page: multiple regression
+  R2.labels <- c("y", "x1", "x2")
+  R2 <- matrix(c(1.00, 0.22, 0.24,
+                 0.22, 1.00, 0.30,
+                 0.24, 0.30, 1.00), ncol = 3, nrow = 3,
+               dimnames = list(R2.labels, R2.labels))
+  acovR2 <- metaSEM::asyCov(R2, n)
+  model2 <- "y ~ x1 + x2
+             ## Variances of x1 and x2 are 1
+             x1 ~~ 1*x1
+             x2 ~~ 1*x2
+             ## x1 and x2 are correlated
+             x1 ~~ x2"
+  RAM2 <- metaSEM::lavaan2RAM(model2, obs.variables = R2.labels)
+  wls.fit2a <- metaSEM::wls(Cov = R2, aCov = acovR2, n = n, RAM = RAM2,
+                            cor.analysis = TRUE, intervals = "LB")
+  tr2 <- extract(wls.fit2a)
+  expect_length(tr2@coef.names, 3)
+  expect_length(tr2@coef, 3)
+  expect_length(tr2@se, 0)
+  expect_length(tr2@pvalues, 0)
+  expect_length(tr2@ci.low, 3)
+  expect_length(tr2@ci.up, 3)
+  expect_true(!any(is.na(tr2@coef)))
+  expect_length(tr2@gof, 11)
+  expect_length(tr2@gof.names, 11)
+  expect_length(tr2@gof.decimal, 11)
+  expect_equivalent(tr2@gof[8], 0.0738, tolerance = 1e-2)
+  expect_equivalent(which(tr2@gof.decimal), c(1, 3, 4, 5, 6, 7, 8, 10, 11))
+
+  # example 3 from wls help page
+  R3.labels <- c("a1", "a2", "a3", "a4")
+  R3 <- matrix(c(1.50, 0.22, 0.24, 0.18,
+                 0.22, 1.60, 0.30, 0.22,
+                 0.24, 0.30, 1.80, 0.24,
+                 0.18, 0.22, 0.24, 1.30), ncol = 4, nrow = 4,
+               dimnames = list(R3.labels, R3.labels))
+  n <- 1000
+  acovS3 <- metaSEM::asyCov(R3, n, cor.analysis = FALSE)
+  model3 <- "f =~ a1 + a2 + a3 + a4"
+  RAM3 <- metaSEM::lavaan2RAM(model3, obs.variables = R3.labels)
+  wls.fit3a <- metaSEM::wls(Cov = R3, aCov = acovS3, n = n, RAM = RAM3,
+                            cor.analysis = FALSE)
+  tr3 <- extract(wls.fit3a)
+  expect_length(tr3@coef.names, 8)
+  expect_length(tr3@coef, 8)
+  expect_length(tr3@se, 8)
+  expect_length(tr3@pvalues, 8)
+  expect_length(tr3@ci.low, 0)
+  expect_length(tr3@ci.up, 0)
+  expect_true(!any(is.na(tr3@coef)))
+  expect_length(tr3@gof, 10)
+  expect_length(tr3@gof.names, 10)
+  expect_length(tr3@gof.decimal, 10)
+  expect_equivalent(which(tr3@gof.decimal), c(1, 3, 4, 5, 6, 7, 9, 10))
+  expect_true(all(tr3@pvalues < 0.05))
 })

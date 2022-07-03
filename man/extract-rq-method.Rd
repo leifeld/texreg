@@ -19,5 +19,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{rq} objects created by the
-\code{\link[quantreg]{rq}} function in the \pkg{quantreg} package.
+\code{rq} function in the \pkg{quantreg} package.
 }

@@ -17,5 +17,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{sienaFit} objects created by the
-\code{\link[RSiena]{siena07}} function in the \pkg{RSiena} package.
+\code{siena07} function in the \pkg{RSiena} package.
 }

@@ -41,7 +41,8 @@ the \code{getMethod} function, for example \code{getMethod("extract", "lm")}
 for linear models. To get help on a specific extract method, type something
 like \code{?`extract,lm-method`} (or something similar for other models,
 where \code{"lm"} needs to be replaced by the class name of the respective
-model).
+model). You can also list the available methods by displaying the
+\link[=texreg-package]{texreg package} help index.
 
 Users can contribute their own extensions for additional statistical models.
 Examples are contained in the article in the Journal of Statistical Software
@@ -52,7 +53,7 @@ referenced below. Suggestions can be submitted as pull requests at
 \references{
 Leifeld, Philip (2013). texreg: Conversion of Statistical Model
   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
-  55(8): 1-24. \url{http://www.jstatsoft.org/v55/i08/}.
+  55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 }
 \seealso{
 \code{\link{createTexreg}}, \code{\link{matrixreg}},

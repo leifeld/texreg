@@ -41,5 +41,5 @@ case to the \code{summary} method for the object.}
 }
 \description{
 \code{\link{extract}} method for \code{zeroinfl} objects created by the
-\code{\link[pscl]{zeroinfl}} function in the \pkg{pscl} package.
+\code{zeroinfl} function in the \pkg{pscl} package.
 }
