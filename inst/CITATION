@@ -8,12 +8,12 @@ citEntry(entry = "Article",
   volume       = "55",
   number       = "8",
   pages        = "1--24",
-  url          = "http://www.jstatsoft.org/v55/i08/",
-  
+  url          = "http://dx.doi.org/10.18637/jss.v055.i08",
+
   textVersion  =
-  paste("Philip Leifeld (2013).",
+  paste("Leifeld, Philip (2013).",
         "texreg: Conversion of Statistical Model Output in R to LaTeX and HTML Tables.",
         "Journal of Statistical Software, 55(8), 1-24.",
-        "URL http://www.jstatsoft.org/v55/i08/.")
+        "URL http://dx.doi.org/10.18637/jss.v055.i08.")
 )
 

@@ -34,7 +34,7 @@ can be used for creating regression tables using \code{\link{screenreg}},
 \item{\code{gof.decimal}}{A vector describing for each GOF statistic whether it is a
 decimal value (\code{TRUE}) or an integer value (\code{FALSE}).}
 
-\item{\code{An}}{optional model name. Can be of length zero.}
+\item{\code{model.name}}{An optional model name. Can be of length zero.}
 }}
 
 \references{

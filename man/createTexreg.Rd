@@ -4,10 +4,18 @@
 \alias{createTexreg}
 \title{Constructor for \linkS4class{texreg} objects}
 \usage{
-createTexreg(coef.names, coef, se = numeric(0), pvalues = numeric(0),
-  ci.low = numeric(0), ci.up = numeric(0), gof.names = character(0),
-  gof = numeric(0), gof.decimal = logical(0),
-  model.name = character(0))
+createTexreg(
+  coef.names,
+  coef,
+  se = numeric(0),
+  pvalues = numeric(0),
+  ci.low = numeric(0),
+  ci.up = numeric(0),
+  gof.names = character(0),
+  gof = numeric(0),
+  gof.decimal = logical(0),
+  model.name = character(0)
+)
 }
 \arguments{
 \item{coef.names}{The names for the covariates in a model as a
@@ -57,7 +65,6 @@ by the \code{\link{texreg}} function to create LaTeX tables and other
 representations of the model results.
 }
 \examples{
-
 library("nlme")  # load library for fitting linear mixed effects models
 model <- lme(distance ~ age, data = Orthodont, random = ~ 1)  # estimate
 coefficient.names <- rownames(summary(model)$tTable)  # extract coef names

@@ -1,3 +1,5 @@
+dist: bionic
+
 language: r
 
 r:
@@ -10,19 +12,44 @@ cache: packages
 
 r_check_args: --as-cran
 
+addons:
+  apt:
+    packages:
+      - ghostscript
+
 r_packages:
   - covr
+  - ggplot2
+  - AER
+  - bife
+  - biglm
+  - brms
+  - btergm
+  - censReg
+  - dynlm
+  - feisr
+  - forecast
+  - gamlss
+  - gamlss.inf
+  - glmmTMB
+  - lfe
+  - lme4
+  - MASS
+  - miceadds
+  - mlogit
+  - mnlogit
+  - MuMIn
+  - nlme
+  - nnet
+  - ordinal
 
 notifications:
   email:
     recipients:
-      - philip.leifeld@glasgow.ac.uk
+      - philip.leifeld@essex.ac.uk
       - claudia.zucca@glasgow.ac.uk
     on_success: change
     on_failure: change
 
-before_install:
-  - sudo apt-get install r-cran-mcmcpack
-
 after_success:
-- Rscript -e 'library(covr); codecov()'
+   - Rscript -e 'library(covr); codecov()'

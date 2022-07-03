@@ -4,16 +4,35 @@
 \alias{huxtablereg}
 \title{Create a huxtable object from multiple statistical models}
 \usage{
-huxtablereg(l, single.row = FALSE, stars = c(0.001, 0.01, 0.05),
-  custom.model.names = NULL, custom.coef.names = NULL,
-  custom.coef.map = NULL, custom.gof.names = NULL,
-  custom.gof.rows = NULL, digits = 2, leading.zero = TRUE,
-  star.symbol = star.symbol, symbol = "+", override.coef = 0,
-  override.se = 0, override.pvalues = 0, override.ci.low = 0,
-  override.ci.up = 0, omit.coef = NULL, reorder.coef = NULL,
-  reorder.gof = NULL, ci.force = FALSE, ci.force.level = 0.95,
-  ci.test = 0, groups = NULL, custom.columns = NULL,
-  custom.col.pos = NULL, ...)
+huxtablereg(
+  l,
+  single.row = FALSE,
+  stars = c(0.001, 0.01, 0.05),
+  custom.model.names = NULL,
+  custom.coef.names = NULL,
+  custom.coef.map = NULL,
+  custom.gof.names = NULL,
+  custom.gof.rows = NULL,
+  digits = 2,
+  leading.zero = TRUE,
+  star.symbol = star.symbol,
+  symbol = "+",
+  override.coef = 0,
+  override.se = 0,
+  override.pvalues = 0,
+  override.ci.low = 0,
+  override.ci.up = 0,
+  omit.coef = NULL,
+  reorder.coef = NULL,
+  reorder.gof = NULL,
+  ci.force = FALSE,
+  ci.force.level = 0.95,
+  ci.test = 0,
+  groups = NULL,
+  custom.columns = NULL,
+  custom.col.pos = NULL,
+  ...
+)
 }
 \arguments{
 \item{l}{A statistical model or a list of statistical models. Lists of
@@ -69,7 +88,7 @@ behavior.}
   variable", "y" = NA, "z" = "Third variable")}. With that particular example
   of \code{custom.coef.map},
   \enumerate{
-   \item coefficients will presented in order: \code{"x"}, \code{"y"},
+   \item coefficients will be presented in order: \code{"x"}, \code{"y"},
      \code{"z"}.
    \item variable \code{"x"} will appear as \code{"First variable"}, variable
      \code{"y"} will appear as \code{"y"}, and variable \code{"z"} will
@@ -121,13 +140,14 @@ arguments in the \code{\link{htmlreg}} function).}
 \item{symbol}{If four threshold values are handed over to the \code{stars}
 argument, p-values smaller than the largest threshold value but larger than
 the second-largest threshold value are denoted by this symbol. The default
-symbol is \code{"\\cdot"} for the LaTeX dot, \code{"&middot;"} for the HTML
-dot, or simply \code{"."} for the ASCII dot. If the \code{\link{texreg}}
-function is used, any other mathematical LaTeX symbol or plain text symbol
-can be used, for example \code{symbol = "\\circ"} for a small circle (note
-that backslashes must be escaped). If the \code{\link{htmlreg}} function is
-used, any other HTML character or symbol can be used. For the
-\code{screenreg} function, only plain text characters can be used.}
+symbol is \code{"\\\\cdot"} for the LaTeX dot, \code{"&middot;"} for the
+HTML dot, or simply \code{"."} for the ASCII dot. If the
+\code{\link{texreg}} function is used, any other mathematical LaTeX symbol
+or plain text symbol can be used, for example \code{symbol = "\\\\circ"}
+for a small circle (note that backslashes must be escaped). If the
+\code{\link{htmlreg}} function is used, any other HTML character or symbol
+can be used. For the \code{screenreg} function, only plain text characters
+can be used.}
 
 \item{override.coef}{Set custom values for the coefficients. New coefficients
 are provided as a list of numeric vectors. The list contains vectors of
@@ -183,7 +203,7 @@ argument is processed after the \code{custom.coef.names} argument, so the
 regular expression should refer to the custom coefficient names. To omit
 GOF entries instead of coefficient entries, use the custom arguments of the
 extract functions instead (see the help entry of the \code{\link{extract}}
-function or \code{\link{extract-methods}}.}
+function.}
 
 \item{reorder.coef}{Reorder the rows of the coefficient block of the
 resulting table in a custom way. The argument takes a vector of the same
@@ -221,8 +241,8 @@ report confidence intervals (\code{ci.force = TRUE} for all and
 for each model separately whether the model should be forced to report
 confidence intervals (e.g., \code{ci.force = c(FALSE, TRUE, FALSE)}).
 Confidence intervals are computed using the standard normal distribution
-(z-values based on the \code{\link{qnorm}} function). The t-distribution is
-currently not supported because this would require each
+(z-values based on the \code{\link[stats:Normal]{qnorm}} function). The
+t-distribution is currently not supported because this would require each
 \code{\link{extract}} method to have an additional argument for the degrees
 of freedom.}
 
@@ -234,10 +254,13 @@ used? By default, \code{0.95} is used (i.e., an alpha value of 0.05).}
 argument specifies the reference value to establish whether a
 coefficient/CI is significant. The default value \code{ci.test = 0}, for
 example, will attach a significance star to coefficients if the confidence
-interval does not contain \code{0}. If no star should be printed at all,
-\code{ci.test = NULL} can be used. The \code{ci.test} argument works both
-for models with native support for confidence intervals and in cases where
-the \code{ci.force} argument is used.}
+interval does not contain \code{0}. A value of \code{ci.test = 1} could be
+useful if coefficients are provided on the odds-ratio scale, for example.
+If no star should be printed at all, \code{ci.test = NA} can be used. It is
+possible to provide a single value for all models or a vector with a
+separate value for each model. The \code{ci.test} argument works both for
+models with native support for confidence intervals and in cases where the
+\code{ci.force} argument is used.}
 
 \item{groups}{This argument can be used to group the rows of the table into
 blocks. For example, there could be one block for hypotheses and another
@@ -248,16 +271,18 @@ the heading of the group. Example: \code{groups = list("first group" = 1:4,
 "second group" = 7:8)}.}
 
 \item{custom.columns}{An optional list of additional text columns to be
-inserted into the table, for example coefficient types. The list should
-contain one or more character vectors with as many character or numeric
-elements as there are rows. If the vectors in the list are named, the names
-are used as labels in the table header. For example, \code{custom.columns =
-list(type = c("a", "b", "c"), 1:3)} will add two columns; the first one is
-labeled while the second one is not. Note that the numeric elements of the
-second column will be converted to \code{character} objects in this example. The
-consequence is that decimal alignment with the \pkg{dcolumn} package is
-switched off in these columns. Note that this argument is processed after
-any arguments that affect the number of rows.}
+inserted into the coefficient block of the table, for example coefficient
+types. The list should contain one or more character vectors with as many
+character or numeric elements as there are coefficients/model terms. If the
+vectors in the list are named, the names are used as labels in the table
+header. For example,
+\code{custom.columns = list(type = c("a", "b", "c"), 1:3)} will add two
+columns; the first one is labeled while the second one is not. Note that
+the numeric elements of the second column will be converted to
+\code{character} objects in this example. The consequence is that decimal
+alignment with the \pkg{dcolumn} package is switched off in these columns.
+Note that this argument is processed after any arguments that affect the
+number of rows.}
 
 \item{custom.col.pos}{An optional integer vector of positions for the columns
 given in the \code{custom.columns} argument. For example, if there are
@@ -270,8 +295,7 @@ usually contains the coefficient names.}
 \item{...}{Custom options to be passed on to the \code{\link{extract}}
 function. For example, most extract methods provide custom options for the
 inclusion or exclusion of specific goodness-of-fit statistics. See the help
-entries of \code{\link{extract}} and \code{\link{extract-methods}} for more
-information.}
+entries of \code{\link{extract}} for more information.}
 }
 \description{
 Create a huxtable object from multiple statistical models.
@@ -306,9 +330,14 @@ if (requireNamespace("huxtable")) {
 \seealso{
 \code{\link{texreg-package}} \code{\link{extract}}
 
-Other texreg: \code{\link{htmlreg}},
-  \code{\link{matrixreg}}, \code{\link{screenreg}},
-  \code{\link{texreg}}, \code{\link{wordreg}}
+Other texreg: 
+\code{\link{htmlreg}()},
+\code{\link{knitreg}()},
+\code{\link{matrixreg}()},
+\code{\link{plotreg}()},
+\code{\link{screenreg}()},
+\code{\link{texreg}},
+\code{\link{wordreg}()}
 }
 \author{
 David Hugh-Jones
