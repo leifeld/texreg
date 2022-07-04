@@ -571,7 +571,7 @@ huxtablereg <- function(l,
          "To do this, enter 'install.packages(\"huxtable\")'.")
   }
 
-  mr.call <- match.call(expand.dots = FALSE)
+  mr.call <- match.call(expand.dots = TRUE)
   mr.call[[1L]] <- quote(texreg::matrixreg)
   mr.call$include.attributes <- TRUE
   mr.call$trim <- TRUE

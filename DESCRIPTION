@@ -15,6 +15,7 @@ Suggests:
   knitr (>= 1.22),
   rmarkdown (>= 1.12.3),
   sandwich (>= 2.3-1),
+  systemfit (>= 1.1-0),
   testthat (>= 2.0.0),
   lmtest (>= 0.9-34)
 Depends: R (>= 3.5)
