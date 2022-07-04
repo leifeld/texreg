@@ -21,6 +21,7 @@ test_that("huxtablereg works", {
 })
 
 test_that("huxtablereg works with beside = TRUE", {
+  skip_if_not_installed("huxtable", minimum_version = "5.0.0")
   skip_if_not_installed("systemfit")
 
   library(systemfit)
