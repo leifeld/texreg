@@ -9050,3 +9050,96 @@ extract.hurdle <- extract.zeroinfl
 #' @export
 setMethod("extract", signature = className("hurdle", "pscl"),
           definition = extract.hurdle)
+
+# -- extract.logitr (logitr) ---------------------------------------------------
+
+#' @noRd
+extract.logitr <- function(
+  model,
+  include.nobs   = TRUE,
+  include.loglik = TRUE,
+  include.aic    = TRUE,
+  include.bic    = TRUE,
+  ...
+) {
+  summary <- summary(model)
+
+  coefnames <- names(summary$coefficients)
+  coefs <- summary$coefTable$Estimate
+  se <- summary$coefTable$`Std. Error`
+  pval <- summary$coefTable$`Pr(>|z|)`
+
+  n <- summary$n$obs
+  ll <- summary$logLik
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.nobs == TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+  if (include.loglik == TRUE) {
+    gof <- c(gof, ll)
+    gof.names <- c(gof.names, "Log Likelihood")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.aic == TRUE) {
+    gof <- c(gof, summary$statTable["AIC", ])
+    gof.names <- c(gof.names, "AIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.bic == TRUE) {
+   gof <- c(gof, summary$statTable["BIC", ])
+    gof.names <- c(gof.names, "BIC")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+
+  tr <- createTexreg(
+    coef.names  = coefnames,
+    coef        = coefs,
+    se          = se,
+    pvalues     = pval,
+    gof.names   = gof.names,
+    gof         = gof,
+    gof.decimal = gof.decimal
+  )
+
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{logitr} objects
+#'
+#' \code{\link{extract}} method for \code{logitr} objects created by the
+#' \code{logitr} function in the \pkg{logitr} package.
+#'
+#' @param model A statistical model object.
+#' @param include.nobs Include the number of observations in summary table?
+#' @param include.loglik Include the log-likelihood in summary table?
+#' @param include.aic Include the the AIC in summary table?
+#' @param include.bic Include the the BIC in summary table?
+#' @param ... further arguments.
+#'
+#' @method extract logitr
+#' @aliases logitr
+#' @export
+#' @examples
+#' library(logitr)
+#' library(texreg)
+#'
+#' # Estimate a preference space model
+#' mnl_pref <- logitr(
+#'   data    = yogurt,
+#'   outcome = "choice",
+#'   obsID   = "obsID",
+#'   pars    = c("price", "feat", "brand")
+#' )
+#'
+#' # Print summary table to screen
+#' screenreg(mnl_pref, stars = c(0.01, 0.05, 0.1))
+#'
+#' # Print LaTeX code for summary table to screen
+#' texreg(mnl_pref, stars = c(0.01, 0.05, 0.1))
+setMethod("extract", signature = className("logitr", "logitr"),
+          definition = extract.logitr)
