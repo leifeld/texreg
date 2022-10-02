@@ -9051,26 +9051,25 @@ extract.hurdle <- extract.zeroinfl
 setMethod("extract", signature = className("hurdle", "pscl"),
           definition = extract.hurdle)
 
-# -- extract.logitr (logitr) ---------------------------------------------------
+# -- extract.logitr (logitr >= 0.8.0) ------------------------------------------
 
 #' @noRd
-extract.logitr <- function(
-  model,
-  include.nobs   = TRUE,
-  include.loglik = TRUE,
-  include.aic    = TRUE,
-  include.bic    = TRUE,
-  ...
-) {
-  summary <- summary(model)
+extract.logitr <- function(model,
+                           include.nobs   = TRUE,
+                           include.loglik = TRUE,
+                           include.aic    = TRUE,
+                           include.bic    = TRUE,
+                           ...) {
 
-  coefnames <- names(summary$coefficients)
-  coefs <- summary$coefTable$Estimate
-  se <- summary$coefTable$`Std. Error`
-  pval <- summary$coefTable$`Pr(>|z|)`
+  s <- summary(model, ...)
 
-  n <- summary$n$obs
-  ll <- summary$logLik
+  coefnames <- names(s$coefficients)
+  coefs <- s$coefTable$Estimate
+  se <- s$coefTable$`Std. Error`
+  pval <- s$coefTable$`Pr(>|z|)`
+
+  n <- s$n$obs
+  ll <- s$logLik
 
   gof <- numeric()
   gof.names <- character()
@@ -9086,23 +9085,23 @@ extract.logitr <- function(
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.aic == TRUE) {
-    gof <- c(gof, summary$statTable["AIC", ])
+    gof <- c(gof, s$statTable["AIC", ])
     gof.names <- c(gof.names, "AIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.bic == TRUE) {
-   gof <- c(gof, summary$statTable["BIC", ])
+   gof <- c(gof, s$statTable["BIC", ])
     gof.names <- c(gof.names, "BIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
 
   tr <- createTexreg(
-    coef.names  = coefnames,
-    coef        = coefs,
-    se          = se,
-    pvalues     = pval,
-    gof.names   = gof.names,
-    gof         = gof,
+    coef.names = coefnames,
+    coef = coefs,
+    se = se,
+    pvalues = pval,
+    gof.names = gof.names,
+    gof = gof,
     gof.decimal = gof.decimal
   )
 
@@ -9119,14 +9118,15 @@ extract.logitr <- function(
 #' @param include.loglik Include the log-likelihood in summary table?
 #' @param include.aic Include the the AIC in summary table?
 #' @param include.bic Include the the BIC in summary table?
-#' @param ... further arguments.
+#' @param ... Custom parameters, which are handed over to subroutines. Currently
+#'   not in use.
 #'
 #' @method extract logitr
 #' @aliases logitr
 #' @export
 #' @examples
-#' library(logitr)
-#' library(texreg)
+#' library("logitr")
+#' library("texreg")
 #'
 #' # Estimate a preference space model
 #' mnl_pref <- logitr(
