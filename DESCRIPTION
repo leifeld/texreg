@@ -1,6 +1,6 @@
 Package: texreg
-Version: 1.38.6
-Date: 2022-04-06
+Version: 1.39.0
+Date: 2022-10-02
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
 Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
              person(given = "Claudia", family = "Zucca", email = "c.zucca@jads.nl", role = "ctb"))
@@ -48,6 +48,7 @@ Enhances:
   latentnet,
   lfe,
   lme4,
+  logitr (>= 0.8.0),
   lqmm,
   maxLik (>= 1.4.8),
   metaSEM (>= 1.2.5.1),
@@ -77,4 +78,4 @@ Enhances:
 SystemRequirements: pandoc (>= 1.12.3) suggested for using wordreg function; LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1

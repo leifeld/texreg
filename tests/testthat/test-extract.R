@@ -1079,3 +1079,36 @@ test_that("extract wls objects from the metaSEM package", {
   expect_equivalent(which(tr3@gof.decimal), c(1, 3, 4, 5, 6, 7, 9, 10))
   expect_true(all(tr3@pvalues < 0.05))
 })
+
+# logitr (logitr) ----
+test_that("extract logitr objects from the logitr package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("logitr", minimum_version = "0.8.0")
+  require("logitr")
+  set.seed(12345)
+
+  mnl_pref <- logitr(
+    data    = yogurt,
+    outcome = "choice",
+    obsID   = "obsID",
+    pars    = c("price", "feat", "brand")
+  )
+  tr <- extract(mnl_pref)
+
+  expect_equivalent(tr@coef, c(-0.37,  0.49, -3.72, -0.64, 0.73), tolerance = 1e-2)
+  expect_equivalent(tr@se, c(0.02, 0.12, 0.15, 0.05, 0.08), tolerance = 1e-2)
+  expect_equivalent(tr@pvalues, c(0, 0, 0, 0, 0), tolerance = 1e-2)
+  expect_equivalent(tr@gof, c(2412.00, -2656.89, 5323.78, 5352.72), tolerance = 1e-2)
+  expect_equivalent(which(tr@gof.decimal), c(2, 3, 4))
+  expect_equivalent(which(tr@pvalues < 0.05), seq(1, 5))
+  expect_length(tr@coef.names, 5)
+  expect_length(tr@coef, 5)
+  expect_length(tr@se, 5)
+  expect_length(tr@pvalues, 5)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof.names, 4)
+  expect_length(tr@gof, 4)
+  expect_length(tr@gof.decimal, 4)
+  expect_equivalent(dim(matrixreg(mnl_pref)), c(15, 2))
+})
