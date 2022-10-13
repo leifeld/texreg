@@ -9055,10 +9055,10 @@ setMethod("extract", signature = className("hurdle", "pscl"),
 
 #' @noRd
 extract.logitr <- function(model,
-                           include.nobs   = TRUE,
+                           include.nobs = TRUE,
                            include.loglik = TRUE,
-                           include.aic    = TRUE,
-                           include.bic    = TRUE,
+                           include.aic = TRUE,
+                           include.bic = TRUE,
                            ...) {
 
   s <- summary(model, ...)
@@ -9068,18 +9068,17 @@ extract.logitr <- function(model,
   se <- s$coefTable$`Std. Error`
   pval <- s$coefTable$`Pr(>|z|)`
 
-  n <- s$n$obs
-  ll <- s$logLik
-
   gof <- numeric()
   gof.names <- character()
   gof.decimal <- logical()
   if (include.nobs == TRUE) {
+    n <- s$n$obs
     gof <- c(gof, n)
     gof.names <- c(gof.names, "Num. obs.")
     gof.decimal <- c(gof.decimal, FALSE)
   }
   if (include.loglik == TRUE) {
+    ll <- s$logLik
     gof <- c(gof, ll)
     gof.names <- c(gof.names, "Log Likelihood")
     gof.decimal <- c(gof.decimal, TRUE)
@@ -9090,7 +9089,7 @@ extract.logitr <- function(model,
     gof.decimal <- c(gof.decimal, TRUE)
   }
   if (include.bic == TRUE) {
-   gof <- c(gof, s$statTable["BIC", ])
+    gof <- c(gof, s$statTable["BIC", ])
     gof.names <- c(gof.names, "BIC")
     gof.decimal <- c(gof.decimal, TRUE)
   }
@@ -9123,23 +9122,7 @@ extract.logitr <- function(model,
 #'
 #' @method extract logitr
 #' @aliases logitr
+#' @author John Paul Helveston, \email{john.helveston@gmail.com}
 #' @export
-#' @examples
-#' library("logitr")
-#' library("texreg")
-#'
-#' # Estimate a preference space model
-#' mnl_pref <- logitr(
-#'   data    = yogurt,
-#'   outcome = "choice",
-#'   obsID   = "obsID",
-#'   pars    = c("price", "feat", "brand")
-#' )
-#'
-#' # Print summary table to screen
-#' screenreg(mnl_pref, stars = c(0.01, 0.05, 0.1))
-#'
-#' # Print LaTeX code for summary table to screen
-#' texreg(mnl_pref, stars = c(0.01, 0.05, 0.1))
 setMethod("extract", signature = className("logitr", "logitr"),
           definition = extract.logitr)

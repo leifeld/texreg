@@ -1111,5 +1111,4 @@ test_that("extract logitr objects from the logitr package", {
   expect_length(tr@gof, 4)
   expect_length(tr@gof.decimal, 4)
   expect_equivalent(dim(matrixreg(mnl_pref)), c(15, 2))
-
 })
