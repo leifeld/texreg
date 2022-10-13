@@ -32,21 +32,6 @@ not in use.}
 \code{\link{extract}} method for \code{logitr} objects created by the
 \code{logitr} function in the \pkg{logitr} package.
 }
-\examples{
-library("logitr")
-library("texreg")
-
-# Estimate a preference space model
-mnl_pref <- logitr(
-  data    = yogurt,
-  outcome = "choice",
-  obsID   = "obsID",
-  pars    = c("price", "feat", "brand")
-)
-
-# Print summary table to screen
-screenreg(mnl_pref, stars = c(0.01, 0.05, 0.1))
-
-# Print LaTeX code for summary table to screen
-texreg(mnl_pref, stars = c(0.01, 0.05, 0.1))
+\author{
+John Paul Helveston, \email{john.helveston@gmail.com}
 }
