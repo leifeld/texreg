@@ -766,6 +766,11 @@ quartoreg <- function(...) {
     texreg(..., use.packages = FALSE) # do not print \usepackage{dcolumn} etc.
   } else if(knitr::is_html_output()) {
     htmlreg(..., doctype = FALSE, star.symbol = "&#42;") # the star symbol must be escaped in Markdown
+  } else if("docx" %in% knitr::opts_knit$get("rmarkdown.pandoc.to")) {
+    mr <- matrixreg(..., output.type = "ascii", include.attributes = FALSE, trim = TRUE)
+    colnames(mr) <- mr[1, ] # set column names because we want 'kable' to draw a horizontal  line under the model names
+    mr <- mr[-1, ] # remove the first row because we already set the model names as column names
+    knitr::kable(mr) # use the kable function to render the table in the Word document
   } else { # whatever else knitr is throwing our way should prompt an ASCII table
     screenreg(...)
   }
