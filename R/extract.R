@@ -3160,7 +3160,7 @@ extract.glmmTMB <- function(model, beside = FALSE, include.count = TRUE,
     gof.names <- c(gof.names, grp.names)
     gof.decimal <- c(gof.decimal, rep(FALSE, length(grps)))
   }
-  if (include.variance == TRUE && !is.na(s$ngrps)) {
+  if (include.variance == TRUE && !is.na(s$ngrps[1])) {
     vc <- glmmTMB::VarCorr(model)
     vc <- as.data.frame(rapply(vc, function(x) attr(x, "stddev")))^2
     rownames(vc) <- gsub("\\.", " ", rownames(vc))
