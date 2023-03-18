@@ -2656,7 +2656,13 @@ quartoreg <- function(...) {
     colnames(mr) <- mr[1, ] # set column names because we want 'kable' to draw a horizontal  line under the model names
     mr <- mr[-1, ] # remove the first row because we already set the model names as column names
     knitr::kable(mr) # use the kable function to render the table in the Word document
-  } else { # whatever else knitr is throwing our way should prompt an ASCII table
+  } else if("pptx" %in% knitr::opts_knit$get("rmarkdown.pandoc.to")) {
+    # FIXME: this only works when results=asis is turned **off**.
+    mr <- matrixreg(..., output.type = "ascii", include.attributes = FALSE, trim = TRUE)
+    colnames(mr) <- mr[1, ] # set column names because we want 'kable' to draw a horizontal  line under the model names
+    mr <- mr[-1, ] # remove the first row because we already set the model names as column names
+    knitr::kable(mr) # use the kable function to render the table in the Word document
+  } else {
     screenreg(...)
   }
 }
