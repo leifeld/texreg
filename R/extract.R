@@ -307,14 +307,19 @@ setMethod("extract", signature = className("averaging", "MuMIn"),
 
 #' @noRd
 extract.bergm <- function(model, posterior.median = FALSE, level = 0.95, ...) {
-  coefnames <- model$specs
+  rNames <- paste("theta",
+                  seq(1, model$dim),
+                  " (",
+                  model$specs[seq(1, model$dim)],
+                  ")",
+                  sep = "") # from Bergm 5.0.5 summary.Bergm method
   coefs <- apply(model$Theta, 2, ifelse(isTRUE(posterior.median), median, mean))
   alpha <- (1 - level) / 2
   cil <- apply(model$Theta, 2, function(x) quantile(x, (1 - level) / 2))
   ciu <- apply(model$Theta, 2, function(x) quantile(x, 1 - ((1 - level) / 2)))
 
   tr <- createTexreg(
-    coef.names = coefnames,
+    coef.names = rNames,
     coef = coefs,
     ci.low = cil,
     ci.up = ciu
