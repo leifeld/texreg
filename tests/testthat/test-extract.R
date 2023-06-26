@@ -156,6 +156,37 @@ test_that("extract brmsfit objects from the brms package", {
   expect_equivalent(suppressWarnings(dim(matrixreg(fit1))), c(16, 2))
 })
 
+# btergm (btergm) ----
+test_that("extract btergm objects from the btergm package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("btergm", minimum_version = "1.10.10")
+  set.seed(5)
+  networks <- list()
+  for (i in 1:10) {              # create 10 random networks with 10 actors
+    mat <- matrix(rbinom(100, 1, .25), nrow = 10, ncol = 10)
+    diag(mat) <- 0               # loops are excluded
+    networks[[i]] <- mat         # add network to the list
+  }
+
+  covariates <- list()
+  for (i in 1:10) {              # create 10 matrices as covariate
+    mat <- matrix(rnorm(100), nrow = 10, ncol = 10)
+    covariates[[i]] <- mat       # add matrix to the list
+  }
+
+  suppressWarnings(fit <- btergm::btergm(networks ~ edges + istar(2) + edgecov(covariates), R = 100, verbose = FALSE))
+  tr <- extract(fit)
+  expect_length(tr@se, 0)
+  expect_length(tr@pvalues, 0)
+  expect_length(tr@ci.low, 3)
+  expect_length(tr@ci.up, 3)
+  expect_length(tr@gof, 1)
+  expect_length(tr@coef, 3)
+  expect_equivalent(dim(matrixreg(fit)), c(8, 2))
+  expect_true(all(tr@ci.low < tr@coef))
+  expect_true(all(tr@coef < tr@ci.up))
+})
+
 # clm (ordinal) ----
 test_that("extract clm objects from the ordinal package", {
   testthat::skip_on_cran()

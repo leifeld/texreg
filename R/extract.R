@@ -818,9 +818,9 @@ extract.btergm <- function(model, level = 0.95, include.nobs = TRUE, ...) {
 
   tr <- createTexreg(
     coef.names = rownames(tab),
-    coef = tab[, 1],
-    ci.low = tab[, 2],
-    ci.up = tab[, 3],
+    coef = tab[, which(grepl("Estimate", colnames(tab)))],
+    ci.low = tab[, which(grepl("2.5", colnames(tab)))],
+    ci.up = tab[, which(grepl("97.5", colnames(tab)))],
     gof.names = gof.names,
     gof = gof,
     gof.decimal = gof.decimal
