@@ -25,7 +25,7 @@ remotes::install_github("leifeld/texreg")
 
 ## Contribute to the project
 
-Please feel free to report bugs or possible enhancements using the [issue tracker](http://github.com/leifeld/texreg/issues) and propose solutions for known bugs using a pull request. Please observe and follow the code formatting in the texreg package when doing so, and add (or update) `testthat` unit tests to your pull requests if possible.
+Please feel free to report bugs or suggested enhancements using the [issue tracker](http://github.com/leifeld/texreg/issues) and propose solutions for known bugs using a pull request. Please observe and follow the code formatting in the texreg package when doing so, and add (or update) `testthat` unit tests to your pull requests if possible.
 
 [![CRAN check and test](https://github.com/leifeld/texreg/actions/workflows/CRAN%20check%20and%20test.yaml/badge.svg)](https://github.com/leifeld/texreg/actions/workflows/CRAN%20check%20and%20test.yaml)
 [![cran version](http://www.r-pkg.org/badges/version/texreg)](https://cran.r-project.org/package=texreg)
