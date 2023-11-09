@@ -523,6 +523,16 @@ test_that("extract glmmTMB objects from the glmmTMB package", {
   expect_length(tr[[2]]@pvalues, 8)
   expect_length(tr, 2)
   expect_equivalent(which(tr[[2]]@gof.decimal), c(1, 2, 5))
+
+  data("mtcars")
+  cars <- glmmTMB(gear ~ mpg, data = mtcars)
+  tr_cars <- extract(cars)
+  expect_length(tr_cars@gof, 3)
+  expect_equal(tr_cars@gof.decimal, c(TRUE, TRUE, FALSE))
+  expect_equal(tr_cars@gof.names, c("AIC", "Log Likelihood", "Num. obs."))
+  expect_length(tr_cars@coef, 2)
+  expect_length(tr_cars@se, 2)
+  expect_length(tr_cars@pvalues, 2)
 })
 
 # ivreg (AER) ----
