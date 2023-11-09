@@ -610,7 +610,8 @@ test_that("extract lm.cluster objects from the miceadds package", {
 # lmerMod (lme4) ----
 test_that("extract lmerMod objects from the lme4 package", {
   testthat::skip_on_cran()
-  skip_if_not_installed("lme4")
+  skip_if_not_installed("lme4", minimum_version = "1.1.34")
+  skip_if_not_installed("Matrix", minimum_version = "1.6.1")
   require("lme4")
   set.seed(12345)
   fm1 <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
