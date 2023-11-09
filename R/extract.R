@@ -4021,7 +4021,7 @@ extract.lme4 <- function(model,
                          include.variance = TRUE,
                          ...) {
 
-  if (utils::packageVersion("lme4") < 1.0) {
+  if (utils::packageVersion("lme4") < "1.0") {
     message("Please update to a newer 'lme4' version for full compatibility.")
   }
 
