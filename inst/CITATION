@@ -1,19 +1,16 @@
 citHeader("To cite texreg in publications use:")
 
-citEntry(entry = "Article",
-  title        = "{texreg}: Conversion of Statistical Model Output in {R} to {\\LaTeX} and {HTML} Tables",
-  author       = personList(as.person("Philip Leifeld")),
-  journal      = "Journal of Statistical Software",
-  year         = "2013",
-  volume       = "55",
-  number       = "8",
-  pages        = "1--24",
-  url          = "http://dx.doi.org/10.18637/jss.v055.i08",
-
-  textVersion  =
-  paste("Leifeld, Philip (2013).",
+bibentry(bibtype = "Article",
+  title = "{texreg}: Conversion of Statistical Model Output in {R} to {\\LaTeX} and {HTML} Tables",
+  author = person(given = "Philip", family = "Leifeld"),
+  journal = "Journal of Statistical Software",
+  year = 2013,
+  volume = "55",
+  number = "8",
+  pages = "1--24",
+  url = "https://doi.org/10.18637/jss.v055.i08",
+  textVersion  = paste("Leifeld, Philip (2013).",
         "texreg: Conversion of Statistical Model Output in R to LaTeX and HTML Tables.",
         "Journal of Statistical Software, 55(8), 1-24.",
-        "URL http://dx.doi.org/10.18637/jss.v055.i08.")
+        "URL https://doi.org/10.18637/jss.v055.i08")
 )
-
