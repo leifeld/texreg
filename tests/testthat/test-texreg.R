@@ -161,7 +161,9 @@ test_that("duplicate row labels in custom.coef.names are merged when feasible", 
 })
 
 test_that("LaTeX code is escaped in GOF labels", {
-  skip_if_not_installed("lme4")
+  skip_if_not_installed("lme4", minimum_version = "1.1.34")
+  skip_if_not_installed("Matrix", minimum_version = "1.6.1")
+  skip_on_ci()
   require("lme4")
   iris$species_variable <- iris$Species
   fit <- lmer(Sepal.Length ~ Sepal.Width + (1 | species_variable), data = iris)
