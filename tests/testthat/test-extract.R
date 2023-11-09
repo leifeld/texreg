@@ -464,6 +464,7 @@ test_that("extract glm.cluster objects from the miceadds package", {
 # glmerMod (lme4) ----
 test_that("extract glmerMod objects from the lme4 package", {
   testthat::skip_on_cran()
+  testthat::skip_on_ci()
   skip_if_not_installed("lme4", minimum_version = "1.1.34")
   skip_if_not_installed("Matrix", minimum_version = "1.6.1")
   require("lme4")
@@ -611,6 +612,7 @@ test_that("extract lm.cluster objects from the miceadds package", {
 # lmerMod (lme4) ----
 test_that("extract lmerMod objects from the lme4 package", {
   testthat::skip_on_cran()
+  testthat::skip_on_ci()
   skip_if_not_installed("lme4", minimum_version = "1.1.34")
   skip_if_not_installed("Matrix", minimum_version = "1.6.1")
   require("lme4")
@@ -812,6 +814,7 @@ test_that("extract multinom objects from the nnet package", {
 # nlmerMod (lme4) ----
 test_that("extract nlmerMod objects from the lme4 package", {
   testthat::skip_on_cran()
+  testthat::skip_on_ci()
   skip_if_not_installed("lme4", minimum_version = "1.1.34")
   skip_if_not_installed("Matrix", minimum_version = "1.6.1")
   require("lme4")
