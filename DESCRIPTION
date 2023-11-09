@@ -47,7 +47,7 @@ Enhances:
   h2o,
   latentnet,
   lfe,
-  lme4,
+  lme4 (>= 1.1.34),
   logitr (>= 0.8.0),
   lqmm,
   maxLik (>= 1.4.8),
