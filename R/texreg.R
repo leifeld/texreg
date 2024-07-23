@@ -7,6 +7,7 @@
 #' customizable. New model types can be easily implemented. Confidence
 #' intervals can be used instead of standard errors and p-values.
 #'
+#' @keywords package
 #' @author Philip Leifeld
 #' @seealso \code{\link{extract}} \code{\link{texreg}}
 #'
@@ -14,7 +15,6 @@
 #'   Output in R to LaTeX and HTML Tables. Journal of Statistical Software
 #'   55(8): 1-24. \doi{10.18637/jss.v055.i08}.
 #'
-#' @docType package
 #' @name texreg-package
 NULL
 
@@ -3821,7 +3821,7 @@ wordreg <- function(l,
   packageStartupMessage(
     "Version:  ", desc$Version, "\n",
     "Date:     ", desc$Date, "\n",
-    "Author:   ", "Philip Leifeld (University of Essex)", "\n\n",
+    "Author:   ", "Philip Leifeld (University of Manchester)", "\n\n",
     "Consider submitting praise using the praise or praise_interactive functions.\n",
     "Please cite the JSS article in your publications -- see citation(\"texreg\")."
   )

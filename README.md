@@ -29,7 +29,7 @@ Please feel free to report bugs or suggested enhancements using the [issue track
 
 [![CRAN check and test](https://github.com/leifeld/texreg/actions/workflows/CRAN%20check%20and%20test.yaml/badge.svg)](https://github.com/leifeld/texreg/actions/workflows/CRAN%20check%20and%20test.yaml)
 [![cran version](http://www.r-pkg.org/badges/version/texreg)](https://cran.r-project.org/package=texreg)
-[![downloads](http://cranlogs.r-pkg.org/badges/texreg)](http://cranlogs.r-pkg.org/badges/texreg)
-[![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/texreg)](http://cranlogs.r-pkg.org/badges/grand-total/texreg)
+[![downloads](https://cranlogs.r-pkg.org/badges/texreg)](http://cranlogs.r-pkg.org/badges/texreg)
+[![total downloads](https://cranlogs.r-pkg.org/badges/grand-total/texreg)](http://cranlogs.r-pkg.org/badges/grand-total/texreg)
 [![Research software impact](http://depsy.org/api/package/cran/texreg/badge.svg)](http://depsy.org/package/r/texreg)
 [![Coverage status](https://codecov.io/gh/leifeld/texreg/branch/master/graph/badge.svg)](https://codecov.io/github/leifeld/texreg?branch=master)

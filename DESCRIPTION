@@ -1,10 +1,10 @@
 Package: texreg
-Version: 1.39.3
-Date: 2023-11-09
+Version: 1.39.4
+Date: 2024-07-23
 Title: Conversion of R Regression Output to LaTeX or HTML Tables
-Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@essex.ac.uk", role = c("aut", "cre")),
+Authors@R: c(person(given = "Philip", family = "Leifeld", email = "philip.leifeld@manchester.ac.uk", role = c("aut", "cre")),
              person(given = "Claudia", family = "Zucca", email = "c.zucca@jads.nl", role = "ctb"))
-Description: Converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables or HTML tables/MS Word documents or to nicely formatted screen output for the R console for easy model comparison. A list of several models can be combined in a single table. The output is highly customizable. New model types can be easily implemented. Details can be found in Leifeld (2013), JStatSoft <doi:10.18637/jss.v055.i08>. (If the Zelig package, which this package enhances, cannot be found on CRAN, you can find it at <https://github.com/IQSS/Zelig>. If the mnlogit package, which this package enhances, cannot be found on CRAN, you can find an old version in the CRAN Archive at <https://cran.r-project.org/src/contrib/Archive/mnlogit/>.)
+Description: Converts coefficients, standard errors, significance stars, and goodness-of-fit statistics of statistical models into LaTeX tables or HTML tables/MS Word documents or to nicely formatted screen output for the R console for easy model comparison. A list of several models can be combined in a single table. The output is highly customizable. New model types can be easily implemented. Details can be found in Leifeld (2013), JStatSoft <doi:10.18637/jss.v055.i08>.)
 URL: https://github.com/leifeld/texreg/
 BugReports: https://github.com/leifeld/texreg/issues/
 Suggests:
@@ -32,7 +32,6 @@ Enhances:
   btergm (>= 1.10.10),
   dynlm,
   eha (>= 2.9.0),
-  erer,
   ergm (>= 4.1.2),
   feisr (>= 1.0.1),
   fGarch,
@@ -56,7 +55,6 @@ Enhances:
   mhurdle,
   miceadds,
   mlogit,
-  mnlogit,
   MuMIn,
   nlme,
   nnet,
@@ -65,6 +63,9 @@ Enhances:
   pglm,
   plm (>= 2.4.1),
   relevent,
+  remify (>= 3.2.6),
+  remstats (>= 3.2.2),
+  remstimate (>= 2.3.11),
   rms,
   robust,
   simex,
@@ -73,9 +74,8 @@ Enhances:
   speedglm,
   survival,
   truncreg (>= 0.2.5),
-  VGAM,
-  Zelig
+  VGAM
 SystemRequirements: pandoc (>= 1.12.3) suggested for using wordreg function; LaTeX packages tikz, booktabs, dcolumn, rotating, thumbpdf, longtable, paralist for the vignette
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1

@@ -4954,48 +4954,6 @@ setMethod("extract", signature = className("lrm", "rms"),
           definition = extract.lrm)
 
 
-# -- extract.maBina (erer) -----------------------------------------------------
-
-#' @noRd
-extract.maBina <- function(model, ...) {
-
-  coefficient.names <- rownames(model$out)
-  coefficients <- model$out[, 1]
-  standard.errors <- model$out[, 2]
-  significance <- model$out[, 4]
-
-  w <- extract(model$w, ...)
-  gof <- w@gof
-  gof.names <- w@gof.names
-  gof.decimal <- w@gof.decimal
-
-  tr <- createTexreg(
-    coef.names = coefficient.names,
-    coef = coefficients,
-    se = standard.errors,
-    pvalues = significance,
-    gof.names = gof.names,
-    gof = gof,
-    gof.decimal = gof.decimal
-  )
-  return(tr)
-}
-
-#' \code{\link{extract}} method for \code{maBina} objects
-#'
-#' \code{\link{extract}} method for \code{maBina} objects created by the
-#' \code{\link[erer]{maBina}} function in the \pkg{erer} package.
-#'
-#' @param model A statistical model object.
-#' @param ... Custom parameters, which are handed over to subroutines.
-#'
-#' @method extract maBina
-#' @aliases extract.maBina
-#' @export
-setMethod("extract", signature = className("maBina", "erer"),
-          definition = extract.maBina)
-
-
 # -- extract.maxLik (maxLik) ---------------------------------------------------
 
 #' @noRd
@@ -5246,134 +5204,6 @@ extract.mlogit <- function(model,
 #' @export
 setMethod("extract", signature = className("mlogit", "mlogit"),
           definition = extract.mlogit)
-
-
-# -- extract.mnlogit (mnlogit) -------------------------------------------------
-
-#' @noRd
-extract.mnlogit <- function(model,
-                            include.aic = TRUE,
-                            include.loglik = TRUE,
-                            include.nobs = TRUE,
-                            include.groups = TRUE,
-                            include.iterations = FALSE,
-                            beside = FALSE,
-                            ...) {
-
-  s <- summary(model, ...)
-  coT <- s$CoefTable
-  coefnames <- rownames(coT)
-
-  gof <- numeric()
-  gof.names <- character()
-  gof.decimal <- logical()
-  if (include.aic == TRUE) {
-    aic <- s$AIC
-    gof <- c(gof, aic)
-    gof.names <- c(gof.names, "AIC")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.loglik == TRUE) {
-    lik <- s$logLik
-    gof <- c(gof, lik)
-    gof.names <- c(gof.names, "Log Likelihood")
-    gof.decimal <- c(gof.decimal, TRUE)
-  }
-  if (include.nobs == TRUE) {
-    N <- s$model.size$N
-    gof <- c(gof, N)
-    gof.names <- c(gof.names, "Num. obs.")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  if (include.groups == TRUE) {
-    K <- s$model.size$K
-    gof <- c(gof, K)
-    gof.names <- c(gof.names, "K")
-    gof.decimal <- c(gof.decimal, FALSE)
-  }
-  if (include.iterations == TRUE) {
-    iter <- s$est.stat$niters
-    gradNorm <- s$est.stat$gradNorm
-    diffLike <- s$est.stat$funcDiff
-    gof <- c(gof, iter, gradNorm, diffLike)
-    gof.names <- c(gof.names, "Iterations", "Gradient 2-norm",
-                   "Diff. Likelihood")
-    gof.decimal <- c(gof.decimal, c(FALSE, TRUE, TRUE))
-  }
-
-  # check for choice-specific covariates and fix beside argument if necessary
-  models <- attributes(model$freq)$names[-1]
-  rows <- which(grepl(paste0(models[1], "$"), coefnames))
-  if (isTRUE(beside) && (ncol(s$residuals) - 1) * length(rows) < nrow(coT)) {
-    beside <- FALSE
-    warning(paste0("The mnlogit model has choice-specific covariates; 'beside'",
-                   " argument will be set to FALSE."))
-  }
-
-  if (beside == FALSE) {
-    co <- coT[, 1]
-    se <- coT[, 2]
-    pval <- coT[, 4]
-
-    tr <- createTexreg(
-      coef.names = coefnames,
-      coef = co,
-      se = se,
-      pvalues = pval,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-    )
-    return(tr)
-  } else {
-    models <- attributes(model$freq)$names[-1]
-    trlist <- list()
-    for (i in 1:length(models)) {
-      rows <- which(grepl(paste0(models[i], "$"), coefnames))
-      coeftable <- coT[rows, ]
-      cn <- coefnames[rows]
-      cn <- gsub(paste0(":", models[i], "$"), "", cn)
-      co <- coeftable[, 1]
-      se <- coeftable[, 2]
-      pval <- coeftable[, 4]
-
-      tr <- createTexreg(
-        coef.names = cn,
-        coef = co,
-        se = se,
-        pvalues = pval,
-        gof.names = gof.names,
-        gof = gof,
-        gof.decimal = gof.decimal,
-        model.name = models[i]
-      )
-      trlist[[i]] <- tr
-    }
-    return(trlist)
-  }
-}
-
-#' \code{\link{extract}} method for \code{mnlogit} objects
-#'
-#' \code{\link{extract}} method for \code{mnlogit} objects created by the
-#' \code{mnlogit} function in the \pkg{mnlogit} package.
-#'
-#' @param model A statistical model object.
-#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
-#'   block?
-#' @param include.loglik Report the log likelihood in the GOF block?
-#' @param include.nobs Report the number of observations in the GOF block?
-#' @param include.groups Report the number of groups?
-#' @param include.iterations Report the number of iterations?
-#' @param beside Arrange the model terms below each other or beside each other?
-#' @param ... Custom parameters, which are handed over to subroutines, in this
-#'   case to the \code{summary} method for the object.
-#'
-#' @method extract mnlogit
-#' @aliases extract.mnlogit
-#' @export
-setMethod("extract", signature = className("mnlogit", "mnlogit"),
-          definition = extract.mnlogit)
 
 
 # -- extract.model.selection (MuMIn) -------------------------------------------
@@ -6758,6 +6588,127 @@ extract.rem.dyad <- function(model,
 #' @export
 setMethod("extract", signature = className("rem.dyad", "relevent"),
           definition = extract.rem.dyad)
+
+
+# -- extract.remstimate (remstimate) -------------------------------------------
+
+#' @noRd
+extract.remstimate <- function(model, include.nobs = TRUE, include.aic = TRUE,
+                               include.aicc = TRUE, include.bic = TRUE,
+                               include.loglik = TRUE, post.mean = FALSE, ...) {
+  op <- capture.output(s <- summary(model))
+  if (length(model) > 2) {
+    models <- list(model)
+  } else {
+    models <- model
+  }
+  tr <- list()
+  for (i in 1:length(models)) {
+    coefs <- models[[i]]$coefficients
+    coefnames <- attributes(models[[i]]$coefficients)$names
+
+    if (length(model) > 2) {
+      coefstab <- s$coefsTab
+    } else {
+      coefstab <- s$coefsTab[[names(models)[[i]]]]
+    }
+    se <- coefstab[, 2]
+
+    gof <- numeric()
+    gof.names <- character()
+    gof.decimal <- logical()
+    if (include.nobs == TRUE) {
+      gof <- c(gof, models[[i]]$df.null)
+      gof.names <- c(gof.names, "Num. obs.")
+      gof.decimal <- c(gof.decimal, FALSE)
+    }
+    if (attributes(model)$method[1] %in% c("MLE", "GDADAMAX")) {
+      pval <- coefstab[, 4]
+      if (include.aic == TRUE) {
+        gof <- c(gof, models[[i]]$AIC)
+        gof.names <- c(gof.names, "AIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      if (include.aicc == TRUE) {
+        gof <- c(gof, models[[i]]$AICC)
+        gof.names <- c(gof.names, "AICc")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+      if (include.bic == TRUE) {
+        gof <- c(gof, models[[i]]$BIC)
+        gof.names <- c(gof.names, "BIC")
+        gof.decimal <- c(gof.decimal, TRUE)
+      }
+    } else if (attributes(model)$method[1] %in% c("HMC", "BSIR")) {
+      pval <- coefstab[, 6]
+      ci.l <- coefstab[, 3]
+      ci.u <- coefstab[, 5]
+      if (post.mean == TRUE) {
+        coefs <- coefstab[, 4]
+      }
+    }
+    if (include.loglik == TRUE) {
+      gof <- c(gof, models[[i]]$loglik)
+      gof.names <- c(gof.names, "Log Likelihood")
+      gof.decimal <- c(gof.decimal, TRUE)
+    }
+
+    if (length(model) > 2) {
+      tr[[i]] <- createTexreg(
+        coef.names = coefnames,
+        coef = coefs,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal
+      )
+    } else {
+      tr[[i]] <- createTexreg(
+        coef.names = coefnames,
+        coef = coefs,
+        se = se,
+        pvalues = pval,
+        gof.names = gof.names,
+        gof = gof,
+        gof.decimal = gof.decimal,
+        model.name = names(model)[i]
+      )
+    }
+  }
+  if (length(tr) == 1) {
+    return(tr[[1]])
+  } else {
+    return(tr)
+  }
+}
+
+#' \code{\link{extract}} method for \code{remstimate} objects
+#'
+#' \code{\link{extract}} method for \code{remstimate} objects created by the
+#' \code{\link[remstimate]{remstimate}} function in the \pkg{remstimate}
+#' package.
+#'
+#' @param model A statistical model object.
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
+#'   block?
+#' @param include.aicc Report Corrected Akaike's Information Criterion (AICc) in
+#'   the GOF block?
+#' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF
+#'   block?
+#' @param include.loglik Report the log likelihood in the GOF block?
+#' @param post.mean Report the posterior means, rather than the posterior modes,
+#'   as coefficients?
+#' @param ... Custom parameters, which are handed over to subroutines. Currently
+#'   not in use.
+#'
+#' @method extract remstimate
+#' @aliases extract.remstimate
+#' @importFrom utils capture.output
+#' @export
+setMethod("extract", signature = className("remstimate", "remstimate"),
+          definition = extract.remstimate)
 
 
 # -- extract.rlm (MASS) --------------------------------------------------------
@@ -8599,300 +8550,6 @@ extract.wls <- function(model,
 #' @export
 setMethod("extract", signature = className("wls", "metaSEM"),
           definition = extract.wls)
-
-
-# -- extract.zelig (Zelig < 5.0) -----------------------------------------------
-
-#' @noRd
-extract.zelig <- function(model,
-                          include.aic = TRUE,
-                          include.bic = TRUE,
-                          include.loglik = TRUE,
-                          include.deviance = TRUE,
-                          include.nobs = TRUE,
-                          include.rsquared = TRUE,
-                          include.adjrs = TRUE,
-                          include.fstatistic = TRUE,
-                          ...) {
-
-  s <- summary(model, ...)
-
-  if ("relogit" %in% class(model) || "logit" %in% class(model) ||
-      "ls" %in% class(model) || "probit" %in% class(model) ||
-      "ologit" %in% class(model)) {
-    coefficient.names <- rownames(s$coef)
-    coefficients <- s$coef[, 1]
-    standard.errors <- s$coef[, 2]
-    if ("ologit" %in% class(model)) {
-      tval <- s$coef[, 3]
-      significance <- 2 * pt(-abs(tval), s$df.residual)
-    } else {
-      significance <- s$coef[, 4]
-    }
-
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.aic == TRUE) {
-      aic <- AIC(model)
-      gof <- c(gof, aic)
-      gof.names <- c(gof.names, "AIC")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.bic == TRUE) {
-      bic <- BIC(model)
-      gof <- c(gof, bic)
-      gof.names <- c(gof.names, "BIC")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.loglik == TRUE) {
-      lik <- logLik(model)[1]
-      gof <- c(gof, lik)
-      gof.names <- c(gof.names, "Log Likelihood")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.deviance == TRUE) {
-      dev <- s$deviance
-      if (!is.null(dev)) {
-        gof <- c(gof, dev)
-        gof.names <- c(gof.names, "Deviance")
-        gof.decimal <- c(gof.decimal, TRUE)
-      }
-    }
-    if (include.nobs == TRUE) {
-      n <- nrow(model$data)
-      gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num. obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
-    }
-    if (include.rsquared == TRUE) {
-      rs <- s$r.squared  #extract R-squared
-      if (!is.null(rs)) {
-        gof <- c(gof, rs)
-        gof.names <- c(gof.names, "R$^2$")
-        gof.decimal <- c(gof.decimal, TRUE)
-      }
-    }
-    if (include.adjrs == TRUE) {
-      adj <- s$adj.r.squared  #extract adjusted R-squared
-      if (!is.null(adj)) {
-        gof <- c(gof, adj)
-        gof.names <- c(gof.names, "Adj. R$^2$")
-        gof.decimal <- c(gof.decimal, TRUE)
-      }
-    }
-    if (include.fstatistic == TRUE) {
-      fstat <- s$fstatistic[[1]]
-      if (!is.null(fstat)) {
-        gof <- c(gof, fstat)
-        gof.names <- c(gof.names, "F statistic")
-        gof.decimal <- c(gof.decimal, TRUE)
-      }
-    }
-
-    tr <- createTexreg(
-      coef.names = coefficient.names,
-      coef = coefficients,
-      se = standard.errors,
-      pvalues = significance,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-    )
-    return(tr)
-  } else if ("mlogit" %in% class(model)) {
-    coefficient.names <- rownames(s@coef3)
-    coefficients <- s@coef3[, 1]
-    standard.errors <- s@coef3[, 2]
-    zval <- s@coef3[, 3]
-    significance <- 2 * pnorm(abs(zval), lower.tail = FALSE)
-
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.loglik == TRUE) {
-      lik <- logLik(model)[1]
-      gof <- c(gof, lik)
-      gof.names <- c(gof.names, "Log Likelihood")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.deviance == TRUE) {
-      dev <- deviance(s)
-      if (!is.null(dev)) {
-        gof <- c(gof, dev)
-        gof.names <- c(gof.names, "Deviance")
-        gof.decimal <- c(gof.decimal, TRUE)
-      }
-    }
-    if (include.nobs == TRUE) {
-      n <- nrow(model$data)
-      gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num. obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
-    }
-
-    tr <- createTexreg(
-      coef.names = coefficient.names,
-      coef = coefficients,
-      se = standard.errors,
-      pvalues = significance,
-      gof.names = gof.names,
-      gof = gof,
-      gof.decimal = gof.decimal
-    )
-    return(tr)
-  } else if ("tobit" %in% class(model)) {
-    coefficient.names <- rownames(s$table)
-    coefficients <- s$table[, 1]
-    standard.errors <- s$table[, 2]
-    significance <- s$table[, 5]
-    gof <- numeric()
-    gof.names <- character()
-    gof.decimal <- logical()
-    if (include.aic == TRUE) {
-      aic <- AIC(model)
-      gof <- c(gof, aic)
-      gof.names <- c(gof.names, "AIC")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.bic == TRUE) {
-      bic <- BIC(model)
-      gof <- c(gof, bic)
-      gof.names <- c(gof.names, "BIC")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.loglik == TRUE) {
-      lik <- logLik(model)[1]
-      gof <- c(gof, lik)
-      gof.names <- c(gof.names, "Log Likelihood")
-      gof.decimal <- c(gof.decimal, TRUE)
-    }
-    if (include.nobs == TRUE) {
-      n <- nrow(model$data)
-      gof <- c(gof, n)
-      gof.names <- c(gof.names, "Num. obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
-    }
-    tr <- createTexreg(coef.names = coefficient.names,
-                       coef = coefficients,
-                       se = standard.errors,
-                       pvalues = significance,
-                       gof.names = gof.names,
-                       gof = gof,
-                       gof.decimal = gof.decimal)
-    return(tr)
-  } else {
-    stop(paste("Only the following Zelig models are currently supported:",
-               "logit, ls, mlogit, ologit, probit, relogit, tobit."))
-  }
-}
-
-#' \code{\link{extract}} method for \code{zelig} objects
-#'
-#' \code{\link{extract}} method for \code{zelig} objects created by the
-#' \code{zelig} function in the \pkg{Zelig} package (version < 5.0).
-#'
-#' @param model A statistical model object.
-#' @param include.aic Report Akaike's Information Criterion (AIC) in the GOF
-#'   block?
-#' @param include.bic Report the Bayesian Information Criterion (BIC) in the GOF
-#'   block?
-#' @param include.loglik Report the log likelihood in the GOF block?
-#' @param include.deviance Report the deviance?
-#' @param include.nobs Report the number of observations in the GOF block?
-#' @param include.rsquared Report R^2 in the GOF block?
-#' @param include.adjrs Report adjusted R^2 in the GOF block?
-#' @param include.fstatistic Report the F-statistic in the GOF block?
-#' @param ... Custom parameters, which are handed over to subroutines, in this
-#'   case to the \code{summary} method for the object.
-#'
-#' @method extract zelig
-#' @aliases extract.zelig
-#' @rdname extract-Zelig-method
-#' @importFrom stats pt AIC BIC logLik deviance
-#' @export
-setMethod("extract", signature = className("zelig", "Zelig"),
-          definition = extract.zelig)
-
-
-# -- extract.Zelig (Zelig >= 5.0) ----------------------------------------------
-
-#' @noRd
-extract.Zelig <- function(model,
-                          include.nobs = TRUE,
-                          include.nimp = TRUE,
-                          ...) {
-  if (model$mi) {
-    if (!exists("combine_coef_se", where = "package:Zelig",
-                mode = "function")) {
-      stop("texreg relies on Zelig's combine_coef_se function to extract model information. Install Zelig >= 5.0-17 to see if texreg can format your model.")
-    }
-    combined <- Zelig::combine_coef_se(model, messages = FALSE)
-    gof <- gof.names <- gof.decimal <- NULL
-    if (include.nobs) {
-      gof <- c(gof, nrow(model$data))
-      gof.names <- c(gof.names, "Num. obs.")
-      gof.decimal <- c(gof.decimal, FALSE)
-    }
-    if (include.nimp) {
-      if (class(model$originaldata)[1] == "amelia") {
-        gof <- c(gof, model$originaldata$m)
-        gof.names <- c(gof.names, "Num. imp.")
-        gof.decimal <- c(gof.decimal, FALSE)
-      } else if (class(model$originaldata)[1] == "mi") { # when imputed dataset was created using to_zelig_mi
-        gof <- c(gof, length(model$originaldata))
-        gof.names <- c(gof.names, "Num. imp.")
-        gof.decimal <- c(gof.decimal, FALSE)
-      }
-    }
-    out <- createTexreg(coef.names = row.names(combined),
-                        coef = combined[, "Estimate"],
-                        se = combined[, "Std.Error"],
-                        pvalues = combined[, "Pr(>|z|)"],
-                        gof.names = gof.names,
-                        gof = gof,
-                        gof.decimal = gof.decimal)
-  } else {
-    if ("Zelig-relogit" %in% class(model)) { # remove when users update to Zelig 5.0-16
-      mod_original <- model$zelig.out$z.out[[1]]
-      class(mod_original) <- "glm"
-    }
-    else if ("Zelig-tobit" %in% class(model)) { # remove when users update to Zelig 5.0-16
-      mod_original <- model$zelig.out$z.out[[1]]
-    } else {
-      if (!exists("from_zelig_model",
-                  where = "package:Zelig",
-                  mode = "function")) {
-        stop("texreg relies on Zelig's from_zelig_model function to extract model information. Install Zelig >= 5.0-16 to see if texreg can format your model.")
-      }
-      mod_original <- try(Zelig::from_zelig_model(model), silent = TRUE)
-      if (class(mod_original)[1] == "try-error") {
-        stop("texreg relies on Zelig's from_zelig_model function to extract information from Zelig models. from_zelig_model does not appear to support models of class ",
-             class(model)[1], ".")
-      }
-    }
-    out <- extract(mod_original, include.nobs = include.nobs, ...)
-  }
-  return(out)
-}
-
-#' \code{\link{extract}} method for \code{Zelig} objects
-#'
-#' \code{\link{extract}} method for \code{Zelig} objects created by the
-#' \code{zelig} function in the \pkg{Zelig} package (version >= 5.0).
-#'
-#' @param model A statistical model object.
-#' @param include.nobs Report the number of observations in the GOF block?
-#' @param include.nimp Report the number of multiple imputations (in Zelig
-#'   models with imputed data)?
-#' @param ... Custom parameters, which are handed over to subroutines. Currently
-#'   not in use.
-#'
-#' @method extract Zelig
-#' @aliases extract.Zelig
-#' @export
-setMethod("extract", signature = className("Zelig", "Zelig"),
-          definition = extract.Zelig)
 
 
 # -- extract.zeroinfl (pscl) ---------------------------------------------------
