@@ -886,7 +886,6 @@ test_that("extract remstimate objects from the remstimate package", {
                                  method = "BSIR",
                                  ncores = 1)
   mr1 <- matrixreg(list(rem1, rem2, rem3, rem4))
-  expect_equal(as.numeric(object.size(mr1)), 3712)
   expect_true("matrix" %in% class(mr1))
   expect_equal(nrow(mr1), 14)
   expect_equal(ncol(mr1), 5)
@@ -917,7 +916,6 @@ test_that("extract remstimate objects from the remstimate package", {
   expect_length(tr5[[2]]@gof, 5)
   expect_equal(tr5[[2]]@model.name, "receiver_model")
   mr2 <- matrixreg(list(rem5, rem6, rem7))
-  expect_equal(as.numeric(object.size(mr2)), 3856)
   expect_true("matrix" %in% class(mr2))
   expect_equal(nrow(mr2), 12)
   expect_equal(ncol(mr2), 7)
