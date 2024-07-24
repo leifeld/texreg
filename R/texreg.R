@@ -3131,15 +3131,6 @@ texreg <- function(l,
     }
   }
 
-  # check siunitx vs. threeparttable
-  if (isTRUE(siunitx) && isTRUE(threeparttable)) {
-    siunitx <- FALSE
-    msg <- paste("The siunitx package and the threeparttable package cannot be",
-                 "used together. Switching off 'siunitx'. Consider using
-                 'dcolumn = TRUE' instead for decimal point alignment.")
-    warning(msg)
-  }
-
   # check longtable vs. sideways
   if (isTRUE(longtable) && isTRUE(sideways)) {
     sideways <- FALSE
