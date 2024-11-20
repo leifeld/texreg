@@ -6503,6 +6503,77 @@ setMethod("extract", signature = className("polr", "MASS"),
           definition = extract.polr)
 
 
+# -- extract.prais (prais) -----------------------------------------------------
+
+#' @noRd
+extract.prais <- function(model,
+                          include.rsquared = TRUE,
+                          include.adjrs = TRUE,
+                          include.nobs = TRUE,
+                          ...) {
+  s <- summary(model, ...)
+
+  rho <- mean(s$rho[nrow(s$rho), ])
+
+  coefficient.names <- c(rownames(coef(s)), "rho")
+  coefficients <- c(coef(s)[, 1], rho)
+  standard.errors <- c(coef(s)[, 2], NA_real_)
+  significance <- c(coef(s)[, 4], NA_real_)
+
+  rs <- s$r.squared
+  adj <- s$adj.r.squared
+  n <- length(model$residuals)
+
+  gof <- numeric()
+  gof.names <- character()
+  gof.decimal <- logical()
+  if (include.rsquared == TRUE) {
+    gof <- c(gof, rs)
+    gof.names <- c(gof.names, "R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.adjrs == TRUE) {
+    gof <- c(gof, adj)
+    gof.names <- c(gof.names, "Adj. R$^2$")
+    gof.decimal <- c(gof.decimal, TRUE)
+  }
+  if (include.nobs == TRUE) {
+    gof <- c(gof, n)
+    gof.names <- c(gof.names, "Num. obs.")
+    gof.decimal <- c(gof.decimal, FALSE)
+  }
+
+  tr <- createTexreg(
+    coef.names = coefficient.names,
+    coef = coefficients,
+    se = standard.errors,
+    pvalues = significance,
+    gof.names = gof.names,
+    gof = gof,
+    gof.decimal = gof.decimal
+  )
+  return(tr)
+}
+
+#' \code{\link{extract}} method for \code{prais} objects
+#'
+#' \code{\link{extract}} method for \code{prais} objects created by the
+#' \code{\link[prais]{prais_winsten}} function in the \pkg{prais} package.
+#'
+#' @param model A statistical model object.
+#' @param include.rsquared Report R^2 in the GOF block?
+#' @param include.adjrs Report adjusted R^2 in the GOF block?
+#' @param include.nobs Report the number of observations in the GOF block?
+#' @param ... Custom parameters, which are handed over to subroutines, in this
+#'   case to the \code{summary} method for the object.
+#'
+#' @method extract prais
+#' @aliases extract.prais
+#' @export
+setMethod("extract", signature = className("prais", "prais"),
+          definition = extract.prais)
+
+
 # -- extract.rem.dyad (relevent) -----------------------------------------------
 
 # extension for rem.dyad objects (relevent package)

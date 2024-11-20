@@ -854,6 +854,29 @@ test_that("extract pcce objects from the plm package", {
   expect_equivalent(which(tr2@gof.decimal), 1:3)
 })
 
+# prais (prais) ----
+test_that("extract prais objects from the prais package", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("prais", minimum_version = "1.1.2")
+  skip_if_not_installed("wooldridge")
+  set.seed(12345)
+
+  data("barium", package = "wooldridge")
+  pwmod <- prais::prais_winsten(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6, data = barium, index = "t")
+
+  tr <- extract(pwmod)
+  expect_length(tr@coef.names, 8)
+  expect_length(tr@coef, 8)
+  expect_length(tr@se, 8)
+  expect_length(tr@pvalues, 8)
+  expect_length(tr@ci.low, 0)
+  expect_length(tr@ci.up, 0)
+  expect_length(tr@gof, 3)
+  expect_length(tr@gof.names, 3)
+  expect_length(tr@gof.decimal, 3)
+  expect_equivalent(which(tr@gof.decimal), 1:2)
+})
+
 # remstimate (remstimate) ----
 test_that("extract remstimate objects from the remstimate package", {
   testthat::skip_on_cran()
