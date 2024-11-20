@@ -857,11 +857,9 @@ test_that("extract pcce objects from the plm package", {
 # prais (prais) ----
 test_that("extract prais objects from the prais package", {
   testthat::skip_on_cran()
-  skip_if_not_installed("prais", minimum_version = "1.1.2")
-  skip_if_not_installed("wooldridge")
+  skip_if_not_installed("prais", minimum_version = "1.1.3")
   set.seed(12345)
-
-  data("barium", package = "wooldridge")
+  data("barium", package = "prais")
   pwmod <- prais::prais_winsten(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6, data = barium, index = "t")
 
   tr <- extract(pwmod)

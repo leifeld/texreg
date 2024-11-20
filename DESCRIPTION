@@ -17,8 +17,7 @@ Suggests:
   sandwich (>= 2.3-1),
   systemfit (>= 1.1-0),
   testthat (>= 2.0.0),
-  lmtest (>= 0.9-34),
-  wooldridge
+  lmtest (>= 0.9-34)
 Depends: R (>= 3.5)
 Imports: methods, stats, httr
 Enhances:
@@ -63,7 +62,7 @@ Enhances:
   ordinal,
   pglm,
   plm (>= 2.4.1),
-  prais (>= 1.1.2),
+  prais (>= 1.1.3),
   relevent,
   remify (>= 3.2.6),
   remstats (>= 3.2.2),
