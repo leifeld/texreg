@@ -860,7 +860,10 @@ test_that("extract prais objects from the prais package", {
   skip_if_not_installed("prais", minimum_version = "1.1.3")
   set.seed(12345)
   data("barium", package = "prais")
-  pwmod <- prais::prais_winsten(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6, data = barium, index = "t")
+
+  output <- capture.output({
+    pwmod <- prais::prais_winsten(lchnimp ~ lchempi + lgas + lrtwex + befile6 + affile6 + afdec6, data = barium, index = "t")
+  }, file = NULL)
 
   tr <- extract(pwmod)
   expect_length(tr@coef.names, 8)
@@ -955,15 +958,17 @@ test_that("extract Sarlm objects from the spatialreg package", {
   ev <- spatialreg::eigenw(listw)
   W <- as(listw, "CsparseMatrix")
   trMatc <- spatialreg::trW(W, type = "mult")
-  sink(nullfile())
-  COL.lag.eig <- spatialreg::lagsarlm(CRIME ~ INC + HOVAL,
-                                      data = COL.OLD,
-                                      listw = listw,
-                                      method = "eigen",
-                                      quiet = FALSE,
-                                      control = list(pre_eig = ev,
-                                                     OrdVsign = 1))
-  sink()
+
+  output <- capture.output({
+    COL.lag.eig <- spatialreg::lagsarlm(CRIME ~ INC + HOVAL,
+                                        data = COL.OLD,
+                                        listw = listw,
+                                        method = "eigen",
+                                        quiet = FALSE,
+                                        control = list(pre_eig = ev,
+                                                       OrdVsign = 1))
+  }, file = NULL)
+
   tr <- extract(COL.lag.eig)
   expect_length(tr@coef.names, 4)
   expect_length(tr@coef, 4)
