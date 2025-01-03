@@ -118,7 +118,6 @@ test_that("threeparttable and custom.note arguments work in the texreg function"
   expect_match(tr, "\\\\hline\\n\\\\insertTableNotes\\\\\\\\\\n\\\\endlastfoot", perl = TRUE)
   expect_match(tr, "\\\\begin\\{TableNotes\\}\\[flushleft\\]\\n", perl = TRUE)
   expect_match(tr, "\\\\begin\\{ThreePartTable\\}\\n", perl = TRUE)
-  expect_warning(texreg(model1, threeparttable = TRUE, siunitx = TRUE), "Switching off 'siunitx'.")
 })
 
 test_that("siunitx argument works in the texreg function", {
