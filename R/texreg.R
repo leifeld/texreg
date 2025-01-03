@@ -4537,8 +4537,7 @@ reorder <- function(mat, new.order) {
 #'   length zero.
 #' @param gof.decimal A \code{logical} vector with as many elements as the
 #'   \code{gof} argument, indicating whether the respective GOF statistic is a
-#'   double (\code{TRUE}) or integer (\code{FALSE}) number or whether it is a
-#'   \code{character} entry (\code{NA}).
+#'   double (\code{TRUE}) or integer (\code{FALSE}) number.
 #' @param model.name A name for the statistical model. Can be a \code{character}
 #'   vector of length zero if there is no model name.
 #' @return A \linkS4class{texreg} object representing the statistical model.
