@@ -1718,7 +1718,7 @@ matrixreg <- function(l,
       }
     }
     if (length(se.missing) == nrow(output.matrix) / 2) {
-      output.matrix <- output.matrix[-se.missing, ]
+      output.matrix <- output.matrix[-se.missing, , drop = FALSE]
     }
   }
 
