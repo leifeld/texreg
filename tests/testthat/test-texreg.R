@@ -386,3 +386,20 @@ test_that("htmlreg function works", {
   expect_match(htmlreg(model1, groups = list("First group" = 1, "Second group" = 2), single.row = FALSE),
                "Second group")
 })
+
+test_that("Single coef and no inference in custom extract method works", {
+  # as per https://github.com/leifeld/texreg/issues/209
+  my_obj <- lm(freeny)
+  my_obj2 <- lm(y ~ lag.quarterly.revenue - 1, data = freeny)
+  extract_my_lm <- function(model) {
+    createTexreg(
+      coef.names = names(coef(model)),
+      coef = coef(model),
+      se = numeric(0),
+      pvalues = numeric(0),
+    )
+  }
+  setMethod("extract", signature = className("lm", "stats"), definition = extract_my_lm)
+  expect_no_error(screenreg(my_obj))
+  expect_no_error(screenreg(my_obj2))
+})
